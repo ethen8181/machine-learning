@@ -103,13 +103,13 @@ testing_result <- predict( train_rpart, newdata = testing, type = "class" )
 
 pml_write_files <- function(x)
 {
-	n <- length(x)
-	for( i in 1:n )
+    n <- length(x)
+    for( i in 1:n )
     {
-  		# paste0, the default separtor will be ""
-    	filename <- paste0("problem_id_",i,".txt")
-    	# quote = FALSE, prevent double quotes with character or factor columns
-    	write.table( x[i], file = filename, quote = FALSE, row.names = FALSE, col.names = FALSE )
+        # paste0, the default separtor will be ""
+        filename <- paste0(" problem_id_", i, ".txt" )
+        # quote = FALSE, prevent double quotes with character or factor columns
+        write.table( x[i], file = filename, quote = FALSE, row.names = FALSE, col.names = FALSE )
     }
 }
 pml_write_files(testing_result)
