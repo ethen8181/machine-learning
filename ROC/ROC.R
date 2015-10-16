@@ -11,7 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-setwd("C:/Users/ASUS/machine-learning/ROC")
+setwd("/Users/ethen/machine-learning")
 # download files
 if( !file.exists("titanic.csv") )
 {
@@ -117,9 +117,11 @@ ggplot( df, aes( survived, pred, color = type ) ) + geom_jitter( shape = 1 ) +
 
 
 # ----------------------------------------------------------------------------------------
+# [calculate_roc] :
 # calculate the x and y value for the ROC curve for each specified threshold
 # x = false positive rate, y = true positive rate
-calculate_roc <- function( df, cost_of_fp, cost_of_fn, n = 100 ) 
+
+CalculateROC <- function( df, cost_of_fp, cost_of_fn, n = 100 ) 
 {
     # true positive rate for the specified threshold
     tpr  <- function( df, threshold ) 
@@ -137,8 +139,10 @@ calculate_roc <- function( df, cost_of_fp, cost_of_fn, n = 100 )
         with( df, sum( pred >= threshold & survived == 0 ) * cost_of_fp + 
                   sum( pred <  threshold & survived == 1 ) * cost_of_fn )
     }
+
     # generate n threshold between 0 and 1
     roc <- data.frame( threshold = seq( 0, 1, length.out = n ) )
+
     # calculate the tpr, fpr and cost for each of the specified threshold
     roc$tpr  <- sapply( roc$threshold, function(th) tpr ( df, th ) )
     roc$fpr  <- sapply( roc$threshold, function(th) fpr ( df, th ) )
@@ -151,26 +155,31 @@ fpcost <- 1
 fncost <- 2
 # return the data frame that has the cost, tp and fp rate for each threshold
 # ( generate 100 from 0~1 ), n specifies the number of the amount of generated threshold
-roc <- calculate_roc( predictions, fpcost, fncost, n = 100 )
+roc <- CalculateROC( predictions, fpcost, fncost, n = 100 )
 head(roc)
 # threshold for the lowest cost
 roc[ which.min(roc$cost), "threshold" ]
 
+
 # ----------------------------------------------------------------------------------------
 # function that does the ROC and cost plotting
-plot_roc <- function( roc, threshold, cost_of_fp, cost_of_fn ) 
+PlotROC <- function( roc, threshold, cost_of_fp, cost_of_fn ) 
 {
     # function that normalize the vector
     norm_vec <- function(v) ( v - min(v) )/ diff( range(v) )
+
     # the generated theshold from 0 ~ 100, which one is closest to the specified threshold 
     index <- which.min( abs( roc$threshold - threshold ) )
+    
     # create color from a palette to assign to the 100 generated threshold between 0 ~ 1
-    col_ramp <- colorRampPalette( c( "green", "orange", "red", "black" ) )(100)
-    # normalize each cost and assign colors to it, the higher the blacker
+    # then normalize each cost and assign colors to it, the higher the blacker
     # don't times it by 100, there will be 0 in the vector
+    col_ramp <- colorRampPalette( c( "green", "orange", "red", "black" ) )(100)   
     col_by_cost <- col_ramp[ ceiling( norm_vec(roc$cost) * 99 ) + 1 ]
+
     # calculate the area under the curve
     area <- auc( df$survived, df$pred )
+
     # ---------------------------------------
     # ROC curve, wuth crossed point of two dashed line approximately the point for our threshold    
     p_roc <- ggplot( roc, aes( fpr,tpr ) ) + 
@@ -197,7 +206,7 @@ plot_roc <- function( roc, threshold, cost_of_fp, cost_of_fn )
                   main = textGrob( sub_title, gp = gpar( fontsize = 16, fontface = "bold" ) ) )
 }
 
-plot_roc( roc, 0.7, fpcost, fncost )
+PlotROC( roc, 0.7, fpcost, fncost )
 
 
 
