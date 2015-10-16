@@ -11,7 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 
-setwd("/Users/ethen/machine-learning")
+setwd("/Users/ethen/machine-learning/ROC")
 # download files
 if( !file.exists("titanic.csv") )
 {
@@ -54,7 +54,7 @@ ncv  <- cumsum( c( rep( size, num ), rest ) )
 # create a new data.frame prediction, to store the probability
 # don't add the pred column to the original column, the model will include that, thus returning error
 predictions <- data.frame( survived = df$survived, pred = NA )
-# testing sample_frac( df, 0.9 ) 
+# testing : sample_frac( df, 0.9 ) 
 for( n in ncv ) 
 {
     v <- rep( TRUE, N )
@@ -72,6 +72,7 @@ head(df)
 # ----------------------------------------------------------------------------------------
 # exploratory analysis
 # threshold, if the probability is bigger than this value then the person will survive
+
 threshold <- 0.7
 # relevel making 1 appears on the left in the graph, as in left of the confusion matrix
 df$survived <- relevel( df$survived, "1" ) 
@@ -84,10 +85,12 @@ table <- table( outcome, df$survived )
 # compare it with the user specified threshold
 prediction  <- as.factor( ifelse( df$pred > 0.5, 1, 0 ) ) %>% relevel("1") 
 confusion   <- table( prediction, df$survived )
+
 # list the two confusion matrix
 list( threshold_.7 = table, threshold_.5 = confusion ) 
 # accuracy rate between the two threshold, disregarding which one is better, proceed on with the idea of evaluating cost
-cbind( threshold_.7 = ( table[ 1, 1 ] + table[ 2, 2 ] ) / sum(table), threshold_.5 = ( confusion[ 1, 1 ] + confusion[ 2, 2 ] ) / sum(confusion) )
+cbind( threshold_.7 = ( table[ 1, 1 ] + table[ 2, 2 ] ) / sum(table), 
+       threshold_.5 = ( confusion[ 1, 1 ] + confusion[ 2, 2 ] ) / sum(confusion) )
 
 # generate the confusion matrix plot
 # testing
@@ -103,16 +106,17 @@ df$type <- with( predictions,
                  ifelse( pred <  threshold & survived == 1, "FN", "TN" ) ) ) )
 
 ggplot( df, aes( survived, pred, color = type ) ) + geom_point()
-# makes most sense when visualizing a large number of individual observations
+
+# jittering, makes most sense when visualizing a large number of individual observations
 # representing each system.
 # Without jittering, we would essentially see two vertical lines. 
 # With jittering, we can spread the points along the x axis 
 ggplot( df, aes( survived, pred, color = type ) ) + geom_jitter( shape = 1 ) + 
-    geom_hline( yintercept = threshold, color = "blue", alpha = 0.6 ) + 
-    labs ( title = sprintf( "Confusion Matrix with Threshold at %.2f", threshold ) )
+geom_hline( yintercept = threshold, color = "blue", alpha = 0.6 ) + 
+labs ( title = sprintf( "Confusion Matrix with Threshold at %.2f", threshold ) )
 
 # The above plot illustrates the tradeoff we face upon choosing a reasonable threshold. 
-# If we increase the threshold the number of false positive (FP) results is lowered, 
+# If we increase the threshold, the number of false positive (FP) results is lowered, 
 # while the number of false negative (FN) results increases.
 
 
@@ -183,20 +187,20 @@ PlotROC <- function( roc, threshold, cost_of_fp, cost_of_fn )
     # ---------------------------------------
     # ROC curve, wuth crossed point of two dashed line approximately the point for our threshold    
     p_roc <- ggplot( roc, aes( fpr,tpr ) ) + 
-        geom_line( color = rgb( 0, 0, 1, alpha = 0.3 ) ) +
-        geom_point( color = col_by_cost, size = 4, alpha = 0.5 ) +
-        geom_line( aes( threshold, threshold ), color = "blue", alpha = 0.5 ) +
-        labs( title = "ROC", x = "False Postive Rate", y = "True Positive Rate" ) +
-        geom_hline( yintercept = roc[ index, "tpr" ], alpha = 0.5, linetype = "dashed" ) +
-        geom_vline( xintercept = roc[ index, "fpr" ], alpha = 0.5, linetype = "dashed" ) +
-        coord_fixed( ratio = 1 ) # equal ratio of x and y
+             geom_line( color = rgb( 0, 0, 1, alpha = 0.3 ) ) +
+             geom_point( color = col_by_cost, size = 4, alpha = 0.5 ) +
+             geom_line( aes( threshold, threshold ), color = "blue", alpha = 0.5 ) +
+             labs( title = "ROC", x = "False Postive Rate", y = "True Positive Rate" ) +
+             geom_hline( yintercept = roc[ index, "tpr" ], alpha = 0.5, linetype = "dashed" ) +
+             geom_vline( xintercept = roc[ index, "fpr" ], alpha = 0.5, linetype = "dashed" ) +
+             coord_fixed( ratio = 1 ) # equal ratio of x and y
 
     # plot the calculated cost for each threshold
     p_cost <- ggplot( roc, aes( threshold, cost ) ) +
-        geom_line( color = "blue", alpha = 0.5 ) +
-        geom_point( color = col_by_cost, size = 4, alpha = 0.5 ) +
-        ggtitle("cost function") +
-        geom_vline( xintercept = threshold, alpha = 0.5, linetype = "dashed" )
+              geom_line( color = "blue", alpha = 0.5 ) +
+              geom_point( color = col_by_cost, size = 4, alpha = 0.5 ) +
+              ggtitle("cost function") +
+              geom_vline( xintercept = threshold, alpha = 0.5, linetype = "dashed" )
     
     # the main title for the two arranged plot
     sub_title <- sprintf( "Threshold at %.2f - Cost of FP = %d, Cost of FN = %d\nAUC = %.3f", 
