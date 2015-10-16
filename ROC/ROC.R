@@ -121,7 +121,7 @@ labs ( title = sprintf( "Confusion Matrix with Threshold at %.2f", threshold ) )
 
 
 # ----------------------------------------------------------------------------------------
-# [calculate_roc] :
+# [CalculateROC] :
 # calculate the x and y value for the ROC curve for each specified threshold
 # x = false positive rate, y = true positive rate
 
@@ -166,7 +166,9 @@ roc[ which.min(roc$cost), "threshold" ]
 
 
 # ----------------------------------------------------------------------------------------
+# [PlotROC] :
 # function that does the ROC and cost plotting
+
 PlotROC <- function( roc, threshold, cost_of_fp, cost_of_fn ) 
 {
     # function that normalize the vector
