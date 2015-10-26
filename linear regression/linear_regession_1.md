@@ -30,7 +30,7 @@ geom_point( data = data.frame( x = 2, y = Formula(2) ), aes( x, y ),
 ggtitle( expression( 1.2 * (x-2)^2 + 3.2 ) )
 ```
 
-![](linear_regession-1_files/figure-html/unnamed-chunk-1-1.png) 
+![](linear_regession_1_files/figure-html/unnamed-chunk-1-1.png) 
 
 By solving the first derivative of the function or simply eyeballing the graph, we can easily tell that the minimum value to the formula is when x equals 2. Plugging the value back into the formula gives us the solution 3.2. 
 
@@ -122,7 +122,7 @@ cbind( xtrace, ytrace )
 Elaboration on what i defined :
 
 - `x_old` and `x_new` to calculate the difference of the x value between two iterations.
-- `epsilon` value to specify if the difference of x is smaller than this value then the algorithm will halt.
+- `epsilon` value to specify if the difference between `x_old` and `x_new` is smaller than this value then the algorithm will halt.
 - `iteration` The maximum iteration to train the algorithm. That is, if the difference of the x value on the 10th iteration and 10 still larger than the `epsilon` value, the algorithm will still halt.
 - `xtrace` and `ytrace` stores the x and its corresponding formula value for each iteration. It's good to store these values to get a sense of how fast the algorithm converges.
 
@@ -178,7 +178,7 @@ geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ),
               color = "blue", alpha = .8, arrow = arrow( length = unit( 0.25, "cm" ) ) )
 ```
 
-![](linear_regession-1_files/figure-html/unnamed-chunk-6-1.png) 
+![](linear_regession_1_files/figure-html/unnamed-chunk-6-1.png) 
 
 The visualization gives us a clearer picture that after assigning an inital value of x and parameters such as `epsilon`, `learning_rate`, `iteration`, the gradient descent algorithm will start manipulate the x value until it meets the converge criteria, and an interesting feature is that when the algorithms starts to get closer and closer to the optimal value, it will take smaller "steps " and wander nearby before converging.
 
@@ -230,10 +230,14 @@ One reasonable method is to make the value produced by function F(x) to be as cl
 
 $$\text{Min } F_{\theta} = \frac{1}{2} \sum_{i=1}^m ( h(x_{i}) - y_{i} )^2 $$
 
-The $\frac{1}{2}$ is there to minimize the math loading for later when we take the first derivative of the function. Again, the meaning for the formula above means after plugging in our input variables $x_{i}$ (recall that i denotes the ith row in the dataset) into the function and obtaining the value, which is the $h(x_{i})$ part. We will calculate its distance with the original $y_{i}$. Therefore the process of the gradient descent is to start some value for $\theta$ and keep updating it to reduce $F_{\theta}$, with the goal of minimizing the summed up differences for all rows. 
+The $\frac{1}{2}$ is there to minimize the math loading for later when we take the first derivative of the function. Again, the meaning for the formula above means after plugging in our input variables $x_{i}$ (recall that i denotes the ith row in the dataset) into the function and obtaining the value, which is the $h(x_{i})$ part. We will calculate its distance with the original $y_{i}$. Therefore the process of the gradient descent is to start some value for $\theta$ and keep updating it to reduce $F_{\theta}$, with the goal of minimizing the summed up differences for all rows. This summed of difference is often referred to as the sum squared error. 
+
+Next, we'll state without proving that after taking the first derivative of the function $F_{\theta}$ and putting it back inside the gradient descent algorithm we'll obtain the formula below:
+
+$$$$
 
 
 ## References
 
 1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
-3. Linear Regression with Gradient Descent: http://cs229.stanford.edu/notes/cs229-notes1.pdf 
+2. Linear Regression with Gradient Descent: http://cs229.stanford.edu/notes/cs229-notes1.pdf 
