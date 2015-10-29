@@ -77,49 +77,49 @@ geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ),
 ##################
 # start from here 
 
+
+# housing data
 library(dplyr)
 
-# their code do not work 
-
-# http://digitheadslabnotebook.blogspot.tw/2012/07/linear-regression-by-gradient-descent.html
-# http://blog.datumbox.com/tuning-the-learning-rate-in-gradient-descent/
-# http://www.moneyscience.com/pg/blog/StatAlgo/read/361152/stanford-ml-3-multivariate-regression-gradient-descent-and-the-normal-equation
-
-# housing data 
 setwd("/Users/ethen/machine-learning/linear regression")
-housing <- read.csv("housing.csv")
-model <- lm( price ~. , data = housing )
-
+housing <- read.table( "housing.txt", header = TRUE, sep = "," )
 
 # normalize the vector to be between values of 0 and 1 [0,1]
 Normalize <- function(x) ( x - min(x) ) / ( max(x) - min(x) )
 
-GradientDescent <- function( target, data, learning_rate = .0001, 
-	                         epsilon = .001, iteration = 1000, normalize = TRUE )	                         
+# z-score normalize 
+Normalize <- function(x) ( x - mean(x) ) / sd(x)
+
+# @target : the column name that serves as the output variable
+GradientDescent <- function( target, data, learning_rate, iteration, 
+	                         epsilon = .001, normalize = TRUE )	                         
 {
 	# separate the input and output variables 
 	input  <- data %>% select( -one_of(target) ) %>% as.matrix()
 	output <- data %>% select( one_of(target) ) %>% as.matrix()
 
-	# normalize the input variables if specified 
+	# normalize the input variables if specified
+	# record the mean and standard deviation  
 	if(normalize)
 	{
+		input_mean <- apply( input, 2, mean )
+		input_sd   <- apply( input, 2, sd )
 		input <- apply( input, 2, Normalize )
 	}
 
 	# add a new column of all 1's to the first column, this serves as X0
 	input <- cbind( theta0 = 1, input )
 
-	# theta_new : initialize the theta value as all 0s
-	# theta_old : a random number whose absolute difference between new is 
+	# theta_new : initialize the theta value as all 1s
+	# theta_old : a random number whose absolute difference between new one is 
 	#             larger than than epsilon 
-	theta_new <- matrix( c( 7000, 100, -9000 ), nrow = 1 )
-	theta_old <- matrix( rep( 2, ncol(input) ), nrow = 1 )
+	theta_new <- matrix( 1, ncol = ncol(input) )
+	theta_old <- matrix( 2, ncol = ncol(input) )
 
 	# cost function 
 	costs <- function( input, output, theta )
 	{
-		sum( ( input %*% t(theta) - output )^2 ) / ( 2 * length(output) )
+		sum( ( input %*% t(theta) - output )^2 ) / ( 2 * nrow(output) )
 	}
 
 	# records the theta and cost value for visualization ; add the inital guess 
@@ -151,18 +151,30 @@ GradientDescent <- function( target, data, learning_rate = .0001,
 		costs_trace[[step]] <- costs( input, output, theta_new )
 	}
 
+	# returns the noramalized mean and standard deviation for each input column
+	# and the cost, theta record 
 	costs <- data.frame( costs = do.call( rbind, costs_trace ) )
 	theta <- data.frame( do.call( rbind, theta_trace ), row.names = NULL )
+	norm  <- data.frame( input_mean = input_mean, input_sd = input_sd )
 
-	return( list( costs = costs, theta = theta ) )
+	return( list( costs = costs, theta = theta, norm = norm ) )
 }
 
+trace <- GradientDescent( target = "price", data = housing, 
+	                      learning_rate = 0.05, iteration = 400 )
 
-trace <- GradientDescent( target = "price", data = housing, learning_rate = .001 )
+# linear regression 
+normed <- apply( housing[ , -3 ], 2, Normalize )
+normed_data <- data.frame( cbind( normed, price = housing$price ) )
+model <- lm( price ~ ., data = normed_data )
 
+parameters <- trace$theta[ nrow(trace$theta), ]
+
+
+costs_df <- data.frame( iteration = 1:nrow(trace$cost), 
+	                    costs = trace$cost / 1000000 )
+
+ggplot( costs_df, aes( iteration, costs ) ) + 
+geom_line()
 
 solve( t(input) %*% input ) %*% t(input) %*% output
-
-
-
-
