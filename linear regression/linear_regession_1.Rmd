@@ -239,7 +239,7 @@ head(housing)
 
 ```
 
-You'll notice that houses' area (sizes) are approximately 1000 times larger than bedroom counts. Therefore when input variables differ by orders of magnitudes, performing some kind of normalization is often times required. Here we'll apply the widely used z-score normalization, where given a input variable you subtract every row element with its mean and then divide it by its standard deviation (Code below). 
+You'll notice that houses' area (sizes) are approximately 1000 times larger than bedroom counts. Therefore when input variables differ by orders of magnitudes, performing some kind of normalization is often times required. Here we'll apply the widely used z-score normalization, where given a input variable you subtract every row element with its mean and then divide it by its standard deviation (see code below). 
 
 ```{r}
 
