@@ -1,4 +1,4 @@
-# A RoadTrip with Linear Regression
+# Gradient Descent with Linear Regression
 Ming-Yu Liu  
 
 > To all of the machine-learning experts out there, I'm sure people who are not in the statistics, math or computer science department will be very grateful if you could provide simple code examples to go along with mathematical notations.
@@ -457,7 +457,7 @@ geom_line()
 
 ![](linear_regession_1_files/figure-html/unnamed-chunk-13-1.png) 
 
-As you can see from the plot, at the beginning when we randomly assign the theta value to our model, the magnitudes of the update is huge. But as it approaches the optimum, then the algorithm will find little need to update the paramters, and therefore, the value of the cost does not change much. This matches the behavior it had with our simple function example in the Getting Started with Gradient Descent section.
+As you can see from the plot, at the beginning when we randomly assign the theta value to our model, the magnitudes of the update is huge. But as it approaches the optimum, then the algorithm will find little need to update the parameters, and therefore, the value of the cost does not change much. This matches the behavior it had with our simple equation example in the Getting Started with Gradient Descent section.
 
 2. Note that gradient descent does not equal to linear regression, there're other approaches to solve or obtain the parameters of the model, however, this algorithm, with a little tuning, is still used in many other places, such as artifical neural network.
 
