@@ -1,7 +1,7 @@
 library(tree)
 library(caret)
 # set the working directory
-setwd("C:/Users/ASUS/machine-learning/Coursera")
+setwd("/Users/ethen/machine-learning/Coursera")
 # download the file into data folder
 if( !file.exists("data") )
 {

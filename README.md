@@ -15,3 +15,8 @@ Course project for the Practical Machine Learning on Coursera
 **linear regression** :
 
 - Solving linear regression with gradient descent. View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
+
+**clustering** : Some useful functions when working with hierarchical clustering and kmeans clustering (kmeans++ is used here).
+
+- Calinski-Harabasz index : Determine the right k (cluster number) for clustering.
+- Boostrap evaluation of stability of the clustering result.
