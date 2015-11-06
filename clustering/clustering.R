@@ -77,8 +77,8 @@ WSS <- function( data, groups )
 # W = WSS(k) / (n-k) ; n = # of data points
 
 # [CHCriterion] : calculates both Calinski-Harabasz index and within sum squared error
-# @kmax   = maximum cluster number, caculates the CH index from 2 cluster to kmax
-# @method = "kmeanspp", "hclust"
+# @kmax          = maximum cluster number, caculates the CH index from 2 cluster to kmax
+# @clustermethod = "kmeanspp", "hclust"
 CHCriterion <- function( data, kmax, clustermethod, ...  )
 {
 	if( !clustermethod %in% c( "kmeanspp", "hclust" ) )
@@ -182,7 +182,7 @@ source("/Users/ethen/Mining-Massive-Dataset/kmeans/kmeanspp.R")
 # @k             = specify the number of clusters
 # @clustermethod = "hclust" for heirarchical clustering, and "kmeanspp" for kmeans++
 # @noise.cut     = if specified, the points of the resulting cluster whose number is smaller
-#                  then it will be considered as noise, and all of these noise cluster will be
+#                  than it will be considered as noise, and all of these noise cluster will be
 #                  grouped together as one whole cluster
 # @...           = pass in other parameters for hclust or kmeans++ (same as kmeans)
 
@@ -264,7 +264,7 @@ ClusterMethod <- function( data, k, noise.cut = 0, clustermethod, ... )
 #              4. clusternum : final cluster count, 
 #                              if you specified noise.cut then it might be different from k.
 #              5. bootdissolved : number of times each cluster's jaccard similarity is smaller than
-#                                 the dissolve value 
+#                                 the dissolve value.
 
 ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100, 
 	                          dissolve = .5, clustermethod, ... )
@@ -329,8 +329,8 @@ ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100,
 }
 
 # test
-boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, clustermethod = "kmeanspp",
-                                 nstart = 10, iter.max = 100 )
+# boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, clustermethod = "kmeanspp",
+#                                 nstart = 10, iter.max = 100 )
 
 # ... parameters for hclust
 # method = "ward.D"
