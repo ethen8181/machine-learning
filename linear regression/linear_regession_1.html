@@ -99,6 +99,7 @@ img {
 <li><a href="#applying-it-to-linear-regression"><span class="toc-section-number">0.3</span> Applying it to Linear Regression</a></li>
 <li><a href="#conclusions"><span class="toc-section-number">0.4</span> Conclusions</a></li>
 <li><a href="#references"><span class="toc-section-number">0.5</span> References</a></li>
+<li><a href="#r-session-information"><span class="toc-section-number">0.6</span> R Session Information</a></li>
 </ul>
 </div>
 
@@ -432,6 +433,7 @@ geom_line()</code></pre>
 <li><p>If your input variables or features comes in different magnitudes, then normalizing them is an important preprocessing step before applying gradient descent. Or else the results will most likely be heavily affected by the input variables with the larger magnitudes, and in that case the algorithm might either returns a really bad result or worse, will not even work.</p></li>
 <li><p>Tuning parameters including the learning rate, epsilon will surely affect the result and the speed to converge, and this requires some trial and error.</p></li>
 </ol>
+<p>All the code for this documentation can be found <a href="https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/gradient.R">here</a>.</p>
 </div>
 <div id="references" class="section level2">
 <h2><span class="header-section-number">0.5</span> References</h2>
@@ -439,6 +441,32 @@ geom_line()</code></pre>
 <li>Gradient Descent Example: <a href="http://www.r-bloggers.com/gradient-descent-in-r/" class="uri">http://www.r-bloggers.com/gradient-descent-in-r/</a></li>
 <li>Linear Regression with Gradient Descent, Notations and Proofs: <a href="http://cs229.stanford.edu/notes/cs229-notes1.pdf" class="uri">http://cs229.stanford.edu/notes/cs229-notes1.pdf</a></li>
 </ol>
+</div>
+<div id="r-session-information" class="section level2">
+<h2><span class="header-section-number">0.6</span> R Session Information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 3.2.2 (2015-08-14)
+## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+## Running under: OS X 10.10.5 (Yosemite)
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] grid      stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] dplyr_0.4.3   ggplot2_1.0.1 scales_0.3.0 
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
+##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         stringr_1.0.0   
+##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
+## [13] DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13     
+## [17] digest_0.6.8     assertthat_0.1   formatR_1.2.1    reshape2_1.4.1  
+## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_0.5-5   
+## [25] proto_0.3-10</code></pre>
 </div>
 
 

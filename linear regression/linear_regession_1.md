@@ -465,8 +465,41 @@ As you can see from the plot, at the beginning when we randomly assign the theta
 
 4. Tuning parameters including the learning rate, epsilon will surely affect the result and the speed to converge, and this requires some trial and error. 
 
+All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/gradient.R).
 
 ## References
 
 1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
-2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf 
+2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf
+
+## R Session Information  
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.2.2 (2015-08-14)
+## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+## Running under: OS X 10.10.5 (Yosemite)
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] grid      stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] dplyr_0.4.3   ggplot2_1.0.1 scales_0.3.0 
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
+##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         stringr_1.0.0   
+##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
+## [13] DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13     
+## [17] digest_0.6.8     assertthat_0.1   formatR_1.2.1    reshape2_1.4.1  
+## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_0.5-5   
+## [25] proto_0.3-10
+```

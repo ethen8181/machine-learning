@@ -177,4 +177,9 @@ costs_df <- data.frame( iteration = 1:nrow(trace$cost),
 ggplot( costs_df, aes( iteration, costs ) ) + 
 geom_line()
 
+
+# ----------------------------------------------------------------------------
+# normal equation
 solve( t(input) %*% input ) %*% t(input) %*% output
+
+

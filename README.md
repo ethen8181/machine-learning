@@ -11,12 +11,13 @@ Each folder is independent of one another.
 
 - Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset (data included in the folder).
 
-**linear regression** : 2015.10.30
-
-- Solving linear regression with gradient descent. View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
-
 **clustering** : Some useful functions when working with hierarchical clustering and kmeans clustering (kmeans++ is used here). 2015.11.6
 
 - Calinski-Harabasz index : Determine the right k (cluster number) for clustering.
 - Boostrap evaluation of the clustering result’s stability.
-- View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html)
+- View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html).
+
+**linear regression** : 2015.10.30
+
+- Solving linear regression with gradient descent. View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
+

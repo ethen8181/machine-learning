@@ -11,7 +11,9 @@ output:
 
 ## Background Information
 
-Assuming that you're familiar with kmeans and hierarchichal clustering, these are some functions useful for choosing the proper cluster number and for evaulating the stability of the clustering result. All the code for the following documentation is [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/clustering.R).
+Assuming that you're familiar with kmeans and hierarchichal clustering, these are some functions useful for choosing the proper cluster number and for evaulating the stability of the clustering result.
+
+> For this documentation we're dropping the issue on which variables should we include in the dataset. Note that, in practice this is an important preprocessing step before applying any sorts of algorithms.
 
 ## Preparing 
 
@@ -143,7 +145,17 @@ boot_clust$bootdissolved
 
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
+You can find all the code for this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/clustering.R).
+
 ## Reference 
 
 1. Math formula of the two measures used to determine the suitable k http://www.mathworks.com/help/stats/clustering.evaluation.calinskiharabaszevaluation-class.html
 2. Some content drawn from Chapter 8 unsupervised method of the book Practical Data Science with R https://www.manning.com/books/practical-data-science-with-r
+
+## R Session Information  
+
+```{r}
+
+sessionInfo()
+
+```

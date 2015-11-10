@@ -379,8 +379,17 @@ As you can see from the plot, at the beginning when we randomly assign the theta
 
 4. Tuning parameters including the learning rate, epsilon will surely affect the result and the speed to converge, and this requires some trial and error. 
 
+All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/gradient.R).
 
 ## References
 
 1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
-2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf 
+2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf
+
+## R Session Information  
+
+```{r}
+
+sessionInfo()
+
+```
