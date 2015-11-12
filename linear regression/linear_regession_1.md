@@ -1,9 +1,10 @@
 # Gradient Descent with Linear Regression
 Ming-Yu Liu  
+October 30, 2015  
 
 > To all of the machine-learning experts out there, I'm sure people who are not in the statistics, math or computer science department will be very grateful if you could provide simple code examples to go along with mathematical notations.
 
-The following tutorial assumes you know the basics of R programming, e.g. data structure such as list and data.frame, looping, visualization using ggplot2, apply function, simple usage of the dplyr package etc. So we will not go over line by line of the code, but will tell split the code into moderate size chunks and tell you what the code is doing.
+The following tutorial assumes you know the basics of R programming, e.g. data structure such as list and data.frame, looping, visualization using ggplot2 etc. So we will not go over line by line of the code, but will split the code into moderate size chunks and specify what that code chunk is doing.
 
 ## Background Information
 
@@ -123,7 +124,7 @@ cbind( xtrace, ytrace )
 Elaboration on what i defined :
 
 - `x_old` and `x_new` to calculate the difference of the x value between two iterations, the two numbers are different so that the loop can still work for the first iteration of the while loop, as you'll see later.
-- `epsilon` value to specify if the difference between `x_old` and `x_new` is smaller than this value then the algorithm will halt.
+- `epsilon` If the difference between `x_old` and `x_new` is smaller than this value then the algorithm will halt.
 - `iteration` The maximum iteration to train the algorithm. That is, if the difference of the x value on the 10th iteration and 10 still larger than the `epsilon` value, the algorithm will still halt.
 - `xtrace` and `ytrace` stores the x and its corresponding formula value for each iteration. It's good to store these values to get a sense of how fast the algorithm converges.
 
@@ -159,7 +160,7 @@ record
 ## 7 1.986213 3.200228
 ```
 
-From the output above, we can see that the algorithm converges at iteration 2 before the user-specified maximum iteration, with the x and formula value that's close to the original optimal value. Let's create the visualization for the process.
+From the output above, we can see that the algorithm converges at iteration 7 before the user-specified maximum iteration, with the x and formula value that's close to the original optimal value. Let's create the visualization for the process.
 
 
 ```r
@@ -218,7 +219,7 @@ $$\text{Repeat until converge} \{ x:=x-\alpha\triangledown F(x) \}$$
 
 Now all we have to do is to define the appropriate cost function of the linear regression and plug it back in to formula above! Before we give it to you, we'll first denote some simple math notations.
 
-- m : the number of training examples. Here we just use all 47 rows.
+- m : the number of training examples. Here we will use all 47 rows.
 - n : the number of "input" variables, in this case, it is 2, the number of bedrooms and the area (size) of the house.
 - $x^{(i)}$ : the ith row of the "input" variable in the dataset. This does not denote x raised to the power of i!
 - $y^{(i)}$ : the ith row "output" variables. In this case the output variable is the price of the house.
@@ -226,7 +227,7 @@ Now all we have to do is to define the appropriate cost function of the linear r
 
 $$ h_{\theta}(x) = \theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2} + \dotsm + \theta_{n}x_{n}  $$
 
-Here the $\theta_{j}$s (j going from 0 to n) denotes the weights or so called coeffficients of the model. Here we only have 2 variables, so j only goes up to 2, and the $h_{\theta}(x)$ for this dataset would be $\theta_{0} + \theta_{1}x_{area} + \theta_{2}x_{bedrooms}$. And for conciseness, suppose we define $x_{0}$ to be a vector of all 1s (This is a trick that we'll be using in the later sample code!!). In that case the formula can be rewritten as :
+Here the $\theta_{j}$s (j going from 0 to n) denotes the weights or so called coeffficients of the model. Here we only have 2 variables, so j only goes up to 2, and the $h_{\theta}(x)$ for this dataset would be $\theta_{0} + \theta_{1}x_{area} + \theta_{2}x_{bedrooms}$. And for conciseness, suppose we define $x_{0}$ to be a vector of all 1s (This is a trick is used in the gradient descent function!!). In that case the formula can be rewritten as :
 
 $$ h_{\theta}(x) = \sum_{j=0}^n \theta_{j}x_{j} $$
 
@@ -238,17 +239,15 @@ The $\frac{1}{2}$ is there to minimize the math loading for later when we take t
 
 Next, we'll state without proving that after taking the first derivative of the function $F_{\theta}$ and putting it back inside the gradient descent algorithm we'll obtain the formula below (Please refer to the reference if you're interested in the proof):
 
-$$ \theta_{j}:=\theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
+$$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
 
-Now all that formula may look a might formidable. The notion is, after you have calculated difference (error) between $h_{\theta}(x^{(i)}) - y^{(i)}$ for each row i you multiply that difference to all of the $x_{j}$s for each row and sum them up. For example :
+Now all that formula may look a might formidable. The notion is, after you have calculated difference (error) between $h_{\theta}(x^{(i)}) - y^{(i)}$ for each row i you multiply that difference to all of the $x_{j}$s for each row and sum them up. A small example using two rows :
 
 
 ```r
-# Using the first two rows from the data, 
-# and you've calculated that the difference of two rows are 100 and 200
-diff <- c( 100 , 200 )
-
-# the first two rows of the input variables
+# suppose you've already calculated that the difference of 
+# the two rows are 100 and 200 respectively, then 
+# using the first two rows of the input variables
 housing[ c( 1, 2 ), -3 ]
 ```
 
@@ -260,7 +259,6 @@ housing[ c( 1, 2 ), -3 ]
 
 ```r
 # multiply 100 with row 1 
-# multuply 200 with row 2
 ( row1 <- 100 * housing[ 1, -3 ] )
 ```
 
@@ -270,6 +268,7 @@ housing[ c( 1, 2 ), -3 ]
 ```
 
 ```r
+# multuply 200 with row 2
 ( row2 <- 200 * housing[ 1, -3 ] )
 ```
 
@@ -310,105 +309,55 @@ head(housing)
 ## 6 1985        4 299900
 ```
 
-You'll notice that houses' area (sizes) are approximately 1000 times larger than bedroom counts. Therefore when input variables differ by orders of magnitudes, performing some kind of normalization is often times required. Here we'll apply the widely used z-score normalization, where given a input variable you subtract every row element with its mean and then divide it by its standard deviation (see code below). 
+You'll notice that houses' area (sizes) are approximately 1000 times larger than bedroom counts. Therefore when input variables differ by orders of magnitudes, performing some kind of normalization is often times required. Here we'll apply the widely used z-score normalization, where given a input variable (column) you subtract every row element with its mean and then divide it by its standard deviation (see code below). 
 
 
 ```r
 # z-score normalization
+# this is equivalent to the "scale" function built in with R
 Normalize <- function(x) ( x - mean(x) ) / sd(x)
 ```
 
 Just want to mention, after the z-score normalization, 0 means that the original number is the average for that column, and all other normalized-number means how many standard deviations is the number away from the mean.
 
-- **Note** : Keep in mind that when you're doing the normalization you should also store the values that was used the scale each of the feature. Because after we're done learning the parameters of the model, next time when we're given a new house information containing only the bedroom number and house size we will like to predict its house price. And before directly plugging in the numbers to the model, we will also have to normalize them.
+- **Note** : Keep in mind that when performing the normalization you should also store the values that was used the scale each of the feature. Because after we're done learning the parameters of the model, next time when we're given a new house information containing only the bedroom number and house size we will like to predict its house price. And before directly plugging in the numbers to the model, we will also have to normalize them.
 
-Now the gradient descent function for linear regression.
+Now the `GradientDescent` function for linear regression. Parameters for the function :
+
+- `data` The whole data frame type data.   
+- `target` Takes a character stating column name that serves as the output variable.  
+- `learning_rate` Learning rate for the gradient descent algorithm. 
+- `iteration` Halting criterion : maximum iteration allowed for training the gradient descent algorithm.
+- `epsilon` Halting criterion : If the trained parameter's difference between the two iteration is smaller than this value then the algorithm will halt. Default to 0.001.
+- `normalize` Boolean value indicating whether to performing z-score normalization for the input variables. Default to true.
+- `method` Specify either "batch" or "stochastic" for the gradient descent method. Use batch for now, this will be explained later!! 
+- The function returns a list consisting of : 
+    - Data frame that records the theta value (model's parameter) for each iteration.
+    - Data frame that records the cost value for each iteration.
+    - Data frame that stores the noramalized mean and standard deviation for each input column.
 
 
 ```r
-# @target : the column name that serves as the output variable
-# @data   : the whole data frame type data 
-GradientDescent <- function( target, data, learning_rate, iteration, 
-	                         epsilon = .001, normalize = TRUE )	                         
-{
-	# separate the input and output variables 
-	input  <- data %>% select( -one_of(target) ) %>% as.matrix()
-	output <- data %>% select( one_of(target) ) %>% as.matrix()
+# source in the function to concise the documentation
+source("linear_regession_1_code/gradient_descent.R")
 
-	# normalize the input variables if specified, default as TRUE
-	# record the mean and standard deviation  
-	if(normalize)
-	{
-		input_mean <- apply( input, 2, mean )
-		input_sd   <- apply( input, 2, sd )
-		input <- apply( input, 2, Normalize )
-	}
-
-	# add a new column of all 1's to the first column, this serves as X0
-	# Note this is done after the input variables are normalized !
-	input <- cbind( theta0 = 1, input )
-
-	# theta_new : initialize the theta value as all 1s
-	# theta_old : a random number whose absolute difference between new one is 
-	#             larger than than epsilon 
-	theta_new <- matrix( 1, ncol = ncol(input) )
-	theta_old <- matrix( 2, ncol = ncol(input) )
-
-	# cost function 
-	costs <- function( input, output, theta )
-	{
-		sum( ( input %*% t(theta) - output )^2 ) / ( 2 * nrow(output) )
-	}
-
-	# records the theta and cost value for visualization ; add the inital guess 
-	theta_trace <- list() ; costs_trace <- list()
-	theta_trace[[1]] <- theta_new
-	costs_trace[[1]] <- costs( input, output, theta_old )
-
-	# first derivative of the cost function 
-	derivative <- function( input, output, theta )
-	{
-		error <- ( input %*% t(theta) ) - output 
-		descent <- ( t(input) %*% error ) / nrow(output)
-		return( t(descent) )
-	}
-
-	# keep updating as long as any of the theta difference is still larger than epsilon
-	# or exceeds the maximum iteration allowed
-	step <- 1 
-	while( any( abs(theta_new - theta_old) > epsilon ) & step <= iteration )
-	{
-		step <- step + 1
-
-		# gradient descent 
-		theta_old <- theta_new
-		theta_new <- theta_old - learning_rate * derivative( input, output, theta_old )
-
-		# record keeping 
-		theta_trace[[step]] <- theta_new
-		costs_trace[[step]] <- costs( input, output, theta_new )
-	}
-
-	# returns the noramalized mean and standard deviation for each input column
-	# and the cost, theta record 
-	costs <- data.frame( costs = do.call( rbind, costs_trace ) )
-	theta <- data.frame( do.call( rbind, theta_trace ), row.names = NULL )
-	norm  <- data.frame( input_mean = input_mean, input_sd = input_sd )
-
-	return( list( costs = costs, theta = theta, norm = norm ) )
-}
+# learning rate of 0.05 and 500 iteration
+trace_b <- GradientDescent( target = "price", data = housing, 
+	                      learning_rate = 0.05, iteration = 500, method = "batch" )
+# print out the final parameters
+parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
+parameters_b
 ```
 
-Um... I know it can be a bit much, so please stop here. Open up your Rstudio or which ever text editor you're using and go through the details of the function on your own. Most part the code is quite similar to the Getting started with Gradient Descent, where we used it on a simple equation. Here, the hard part is probably the `derivative` function section, as it exploit the use of the `%*%` matrix operator built in with R, and the transpose function can be a bit confusing if you're simply looking at it. 
+```
+##       theta0   area  bedrooms
+## 501 340412.7 110630 -6648.375
+```
 
-Given that you've worked your way through the function, let's use it and compare with the `lm` function that calculates the linear regression's parameters which are built in with R.
+We've now obtain the parameters of the linear model calculated by the gradient descent method. Let's use it and compare with R's built-in `lm` function, which also calculates the linear regression's parameters.
 
 
 ```r
-# learning rate of 0.05 and 400 ieration maximum
-trace <- GradientDescent( target = "price", data = housing, 
-	                      learning_rate = 0.05, iteration = 400 )
-
 # linear regression 
 normed <- apply( housing[ , -3 ], 2, Normalize )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
@@ -426,19 +375,21 @@ model
 ##      340413       110631        -6649
 ```
 
-```r
-parameters <- trace$theta[ nrow(trace$theta), ]
-parameters
-```
+From the result above, after setting the learning rate to be 0.05 and training our gradient descent algorithm for 500 iterations, the parameters are really close to the results given by the linear regression function in R. So in this case the linear regression model obtained by our gradient descent algorithm is : 
 
-```
-##       theta0     area  bedrooms
-## 401 340412.7 110621.4 -6639.779
-```
+$$ h_{\theta}(x) = 340,413 + 110,630x_{area} + -6648x_{bedroom} $$
 
-As you can see, after training our gradient descent algorithm for after 400 iterations, the parameters are quite similar to the results given by the linear regression function in R. So in this case the linear regression model obtained by our gradient descent algorithm is : 
+Now that we've gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the `method` parameter from the gradient descent function call above. Let's recall the math formula for this approach. 
+$$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
 
-$$ h_{\theta}(x) = 340,413 + 110,621x_{area} + -6640x_{bedroom} $$
+From the formula, the part $\sum_{i=1}^m$ tells you that this method looks at every example in the entire training set on every step of the update, and the mor formal name to this approach is **batch gradient descent**. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only 47. Thus if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, \mathcal{O}(m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the **stochastic gradient descent**, math formula as follow :
+
+$$ \text{for } i \text{ in } 1, 2, \dotsm, m :  $$
+$$ \theta_{j} := \theta_{j} - \alpha ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
+
+The notion for stochastic gradient descent is, for each iteration, we will update the parameters according to the error of a single training example only, I repeat a single. Then for the next iteration, it will use the next training example, and so on. As for the for loop, the order of which training example of use can also be selected randomly. The trade off for this method is that, since it's computing the value to "descent" using only a single training example, the final parameters it obtain will oscillating around the optimal value, but never actually reaches it; though in practice most of the values near the minimum will be reasonably good approximations to the true minimum.
+
+In sum, compared to batch gradient descent, this method is more widely used for LARGE training datasets, as it converges faster.
 
 ## Conclusions
 
@@ -448,24 +399,23 @@ Some takeways about gradient descent :
 
 
 ```r
-costs_df <- data.frame( iteration = 1:nrow(trace$cost), 
-	                    costs = trace$cost / 1000000 )
+costs_df <- data.frame( iteration = 1:nrow(trace_b$cost), 
+	                    costs = trace_b$cost / 1e+8 )
 
-ggplot( costs_df, aes( iteration, costs ) ) + 
-geom_line()
+ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
 ```
 
 ![](linear_regession_1_files/figure-html/unnamed-chunk-13-1.png) 
 
 As you can see from the plot, at the beginning when we randomly assign the theta value to our model, the magnitudes of the update is huge. But as it approaches the optimum, then the algorithm will find little need to update the parameters, and therefore, the value of the cost does not change much. This matches the behavior it had with our simple equation example in the Getting Started with Gradient Descent section.
 
-2. Note that gradient descent does not equal to linear regression, there're other approaches to solve or obtain the parameters of the model, however, this algorithm, with a little tuning, is still used in many other places, such as artifical neural network.
+2. Note that gradient descent does not equal to linear regression, there're other approaches to solve or obtain the model's parameters, however, this algorithm, with a little tuning, is still widely used in many other places, such as artifical neural network.
 
 3. If your input variables or features comes in different magnitudes, then normalizing them is an important preprocessing step before applying gradient descent. Or else the results will most likely be heavily affected by the input variables with the larger magnitudes, and in that case the algorithm might either returns a really bad result or worse, will not even work.
 
-4. Tuning parameters including the learning rate, epsilon will surely affect the result and the speed to converge, and this requires some trial and error. 
+4. Tuning parameters including the learning rate, epsilon and iterations will surely affect the result and the speed to converge, and this requires some trial and error. 
 
-All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/gradient.R).
+All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code). The gradient descent function and the documentation code are in two separate scripts.
 
 ## References
 
@@ -500,6 +450,6 @@ sessionInfo()
 ##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
 ## [13] DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13     
 ## [17] digest_0.6.8     assertthat_0.1   formatR_1.2.1    reshape2_1.4.1  
-## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_0.5-5   
+## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_1.0-1   
 ## [25] proto_0.3-10
 ```

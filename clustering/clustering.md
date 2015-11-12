@@ -1,9 +1,10 @@
-# Useful Functions when working with Kmeans and Hierarchical Clustering
+# Calinski-Harabasz Index and Boostrap Evaluation with K-means and Hierarchical Clustering
 Ming-Yu Liu  
+November 6, 2015  
 
 ## Background Information
 
-Assuming that you're familiar with kmeans and hierarchichal clustering, these are some functions useful for choosing the proper cluster number and for evaulating the stability of the clustering result.
+When working with kmeans and hierarchichal clustering (this documentation assumes that you're familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result. 
 
 > For this documentation we're dropping the issue on which variables should we include in the dataset. Note that, in practice this is an important preprocessing step before applying any sorts of algorithms.
 
@@ -134,7 +135,7 @@ Now that we've decided the suitable number of cluster (k) for our clustering alg
 
 - `data` Your data.frame or matrix type data, data.frame is preferred, the function will convert matrix type data to data.frame under the hood.
 - `k` Specify the number of cluster for your clustering algorithm.
-- `noise.cut` If specified, the points of the resulting cluster whose number is smaller than this number will be considered as noise, and all of these noise cluster will be grouped together as one whole cluster. Default to 0.
+- `noise.cut` If specified, the points of the resulting cluster whose number is smaller than this number will be considered as noise, and all of these noise cluster will be grouped together as one whole cluster. Default to 0. (Not used in this documentation).
 - `bootstrap` Number of boostrap iteration. Default to 100.
 - `dissolve` If the jaccard similarity is smaller than this number, then it is considered to be "dissolved", that is, it did not show up in the new cluster. A cluster that dissolved too often is most likely not a real cluster. Default to 0.5 .
 - `clustermethod` Same as the "CHCriterion" function above, specify either "hclust" or "kmeanspp" for calculating the measures for heirarchichal or kmeans++ clustering.
@@ -256,5 +257,5 @@ sessionInfo()
 ## [13] gtable_0.1.2     DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10 
 ## [17] yaml_2.1.13      assertthat_0.1   digest_0.6.8     reshape2_1.4.1  
 ## [21] formatR_1.2.1    evaluate_0.8     rmarkdown_0.8    labeling_0.3    
-## [25] stringi_0.5-5    scales_0.3.0     proto_0.3-10
+## [25] stringi_1.0-1    scales_0.3.0     proto_0.3-10
 ```

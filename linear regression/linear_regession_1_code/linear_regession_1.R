@@ -84,102 +84,63 @@ library(dplyr)
 setwd("/Users/ethen/machine-learning/linear regression")
 housing <- read.table( "housing.txt", header = TRUE, sep = "," )
 
-# normalize the vector to be between values of 0 and 1 [0,1]
-Normalize <- function(x) ( x - min(x) ) / ( max(x) - min(x) )
+# example :
+# suppose you've already calculated that the difference of 
+# the two rows are 100 and 200 respectively, then 
+# using the first two rows of the input variables
+housing[ c( 1, 2 ), -3 ]
+
+# multiply 100 with row 1 
+( row1 <- 100 * housing[ 1, -3 ] )
+
+# multuply 200 with row 2
+( row2 <- 200 * housing[ 1, -3 ] )
+
+# sum each row up
+list( area = sum( row1[1] + row2[1] ), bedrooms = sum( row1[2] + row2[2] ) )
+
 
 # z-score normalize 
 Normalize <- function(x) ( x - mean(x) ) / sd(x)
 
-# @target : the column name that serves as the output variable
-GradientDescent <- function( target, data, learning_rate, iteration, 
-	                         epsilon = .001, normalize = TRUE )	                         
-{
-	# separate the input and output variables 
-	input  <- data %>% select( -one_of(target) ) %>% as.matrix()
-	output <- data %>% select( one_of(target) ) %>% as.matrix()
+# --------------------------------------------------------------------------------------------
+source("linear_regession_1_code/gradient_descent.R")
 
-	# normalize the input variables if specified
-	# record the mean and standard deviation  
-	if(normalize)
-	{
-		input_mean <- apply( input, 2, mean )
-		input_sd   <- apply( input, 2, sd )
-		input <- apply( input, 2, Normalize )
-	}
+trace_b <- GradientDescent( target = "price", data = housing, 
+	                        learning_rate = 0.05, iteration = 500, method = "batch" )
 
-	# add a new column of all 1's to the first column, this serves as X0
-	input <- cbind( theta0 = 1, input )
-
-	# theta_new : initialize the theta value as all 1s
-	# theta_old : a random number whose absolute difference between new one is 
-	#             larger than than epsilon 
-	theta_new <- matrix( 1, ncol = ncol(input) )
-	theta_old <- matrix( 2, ncol = ncol(input) )
-
-	# cost function 
-	costs <- function( input, output, theta )
-	{
-		sum( ( input %*% t(theta) - output )^2 ) / ( 2 * nrow(output) )
-	}
-
-	# records the theta and cost value for visualization ; add the inital guess 
-	theta_trace <- list() ; costs_trace <- list()
-	theta_trace[[1]] <- theta_new
-	costs_trace[[1]] <- costs( input, output, theta_old )
-
-	# first derivative of the cost function 
-	derivative <- function( input, output, theta )
-	{
-		error <- ( input %*% t(theta) ) - output 
-		descent <- ( t(input) %*% error ) / nrow(output)
-		return( t(descent) )
-	}
-
-	# keep updating as long as any of the theta difference is still larger than epsilon
-	# or exceeds the maximum iteration allowed
-	step <- 1 
-	while( any( abs(theta_new - theta_old) > epsilon ) & step <= iteration )
-	{
-		step <- step + 1
-
-		# gradient descent 
-		theta_old <- theta_new
-		theta_new <- theta_old - learning_rate * derivative( input, output, theta_old )
-
-		# record keeping 
-		theta_trace[[step]] <- theta_new
-		costs_trace[[step]] <- costs( input, output, theta_new )
-	}
-
-	# returns the noramalized mean and standard deviation for each input column
-	# and the cost, theta record 
-	costs <- data.frame( costs = do.call( rbind, costs_trace ) )
-	theta <- data.frame( do.call( rbind, theta_trace ), row.names = NULL )
-	norm  <- data.frame( input_mean = input_mean, input_sd = input_sd )
-
-	return( list( costs = costs, theta = theta, norm = norm ) )
-}
-
-trace <- GradientDescent( target = "price", data = housing, 
-	                      learning_rate = 0.05, iteration = 400 )
+parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
 
 # linear regression 
 normed <- apply( housing[ , -3 ], 2, Normalize )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
 
-parameters <- trace$theta[ nrow(trace$theta), ]
 
+costs_df <- data.frame( iteration = 1:nrow(trace_b$cost), 
+	                    costs = trace_b$cost / 1e+8 )
 
-costs_df <- data.frame( iteration = 1:nrow(trace$cost), 
-	                    costs = trace$cost / 1000000 )
-
-ggplot( costs_df, aes( iteration, costs ) ) + 
-geom_line()
+ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
 
 
 # ----------------------------------------------------------------------------
+# test code 
 # normal equation
 solve( t(input) %*% input ) %*% t(input) %*% output
 
+
+# stochastic approach 
+trace_s <- GradientDescent( target = "price", data = housing, 
+	                        learning_rate = 0.05, iteration = 3000, method = "stochastic" )
+parameters_s <- trace_s$theta[ nrow(trace$theta), ]
+
+library(microbenchmark)
+runtime <- microbenchmark( 
+
+	batch = GradientDescent( target = "price", data = housing, 
+	                        learning_rate = 0.05, iteration = 500, method = "batch" ),
+	stochastic = GradientDescent( target = "price", data = housing, 
+	                        learning_rate = 0.05, iteration = 521, method = "stochastic" )
+
+)
 
