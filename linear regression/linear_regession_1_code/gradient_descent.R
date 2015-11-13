@@ -42,9 +42,10 @@ GradientDescent <- function( data, target, learning_rate, iteration,
 	}
 
 	# records the theta and cost value for visualization ; add the inital guess 
-	theta_trace <- list() ; costs_trace <- list()
+	theta_trace <- vector( mode = "list", length = iteration ) 
 	theta_trace[[1]] <- theta_new
-	costs_trace[[1]] <- costs( input, output, theta_old )
+	costs_trace <- numeric( length = iteration )
+	costs_trace[1] <- costs( input, output, theta_old )
 
 	# first derivative of the cost function 
 	if( method == "batch" )
@@ -79,12 +80,12 @@ GradientDescent <- function( data, target, learning_rate, iteration,
 
 		# record keeping 
 		theta_trace[[step]] <- theta_new
-		costs_trace[[step]] <- costs( input, output, theta_new )
+		costs_trace[step]   <- costs( input, output, theta_new )
 	}
-
+	
 	# returns the noramalized mean and standard deviation for each input column
 	# and the cost, theta record 
-	costs <- data.frame( costs = do.call( rbind, costs_trace ) )
+	costs <- data.frame( costs = costs_trace )
 	theta <- data.frame( do.call( rbind, theta_trace ), row.names = NULL )
 	norm  <- data.frame( input_mean = input_mean, input_sd = input_sd )
 

@@ -53,7 +53,7 @@ rect.hclust( test, k = 4 )
 
 ![](clustering_files/figure-html/unnamed-chunk-2-1.png) 
 
-Now what if we have let's say thousand rows of data or more, then the dendogram will probably be a blur and it probably won't be that useful in helping us choose the suitable cluster number (k) to group the data. Not to mention when you're working with kmeans where you have to specify the k before you run the algorithm.
+Now what if we have let's say one thousand rows of data or more, then the dendogram will probably be a blur and will most likely be useless in helping us choose the suitable cluster number (k) to group the data. Not to mention when you're working with kmeans where you have to specify the k before you run the algorithm.
 
 So here we'll be using two measures, the Calinski-Harabasz Index, or known as the variance ratio criterion and Total within Sum of Squares for choosing the suitable k. Let's use the function and visualize both measures first, so it'll be easier to explain.
 
@@ -151,11 +151,11 @@ Here we'll use the "kmeanspp" as our `clustermethod` so we can demonstrate some 
 
 
 ```r
-# parameters : k = 4, clustermethod = "kmeanspp"
+# parameters : k = 4, clustermethod = "kmeanspp", bootstrap = 200
 # set seed : reproducibility for sampling 
 set.seed(1234)
-boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, clustermethod = "kmeanspp",
-                                nstart = 10, iter.max = 100 )
+boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, bootstrap = 200, 
+                                clustermethod = "kmeanspp", nstart = 10, iter.max = 100  )
 # print the returned list for clarity
 boot_clust
 ```
@@ -190,7 +190,7 @@ boot_clust
 ## [9] "ifault"      
 ## 
 ## $bootmean
-## [1] 0.7434219 0.8486637 0.5740643 0.7206204
+## [1] 0.7376737 0.8453092 0.6147439 0.7253609
 ## 
 ## $partition
 ##  [1] 4 4 4 1 2 1 2 1 1 1 1 2 2 2 2 2 2 4 4 4 1 2 2 2 2 4 4 4 3 3 3 4
@@ -199,7 +199,7 @@ boot_clust
 ## [1] 4
 ## 
 ## $bootdissolved
-## [1] 23  9 41 13
+## [1] 50 14 76 24
 ```
 
 ```r
@@ -209,7 +209,7 @@ boot_clust$bootmean
 ```
 
 ```
-## [1] 0.7434219 0.8486637 0.5740643 0.7206204
+## [1] 0.7376737 0.8453092 0.6147439 0.7253609
 ```
 
 ```r
@@ -217,12 +217,14 @@ boot_clust$bootdissolved
 ```
 
 ```
-## [1] 23  9 41 13
+## [1] 50 14 76 24
 ```
 
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
 You can find all the code for this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/clustering.R).
+
+Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 
 
 ## Reference 
 

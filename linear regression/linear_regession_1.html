@@ -118,9 +118,9 @@ img {
 <p>Let’s start from a basic formula <span class="math inline">\(1.2\times(x-2)^2 + 3.2\)</span>. If you still remember basic calculus, the first derivative of function gives you the optimal solution to that funciton. In this case, it’s by solving <span class="math inline">\(2\times1.2\times(x-2)=0\)</span>.</p>
 <pre class="r"><code># libraries that we'll use throughout the tutorial
 library(grid)
+library(dplyr)
 library(scales)
 library(ggplot2)
-suppressMessages( library(dplyr) )
 
 # original formula 
 Formula &lt;- function(x) 1.2 * (x-2)^2 + 3.2
@@ -340,9 +340,10 @@ Normalize &lt;- function(x) ( x - mean(x) ) / sd(x)</code></pre>
 <pre class="r"><code># source in the function to concise the documentation
 source(&quot;linear_regession_1_code/gradient_descent.R&quot;)
 
-# learning rate of 0.05 and 500 iteration
+# parameters :
+# learning rate of 0.05, 500 iteration, method = &quot;batch&quot;
 trace_b &lt;- GradientDescent( target = &quot;price&quot;, data = housing, 
-                          learning_rate = 0.05, iteration = 500, method = &quot;batch&quot; )
+                            learning_rate = 0.05, iteration = 500, method = &quot;batch&quot; )
 # print out the final parameters
 parameters_b &lt;- trace_b$theta[ nrow(trace_b$theta), ]
 parameters_b</code></pre>
@@ -363,8 +364,8 @@ model</code></pre>
 ##      340413       110631        -6649</code></pre>
 <p>From the result above, after setting the learning rate to be 0.05 and training our gradient descent algorithm for 500 iterations, the parameters are really close to the results given by the linear regression function in R. So in this case the linear regression model obtained by our gradient descent algorithm is :</p>
 <p><span class="math display">\[ h_{\theta}(x) = 340,413 + 110,630x_{area} + -6648x_{bedroom} \]</span></p>
-<p>Now that we’ve gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the <code>method</code> parameter from the gradient descent function call above. Let’s recall the math formula for this approach. <span class="math display">\[ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} \]</span></p>
-<p>From the formula, the part <span class="math inline">\(\sum_{i=1}^m\)</span> tells you that this method looks at every example in the entire training set on every step of the update, and the mor formal name to this approach is <strong>batch gradient descent</strong>. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only 47. Thus if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, (m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the <strong>stochastic gradient descent</strong>, math formula as follow :</p>
+<p>Now that we’ve gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the <code>method</code> parameter from the gradient descent function call above. Let’s recall the math formula for this approach : <span class="math display">\[ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} \]</span></p>
+<p>First the more formal name to this approach is <strong>batch gradient descent</strong>. From the formula, the part <span class="math inline">\(\sum_{i=1}^m\)</span> tells you that this method looks at every example in the entire training set on every step of the update. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only 47 this approach will work out fine, but if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, (m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the <strong>stochastic gradient descent</strong>, math formula as follow :</p>
 <p><span class="math display">\[ \text{for } i \text{ in } 1, 2, \dotsm, m :  \]</span> <span class="math display">\[ \theta_{j} := \theta_{j} - \alpha ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} \]</span></p>
 <p>The notion for stochastic gradient descent is, for each iteration, we will update the parameters according to the error of a single training example only, I repeat a single. Then for the next iteration, it will use the next training example, and so on. As for the for loop, the order of which training example of use can also be selected randomly. The trade off for this method is that, since it’s computing the value to “descent” using only a single training example, the final parameters it obtain will oscillating around the optimal value, but never actually reaches it; though in practice most of the values near the minimum will be reasonably good approximations to the true minimum.</p>
 <p>In sum, compared to batch gradient descent, this method is more widely used for LARGE training datasets, as it converges faster.</p>
@@ -387,6 +388,7 @@ ggplot( costs_df, aes( iteration, costs ) ) + geom_line()</code></pre>
 <li><p>Tuning parameters including the learning rate, epsilon and iterations will surely affect the result and the speed to converge, and this requires some trial and error.</p></li>
 </ol>
 <p>All the code for this documentation can be found <a href="https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code">here</a>. The gradient descent function and the documentation code are in two separate scripts.</p>
+<p>Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues <a href="https://github.com/ethen8181/machine-learning/issues">here</a>.</p>
 </div>
 <div id="references" class="section level2">
 <h2><span class="header-section-number">0.5</span> References</h2>
@@ -410,14 +412,14 @@ ggplot( costs_df, aes( iteration, costs ) ) + geom_line()</code></pre>
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] dplyr_0.4.3   ggplot2_1.0.1 scales_0.3.0 
+## [1] ggplot2_1.0.1 scales_0.3.0  dplyr_0.4.3  
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
 ##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         stringr_1.0.0   
 ##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
-## [13] DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13     
-## [17] digest_0.6.8     assertthat_0.1   formatR_1.2.1    reshape2_1.4.1  
+## [13] DBI_0.3.1        htmltools_0.2.6  yaml_2.1.13      lazyeval_0.1.10 
+## [17] assertthat_0.1   digest_0.6.8     reshape2_1.4.1   formatR_1.2.1   
 ## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_1.0-1   
 ## [25] proto_0.3-10</code></pre>
 </div>

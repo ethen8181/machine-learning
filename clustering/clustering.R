@@ -21,7 +21,7 @@ library(ggplot2)
 Distance <- function(cluster)
 {
 	# the center of the cluster, mean of all the points
-	center <- apply( cluster, 2, mean )
+	center <- colMeans(cluster)
 	
 	# calculate the summed squared error between every point and 
 	# the center of that cluster 
@@ -41,14 +41,14 @@ WSS <- function( data, groups )
 
 	# loop through each groups (clusters) and obtain its 
 	# within sum squared error 
-	total <- sapply( 1:k, function(k)
+	total <- lapply( 1:k, function(k)
 	{
 		# extract the data point within the cluster
 		cluster <- subset( data, groups == k )
 
 		distance <- Distance(cluster)
 		return(distance)
-	})
+	}) %>% unlist()
 
 	return( sum(total) )
 }
@@ -299,11 +299,11 @@ ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100,
 		for( j in 1:cluster_num )
 		{
 			# compare the original cluster with every other bootstrapped cluster
-			similarity <- sapply( 1:boot_num, function(k)
+			similarity <- lapply( 1:boot_num, function(k)
 			{
 				jaccard <- jaccardSimilarity( x = cluster_result$clusterlist[[j]][sampling],
 				                              y = boot_result$clusterlist[[k]] )
-			})
+			}) %>% unlist()
 
 			# return the largest jaccard similarity
 			boot_jaccard[ i, j ] <- max(similarity)
@@ -311,7 +311,7 @@ ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100,
 	}
 
 	# cluster's stability, mean of all the boostrapped jaccard similarity 
-	boot_mean <- apply( boot_jaccard, 2, mean, na.rm = TRUE )
+	boot_mean <- colMeans(boot_jaccard)
 
 	# how many times are each cluster's jaccard similarity below the 
 	# specified "dissolved" value  
@@ -329,6 +329,7 @@ ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100,
 }
 
 # test
+# set.seed(1234)
 # boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, clustermethod = "kmeanspp",
 #                                 nstart = 10, iter.max = 100 )
 

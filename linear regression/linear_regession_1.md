@@ -18,9 +18,9 @@ Let's start from a basic formula $1.2\times(x-2)^2 + 3.2$. If you still remember
 ```r
 # libraries that we'll use throughout the tutorial
 library(grid)
+library(dplyr)
 library(scales)
 library(ggplot2)
-suppressMessages( library(dplyr) )
 
 # original formula 
 Formula <- function(x) 1.2 * (x-2)^2 + 3.2
@@ -341,9 +341,10 @@ Now the `GradientDescent` function for linear regression. Parameters for the fun
 # source in the function to concise the documentation
 source("linear_regession_1_code/gradient_descent.R")
 
-# learning rate of 0.05 and 500 iteration
+# parameters :
+# learning rate of 0.05, 500 iteration, method = "batch"
 trace_b <- GradientDescent( target = "price", data = housing, 
-	                      learning_rate = 0.05, iteration = 500, method = "batch" )
+	                        learning_rate = 0.05, iteration = 500, method = "batch" )
 # print out the final parameters
 parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
 parameters_b
@@ -379,10 +380,10 @@ From the result above, after setting the learning rate to be 0.05 and training o
 
 $$ h_{\theta}(x) = 340,413 + 110,630x_{area} + -6648x_{bedroom} $$
 
-Now that we've gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the `method` parameter from the gradient descent function call above. Let's recall the math formula for this approach. 
+Now that we've gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the `method` parameter from the gradient descent function call above. Let's recall the math formula for this approach : 
 $$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
 
-From the formula, the part $\sum_{i=1}^m$ tells you that this method looks at every example in the entire training set on every step of the update, and the mor formal name to this approach is **batch gradient descent**. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only 47. Thus if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, \mathcal{O}(m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the **stochastic gradient descent**, math formula as follow :
+First the more formal name to this approach is **batch gradient descent**. From the formula, the part $\sum_{i=1}^m$ tells you that this method looks at every example in the entire training set on every step of the update. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only 47 this approach will work out fine, but if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, \mathcal{O}(m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the **stochastic gradient descent**, math formula as follow :
 
 $$ \text{for } i \text{ in } 1, 2, \dotsm, m :  $$
 $$ \theta_{j} := \theta_{j} - \alpha ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
@@ -417,6 +418,8 @@ As you can see from the plot, at the beginning when we randomly assign the theta
 
 All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code). The gradient descent function and the documentation code are in two separate scripts.
 
+Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 
+
 ## References
 
 1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
@@ -442,14 +445,14 @@ sessionInfo()
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] dplyr_0.4.3   ggplot2_1.0.1 scales_0.3.0 
+## [1] ggplot2_1.0.1 scales_0.3.0  dplyr_0.4.3  
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
 ##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         stringr_1.0.0   
 ##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
-## [13] DBI_0.3.1        htmltools_0.2.6  lazyeval_0.1.10  yaml_2.1.13     
-## [17] digest_0.6.8     assertthat_0.1   formatR_1.2.1    reshape2_1.4.1  
+## [13] DBI_0.3.1        htmltools_0.2.6  yaml_2.1.13      lazyeval_0.1.10 
+## [17] assertthat_0.1   digest_0.6.8     reshape2_1.4.1   formatR_1.2.1   
 ## [21] evaluate_0.8     rmarkdown_0.8    labeling_0.3     stringi_1.0-1   
 ## [25] proto_0.3-10
 ```
