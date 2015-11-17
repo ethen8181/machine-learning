@@ -1,15 +1,15 @@
 # machine-learning
 
-Each folder is independent of one another.
+Me learning some machine learning and data mining techniques as a novice. Each folder is independent of one another.
 
-**Coursera** : 2015.10.16
+**Coursera** : 2015.10.16 (document later)
 
 Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
 
 - `machine-learning.md` Project report viewable on github.
 - `machine-learning.R` R code for used in the report, it may contain other testing codes that were not used in the report.
 
-**ROC** : 2015.10.16
+**ROC** : 2015.10.16 (document later)
 
 Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset (data included in the folder).
 
@@ -25,7 +25,11 @@ Some useful functions when working with hierarchical clustering and k-means clus
 
 - Solving linear regression with gradient descent. View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
 
+**text_similarity** : 2015.11.19
+
+- Illustrates k-shingle, Minhash and locality sensitive hashing for solving the problem of finding textually similar documents. View detail [here](http://ethen8181.github.io/machine-learning/text_similarity/text_similarity.html).
+
 **tf_idf** : 2015.11.17
 
-- Introducing tf-idf (term frequency-inverse document frequency), a well-known text mining technique and using it to perform text clustering using hierarchical clustering. View report [here](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html).
+- Introducing tf-idf (term frequency-inverse document frequency), a well-known text mining technique and using it to perform text clustering using hierarchical clustering. View documentation [here](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html).
 

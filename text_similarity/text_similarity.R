@@ -1,4 +1,4 @@
-# http://dsnotes.com/blog/2015/01/02/locality-sensitive-hashing-in-r-part-1/
+# Comparing text similarity 
 
 # -----------------------------------------------------------------------------------------------------
 # Documentation code 
@@ -28,6 +28,7 @@ doc1 <- lapply( doc, function(x)
 #	 return(text)
 # })
 
+# letter shingling
 Shingling <- function( document, k )
 {
 	shingles <- character( length = nchar(document) - k + 1 )	
@@ -46,6 +47,7 @@ Shingling <- function( document, k )
 #                  Shingling 
 # ---------------------------------------------------------------------------------
 
+# character shingling
 Shingling <- function( document, k )
 {
 	shingles <- character( length = ( length(document) - k + 1 ) )
@@ -109,9 +111,12 @@ doc
 #                 MinHash   
 # ---------------------------------------------------------------------------------
 
+# the # of shingle sets are large, use minhash to convert large sets into short signatures
+# while still preserving similarity
+
 # random permutation
 # number of hash functions (signature number )
-signature_num <- 8
+signature_num <- 4
 
 # prime number
 prime <- 17
@@ -157,6 +162,8 @@ for( i in 1:ncol(M) )
 	for( s in 1:signature_num )
 		SM[ s, i ] <- min( permute_df[ , s ][ non_zero_rows[[i]] ] )
 }
+colnames(SM) <- paste( "doc", 1:length(doc), sep = "_" )
+rownames(SM) <- paste( "minhash", 1:signature_num, sep = "_" )
 SM	
 
 # signature similarity 
@@ -168,29 +175,22 @@ pr_DB$delete_entry( "SigSimilarity" )
 d2
 
 
+# ---------------------------------------------------------------------------------
+#                 Locality Sensitive Hashing    
+# ---------------------------------------------------------------------------------
 
-# explains  
-# http://www.bogotobogo.com/Algorithms/minHash_Jaccard_Similarity_Locality_sensitive_hashing_LSH.php
+# number of bands and rows
+bands <- 2
+rows <- nrow(SM) / bands
 
-
-# the # of shingle sets are large, use minhash to convert large sets into short signatures
-# while still preserving similarity
-
-
-# python implement 
-# https://github.com/chrisjmccormick/MinHash
-
-
-# more basic version ?
-# https://github.com/rahularora/MinHash
+data.frame(SM) %>% 
+mutate( band = rep( 1:bands, each = rows ) ) %>%
+select( band, everything() )
 
 
-# blog post
-# http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html
+# evaluation and a bigger example 
 
-
-# good blog 
-# http://okomestudio.net/biboroku/?p=2065
+# http://okomestudio.net/biboroku/?p=2065#id3005927054
 
 
 

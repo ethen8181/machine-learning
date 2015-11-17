@@ -1,5 +1,5 @@
 ---
-title: "TF-IDF"
+title: "TF-IDF, Term Frequency-Inverse Document Frequency"
 author: "Ming-Yu Liu"
 date: "November 17, 2015"
 output: 
@@ -221,7 +221,7 @@ Overall, the first small cluster seems to be about China and UK, as the second c
 
 One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom). 
 
-All the code (tf-idf.R), news' data (news.csv) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/tf_idf) folder. 
+All the code (tf-idf.R) and the news data (news.csv) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/tf_idf) folder. 
 
 If you happen to find any errors, you can file new issues [here](https://github.com/ethen8181/machine-learning/issues). Feedbacks or suggestions of improvements are also welcomed !
 

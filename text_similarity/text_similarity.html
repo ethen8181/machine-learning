@@ -124,11 +124,12 @@ img {
 </ul>
 </div>
 
+<blockquote>
+<p>This documentation assumes you’re famaliar with R. All the codes are in “illustrative” form, you shouldn’t directly use them for actual production.</p>
+</blockquote>
 <div id="background" class="section level2">
 <h2><span class="header-section-number">0.1</span> Background</h2>
-<blockquote>
-<p>This documentation assumes you’re famaliar with R. All the code in “illustrative” form, you shouldn’t directly use them for actual production.</p>
-</blockquote>
+<p>One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don’t show identical news articles to users), and the list goes on.</p>
 <p>We’ll use three documents as our toy example. The following section loads them in and also preprocess them by :</p>
 <ul>
 <li>Removing any punctuation mark.<br />
@@ -139,13 +140,14 @@ img {
 </li>
 <li>Split the text string into separate words.</li>
 </ul>
+<p>Link to the dataset is provided at the end.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(proxy)
 <span class="kw">library</span>(data.table)
 <span class="kw">setwd</span>(<span class="st">&quot;/Users/ethen/machine-learning/text_similarity/data&quot;</span>)
 
 doc &lt;-<span class="st"> </span><span class="kw">lapply</span>( <span class="kw">list.files</span>(), readLines )
-<span class="co"># the original text</span>
+<span class="co"># the original text </span>
 doc</code></pre></div>
 <pre><code>## [[1]]
 ## [1] &quot;The sky is blue and the sun is bright.&quot;
@@ -235,7 +237,7 @@ M</code></pre></div>
 ## bright the sky     0     0     1</code></pre>
 <p>Looking at the first row of the matrix above, all three columns of recorded a 1. This denotes that all three documents contains the 3-shingle <strong>the sky is</strong>. As for the second, column cell value of [1, 0, 1] means that document 2 does not have the 3-shingle <strong>sky is blue</strong>, while document 1 and 3 do. And so on.</p>
 <ul>
-<li>Note that unlike our toy example, these “characteristic” matrices are almost always <em>sparse</em>, therefore, in practice we usually represent these kind of matrices of 0’s and 1’s only by the positions in which is 1’s appear. This saves space.</li>
+<li>Note that unlike our toy example, these “characteristic” matrices are almost always <em>sparse</em>, therefore, in practice we usually represent these kind of matrices of 0’s and 1’s only by the positions in which is 1’s appear. This is more space efficient.</li>
 </ul>
 </div>
 <div id="jaccard-similarity" class="section level2">
@@ -395,12 +397,16 @@ for( i in <span class="dv">1</span>:<span class="kw">ncol</span>(M) )
     for( s in <span class="dv">1</span>:signature_num )
         SM[ s, i ] &lt;-<span class="st"> </span><span class="kw">min</span>( permute_df[ , s ][ non_zero_rows[[i]] ] )
 }
-SM  </code></pre></div>
-<pre><code>##      [,1] [,2] [,3]
-## [1,]    0    2    1
-## [2,]    0    0    0
-## [3,]    3    2    0
-## [4,]    0    6    0</code></pre>
+
+<span class="co"># set names for clarity</span>
+<span class="kw">colnames</span>(SM) &lt;-<span class="st"> </span><span class="kw">paste</span>( <span class="st">&quot;doc&quot;</span>, <span class="dv">1</span>:<span class="kw">length</span>(doc), <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span> )
+<span class="kw">rownames</span>(SM) &lt;-<span class="st"> </span><span class="kw">paste</span>( <span class="st">&quot;minhash&quot;</span>, <span class="dv">1</span>:signature_num, <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span> )  
+SM</code></pre></div>
+<pre><code>##           doc_1 doc_2 doc_3
+## minhash_1     0     2     1
+## minhash_2     0     0     0
+## minhash_3     3     2     0
+## minhash_4     0     6     0</code></pre>
 <p>Note that despite our signature matrix has the same number of columns as the original characteristic matrix, but it only has n rows, where n is the number of hash functions we wish to generate (in this case 4).</p>
 <p>As for calculating the pair-wise similarity using this condensed signature matrix. A cool way of saying it is to calculate the fraction in which the hash functions hash into the same bucket. In plain English, this is equivalent to calculate the fraction the rows in which their values are the same. e.g. for document 1 and 2 (column 1 and 2), it’s similarity would be 0.25 because they only agree in 1 row out of a total of 4 (both column’s row 2 is 0).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># signature similarity</span>
@@ -413,31 +419,50 @@ pr_DB$<span class="kw">delete_entry</span>( <span class="st">&quot;SigSimilarity
 
 <span class="kw">list</span>( <span class="dt">SigSimilarity =</span> d2, <span class="dt">JaccardSimilarity =</span> d1 )</code></pre></div>
 <pre><code>## $SigSimilarity
-##      1    2
-## 2 0.25     
-## 3 0.50 0.25
+##       doc_1 doc_2
+## doc_2  0.25      
+## doc_3  0.50  0.25
 ## 
 ## $JaccardSimilarity
 ##            doc_1      doc_2
 ## doc_2 0.09090909           
 ## doc_3 0.25000000 0.08333333</code></pre>
 <p>From the difference of the result between the original jaccard similarity and our new similarity obtained using the signature similarity, you might be doubting is this a true estimate ? Well, the short answer is, we said right in the beginning of this section that Minhash’s purpose is to provide us with a fast “approximation” to the true jaccard similarity, and this example is simply way too small for the law of large numbers to assure that the estimates are close.</p>
-<p>For the next section, if your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing <strong>Locality Sensitive Hashing</strong>, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.</p>
+<p>For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing <strong>Locality Sensitive Hashing</strong>, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.</p>
 </div>
 <div id="locality-sensitive-hashing" class="section level2">
 <h2><span class="header-section-number">0.5</span> Locality Sensitive Hashing</h2>
 <p>While the information necessary to compute the similarity between documents have been condensed from the original <em>sparse</em> characteristic matrix into a much smaller signature matrix, the underlying problem of needing to perform pairwise comparisons on all the documents still exists.</p>
-<p>The concept for locality sensitive hashing (LSH) is that given our signature matrix of size n (row count), we will partition it into b bands, resulting each band with r rows. This is equivalent to the simple math formula : n = br, thus when you’re doing the partition be sure the b you choose is divisible by n.</p>
+<p>The concept for locality sensitive hashing (LSH) is that given our signature matrix of size n (row count), we will partition it into b bands, resulting each band with r rows. This is equivalent to the simple math formula : n = br, thus when you’re doing the partition be sure the b you choose is divisible by n. Using our signature matrix above, choosing the band size to be 2 will then become :</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># number of bands and rows</span>
+bands &lt;-<span class="st"> </span><span class="dv">2</span>
+rows &lt;-<span class="st"> </span><span class="kw">nrow</span>(SM) /<span class="st"> </span>bands
+
+<span class="kw">data.frame</span>(SM) %&gt;%<span class="st"> </span>
+<span class="kw">mutate</span>( <span class="dt">band =</span> <span class="kw">rep</span>( <span class="dv">1</span>:bands, <span class="dt">each =</span> rows ) ) %&gt;%
+<span class="kw">select</span>( band, <span class="kw">everything</span>() )</code></pre></div>
+<pre><code>##   band doc_1 doc_2 doc_3
+## 1    1     0     2     1
+## 2    1     0     0     0
+## 3    2     3     2     0
+## 4    2     0     6     0</code></pre>
+<p>What locality sensitive hashing tells us is : If the signature values of two documents agree in all the rows of at least one band, then these two documents are likely to be similar and should be compared (list it as our candidate pair) .</p>
+<p>evaluation ???????????</p>
 <p><strong>Takeaways :</strong></p>
 <ol style="list-style-type: decimal">
-<li><p>MinHash, or the formal name, min-wise independent permutations locality senscompute an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.</p></li>
-<li><p>, Note that there’re other forms of LSH, which are designed to solve other problems and this is beyond the scope of this documentation.</p></li>
+<li>MinHash, or the formal name, min-wise independent permutations locality sensitive hashing scheme computes an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.<br />
+</li>
+<li>k-shingle, size of k ???????????</li>
+<li>To note, there’s also a R library <code>textreuse</code> that implements the techniques that we’ve walked through in this documentation. You should be able understand its vignette with no problem.</li>
 </ol>
+<p>All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in <a href="https://github.com/ethen8181/machine-learning/blob/master/text_similarity">this</a> folder.</p>
+<p>You can File a new issue or leave comments of any sort <a href="https://github.com/ethen8181/machine-learning/issues">here</a>. This includes Feedbacks, suggestions, bug reports or room for improvements. Thank you !</p>
 </div>
 <div id="reference" class="section level2">
 <h2><span class="header-section-number">0.6</span> Reference</h2>
 <ol style="list-style-type: decimal">
 <li>Mining Massive Datasets : <a href="http://infolab.stanford.edu/~ullman/mmds/ch3.pdf" class="uri">http://infolab.stanford.edu/~ullman/mmds/ch3.pdf</a></li>
+<li>Blog on the same topic written from a Java coder’s perspective <a href="http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html" class="uri">http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html</a></li>
 </ol>
 </div>
 <div id="r-session-information" class="section level2">
@@ -459,9 +484,9 @@ pr_DB$<span class="kw">delete_entry</span>( <span class="st">&quot;SigSimilarity
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_0.12.1     digest_0.6.8    assertthat_0.1  chron_2.3-47   
 ##  [5] R6_2.1.1        DBI_0.3.1       formatR_1.2.1   magrittr_1.5   
-##  [9] evaluate_0.8    stringi_1.0-1   rmarkdown_0.8   tools_3.2.2    
-## [13] stringr_1.0.0   yaml_2.1.13     parallel_3.2.2  htmltools_0.2.6
-## [17] knitr_1.11</code></pre>
+##  [9] evaluate_0.8    stringi_1.0-1   lazyeval_0.1.10 rmarkdown_0.8  
+## [13] tools_3.2.2     stringr_1.0.0   yaml_2.1.13     parallel_3.2.2 
+## [17] htmltools_0.2.6 knitr_1.11</code></pre>
 </div>
 
 

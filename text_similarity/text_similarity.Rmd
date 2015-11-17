@@ -10,16 +10,20 @@ output:
     toc: yes
 ---
 
+> This documentation assumes you're famaliar with R. All the codes are in "illustrative" form, you shouldn't directly use them for actual production.
+
 ## Background
 
-> This documentation assumes you're famaliar with R. All the code in "illustrative" form, you shouldn't directly use them for actual production.
+One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don't show identical news articles to users), and the list goes on.   
 
 We'll use three documents as our toy example. The following section loads them in and also preprocess them by :  
 
 - Removing any punctuation mark.  
 - Transform all letters to lower cases.  
 - Convert extra white space as a single blank.  
-- Split the text string into separate words.  
+- Split the text string into separate words.
+
+Link to the dataset is provided at the end.
 
 ```{r, message = FALSE, warning = FALSE}
 
@@ -29,7 +33,7 @@ library(data.table)
 setwd("/Users/ethen/machine-learning/text_similarity/data")
 
 doc <- lapply( list.files(), readLines )
-# the original text
+# the original text 
 doc
 
 # preprocess text
@@ -104,7 +108,7 @@ M
 
 Looking at the first row of the matrix above, all three columns of recorded a 1. This denotes that all three documents contains the 3-shingle **`r rownames(M)[1]`**. As for the second, column cell value of [`r M[2,]`] means that document 2 does not have the 3-shingle **`r rownames(M)[2]`**, while document 1 and 3 do. And so on.
 
-- Note that unlike our toy example, these "characteristic" matrices are almost always *sparse*, therefore, in practice we usually represent these kind of matrices of 0's and 1's only by the positions in which is 1's appear. This saves space.
+- Note that unlike our toy example, these "characteristic" matrices are almost always *sparse*, therefore, in practice we usually represent these kind of matrices of 0's and 1's only by the positions in which is 1's appear. This is more space efficient.
 
 ## Jaccard Similarity
 
@@ -263,8 +267,11 @@ for( i in 1:ncol(M) )
 	for( s in 1:signature_num )
 		SM[ s, i ] <- min( permute_df[ , s ][ non_zero_rows[[i]] ] )
 }
-SM	
 
+# set names for clarity
+colnames(SM) <- paste( "doc", 1:length(doc), sep = "_" )
+rownames(SM) <- paste( "minhash", 1:signature_num, sep = "_" )	
+SM
 ```
 
 Note that despite our signature matrix has the same number of columns as the original characteristic matrix, but it only has n rows, where n is the number of hash functions we wish to generate (in this case `r signature_num`). 
@@ -286,28 +293,45 @@ list( SigSimilarity = d2, JaccardSimilarity = d1 )
 
 From the difference of the result between the original jaccard similarity and our new similarity obtained using the signature similarity, you might be doubting is this a true estimate ? Well, the short answer is, we said right in the beginning of this section that Minhash's purpose is to provide us with a fast "approximation" to the true jaccard similarity, and this example is simply way too small for the law of large numbers to assure that the estimates are close.
 
-For the next section, if your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing **Locality Sensitive Hashing**, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.
+For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing **Locality Sensitive Hashing**, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.
 
 ## Locality Sensitive Hashing
 
 While the information necessary to compute the similarity between documents have been condensed from the original *sparse* characteristic matrix into a much smaller signature matrix, the underlying problem of needing to perform pairwise comparisons on all the documents still exists. 
 
-The concept for locality sensitive hashing (LSH) is that given our signature matrix of size n (row count), we will partition it into b bands, resulting each band with r rows. This is equivalent to the simple math formula : n = br, thus when you're doing the partition be sure the b you choose is divisible by n.
+The concept for locality sensitive hashing (LSH) is that given our signature matrix of size n (row count), we will partition it into b bands, resulting each band with r rows. This is equivalent to the simple math formula : n = br, thus when you're doing the partition be sure the b you choose is divisible by n. Using our signature matrix above, choosing the band size to be 2 will then become :
 
+```{r}
 
+# number of bands and rows
+bands <- 2
+rows <- nrow(SM) / bands
 
+data.frame(SM) %>% 
+mutate( band = rep( 1:bands, each = rows ) ) %>%
+select( band, everything() )
 
+```
 
+What locality sensitive hashing tells us is : If the signature values of two documents agree in all the rows of at least one band, then these two documents are likely to be similar and should be compared (list it as our candidate pair) . 
+
+evaluation ???????????
 
 **Takeaways :**
 
-1. MinHash, or the formal name, min-wise independent permutations locality senscompute an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.
+1. MinHash, or the formal name, min-wise independent permutations locality sensitive hashing scheme computes an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.  
+2. k-shingle, size of k ???????????
+3. To note, there's also a R library `textreuse` that implements the techniques that we've walked through in this documentation. You should be able understand its vignette with no problem.
 
-2. , Note that there're other forms of LSH, which are designed to solve other problems and this is beyond the scope of this documentation.
+All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/text_similarity) folder. 
+
+You can File a new issue or leave comments of any sort [here](https://github.com/ethen8181/machine-learning/issues). This includes Feedbacks, suggestions, bug reports or room for improvements. Thank you !
+
 
 ## Reference
 
 1. Mining Massive Datasets : http://infolab.stanford.edu/~ullman/mmds/ch3.pdf
+2. Blog on the same topic written from a Java coder's perspective http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html
 
 ## R Session Information
 

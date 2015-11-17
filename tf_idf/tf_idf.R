@@ -2,7 +2,6 @@ library(tm)
 library(proxy)
 library(dplyr)
 
-
 doc <- c( "The sky is blue.", "The sun is bright today.",
 		  "The sun in the sky is bright.", "We can see the shining sun, the bright sun." )
 
@@ -33,13 +32,12 @@ colnames(tf_idf) <- rownames(tf)
 tf_idf
 
 # normalize 
-# tf_idf / sqrt( rowSums( tf_idf^2 ) )
+tf_idf / sqrt( rowSums( tf_idf^2 ) )
 
 
 # -----------------------------------------------------------------------------------
 #                                    Text Clustering
 # -----------------------------------------------------------------------------------
-
 
 setwd("/Users/ethen/machine-learning/tf_idf")
 news <- read.csv( "news.csv", stringsAsFactors = FALSE )
@@ -85,6 +83,5 @@ plot(cluster)
 
 # manually examine some cluster 
 list( news$title[ c( 8, 9, 22, 36, 69 ) ], news$title[ c( 55, 57, 66 ) ] )
-
 
 
