@@ -1,0 +1,238 @@
+---
+title: "TF-IDF"
+author: "Ming-Yu Liu"
+date: "November 17, 2015"
+output: 
+  html_document: 
+    highlight: tango
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+---
+
+## Background Information 
+
+tf-idf is short for term frequency–inverse document frequency. This is a numeric measure that's use to score the importance of a word in a document based on how often did it appear in that document and a collection of documents. The intuition for this measurement is : If a word appears frequently in a document, its should be important. we should give that the word a high score. But if a word appears in many documents, it's probably not a unique identifier, give that word a low score. The math formula for this measure :
+
+$$ tfidf( t, d, D ) = tf( t, d ) \times idf( t, D ) $$
+
+Where `t` denotes the terms; `d` denotes each document; `D` denotes the collection of documents.
+
+In the following documentation, we'll break down this formula using four small documents to illustrate the idea. 
+
+```{r, message=FALSE}
+
+# environment 
+library(tm)
+library(proxy)
+library(dplyr)
+
+doc <- c( "The sky is blue.", "The sun is bright today.",
+		  "The sun in the sky is bright.", "We can see the shining sun, the bright sun." )
+
+```
+
+## TF Term Frequency
+
+The first part of the formula $tf( t, d )$ is simply to calculate the number of times each word appeared in each document.
+
+$$ tf( t, d ) =
+  \begin{cases}
+    1 & \text{, if } t \text{ occurs in d}\\
+    0 & \text{, otherwise}\\
+  \end{cases}
+$$
+
+Of course, as with all text mining methods, stop words like "a", "the" and punctuation marks will removed beforehand. 
+
+```{r} 
+
+# create term frequency matrix using functions from tm library
+doc_corpus <- Corpus( VectorSource( doc ) )
+control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+tdm <- TermDocumentMatrix( doc_corpus, control = control_list )
+
+# print
+( tf <- as.matrix(tdm ) )
+
+```
+
+And that's it for the term frequency part, easy peasy!!
+
+## IDF Inverse Document Frequency
+
+Let's first write down the complete math formula for IDF.
+
+$$ idf( t, D ) = log \frac{ \text{| } D \text{ |} }{ 1 + \text{| } \{ d \in D : t \in d \} \text{ |} } $$
+
+- The numerator : `D` is infering to our document space. It can also be seen as D = ${ d_{1}, d_{2}, \dots, d_{n} }$ where n is the number of documents in your collection. Thus for our example $\text{| } D \text{ |}$, the size of our document space is `r length(doc)`, since we're only using `r length(doc)` documents.
+
+- The denominator : $\text{| } \{ d \in D : t \in d \} \text{ |}$ implies the number of times in which term t appeared in document d ( the ${d \in D}$ restricts the document to be in your current document space ). As for the 1, it is there to avoid zero division.
+
+Using our term frequency matrix, the idf weight for can be calculated like below.
+
+```{r}
+# idf
+( idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) )
+
+```
+
+Now that we have our matrix with the term frequency and the idf weight, we're ready to calculate the full tf-idf weight. To do this matrix multiplication, we will also have to transform the idf vector into a diagonal matrix. Both calculations shown below.
+
+```{r}
+
+# diagonal matrix
+( idf <- diag(idf) )
+
+tf_idf <- t(tf) %*% idf
+colnames(tf_idf) <- rownames(tf)
+tf_idf
+
+```
+
+Don't start cheering yet, there's still one more step to do for this tf-idf matrix. Recall that in the tf (term frequency) section, we're representing each term as the number of times they appeared in the document. The main issue for this representation is that it will create a bias towards long documents, as a given term has more chance to appear in longer document, making them look more important than actually they are.
+
+Thus the approach the resolve this issue is the good old L2 normalization. Math formula : 
+
+$$ \hat{v} = \frac{ \overrightarrow{v} }{\| \overrightarrow{v} \| } $$
+
+For each vector $\overrightarrow{v}$, you divide it by its norm (length, magnitude). Calculation as below
+
+```{r}
+
+# Note that normalization is computed "row-wise"
+tf_idf / sqrt( rowSums( tf_idf^2 ) )
+
+```
+
+And that's it, our final tf-idf matrix, when comparing it with our original document text. 
+
+```{r}
+
+doc
+
+```
+
+One thing you can see is that the word "bright", which appeared only in 3 out of the 4 documents is a given really low score across all the documents. This matches what we've said about the intuition of tf-idf in the beginning. A word should be representative of a document if it shows up a lot, but if that word occurs too often across all the documents, then it is most likely a meaningless indicator.
+
+## Text Clustering
+
+Now that we have this tf-idf matrix, one thing we can do with it is to perform text clustering !! 
+
+To performing document clustering using the tf-idf weight matrix, we'll use the cosine similarity to measure how close are two given documents. Math formula :
+
+$$ cos(\theta) = \frac{ v \cdot w }{ \| v \| \| w \| } = \frac{ \sum_{i=1}^n v_i w_i }{ \sqrt{\sum_{i=1}^n v_i^2} \sqrt{\sum_{i=1}^n w_i^2} } $$
+
+Where v and w are the two vectors that you wish to calculate the distance; $v_i$ and $w_i$ are components of vector v and w repesctively, n is the number of components you have. Calculation of the numerator and denominator are shown below with two simple vector.
+
+```{r}
+
+# example 
+
+a <- c( 3, 4 )
+b <- c( 5, 6 )
+
+l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
+
+# cosine 
+l$numerator / l$denominator
+
+```
+
+After calculating $cos(\theta)$, you can also obtain the actual $\theta$ (degree) using the `acos` function in R.
+
+As for why we're using this distance measure, remember what we've said in the normalization part, since documents are usually not of equal length, simply computing the difference between two vectors by using euclidean distance has the disadvantage that documents of similar content but different length are not regarded as similar in the vector space.   
+
+For this section, we'll move on to a slightly larger dataset, since there's really no point of performing text clustering when you only have 4 documents....
+
+```{r}
+
+# a slightly larger dataset
+setwd("/Users/ethen/machine-learning/tf_idf")
+news <- read.csv( "news.csv", stringsAsFactors = FALSE )
+list( head(news), dim(news) )
+
+```
+
+These are some news articles collected from the BBC website, data consists of `r nrow(news)` rows and `r ncol(news)` columns, where the columns are simply the title of the news and its corresponding links (urls). We'll be only be representing each news (document) with its title. Link to the data is provided at the end.
+
+The following code : 
+
+1. Calculate the tf-idf for this document collection.  
+2. Define our cosine distance.
+3. Set this pre-defined cosine distance into R `proxy` library's database (backbone for the `dist` function) and caculate the pairwise distance matrix using cosine distance, performs hierarchical clustering using this matrix and visualize the clustering result with the dendogram. Note that we WON'T be needing to normalize the tf-idf matrix before calculating the cosine distance, cosine distance will do that for us.
+( This documentation assumes that you are famaliar with heirarchical clustering and how to do it in R, so sorry for not explaining too much. )
+
+```{r, fig.width=10}
+
+# -- Step 1 --------------------------------------------------------------------------
+# [TFIDF] :
+# @vector = pass in a vector of documents  
+TFIDF <- function( vector )
+{
+	# tf 
+	news_corpus  <- Corpus( VectorSource(vector) )
+	control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+	tf <- TermDocumentMatrix( news_corpus, control = control_list ) %>% as.matrix()
+
+	# idf
+	idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) %>% diag()
+
+	return( t(tf) %*% idf )
+}
+
+# tf-idf matrix using news' title 
+news_tf_idf <- TFIDF(news$title)
+
+# -- Step 2 --------------------------------------------------------------------------
+# [Cosine] :
+# distance between two vectors
+Cosine <- function( x, y )
+{
+	similarity <- sum( x * y ) / ( sqrt( sum( y^2 ) ) * sqrt( sum( x^2 ) ) )
+
+	# given the cosine value, use acos to convert back to degrees
+	# acos returns the radian, multiply it by 180 and divide by pi to obtain degrees
+	return( acos(similarity) * 180 / pi )
+}
+
+# -- Step 3 --------------------------------------------------------------------------
+# calculate pair-wise distance matrix 
+pr_DB$set_entry( FUN = Cosine, names = c("Cosine") )
+d <- dist( news_tf_idf, method = "Cosine" )
+pr_DB$delete_entry( "Cosine" )
+
+# heirachical clustering 
+cluster <- hclust( d, method = "ward.D" )
+plot(cluster)
+
+```
+
+After obtaining this dendogram, we'll do a quick manual inspection at the partial results. 
+
+```{r}
+
+# manually examine some potential small cluster 
+list( news$title[ c( 8, 9, 22, 36, 69 ) ], news$title[ c( 55, 57, 66 ) ] )
+
+```
+
+Overall, the first small cluster seems to be about China and UK, as the second cluster's news are all related Uighurs. Not bad, huh ? Given the fact that we're only using news' title instead of the entire news' article to represent the news. Since clustering is an unsupervised algorithm (meaning there're probably no such thing as a one hundred percent correct answer), I'll leave it to you to decide whether the clustering results are actually acceptable. 
+
+One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom). 
+
+All the code (tf-idf.R), news' data (news.csv) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/tf_idf) folder. 
+
+If you happen to find any errors, you can file new issues [here](https://github.com/ethen8181/machine-learning/issues). Feedbacks or suggestions of improvements are also welcomed !
+
+## Reference
+
+1. Document reimplemented from this python blog : http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/
+
+## R Session Information
+
+```{r}
+
+sessionInfo()
+
+```

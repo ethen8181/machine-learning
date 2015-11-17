@@ -11,7 +11,7 @@ Course project for the Practical Machine Learning on Coursera. Using R’s tree 
 
 **ROC** : 2015.10.16
 
-- Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset (data included in the folder).
+Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset (data included in the folder).
 
 **clustering** : 2015.11.6
 
@@ -24,4 +24,8 @@ Some useful functions when working with hierarchical clustering and k-means clus
 **linear regression** : 2015.10.30
 
 - Solving linear regression with gradient descent. View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
+
+**tf_idf** : 2015.11.17
+
+- Introducing tf-idf (term frequency-inverse document frequency), a well-known text mining technique and using it to perform text clustering using hierarchical clustering. View report [here](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html).
 

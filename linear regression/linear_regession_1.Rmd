@@ -4,7 +4,6 @@ author: "Ming-Yu Liu"
 date: "October 30, 2015"
 output: 
   html_document: 
-    keep_md: yes
     number_sections: yes
     theme: flatly
     toc: yes
@@ -20,7 +19,7 @@ For supervised learning problems like linear regression, the way it works is whe
 
 ## Getting Started With Gradient Descent 
 
-Let's start from a basic formula $1.2\times(x-2)^2 + 3.2$. If you still remember basic calculus, the first derivative of function gives you the optimal solution to that funciton. In this case, it's by solving $2\times1.2\times(x-2)=0$.
+Let's start from a basic formula $1.2\times(x-2)^2 + 3.2$. If you still remember basic calculus, the first derivative of a function gives you the optimal solution to it (whether it be for max or min problems). In this case, it's by solving $2\times1.2\times(x-2)=0$.
 
 ```{r, message=FALSE}
 

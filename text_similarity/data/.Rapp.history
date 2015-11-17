@@ -1,0 +1,658 @@
+warnings()
+mtcars_scaled
+row.names(mtcars_scaled) <- NULL
+mtcars_scaled
+ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100, #
+                              dissolve = .5, clustermethod, ... )#
+{#
+    # step 1#
+    cluster_result <- ClusterMethod( data = data, k = k, noise.cut = noise.cut, #
+                                     clustermethod = clustermethod, ... )#
+#
+    cluster_num  <- cluster_result$clusternum#
+    boot_jaccard <- matrix( 0, nrow = bootstrap, ncol = cluster_num )#
+    # pass in two vectors containing TRUE and FALSE#
+    # ( do not use built in intersect or union ! )#
+    jaccardSimilarity <- function( x, y )#
+    {#
+        jaccard <- sum( x & y ) / ( sum(x) + sum(y) - sum( x & y ) )#
+        return(jaccard)#
+    }#
+#
+    n <- nrow(data)#
+    for( i in 1:bootstrap )#
+    {#
+        # step 2, cluster the new sampled data #
+        sampling  <- sample( n, n, replace = TRUE )#
+        boot_data <- data[ sampling, ]#
+#
+        boot_result <- ClusterMethod( data = boot_data, k = k, noise.cut = noise.cut, #
+                                      clustermethod = clustermethod, ... )#
+        boot_num <- boot_result$clusternum#
+#
+        # step 3#
+        for( j in 1:cluster_num )#
+        {#
+            # compare the original cluster with every other bootstrapped cluster#
+            similarity <- sapply( 1:boot_num, function(k)#
+            {#
+                jaccard <- jaccardSimilarity( x = cluster_result$clusterlist[[j]][sampling],#
+                                              y = boot_result$clusterlist[[k]] )#
+            })#
+#
+            # return the largest jaccard similarity#
+            boot_jaccard[ i, j ] <- max(similarity)#
+        }   #
+    }#
+#
+    # cluster's stability, mean of all the boostrapped jaccard similarity #
+    boot_mean <- apply( boot_jaccard, 2, mean, na.rm = TRUE )#
+#
+    # how many times are each cluster's jaccard similarity below the #
+    # specified "dissolved" value  #
+    boot_dissolved <- apply( boot_jaccard, 2, function(x)#
+    {#
+        sum( x < dissolve, na.rm = TRUE )#
+    })#
+#
+    boot_result <- list( result        = cluster_result$result,#
+                         bootmean      = boot_mean,#
+                         partition     = cluster_result$partition,#
+                         clusternum    = cluster_num,                     #
+                         bootdissolved = boot_dissolved )#
+    return(boot_result)#
+}
+boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, clustermethod = "kmeanspp",#
+                                 nstart = 10, iter.max = 100 )
+boot_clust
+?scale
+library(ggplot2)#
+library(plyr)#
+library(dplyr)#
+library(tidyr)
+library(plyr)#
+library(dplyr)#
+library(tidyr)#
+library(ggplot2)
+source("/Users/ethen/Desktop/kmeans_caveat.R")
+library(plyr)#
+library(dplyr)#
+library(tidyr)#
+library(ggplot2)
+?anscombe
+anscombe
+?n()
+seq_len(n())
+anscombe %>%#
+mutate(observation = seq_len(n()))
+anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation )
+anscombe %>%#
+mutate( observation = seq_len( n() ) )
+anscombe_tidy <- anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation )
+head(anscombe_tidy)
+anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1, convert = TRUE )
+anscombe_tidy
+?separate
+anscombe_tidy <- anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1, convert = TRUE )
+sapply( anscombe_tidy, class )
+anscombe_tidy <- anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1 )
+sapply( anscombe_tidy, class )
+anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1, convert = TRUE ) %>% #
+mutate( set = c("I", "II", "III", "IV")[set])
+anscombe
+anscombe_tidy
+anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1, convert = TRUE ) %>% # 1.#
+mutate( set = c( "I", "II", "III", "IV" )[set] ) %>% # 2.#
+spread( variable, value )
+?spread
+library(reshape2)
+?dcast
+anscombe
+anscombe_tidy
+dcast( variable ~ value, data = anscombe_tidy )
+dcast( set ~ variable + value, data = anscombe_tidy )
+?dcast
+names(airquality) <- tolower(names(airquality))#
+aqm <- melt(airquality, id=c("month", "day"), na.rm=TRUE)
+aqm
+head(aqm)
+?dcast
+names(ChickWeight) <- tolower(names(ChickWeight))#
+aqm <- melt(ChickWeight, id=2:4, na.rm=TRUE)
+head(aqm)
+dcast(chick_m, diet + chick ~ time)
+dcast(aqm , diet + chick ~ time)
+x = data.frame(subject = c("John", "Mary"), #
+               time = c(1,1),#
+               age = c(33,NA),#
+               weight = c(90, NA),#
+               height = c(2,2))
+x
+molten = melt(x, id = c("subject", "time"), na.rm = TRUE)#
+molten
+dcast(molten, formula = time + subject ~ variable)
+dcast(molten, formula = subject + time  ~ variable)
+dcast(molten, formula = subject  ~ variable)
+dcast(molten, formula = ...  ~ variable)
+?dcast
+anscombe
+anscombe_tidy
+dcast( observation + set ~ variable, data = anscombe_tidy, value.var = "value" )
+anscombe_tidy <- anscombe %>%#
+mutate( observation = seq_len( n() ) ) %>%#
+gather( key, value, -observation ) %>%#
+separate( key, c( "variable", "set" ), 1, convert = TRUE ) %>% # 1.#
+mutate( set = c( "I", "II", "III", "IV" )[set] ) %>% # 2.#
+spread( variable, value )
+ggplot(anscombe_tidy, aes(x, y)) + geom_point() + facet_wrap(~ set) +#
+geom_smooth(method = "lm", se = FALSE)
+set.seed(2015)#
+#
+n <- 250#
+c1 <- data_frame(x = rnorm(n), y = rnorm(n), cluster = 1)#
+c2 <- data_frame(r = rnorm(n, 5, .25), theta = runif(n, 0, 2 * pi),#
+                 x = r * cos(theta), y = r * sin(theta), cluster = 2) %>%#
+    dplyr::select(x, y, cluster)
+c1
+c2
+points1 <- rbind(c1, c2) %>% mutate( cluster = factor(cluster) )
+points1
+ggplot(points1, aes(x, y)) + geom_point()
+?ungroup
+?group
+points1
+ungroup(points1)
+?augment
+points1 %>% ungroup %>% dplyr::select(x, y)
+points1  %>% dplyr::select(x, y)
+clust <- points1  %>% dplyr::select(x, y) %>% kmeans(2)
+clust
+augment(clust, points1)
+ggplot(augment(clust, points1), aes(x, y)) + geom_point(aes(color = .cluster)) +#
+geom_point(aes(x1, x2), data = tidy(clust), size = 10, shape = "x") +#
+labs(color = "K-means assignments")
+?fortify
+fortify(clust)
+sizes <- c( 20, 100, 500 )
+set.seed(2015)#
+centers <- data_frame( x = c(1, 4, 6), #
+                       y = c(5, 0, 6), #
+                       n = sizes, #
+                       cluster = factor(1:3) )#
+#
+points <- centers %>% group_by(cluster) %>%#
+do(data_frame(x = rnorm(.$n, .$x), y = rnorm(.$n, .$y)))
+?do
+centers
+?do
+ggplot(points, aes(x, y)) + geom_point()
+library(broom)
+clust
+points1
+augment(clust, points1)
+tidy(clust)
+ggplot(augment(clust, points1), aes(x, y)) + geom_point(aes(color = .cluster)) +#
+    geom_point(aes(x1, x2), data = tidy(clust), size = 10, shape = "x") +#
+    labs(color = "K-means assignments")
+clust
+clust$cluster
+?augment
+centers %>% group_by(cluster)
+points
+?rnorm
+?cooks.distance
+library(sna)#
+library(grid)#
+library(igraph)#
+library(ggplot2)#
+library(network)#
+library(reshape2)#
+library(data.table)#
+library(intergraph)#
+library(GGally)
+data(coleman)  #
+adjacency_matrix <- coleman[1, , ]#
+#
+adjacency_list <- melt(adjacency_matrix)#
+#
+# the column that represents that there're no edges between the two vertices are simply excluded#
+adjacency_list <- adjacency_list[ adjacency_list$value > 0, ]#
+#
+# obtain the coordinates of the points #
+set.seed(1234)#
+coordinates <- gplot(adjacency_matrix)
+path_list <- lapply( 1:nrow(adjacency_list), function(row)#
+{#
+    # obtain the segment coordinates of the edges#
+    head <- coordinates[ adjacency_list[ row, 1 ], ]#
+    tail <- coordinates[ adjacency_list[ row, 2 ], ]#
+#
+    edge <- data.frame( rbind( t(head), t(tail) ) )#
+#
+    # create a group to identify the path  #
+    edge$group <- paste( adjacency_list[ row, 1:2 ], collapse = " > " )#
+#
+    return(edge)#
+})#
+path <- do.call( rbind, path_list )
+path
+ggplot( path, aes( x, y ) ) +#
+geom_path( aes( group = group ) ) + #
+geom_point( data = data.frame(coordinates), aes( x, y ), size = 2, pch = 21, fill = "gray" ) + #
+theme_bw()
+set.seed(1234)#
+graph <- graph.adjacency( adjacency_matrix, mode = "directed" )#
+network <- asNetwork( graph )#
+#
+network %v% "groups" <- ifelse( igraph::degree(graph) > 8, #
+                                "Larger Degrees", "Smaller Degrees" )#
+#
+ggnet2( network, node.size  = 6,#
+                 node.color = "groups",#
+                 palette    = "Set2",#
+                 node.alpha = .4, #
+                 arrow.type = "open",#
+                 arrow.size = 5, #
+                 arrow.gap  = 0.85 )
+library(ggnet)
+ggnet2( network, node.size  = 6,#
+                 node.color = "groups",#
+                 palette    = "Set2",#
+                 node.alpha = .4, #
+                 arrow.type = "open",#
+                 arrow.size = 5, #
+                 arrow.gap  = 0.85 )
+ggnet2( network, node.size  = 6,#
+                 node.color = "groups",#
+                 palette    = "Set2",#
+                 node.alpha = .4, #
+                 arrow.type = "open",#
+                 arrow.size = 5 )
+GetSymbols <- function()#
+{#
+    wheel <- c( "DD", "7", "BBB", "BB", "B", "C", "0" ) #
+    sample( wheel, size = 3, replace = TRUE,#
+            prob = c(0.03, 0.03, 0.06, 0.1, 0.25, 0.01, 0.52) ) #
+}
+GetSymbols()
+symbols <- GetSymbols()
+symbols
+length( unique(symbols) ) == 1
+symbols
+symbols %in% ( "BBB", "BB", "B" )
+( "BBB", "BB", "B" )
+c( "BBB", "BB", "B" )
+symbols %in% c( "BBB", "BB", "B" )
+payouts <- c( "DD" = 100, "7" = 80, "BBB" = 40, "BB" = 25, "B" = 10, "C" = 10, "0" = 0 )
+payouts
+unname( payouts[symbols[1]] )
+symbols[1]
+symbols
+payouts
+payouts$DD
+payouts[[DD]]
+payouts[["DD"]]
+payouts["DD"]
+Score <- function( symbols )#
+{#
+    # three of a kind#
+    same <- length( unique(symbols) ) == 1#
+#
+    # when symbols contain all bars #
+    bars <- all( symbols %in% c( "BBB", "BB", "B" ) )#
+#
+    # note that symbols that contain all bars will have three of a kind#
+    # e.g. "B", "B", "B", thus three of a kind must be put in the first if   #
+    if(same)#
+    {#
+        # use lookup tables to prevent multiple if else statement #
+        # prize table#
+        payouts <- c( "DD" = 100, "7" = 80, "BBB" = 40, "BB" = 25, "B" = 10, "C" = 10, "0" = 0 )#
+#
+        # use the any symbol is fine, cuz they're all the same #
+        prize <- unname( payouts[ symbols[1] ] )#
+#
+    }else if( bars )#
+    {#
+        prize <- 5#
+#
+    }else#
+    {#
+        cherries <- sum( symbols == "C" )#
+        prize <- c( 0 ,2 , 5)[cherries+1] # add one for proper indexing#
+    }#
+#
+    # adjust for diamonds#
+    diamonds <- sum( symbols == "DD" )#
+    prize * 2 ^ diamonds#
+}
+Play <- function()#
+{#
+    symbols <- GetSymbols()#
+    print(symbols)#
+    Score(symbols)#
+}
+Play()
+play <- Play()
+attributes(play)
+attr( play, "symbols" )
+attr( play, "symbols" ) <- c( "B", "0", "B" )
+attr( play, "symbols" )
+play
+num <- 10000000#
+print(num)
+class(num) <- c( "POSIXct", "POSIXt" )#
+print(num)
+class(num)
+class(play)
+play
+symbols(play)
+Play <- function()#
+{#
+    symbols <- GetSymbols()#
+    play <- Score(symbols)#
+    attr( play, "symbols" ) <- symbols#
+}#
+#
+Play()
+Play <- function()#
+{#
+    symbols <- GetSymbols()#
+    play <- Score(symbols)#
+    attr( play, "symbols" ) <- symbols#
+    return(play)#
+}#
+#
+play <- Play()
+play
+play <- Play()
+play
+play +1
+?ave
+Play <- function()#
+{#
+    symbols <- GetSymbols()#
+    play <- structure( Score(symbols), symbols = symbols )#
+    return(play)#
+}
+play <- Play()
+play
+cat(play)
+print(play)
+SlotDisplay <- function(prize)#
+{#
+    # extracy symbols#
+    symbols <- attr( prize, "symbols" )#
+#
+    symbols <- paste( symbols, collapse = " " )#
+#
+    # cat is equivalent to print, but without the quote #
+    string <- paste( symbols, prize, sep = "\n$" )#
+    cat(string)#
+}
+SlotDisplay(play)
+SlotDisplay( Play() )
+print
+?UseMethod
+print.numeric
+print.character
+methods(print)
+args(print)
+Play <- function()#
+{#
+    symbols <- GetSymbols()#
+    play <- structure( Score(symbols), symbols = symbols, class = "slots" )#
+    return(play)#
+}
+print.slots <- function( x, ... )#
+{#
+    SlotDisplay(x)#
+}
+play <- Play()
+play
+print(play)
+class(play)
+Play()
+class(play)
+methods( class = "factor" )
+?UseMethod
+?append
+deck <- read.table( "Users/ethen/Desktop/copy.txt", sep = "\t", header = TRUE )
+deck <- read.table( "/Users/ethen/Desktop/copy.txt", sep = "\t", header = TRUE )
+deck
+shuffle <- function(cards)#
+{ #
+    random <- sample(1:52, size = 52) cards[random, ]#
+}#
+#
+deal <- function(cards)#
+{#
+    cards[1, ]#
+}
+shuffle <- function(cards)#
+{ #
+    random <- sample(1:52, size = 52) #
+    cards[random, ]#
+}#
+#
+deal <- function(cards)#
+{#
+    cards[1, ]#
+}
+deal(deck)
+library(devtools)
+parentvs( all = TRUE )
+parenvs( all = TRUE )
+EnvVar()
+as.environment("package:stats")
+ls()
+ls(globalenv())
+globalenv
+globalenv()
+bubba <- list( first = "one", second = "two", third = "three" )
+attributes(bubba)
+class(bubba)
+c( class(bubba), "test" )
+class(bubba) <- c( class(bubba), "test" )
+class(bubba)
+bubba
+bubba <- list( first = "one", second = "two", third = "three" )
+bubba
+class(bubba) <- c( class(bubba), "test" )
+print
+GetFirst <- function(x)#
+{#
+    UseMethod( "GetFirst", x )#
+}#
+#
+GetFirst.test <- function(x)#
+{#
+    return(x$first)#
+}
+GetFirst(bubba)
+NorthAmerican <- function( eatsBreakfast = TRUE, myFavorite = "cereal" )#
+{#
+    me <- list( hasBreakfast = eatsBreakfast,#
+                favoriteBreakfast = myFavorite )#
+#
+    class(me) <- c( class(me), "NorthAmerican" )#
+    return(me)#
+}
+bubba <- NorthAmerican()
+bubba
+setHasBreakFast <- function(x, ... )#
+{#
+    UseMethod( "setHasBreakFast", x )#
+}#
+#
+setHasBreakFast.NorthAmerican <- function( x, y )#
+{#
+    x$hasBreakfast <- y#
+    return(x)#
+}
+setHasBreakFast( bubba, FALSE )
+?reset
+?NextMethod
+data <- read.table( file = "clipboard", sep = "\t", header = TRUE )
+library(dplyr)#
+library(proxy)#
+library(data.table)#
+setwd("/Users/ethen/machine-learning/text_similarity/data")#
+#
+doc <- lapply( list.files(), readLines )#
+#
+# remove punctuation mark and convert to lower cases#
+# and extra white space as a single blank#
+doc1 <- lapply( doc, function(x)#
+{#
+    text <- gsub( "[[:punct:]]", "", x ) %>% tolower()#
+    text <- gsub( "\\s+", " ", text )   #
+    word <- strsplit( text, " " ) %>% unlist()#
+    return(word)#
+})
+Shingling <- function( document, k )#
+{#
+    shingles <- character( length = ( length(document) - k + 1 ) )#
+#
+    for( i in 1:( length(document) - k + 1 ) )#
+    {#
+        shingles[i] <- paste( document[ i:( i + k - 1 ) ], collapse = " " )#
+    }#
+    return(shingles)    #
+}#
+#
+doc1 <- lapply( doc1, function(x)#
+{#
+    Shingling( x, k = 3 )#
+})#
+doc1[[1]]#
+#
+# ---------------------------------------------------------------------------------#
+#                 Jaccard Similarity  #
+# ---------------------------------------------------------------------------------#
+#
+# unique sets on shingles across all documents#
+doc_dict <- unlist(doc1) %>% unique()#
+#
+# convert to boolean matrices, where #
+# rows    = elements of the universal set (every possible combinations across all documents )#
+# columns = one column per document#
+# thus the matrix has one in row i and column j if and only if document j contains the term i #
+M <- lapply( doc1, function( set, dict )#
+{#
+    as.integer( dict %in% set )#
+}, dict = doc_dict ) %>% data.frame() #
+#
+# set the names for both rows and columns#
+setnames( M, paste( "doc", 1:length(doc), sep = "_" ) )#
+rownames(M) <- doc_dict#
+M#
+#
+# How similar is two given document, jaccard similarity #
+JaccardSimilarity <- function( x, y )#
+{#
+    non_zero <- which( x | y )#
+    set_intersect <- sum( x[non_zero] & y[non_zero] )#
+    set_union <- length(non_zero)#
+    return( set_intersect / set_union ) #
+}#
+#
+# create a new entry in the registry#
+pr_DB$set_entry( FUN = JaccardSimilarity, names = c("JaccardSimilarity") )#
+#
+# cosine degree distance matrix #
+d1 <- dist( t(M), method = "JaccardSimilarity" )#
+#
+# delete entry#
+pr_DB$delete_entry( "JaccardSimilarity" )#
+d1#
+doc#
+# ---------------------------------------------------------------------------------#
+#                 MinHash   #
+# ---------------------------------------------------------------------------------#
+#
+# random permutation#
+# number of hash functions (signature number )#
+signature_num <- 8#
+#
+# prime number#
+prime <- 17#
+set.seed(12345)#
+coeff_a <- sample( nrow(M), signature_num )#
+coeff_b <- sample( nrow(M), signature_num )#
+#
+# check that it does permute #
+permute <- lapply( 1:signature_num, function(s)#
+{#
+    hash <- numeric( length = length(nrow(M)) )#
+    for( i in 1:nrow(M) )#
+        hash[i] <- ( coeff_a[s] * i + coeff_b[s] ) %% prime#
+    return(hash)#
+})#
+# # convert to data frame #
+permute_df <- structure( permute, names = paste0( "hash_", 1:length(permute) ) ) %>%#
+              data.frame()#
+# -----------------------------------------------------------------------------#
+# bind with the original characteristic matrix, using the first two sig #
+M1 <- cbind( M, permute_df[1:2] )#
+rownames(M1) <- 1:nrow(M1)#
+M1#
+#
+# calculate signatures #
+#
+# obtain the non zero rows' index#
+non_zero_rows <- lapply( 1:ncol(M), function(j)#
+{#
+    return( which( M[ , j ] != 0 ) )#
+})#
+#
+# initialize signature matrix#
+SM <- matrix( data = NA, nrow = signature_num, ncol = ncol(M) )#
+#
+# for each column (document)#
+for( i in 1:ncol(M) )#
+{#
+    # for each hash function (signature)'s value #
+    for( s in 1:signature_num )#
+        SM[ s, i ] <- min( permute_df[ , s ][ non_zero_rows[[i]] ] )#
+}#
+SM
+library(textreuse)
+setwd("/Users/ethen/machine-learning/text_similarity/data")
+minhash <- minhash_generator( n = 100, seed = 3552 )#
+test <- TextReuseCorpus( dir = getwd(), keep_tokens = TRUE, minhash_func = minhash, #
+                         tokenizer = tokenize_ngrams, n = 3, progress = FALSE )
+test
+content( test[["doc1"]] )
+jaccard_similarity( test[["doc1"]], test[["doc2"]] )
+pairwise_compare(test)
+?pairwise_compare
+pairwise_compare(test, jaccard_similarity)
+compare <- pairwise_compare( test, jaccard_similarity )
+pairwise_candidates(compare )
+?bind_rows
+split(mtcars, mtcars$cyl)
+bind_rows( split(mtcars, mtcars$cyl) )
+?gather_
+library(dplyr)
+?gather
+?filter_

@@ -4,7 +4,6 @@ author: "Ming-Yu Liu"
 date: "November 6, 2015"
 output: 
   html_document: 
-    keep_md: yes
     number_sections: yes
     theme: cerulean
     toc: yes
@@ -19,10 +18,11 @@ When working with kmeans and hierarchichal clustering (this documentation assume
 ## Preparing 
 
 Here we use the built-in mtcars dataset as an example. Note that for clustering algorithms, units of the variables do matter. When the columns' units comes in different magnitudes ( e.g. weight is recorded in kilograms, height is recorded in centimeters ), a common approach to resolve this issue is to normalize the dataset. Here we use the `scale` function for doing this, which transforms all the variables to have a mean value of 0 and a standard deviation of 1.
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 
 # source in the functions 
-suppressMessages( source("/Users/ethen/machine-learning/clustering/clustering.R") )
+source("/Users/ethen/machine-learning/clustering/clustering.R")
 
 # example dataset, 
 # also remove the row.names or else will produce trivial warnings for later functions
@@ -56,7 +56,7 @@ So here we'll be using two measures, the Calinski-Harabasz Index, or known as th
 - `...` After specifying the "clustermethod", you can pass in other parameters into the R "hclust" and "kmeans" function. Please refer to the help page (?hclust or ?kmeans in R) for more information.
 - The function returns a data frame of three columns, consisting of cluster number from 2 to kmax and its corresponding both measures' value, each in one column.
 
-```{r, fig.height=8, fig.width=12}
+```{r, fig.height=6, fig.width=9}
 
 # parameters : kmax = 10 ; clustermethod = "hclust"
 # method = "ward.D" is one of parameters you can use to specify the

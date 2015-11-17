@@ -79,6 +79,7 @@ WSS <- function( data, groups )
 # [CHCriterion] : calculates both Calinski-Harabasz index and within sum squared error
 # @kmax          = maximum cluster number, caculates the CH index from 2 cluster to kmax
 # @clustermethod = "kmeanspp", "hclust"
+
 CHCriterion <- function( data, kmax, clustermethod, ...  )
 {
 	if( !clustermethod %in% c( "kmeanspp", "hclust" ) )
@@ -149,6 +150,7 @@ CHCriterion <- function( data, kmax, clustermethod, ...  )
 # test <- hclust( dist(mtcars_scaled), method = "ward.D" )
 # plot(test)
 # rect.hclust( test, k = 4 )
+
 
 # ----------------------------------------------------------------------------------------------
 #### boostrap evaluation of a cluster result 
@@ -248,7 +250,6 @@ ClusterMethod <- function( data, k, noise.cut = 0, clustermethod, ... )
 	return(cluster_result)
 }
 
-
 # cluster_result <- ClusterMethod( data = mtcars_scaled, k = 5, clustermethod = "hclust" )
 
 
@@ -343,4 +344,5 @@ ClusterBootstrap <- function( data, k, noise.cut = 0, bootstrap = 100,
 
 # clusters that have a low bootmean or high bootdissolved
 # has the characteristics of what we’ve been calling the “other” cluster.
+
 

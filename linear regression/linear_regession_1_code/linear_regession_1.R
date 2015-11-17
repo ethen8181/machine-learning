@@ -74,10 +74,7 @@ geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ),
               color = "blue", alpha = .8, arrow = arrow( length = unit( 0.25, "cm" ) ) )
 
 
-##################
-# start from here 
-
-
+# --------------------------------------------------------------------------------
 # housing data
 library(dplyr)
 
@@ -138,9 +135,9 @@ library(microbenchmark)
 runtime <- microbenchmark( 
 
 	batch = GradientDescent( target = "price", data = housing, 
-	                        learning_rate = 0.05, iteration = 500, method = "batch" ),
+	                         learning_rate = 0.05, iteration = 500, method = "batch" ),
 	stochastic = GradientDescent( target = "price", data = housing, 
-	                        learning_rate = 0.05, iteration = 521, method = "stochastic" )
+	                              learning_rate = 0.05, iteration = 521, method = "stochastic" )
 
 )
 
