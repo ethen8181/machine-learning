@@ -183,7 +183,7 @@ tdm &lt;-<span class="st"> </span><span class="kw">TermDocumentMatrix</span>( do
 <p><span class="math display">\[ idf( t, D ) = log \frac{ \text{| } D \text{ |} }{ 1 + \text{| } \{ d \in D : t \in d \} \text{ |} } \]</span></p>
 <ul>
 <li><p>The numerator : <code>D</code> is infering to our document space. It can also be seen as D = <span class="math inline">\({ d_{1}, d_{2}, \dots, d_{n} }\)</span> where n is the number of documents in your collection. Thus for our example <span class="math inline">\(\text{| } D \text{ |}\)</span>, the size of our document space is 4, since we’re only using 4 documents.</p></li>
-<li><p>The denominator : <span class="math inline">\(\text{| } \{ d \in D : t \in d \} \text{ |}\)</span> implies the number of times in which term t appeared in document d ( the <span class="math inline">\({d \in D}\)</span> restricts the document to be in your current document space ). As for the 1, it is there to avoid zero division.</p></li>
+<li><p>The denominator : <span class="math inline">\(\text{| } \{ d \in D : t \in d \} \text{ |}\)</span> implies the total number of times in which term t appeared in all of your document d ( the <span class="math inline">\({d \in D}\)</span> restricts the document to be in your current document space ). Note that this implies it doesn’t matter if a term appeard 1 time or 100 times in a document, it will still be counted as 1, since it simply did appear in the document. As for the 1, it is there to avoid zero division.</p></li>
 </ul>
 <p>Using our term frequency matrix, the idf weight for can be calculated like below.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># idf</span>
@@ -246,13 +246,11 @@ tf_idf /<span class="st"> </span><span class="kw">sqrt</span>( <span class="kw">
 <p><span class="math display">\[ cos(\theta) = \frac{ v \cdot w }{ \| v \| \| w \| } = \frac{ \sum_{i=1}^n v_i w_i }{ \sqrt{\sum_{i=1}^n v_i^2} \sqrt{\sum_{i=1}^n w_i^2} } \]</span></p>
 <p>Where v and w are the two vectors that you wish to calculate the distance; <span class="math inline">\(v_i\)</span> and <span class="math inline">\(w_i\)</span> are components of vector v and w repesctively, n is the number of components you have. Calculation of the numerator and denominator are shown below with two simple vector.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># example </span>
-
 a &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="dv">3</span>, <span class="dv">4</span> )
 b &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="dv">5</span>, <span class="dv">6</span> )
 
-l &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">numerator =</span> <span class="kw">sum</span>( a *<span class="st"> </span>b ), <span class="dt">denominator =</span> <span class="kw">sqrt</span>( <span class="kw">sum</span>( a^<span class="dv">2</span> ) ) *<span class="st"> </span><span class="kw">sqrt</span>( <span class="kw">sum</span>( b^<span class="dv">2</span> ) ) )
-
 <span class="co"># cosine </span>
+l &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">numerator =</span> <span class="kw">sum</span>( a *<span class="st"> </span>b ), <span class="dt">denominator =</span> <span class="kw">sqrt</span>( <span class="kw">sum</span>( a^<span class="dv">2</span> ) ) *<span class="st"> </span><span class="kw">sqrt</span>( <span class="kw">sum</span>( b^<span class="dv">2</span> ) ) )
 l$numerator /<span class="st"> </span>l$denominator</code></pre></div>
 <pre><code>## [1] 0.9986877</code></pre>
 <p>After calculating <span class="math inline">\(cos(\theta)\)</span>, you can also obtain the actual <span class="math inline">\(\theta\)</span> (degree) using the <code>acos</code> function in R.</p>

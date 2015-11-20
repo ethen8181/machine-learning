@@ -1,6 +1,6 @@
 # machine-learning
 
-Me learning some machine learning and data mining techniques as a novice. Each folder is independent of one another.
+Learning machine learning and data mining techniques as a novice. Each folder is independent of one another.
 
 **Coursera** : 2015.10.16 (document later)
 

@@ -114,9 +114,9 @@ normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
 
 
+# visualize cost
 costs_df <- data.frame( iteration = 1:nrow(trace_b$cost), 
 	                    costs = trace_b$cost / 1e+8 )
-
 ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
 
 

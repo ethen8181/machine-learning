@@ -83,9 +83,7 @@ WSS <- function( data, groups )
 CHCriterion <- function( data, kmax, clustermethod, ...  )
 {
 	if( !clustermethod %in% c( "kmeanspp", "hclust" ) )
-	{
 		stop( "method must be one of 'kmeanspp' or 'hclust'" )
-	}
 
 	# total sum squared error (independent with the number of cluster k)
 	tss <- Distance( cluster = data )
@@ -191,9 +189,7 @@ source("/Users/ethen/Mining-Massive-Dataset/kmeans/kmeanspp.R")
 ClusterMethod <- function( data, k, noise.cut = 0, clustermethod, ... )
 {
 	if( !clustermethod %in% c( "kmeanspp", "hclust" ) )
-	{
 		stop( "method must be one of 'kmeanspp' or 'hclust'" )
-	}
 
 	# hierarchical clustering 
 	if( clustermethod == "hclust" )

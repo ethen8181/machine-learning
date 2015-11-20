@@ -173,7 +173,7 @@ pr_DB$set_entry( FUN = SigSimilarity, names = c("SigSimilarity") )
 d2 <- dist( t(SM), method = "SigSimilarity" )
 pr_DB$delete_entry( "SigSimilarity" )
 d2
-
+as.matrix(d2)
 
 # ---------------------------------------------------------------------------------
 #                 Locality Sensitive Hashing    
@@ -188,7 +188,11 @@ mutate( band = rep( 1:bands, each = rows ) ) %>%
 select( band, everything() )
 
 
+# work on this later
 # evaluation and a bigger example 
+
+1 - ( 1 - (.5)^rows )^bands
+
 
 # http://okomestudio.net/biboroku/?p=2065#id3005927054
 

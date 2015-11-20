@@ -67,7 +67,7 @@ $$ idf( t, D ) = log \frac{ \text{| } D \text{ |} }{ 1 + \text{| } \{ d \in D : 
 
 - The numerator : `D` is infering to our document space. It can also be seen as D = ${ d_{1}, d_{2}, \dots, d_{n} }$ where n is the number of documents in your collection. Thus for our example $\text{| } D \text{ |}$, the size of our document space is `r length(doc)`, since we're only using `r length(doc)` documents.
 
-- The denominator : $\text{| } \{ d \in D : t \in d \} \text{ |}$ implies the number of times in which term t appeared in document d ( the ${d \in D}$ restricts the document to be in your current document space ). As for the 1, it is there to avoid zero division.
+- The denominator : $\text{| } \{ d \in D : t \in d \} \text{ |}$ implies the total number of times in which term t appeared in all of your document d ( the ${d \in D}$ restricts the document to be in your current document space ). Note that this implies it doesn't matter if a term appeard 1 time or 100 times in a document, it will still be counted as 1, since it simply did appear in the document. As for the 1, it is there to avoid zero division.
 
 Using our term frequency matrix, the idf weight for can be calculated like below.
 
@@ -128,13 +128,11 @@ Where v and w are the two vectors that you wish to calculate the distance; $v_i$
 ```{r}
 
 # example 
-
 a <- c( 3, 4 )
 b <- c( 5, 6 )
 
-l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
-
 # cosine 
+l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
 l$numerator / l$denominator
 
 ```
