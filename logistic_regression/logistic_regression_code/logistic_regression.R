@@ -1,0 +1,213 @@
+# logistic regression
+
+# environment setting 
+library(ROCR)
+library(grid)
+library(caret)
+library(tidyr)
+library(dplyr)
+library(scales)
+library(ggplot2)
+library(ggthemr)
+library(ggthemes)
+library(gridExtra)
+library(data.table)
+setwd("/Users/ethen/machine-learning/logistic_regression")
+
+# read in both training and testing dataset 
+data <- fread( list.files( "data", full.names = TRUE ) )
+str(data)
+
+# using summary to check if columns contain missing values like NAs 
+summary(data)
+
+# find correlations to exclude from the model 
+findCorrelation( cor(data), cutoff = .75 )
+
+# convert the newborn and left to factor variables
+data[ , Newborn := as.factor(Newborn) ]
+
+# from this probability table we can see that 16 percent of 
+# your emplyees have left
+prop.table( table(data$left) )
+
+
+# -------------------------------------------------------------------------
+#						Model Training 
+# -------------------------------------------------------------------------
+
+# split the dataset into two parts. 80 percent of the dataset will be used to actually 
+# train the model, while the rest will be used to evaluate the accuracy of this model, 
+# i.e. out of sample error
+set.seed(4321)
+test <- createDataPartition( data$left, p = .2, list = FALSE )
+data_train <- data[ -test, ]
+data_test  <- data[ test, ]
+rm(data)
+
+model_glm <- glm( left ~ . , data = data_train, family = binomial(logit) )
+summary(model_glm)
+# all the p value of the coefficients indicates significance 
+
+
+# -------------------------------------------------------------------------
+#						Predicting and Assessing the Model 
+# -------------------------------------------------------------------------
+
+# obtain the predicted value that a employee will leave in the future on the train
+# and test set, after that we'll perform a quick evaluation by using the double density plot
+data_train$prediction <- predict( model_glm, newdata = data_train, type = "response" )
+data_test$prediction  <- predict( model_glm, newdata = data_test , type = "response" )
+
+# given that our model's final objective is to classify new instances 
+# into one of two categories, whether the employee will leave or not
+# we will want the model to give high scores to positive
+# instances ( 1: employee left ) and low scores ( 0 : employee stayed ) otherwise. 
+
+# distribution of the prediction score grouped by known outcome
+ggplot( data_train, aes( prediction, color = as.factor(left) ) ) + 
+geom_density( size = 1 ) +
+ggtitle( "Training Set's Predicted Score" ) + 
+scale_color_economist( name = "data", labels = c( "negative", "positive" ) ) + 
+theme_economist()
+
+# Ideally you want the distribution of scores to be separated, 
+# with the score of the negative instances to be on the left and the score of the
+# positive instance to be on the right.
+# In the current case, both distributions are slight skewed to the left. 
+# Not only is the predicted probability for the negative outcomes low, but 
+# the probability for the positive outcomes are also lower than it should be. 
+# The reason for this is because our dataset only consists of 16 percent of positive 
+# instances ( employees that left ). Thus our predicted scores sort of gets pulled 
+# towards a lower number because of the majority of the data being negative instances.
+
+# A slight digression, when developing models for prediction, we all know that we want the model to be
+# as accurate as possible, or in other words, to do a good job in 
+# predicting the target variable on out of sample observations.
+
+# Our plot, however, can actually tell us a very important thing :
+# Accuracy will not be a suitable measurement for this model 
+
+# We'll show why below :
+
+# Since the prediction of a logistic regression model is a 
+# probability, in order to use it as a classifier, we'll have a choose a cutoff value,
+# or you can say its a threshold. Where scores above this value will classified as 
+# positive, those below as negative. We'll be using the term cutoff for the rest of 
+# the documentation
+
+# Here we'll use a function to loop through several cutoff values and 
+# compute the model's accuracy on both training and testing set
+source("logistic_regression_code/logistic_functions.R")
+ggthemr("light")
+accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
+									 predict = "prediction", actual = "left" )
+accuracy_info$plot
+
+
+# from the output, you can see that starting from the cutoff value of .6
+# our accuracy for both training and testing set grows higher and higher showing 
+# no sign of decreasing at all 
+# we'll visualize the confusion matrix of the test set to see what's causing this
+ggthemr("flat")
+cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
+					 			actual = "left", cutoff = .6 )
+cm_info$plot
+
+# wiki : https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Worked_example
+# The above plot depicts the tradeoff we face upon choosing a reasonable cutoff. 
+
+# if we increase the cutoff value, 
+# the number of true negative (TN) increases and the number of true positive (TP) decreases.
+# Or you can say, If we increase the cutoff's value, the number of false positive (FP) is lowered, 
+# while the number of false negative (FN) rises. 
+# Here, because we have very few positive instances, thus our model will be 
+# less likely to make a false negative mistake, so if we keep on adding 
+# the cutoff value, we'll actually increase our model's accuracy, since 
+# we have a higher chance of turning the false positive into true negative. 
+
+# predict all the test set's outcome as 0
+prop.table( table( data_test$left ) )
+
+# Section conclusion : 
+# Accuracy is not the suitable indicator for the model 
+# for unbalanced distribution or costs
+
+# -------------------------------------------------------------------------
+#						Choosing the Suitable Cutoff Value 
+# -------------------------------------------------------------------------
+
+
+# use the roc curve to determine the cutoff
+# it plots the false positive rate (FPR) on the x-axis and the true positive rate (TPR) on the y-axis
+ggthemr_reset()
+cm_info$data
+
+
+# different cost for false negative and false positive 
+cost_fp <- 100
+cost_fn <- 200
+
+roc_info <- ROCInfo( data = cm_info$data, predict = "predict", 
+					 actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
+grid.draw(roc_info$plot)
+
+
+# re plot the confusion matrix plot 
+ggthemr("flat")
+cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
+                                actual = "left", cutoff = roc_info$cutoff )
+cm_info$plot
+
+
+# If the score distributions of the positive and negative instances are well separated, 
+# we can pick an appropriate threshold in the “valley” between the two peaks
+
+
+
+# -------------------------------------------------------------------------
+#						Interpretation 
+# -------------------------------------------------------------------------
+
+
+# given this probability we can prioritize our actions by adding back how much 
+# do we wish to retain these employees. Recall that from our dataset, we have the performance
+# information of the employee ( last project evaluation ). 
+
+# given this table, we can easily create a visualization to tell the story
+ggplot( data_test, aes( prediction, LPE ) ) + 
+geom_point()
+
+# we first have the employees that are underperforming, we probably should 
+# improve their performance or you can say you can't wait for them to leave....
+# for employees that are not likely to leave, we should manage them as usual
+# then on the short run, we should focus on those with a good performance, but
+# also has a high probability to leave.
+
+
+# the next thing we can do, is to quantify our priority by 
+# multiplying the probablity to leave with the performance.
+# we'll also use test, which stores the column index to create the testing set
+# to serve as employee ids.
+# Then we will obtain a priority score. Where the score will be high for 
+# the employees we wish to act upon as soon as possible, and low for the other ones
+result <- result %>% 
+		  mutate( priority = prediction * performance ) %>%
+		  mutate( id = test ) %>%
+		  arrange( desc(priority) )
+
+# after obtaining this result, we can schedule a face to face interview with employees 
+# at the top of the list.
+
+# using classification in this example enabled us to detect events that will 
+# happen in the future. That is which employees are more likely to leave the company.
+# Based on this information, we can come up with a more efficient strategy to cope
+# with matter at hand.
+
+
+
+# http://www.r-bloggers.com/evaluating-logistic-regression-models/
+		  	
+
+
+

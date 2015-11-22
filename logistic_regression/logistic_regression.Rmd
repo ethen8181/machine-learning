@@ -1,0 +1,244 @@
+---
+title: "Choosing Logisitic Regression’s Cutoff Value"
+author: "Ming-Yu Liu"
+date: "November 25, 2015"
+output: 
+  html_document: 
+    highlight: haddock
+    number_sections: yes
+    toc: yes
+---
+
+## Background Information 
+
+```{r, message=FALSE, warning=FALSE}
+
+# environment setting 
+library(ROCR)
+library(grid)
+library(caret)
+library(tidyr)
+library(dplyr)
+library(scales)
+library(ggplot2)
+library(ggthemr)
+library(ggthemes)
+library(gridExtra)
+library(data.table)
+setwd("/Users/ethen/machine-learning/logistic_regression")
+
+# read in the dataset 
+data <- fread( list.files( "data", full.names = TRUE ) )
+str(data)
+
+```
+
+This dataset contains `r nrow(data)` observations and 6 variables, each representing :
+
+- `S` The satisfaction level on a scale of 0 to 1.   
+- `LPE` Last project evaluation by a client on a scale of 0 to 1.   
+- `NP` Represents the number of projects worked on by employee in the last 12 month.  
+- `ANH` Average number of hours worked in the last 12 month for that employee.  
+- `TIC` The amount of time the emplyee spent in the company, measured in years.  
+- `Newborn` This variable will take the value 1 if the employee had a newborn within the last 12 month and 0 otherwise.  
+- `left` 1 if the left the company, 0 if they're still working here.
+
+```{r}
+
+# using summary to check if columns contain missing values like NAs 
+summary(data)
+
+# convert the newborn and left to factor variables
+data[ , Newborn := as.factor(Newborn) ]
+
+# from this probability table we can see that 16 percent of 
+# your emplyees have left
+prop.table( table(data$left) )
+
+```
+
+## Model Training 
+
+split the dataset into two parts. 80 percent of the dataset will be used to actually train the model, while the rest will be used to evaluate the accuracy of this model, i.e. out of sample error.
+
+```{r}
+
+set.seed(4321)
+test <- createDataPartition( data$left, p = .2, list = FALSE )
+data_train <- data[ -test, ]
+data_test  <- data[ test, ]
+rm(data)
+
+model_glm <- glm( left ~ . , data = data_train, family = binomial(logit) )
+summary(model_glm)
+# all the p value of the coefficients indicates significance 
+
+```
+
+## Predicting and Assessing the Model 
+
+For this section we start off by obtaining the predicted value that a employee will leave in the future on both training and testing set, after that we'll perform a quick evaluation on the model by using the double density plot. 
+
+```{r}
+
+# prediction
+data_train$prediction <- predict( model_glm, newdata = data_train, type = "response" )
+data_test$prediction  <- predict( model_glm, newdata = data_test , type = "response" )
+
+# distribution of the prediction score grouped by known outcome
+ggplot( data_train, aes( prediction, color = as.factor(left) ) ) + 
+geom_density( size = 1 ) +
+ggtitle( "Training Set's Predicted Score" ) + 
+scale_color_economist( name = "data", labels = c( "negative", "positive" ) ) + 
+theme_economist()
+
+```
+
+Given that our model's final objective is to classify new instances into one of two categories, whether the employee will leave or not we will want the model to give high scores to positive instances ( 1: employee that left ) and low scores ( 0 : employee that stayed ) otherwise. Thus for a ideal double density plot you want the distribution of scores to be separated, with the score of the negative instances to be on the left and the score of the positive instance to be on the right.   
+In the current case, both distributions are slight skewed to the left. Not only is the predicted probability for the negative outcomes low, but the probability for the positive outcomes are also lower than it should be. The reason for this is because our dataset only consists of 16 percent of positive instances ( employees that left ). Thus our predicted scores sort of gets pulled towards a lower number because of the majority of the data being negative instances.
+
+A slight digression, when developing models for prediction, we all know that we want the model to be as accurate as possible, or in other words, to do a good job in predicting the target variable on out of sample observations.
+
+Our *skewed* double density plot, however, can actually tell us a very important thing :
+
+**Accuracy will not be a suitable measurement for this model.** 
+
+We'll show why below :
+
+Since the prediction of a logistic regression model is a probability, in order to use it as a classifier, we'll have to choose a cutoff value, or you can say its a threshold value. Where scores above this value will classified as positive, those below as negative. ( We'll be using the term cutoff throughout the rest of the documentation ).
+
+Here we'll use a function to loop through several cutoff values and compute the model's accuracy on both training and testing set.
+
+[`AccuracyCutoffInfo`][AccuracyCutoffInfo] Obtain the accuracy on the trainining and testing dataset for cutoff value ranging from .4 to .8 ( with a .05 increase ). Input parameters : 
+
+- `train` Data.table or data.frame type training data, assumes you already have the predicted score and actual outcome in it.    
+- `test` Condition equivalent as above for the test set.    
+- `predict` Prediction's (predicted score) column name, assumes the same for both train and test set, must specify it as a character.   
+- `actual` Condition equivalent as above for the actual results' column name.    
+- The function returns a list consisting of :          
+    - data : data.table with three columns. Each row indicates the cutoff value and the accuracy for the train and test set respectively.   
+    - plot : a single plot that visualizes the data.table.   
+
+```{r}
+
+# functions are sourced in, to reduce document's length
+source("logistic_regression_code/logistic_functions.R")
+
+# define the theme for the next plot
+ggthemr("light")
+accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
+									 predict = "prediction", actual = "left" )
+accuracy_info$plot
+
+````
+
+From the output, you can see that starting from the cutoff value of .6, our model's accuracy for both training and testing set grows higher and higher, showing no sign of decreasing at all. 
+We'll use another function to visualize the confusion matrix of the test set to see what's causing this. Oh, and for those who are familar with terms related to the confusion matrix or have forgotten, [here's](https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Worked_example) the wiki page for a quick refresher. We'll not be going through the terms here.
+
+[`ConfusionMatrixInfo`][ConfusionMatrixInfo] Obtain the confusion matrix plot and data.table for a given dataset that already consists the predicted score and actual outcome column.
+
+- `data` Data.table or data.frame type data that consists the column of the predicted score and actual outcome. 
+- `predict` Prediction's column name, must specify it as a character.
+- `actual` Condition equivalent as above for the actual results' column name.
+- `cutoff` Cutoff value for the prediction score.
+- The function returns a list consisting of :
+    - data : A data.table consisting of three columns. First two columns stores the original value of the prediction and actual outcome from the passed in data frame. The third indicates the type, which is after choosing the cutoff value, will this row be a true/false positive/negative. 
+    - plot : Plot that visualizes the data.table.
+
+```{r, fig.height=7, fig.width=10}
+
+# visualize .6 cutoff (lowest point of the previous plot)
+ggthemr("flat")
+cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
+					 			actual = "left", cutoff = .6 )
+cm_info$plot
+
+```
+
+To avoid confusion, the predicted scores are jittered along their predicted label ( along the 0 and 1 outcome ). It makes sense to do so when visualizing a large number of individual observations representing each outcome so we can spread the points along the x axis. Without jittering, we would essentially see two vertical lines with tons of points overlapped on top of each other. 
+
+The above plot depicts the tradeoff we face upon choosing a reasonable cutoff. If we increase the cutoff value, the number of true negative (TN) increases and the number of true positive (TP) decreases. Or you can say, If we increase the cutoff's value, the number of false positive (FP) is lowered, while the number of false negative (FN) rises. 
+
+Here, because we have very few positive instances in our dataset, thus our model will be less likely to make a false negative mistake. Meaning if we keep on adding the cutoff value, we'll actually increase our model's accuracy, since we have a higher chance of turning the false positive into true negative.
+
+To make this idea sink in to our head, suppose given our test set, we'll simply predict every single observation as a negative instance ( 0 : meaning this employee will not leave in the near future ). 
+
+```{r}
+
+# predict all the test set's outcome as 0
+prop.table( table( data_test$left ) )
+
+```
+
+Then what happens is, we'll still obtain a 84 percent accuracy !! Which is pretty much the same compared to our logistic model....
+
+**Section Conclusion :**   
+
+> Accuracy is not the suitable indicator for the model when you have unbalanced distribution or costs.
+
+## Choosing the Suitable Cutoff Value 
+
+Due to the fact that accuracy isn't suitable for this situation, we'll have to use another measurement to decide which cutoff value to choose. And the method we'll be using is the [ROC curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic).
+Remember we said in the last section that when we choose our cutoff value, we're making a balance between the false positive rate (FPR) and false negative rate (FNR). Well, ROC curve's purpose is used to visualize and quantify the tradeoff we're making between the two measures. Where the curve is created by plotting the true positive rate (TPR) on the y axis against the false positive rate (FPR) on the x axis at various cutoff settings ( between 0 and 1 ).
+
+```{r}
+
+cm_info$data
+
+```
+
+[`ROCInfo`][ROCInfo] : Pass in the data that includes the predicted score and actual outcome column to obtain the ROC curve information.
+
+- `data` Data.table or data.frame type data that consists the column of the predicted score and actual outcome.
+- `predict` Predicted score's column name.
+- `actual` Actual results' column name.
+- `cost.fp` Associated cost for a false positive instance. 
+- `cost.fn` Associated cost for a false negative instance. 
+- The function returns a list consisting of : 
+    - plot : A side by side roc and cost plot, title showing optimal cutoff value title showing optimal cutoff, total cost, and area under the curve (auc). Wrap the gride.draw function around the plot to visualize it !!
+    - cutoff : Optimal cutoff value according to the specified FP and FN cost .
+    - totalcost : Total cost according to the specified FP and FN cost.
+    - sensitivity : TP / (TP + FN) .
+    - specificity : TN / (FP + TN) .
+
+```{r, fig.height=6, fig.width=10}
+
+# different cost for false negative and false positive 
+cost_fp <- 100
+cost_fn <- 200
+
+# reset to default ggplot theme 
+ggthemr_reset()
+roc_info <- ROCInfo( data = cm_info$data, predict = "predict", 
+					 actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
+grid.draw(roc_info$plot)
+
+```
+
+
+**Takeaway** 
+
+1. If there are a lot more negative outcome data than positives, or vice versa, we shouldn't use accuracy as the measurement. 
+
+All the code and the data can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/logistic_regression) folder. Codes are under the folder "logistic_regression_code", where the general code and function code are in two separate scripts. Data is under the "data" folder.
+
+Errors or suggestions can be filed [here](https://github.com/ethen8181/machine-learning/issues), I will gladly fix them as soon as possible ~  
+
+## Reference 
+
+1. ROC curve associated with cost reimplemented from this blog post : http://www.r-bloggers.com/illustrated-guide-to-roc-and-auc/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29
+
+## R Session Information
+
+```{r}
+
+sessionInfo()
+
+```
+
+[AccuracyCutoffInfo]: 
+
+[ConfusionMatrixInfo]:   
+
+[ROCInfo]:
+
