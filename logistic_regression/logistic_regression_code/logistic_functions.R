@@ -3,7 +3,6 @@ library(ROCR)
 library(grid)
 library(caret)
 library(dplyr)
-library(scales)
 library(ggplot2)
 library(gridExtra)
 library(data.table)
@@ -82,14 +81,15 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 						 ifelse( predict >= cutoff & actual == 1, "TP",
 						 ifelse( predict >= cutoff & actual == 0, "FP", 
 						 ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) )
+	levels(result$type) <- c( "TP", "FP", "FN", "TN" )
 
 	# jittering : can spread the points along the x axis 
 	plot <- ggplot( result, aes( actual, predict, color = type ) ) + 
 			geom_violin( fill = "white", color = NA ) +
 			geom_jitter( shape = 1 ) + 
 			geom_hline( yintercept = cutoff, color = "blue", alpha = 0.6 ) + 
-			scale_y_continuous( limits = c( 0 ,1 ) ) + 
-			labs( title = sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
+			scale_y_continuous( limits = c( 0, 1 ) ) + 
+			ggtitle( sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
 
 	# return the datapoint and confusion matrix plot 
 	return( list( data = result, plot = plot ) )
@@ -111,8 +111,9 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 # 				 	   		  title showing optimal cutoff, total cost, and area under the curve (auc)
 # 		     2. cutoff      : optimal cutoff value according to the specified fp/fn cost 
 #		     3. totalcost   : total cost according to the specified fp/fn cost
-#		     4. sensitivity : TP / (TP + FN)
-#		     5. specificity : TN / (FP + TN)
+#			 4. auc 		: area under the curve
+#		     5. sensitivity : TP / (TP + FN)
+#		     6. specificity : TN / (FP + TN)
 
 ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 {
@@ -123,11 +124,16 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	roc_dt <- data.frame( fpr = perf@x.values[[1]], tpr = perf@y.values[[1]] )
 
 	# cost with the specified false positive and false negative cost 
-	cost <- performance( pred, "cost", cost.fp = cost.fp, cost.fn = cost.fn )
-	cost_dt <- data.frame( cutoff = cost@x.values[[1]], cost = cost@y.values[[1]] )
+	# false postive rate * number of negative instances * false positive cost + 
+	# false negative rate * number of positive instances * false negative cost
+	cost <- perf@x.values[[1]] * cost.fp * sum( data[[actual]] == 0 ) + 
+			( 1 - perf@y.values[[1]] ) * cost.fn * sum( data[[actual]] == 1 )
+
+	cost_dt <- data.frame( cutoff = pred@cutoffs[[1]], cost = cost )
 
 	# optimal cutoff value, and the corresponding true positive and false positive rate
-	best_index  <- which.min( cost@y.values[[1]] )
+	best_index  <- which.min(cost)
+	best_cost   <- cost_dt[ best_index, "cost" ]
 	best_tpr    <- roc_dt[ best_index, "tpr" ]
 	best_fpr    <- roc_dt[ best_index, "fpr" ]
 	best_cutoff <- pred@cutoffs[[1]][ best_index ]
@@ -142,7 +148,7 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	# then normalize each cost and assign colors to it, the higher the blacker
 	# don't times it by 100, there will be 0 in the vector
 	col_ramp <- colorRampPalette( c( "green", "orange", "red", "black" ) )(100)   
-	col_by_cost <- col_ramp[ ceiling( normalize(cost@y.values[[1]]) * 99 ) + 1 ]
+	col_by_cost <- col_ramp[ ceiling( normalize(cost) * 99 ) + 1 ]
 
 	roc_plot <- ggplot( roc_dt, aes( fpr, tpr ) ) + 
 				geom_line( color = rgb( 0, 0, 1, alpha = 0.3 ) ) +
@@ -158,21 +164,16 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 				 ggtitle( "Cost" ) +
 				 geom_vline( xintercept = best_cutoff, alpha = 0.8, linetype = "dashed", color = "steelblue4" )	
 
-	# calculate the actual cost, 
-	# false postive rate * number of negative instances * false positive cost + 
-	# false negative rate * number of positive instances * false negative cost
-	cost_total <- best_fpr * sum( data[[actual]] == 0 ) * cost.fp + (1- best_tpr ) * sum( data[[actual]] == 1 ) * cost.fn
-
 	# the main title for the two arranged plot
 	sub_title <- sprintf( "Cutoff at %.2f - Total Cost = %d, AUC = %.3f", 
-						  best_cutoff, cost_total, auc )
+						  best_cutoff, best_cost, auc )
 	
 	# arranged into a side by side plot
 	plot <- arrangeGrob( roc_plot, cost_plot, ncol = 2, 
 						  top = textGrob( sub_title, gp = gpar( fontsize = 16, fontface = "bold" ) ) )
 	
 	# return 
-	return( list( plot = plot, cutoff = best_cutoff, totalcost = cost_total,
+	return( list( plot = plot, cutoff = best_cutoff, totalcost = best_cost, auc = auc,
 				  sensitivity = best_tpr, specificity = 1 - best_fpr ) )
 }
 

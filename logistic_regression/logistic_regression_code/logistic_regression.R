@@ -3,6 +3,7 @@
 # environment setting 
 library(ROCR)
 library(grid)
+library(broom)
 library(caret)
 library(tidyr)
 library(dplyr)
@@ -14,18 +15,15 @@ library(gridExtra)
 library(data.table)
 setwd("/Users/ethen/machine-learning/logistic_regression")
 
-# read in both training and testing dataset 
-data <- fread( list.files( "data", full.names = TRUE ) )
+# read in HR dataset 
+data <- fread( list.files( "data", full.names = TRUE )[2] )
 str(data)
 
 # using summary to check if columns contain missing values like NAs 
 summary(data)
 
 # find correlations to exclude from the model 
-findCorrelation( cor(data), cutoff = .75 )
-
-# convert the newborn and left to factor variables
-data[ , Newborn := as.factor(Newborn) ]
+findCorrelation( cor(data), cutoff = .75, names = TRUE )
 
 # from this probability table we can see that 16 percent of 
 # your emplyees have left
@@ -35,6 +33,9 @@ prop.table( table(data$left) )
 # -------------------------------------------------------------------------
 #						Model Training 
 # -------------------------------------------------------------------------
+
+# convert the newborn to factor variables
+data[ , Newborn := as.factor(Newborn) ]
 
 # split the dataset into two parts. 80 percent of the dataset will be used to actually 
 # train the model, while the rest will be used to evaluate the accuracy of this model, 
@@ -46,8 +47,16 @@ data_test  <- data[ test, ]
 rm(data)
 
 model_glm <- glm( left ~ . , data = data_train, family = binomial(logit) )
-summary(model_glm)
+summary_glm <- summary(model_glm)
+
+# p-value and pseudo r squared 
+list( model_glm_sum$coefficient, 
+	  1- ( model_glm_sum$deviance / model_glm_sum$null.deviance ) )
+
 # all the p value of the coefficients indicates significance 
+
+
+
 
 
 # -------------------------------------------------------------------------
@@ -160,23 +169,63 @@ cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction",
 cm_info$plot
 
 
-# If the score distributions of the positive and negative instances are well separated, 
-# we can pick an appropriate threshold in the “valley” between the two peaks
-
-
-
 # -------------------------------------------------------------------------
 #						Interpretation 
 # -------------------------------------------------------------------------
 
+# tidy from the broom package
+coefficient <- tidy(model_glm)[ , c( "term", "estimate", "statistic" ) ]
+
+# transfrom the coefficient to be in probability format 
+coefficient$estimate <- 1 / ( 1 / exp( coefficient$estimate ) + 1 )
+
+coefficient[ coefficient$term == "S", "estimate" ]
+
+
+# use the model to predict a unknown outcome data "HR_unknown.csv"
+# specify the column's class 
+col_class <- sapply( data_test, class )[1:6]
+data <- read.csv( list.files( "data", full.names = TRUE )[1], colClasses = col_class )
+data$prediction <- predict( model_glm, newdata = data, type = "response" )
+
+# cutoff
+data <- data[ data$prediction >= roc_info$cutoff, ]
+
+# time spent in the company 
+median_tic <- data %>% group_by(TIC) %>% 
+					   summarise( prediction = median(prediction), count = n() )
+
+ggthemr_reset()
+ggplot( median_tic, aes( TIC, prediction, size = count ) ) + 
+geom_point() + theme( legend.position = "none" ) +
+labs( title = "Time and Employee Attrition", y = "Attrition Probability", 
+	  x = "Time Spent in the Company" ) 
+
+# last project evaluation 
+data$LPECUT <- cut( data$LPE, breaks = quantile(data$LPE), include.lowest = TRUE )
+median_lpe <- data %>% group_by(LPECUT) %>% 
+					   summarise( prediction = median(prediction), count = n() )
+
+
+ggplot( median_lpe, aes( LPECUT, prediction ) ) + 
+geom_point( aes( size = count ), color = "royalblue3" ) + 
+theme( legend.position = "none" ) +
+labs( title = "Last Project's Evaluation and Employee Attrition", 
+	  y = "Attrition Probability", x = "Last Project's Evaluation by Client" )
+
+# This is probabily an indication that it'll be worth trying out other classification 
+# algorithms. Since logistic regressions assumes monotonic relationships ( either entirely increasing or decreasing )
+# between the input paramters and the outcome ( also true for linear regression ). Meaning the   
+# if more of a quantity is good, then much more of the quantity is better. This is often not the case in the real world
 
 # given this probability we can prioritize our actions by adding back how much 
 # do we wish to retain these employees. Recall that from our dataset, we have the performance
 # information of the employee ( last project evaluation ). 
-
 # given this table, we can easily create a visualization to tell the story
-ggplot( data_test, aes( prediction, LPE ) ) + 
-geom_point()
+ggthemr("fresh")
+ggplot( data, aes( prediction, LPE ) ) + 
+geom_point() + 
+ggtitle( "Performace v.s. Probability to Leave" )
 
 # we first have the employees that are underperforming, we probably should 
 # improve their performance or you can say you can't wait for them to leave....
@@ -184,16 +233,15 @@ geom_point()
 # then on the short run, we should focus on those with a good performance, but
 # also has a high probability to leave.
 
-
 # the next thing we can do, is to quantify our priority by 
 # multiplying the probablity to leave with the performance.
-# we'll also use test, which stores the column index to create the testing set
-# to serve as employee ids.
+# we'll also use row names of the data.frame to 
+# to serve as imaginery employee ids.
 # Then we will obtain a priority score. Where the score will be high for 
 # the employees we wish to act upon as soon as possible, and low for the other ones
-result <- result %>% 
-		  mutate( priority = prediction * performance ) %>%
-		  mutate( id = test ) %>%
+result <- data %>% 
+		  mutate( priority = prediction * LPE ) %>%
+		  mutate( id = rownames(data) ) %>%
 		  arrange( desc(priority) )
 
 # after obtaining this result, we can schedule a face to face interview with employees 
@@ -205,7 +253,8 @@ result <- result %>%
 # with matter at hand.
 
 
-
+# ----------------------------------------------------------------------
+# document later, strange statistic test 
 # http://www.r-bloggers.com/evaluating-logistic-regression-models/
 		  	
 
