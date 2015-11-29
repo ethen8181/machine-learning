@@ -254,12 +254,12 @@ ClusterMethod <- function( data, k, noise.cut = 0, clustermethod, ... )
 # @bootstrap : number of boostrap iteraion
 # @dissolve  : if the jaccard similarity is smaller than this number, then it is considered
 #              to be "dissolved"
-# Returns    : 1. result     : the original clustering object.
-#              2. bootmean   : mean of the Jaccard Similarity for specified bootstrap time.
-#              3. partition  : the original clustering result, a vector specifying which 
-#                              group does the data point belong.
-#              4. clusternum : final cluster count, 
-#                              if you specified noise.cut then it might be different from k.
+# Returns    : 1. result        : the original clustering object.
+#              2. bootmean      : mean of the Jaccard Similarity for specified bootstrap time.
+#              3. partition     : the original clustering result, a vector specifying which 
+#                                 group does the data point belong.
+#              4. clusternum    : final cluster count, 
+#                                 if you specified noise.cut then it might be different from k.
 #              5. bootdissolved : number of times each cluster's jaccard similarity is smaller than
 #                                 the dissolve value.
 

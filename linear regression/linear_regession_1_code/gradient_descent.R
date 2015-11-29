@@ -1,4 +1,4 @@
-# Batch gradient descent 
+# gradient descent for linear regression
 
 # [GradientDescent] :
 # @data          : The whole data frame type data.   

@@ -16,8 +16,8 @@ library(data.table)
 # @predict : prediction's column name (assumes the same for training and testing set)
 # @actual  : actual results' column name
 # returns  : 1. data : a data.table with three columns.
-#            	each row indicates the cutoff value and the accuracy for the 
-#            	train and test set respectively.
+#            		   each row indicates the cutoff value and the accuracy for the 
+#            		   train and test set respectively.
 # 			 2. plot : plot that visualizes the data.table
 
 AccuracyCutoffInfo <- function( train, test, predict, actual )
@@ -30,8 +30,7 @@ AccuracyCutoffInfo <- function( train, test, predict, actual )
 		# use the confusionMatrix from the caret package
 		cm_train <- confusionMatrix( as.numeric( train[[predict]] > c ), train[[actual]] )
 		cm_test  <- confusionMatrix( as.numeric( test[[predict]]  > c ), test[[actual]]  )
-		
-		
+			
 		dt <- data.table( cutoff = c,
 						  train  = cm_train$overall[["Accuracy"]],
 		 			      test   = cm_test$overall[["Accuracy"]] )
@@ -61,9 +60,9 @@ AccuracyCutoffInfo <- function( train, test, predict, actual )
 # @actual  : actual results' column name
 # @cutoff  : cutoff value for the prediction score 
 # return   : 1. data : a data.table consisting of three column
-#            	the first two stores the original value of the prediction and actual outcome from
-#			 	the passed in data frame, the third indicates the type, which is after choosing the 
-#			 	cutoff value, will this row be a true/false positive/ negative 
+#            		   the first two stores the original value of the prediction and actual outcome from
+#			 		   the passed in data frame, the third indicates the type, which is after choosing the 
+#			 		   cutoff value, will this row be a true/false positive/ negative 
 #            2. plot : plot that visualizes the data.table 
 
 ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
@@ -142,7 +141,7 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	auc <- performance( pred, "auc" )@y.values[[1]]
 
 	# normalize the cost 
-	normalize <- function(v) ( v - min(v) )/ diff( range(v) )
+	normalize <- function(v) ( v - min(v) ) / diff( range(v) )
 	
 	# create color from a palette to assign to the 100 generated threshold between 0 ~ 1
 	# then normalize each cost and assign colors to it, the higher the blacker
@@ -170,11 +169,15 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	
 	# arranged into a side by side plot
 	plot <- arrangeGrob( roc_plot, cost_plot, ncol = 2, 
-						  top = textGrob( sub_title, gp = gpar( fontsize = 16, fontface = "bold" ) ) )
+						 top = textGrob( sub_title, gp = gpar( fontsize = 16, fontface = "bold" ) ) )
 	
 	# return 
-	return( list( plot = plot, cutoff = best_cutoff, totalcost = best_cost, auc = auc,
-				  sensitivity = best_tpr, specificity = 1 - best_fpr ) )
+	return( list( plot 		  = plot, 
+				  cutoff 	  = best_cutoff, 
+				  totalcost   = best_cost, 
+				  auc         = auc,
+				  sensitivity = best_tpr, 
+				  specificity = 1 - best_fpr ) )
 }
 
 

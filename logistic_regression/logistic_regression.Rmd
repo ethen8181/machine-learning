@@ -9,7 +9,7 @@ output:
     toc: yes
 ---
 
-This documentation focuses on choosing the optimal cutoff value for logistic regression when dealing with unbalanced dataset. Notion also applies to other classification algorithms where the model's prediction on unknown outcome is a score. We'll not be giving a thorough introduction on logistic regression, there're tons of resources on the web or statistic books that already does this, look it up if you're not familiar with it. Also discussion of why not choose other algorithms to boost classification performace is also overlooked.
+This documentation focuses on choosing the optimal cutoff value for logistic regression when dealing with unbalanced dataset. Notion also applies to other classification algorithms where the model's prediction on unknown outcome is a score. We'll not be giving a thorough introduction on logistic regression, there're tons of resources on the web or statistic books that already does this, look it up if you're not familiar with it. Discussion of why not choose other algorithms to boost classification performace is also overlooked.
 
 Link to the dataset and R scripts are provided at the end the documentation.
 
@@ -17,7 +17,7 @@ Link to the dataset and R scripts are provided at the end the documentation.
 
 Logistic regression is a technique that is well suited for binary classification problems. After giving the model your input parameters ( or called variables, predictors ), the model will calculate the probability that each observation will belong to one of the two classes ( depending on which one you're choosing as the "positive" class ). The math formula of this regression : 
 
-$$ P(y) = \frac{1}{ 1 + exp^{ ( B_0 + B_1X_1 + \dots + B_nX_n ) } } $$
+$$ P(y) = \frac{1}{ 1 + e^{ ( B_0 + B_1X_1 + \dots + B_nX_n ) } } $$
 
 Where $P(y)$ is the calculated probability ; the $B$s denotes the model's parameters and $X$s refer to your input parameters.
 
@@ -358,7 +358,7 @@ labs( title = "Time and Employee Attrition", y = "Attrition Probability",
 
 You'll notice that, the probability tells us that the estimated probability of an employee leaving the company is postively correlated with the time spent in the company. Note that this could indicate a bad thing, since it's showing that you're company can't retain employees that have stayed in the company for a long time. In the field of marketing, it should make sense that at some point if your customers are loyal to you after many years, then they will most likely stay loyal forever. For our human resource example, failing to retain "loyal" employees could possibly ( I'm saying could possibly here ) mean that the company failed to propose a descent career plan to the employees. The point's (bubble) size shows that this is not a rare case.
 
-The second is the relationship between `LPE` last project evaluation by client and the estimated probability to leave. We'll do same thing as we did for the last plot, Except for one thing. . Unlike `TIC` time spent in the company that has only fix variables, `LPE` is a numeric index ranging from 0 to 1, so in order to plot it with the same fashion as the last one we'll use an extra step cut (split) the `LPE` variable into four groups. 
+The second is the relationship between `LPE` last project evaluation by client and the estimated probability to leave. We'll do same thing as we did for the last plot, Except for one thing. . Unlike `TIC` time spent in the company that has only five different values, `LPE` is a numeric index ranging from 0 to 1, so in order to plot it with the same fashion as the last one we'll use an extra step cut (split) the `LPE` variable into four groups. 
 
 ```{r}
 
@@ -374,7 +374,7 @@ labs( title = "Last Project's Evaluation and Employee Attrition",
 
 ```
 
-From the plot above we can see that the relationship between the last project evaluation is not positively nor negatively correlated with the estimated probability. This is an indication that it'll be worth trying out other classification algorithms. Since logistic regressions assumes monotonic relationships ( either entirely increasing or decreasing ) between the input paramters and the outcome ( also true for linear regression ). Meaning if more of a quantity is good, then much more of the quantity is better. Which is often not the case in real world datasets.
+From the plot above we can see that the relationship between the last project evaluation is not positively nor negatively correlated with the estimated probability. This is an indication that it'll be worth trying out other classification algorithms. Since logistic regressions assumes monotonic relationships ( either entirely increasing or decreasing ) between the input paramters and the outcome ( also true for linear regression ). Meaning if more of a quantity is good, then much more of the quantity is better, which is often not the case in real world cases.
 
 Now, back to where we were on retaining our employees, apart from we knowing who do we want to retain, we can also prioritize our actions by adding back how much do we wish to retain these employees. This will tell us how much does the company wish to retain each employee. Recall that from our dataset, we have the performance information of the employee, the last project evaluation (LPE). 
 
