@@ -1,0 +1,766 @@
+colnames(tf_idf)
+colnames(tf_idf) <- rownames(M)
+tf_idf
+class(tf_idf)
+sqrt( rowSums( tf_idf^2 ) )
+( tf_idf <- tf_idf / sqrt( rowSums( tf_idf^2 ) ) )
+sum( 0.9236103^2 + 0.3833329^2 )
+doc <- c( "The sky is blue.", "The sun is bright today.",#
+          "The sun in the sky is bright.", "We can see the shining sun, the bright sun." )#
+#
+# create corpus#
+doc_corpus <- Corpus( VectorSource( doc ) )#
+control_list <- list( removePunctuation = TRUE, stopwords = TRUE )#
+#
+tdm_train <- TermDocumentMatrix( doc_corpus, control = control_list )#
+# inspect(tdm_train)#
+#
+# tf#
+M <- as.matrix(tdm_train)#
+#
+# idf#
+# idf <- log( ncol(M) / ( 1 + rowSums( M != 0 ) ) ) %>% diag()#
+( idf <- log( ncol(M) / ( 1 + rowSums( M != 0 ) ) ) )#
+#
+# diagonal matrix#
+( idf <- diag(idf) )#
+#
+# remember to transpose the original tf matrix#
+tf_idf <- t(M) %*% idf#
+colnames(tf_idf) <- rownames(M)#
+tf_idf#
+#
+# normalize #
+( tf_idf <- tf_idf / sqrt( rowSums( tf_idf^2 ) ) )
+tf_idf
+matrix = tf_idf
+tf_idf
+tf_idf[1, ]
+y <- tf_idf[2, ]
+y
+y <- tf_idf[4, ]
+y
+sum( x^2 )
+x <- tf_idf[ 1, ]
+sum( x^2 )
+sqrt( sum( x^2 ) )
+stopwords("en")
+stopwords("english")
+doc_corpus <- Corpus( VectorSource( doc ) )
+tm_map( doc_corpus, removeWords, c( stopwords("english"), "can", "see", ) )
+tm_map( doc, removeWords, c( stopwords("english"), "can", "see", ) )
+doc_corpus <- Corpus( VectorSource( doc ) )#
+control_list <- list( removePunctuation = TRUE, stopwords = TRUE )#
+tdm_train <- TermDocumentMatrix( doc_corpus, control = control_list )
+M <- as.matrix(tdm_train)
+M
+M[ !rownames(M) %in% c( "can", "see" ), ]
+M <-  M[ !rownames(M) %in% c( "can", "see" ), ]
+idf <- log( ncol(M) / ( 1 + rowSums( M != 0 ) ) ) )#
+#
+# diagonal matrix#
+( idf <- diag(idf) )#
+#
+# remember to transpose the original tf matrix#
+tf_idf <- t(M) %*% idf#
+colnames(tf_idf) <- rownames(M)#
+tf_idf
+M
+x <- seq( -10, 10, by = .01 )#
+y <- 1- x^2 + rnorm( length(x), 0 ,5 )
+library(ggplot2)
+ggplot( data.frame( X = x, Y = y ), aes( X, Y ) ) + #
+geom_point()
+ggplot( data.frame( X = x, Y = y ), aes( X, Y ) ) + #
+geom_point() + #
+geom_smooth( se = FALSE )
+ggplot( data.frame( XSquared = x^2, Y = y ), aes( XSquared, y ) ) + #
+geom_point() + #
+geom_smooth( method = "lm", se = FALSE )
+summary( lm( y ~ x ) )
+summary( lm( y ~ x ) )$r.square
+summary( lm( y ~ x^2 ) )$r.square
+summary( lm( y ~ x^2 ) )
+x
+x^2
+y
+x_squared <- x^2#
+summary( lm( y ~ x ) )$r.square#
+summary( lm( y ~ x_squared ) )$r.square
+set.seed(1)#
+#
+x <- seq( 0, 1, by = .01 )#
+y <- sin( 2 * pi * x ) + rnorm( length(x), 0 ,1 )#
+df <- data.frame( x = x, y = y ) #
+#
+ggplot( df, aes( x, y ) ) + #
+geom_point()
+set.seed(1)#
+#
+x <- seq( 0, 1, by = .01 )#
+y <- sin( 2 * x + pi ) + rnorm( length(x), 0 ,1 )#
+df <- data.frame( x = x, y = y ) #
+#
+ggplot( df, aes( x, y ) ) + #
+geom_point()
+set.seed(1)#
+#
+x <- seq( 0, 1, by = .01 )#
+y <- sin( 2 * x * pi ) + rnorm( length(x), 0 ,.1 )#
+df <- data.frame( x = x, y = y ) #
+#
+ggplot( df, aes( x, y ) ) + #
+geom_point()
+df <- transform( df, x2 = x^2, x3 = x^3 )
+df
+summary( lm( y ~ x + x2 + x3, data = df ) )
+ggplot( df, aes( x, y ) ) + #
+geom_point( method = "lm", se = FALSE )
+ggplot( df, aes( x, y ) ) + #
+geom_point() + #
+geom_smooth( method = "lm", se = FALSE  )
+?poly
+summary( lm( y ~ poly( x, degree = 3 ), data = df ) )
+poly( x, degree = 3 )
+x
+poly_fit <- lm( y ~ poly( x, degree = 1 ), data = df )
+poly_fit
+summary(poly_fit)
+predict(poly_fit)
+poly_fit$fitted
+poly_fit <- lm( y ~ poly( x, degree = 3 ), data = df )#
+df <- transform( PredictedY = poly_fit$fitted.values )#
+ggplot( df, aes( x, PredictedY ) ) +#
+geom_point() + geom_line()
+df <- transform( df, PredictedY = poly_fit$fitted.values )#
+ggplot( df, aes( x, PredictedY ) ) +#
+geom_point() + geom_line()
+set.seed(1)#
+x <- seq( 0, 1, by = 0.01 )#
+y <- sin( 2 * pi * x ) + rnorm( length(x), 0, 0.1 )
+n <- length(x)
+n
+sample( 1:n, round( .5 * n ) )
+sort( sample( 1:n, round( .5 * n ) ) )
+df <- data.frame( x = x, y = y )
+?sort
+sort( sample( 1:n, round( .5 * n ) ) )
+indices <- sort( sample( 1:n, round( .5 * n ) ) )
+df_train <- df[ indices, ] #
+df_test  <- df[ -indices, ]
+df_train
+df_train$y
+predict( poly_fit, df_test )
+RMSE <- function( y, h )#
+{#
+    return( sqrt( mean( ( y - h )^2 ) ) )#
+}#
+degree <- 12#
+for( d in 1:degree )#
+{#
+    poly_fit <- lm( y ~ poly( x, degree = d ), data = df_train )#
+#
+    # a list that has the space to store the result of#
+    # training and testing result#
+    performance <- vector( mode = "list", length = degree )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[d]] <- data.frame( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_train$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}
+warnings()
+poly_fit <- lm( y ~ poly( x, degree = 1 ), data = df_train )
+poly_fit
+RMSE( df_train$y, poly_fit$fitted )
+RMSE( df_train$y, predict( poly_fit, newdata = df_test ) )
+df_test
+RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )
+degree <- 12#
+for( d in 1:degree )#
+{#
+    poly_fit <- lm( y ~ poly( x, degree = d ), data = df_train )#
+#
+    # a list that has the space to store the result of#
+    # training and testing result#
+    performance <- vector( mode = "list", length = degree )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[d]] <- data.frame( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}
+library(data.table)#
+degree <- 12#
+for( d in 1:degree )#
+{#
+    poly_fit <- lm( y ~ poly( x, degree = d ), data = df_train )#
+#
+    # a list that has the space to store the result of#
+    # training and testing result#
+    performance <- vector( mode = "list", length = degree )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[d]] <- data.table( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}
+performance_df <- rbindlist(performance)
+performance_df
+performance
+1:degree
+RMSE <- function( y, h )#
+{#
+    return( sqrt( mean( ( y - h )^2 ) ) )#
+}
+degree <- 12#
+for( d in 1:degree )#
+{#
+    poly_fit <- lm( y ~ poly( x, degree = d ), data = df_train )#
+#
+    # a list that has the space to store the result of#
+    # training and testing result#
+    performance <- vector( mode = "list", length = degree )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[d]] <- data.table( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}
+performance
+degree
+poly_fit <- lm( y ~ poly( x, degree = 1 ), data = df_train )
+poly_fit
+performance <- vector( mode = "list", length = degree )
+performance
+performance[[1]] <- data.table( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )
+performance
+library(data.table)#
+# a list that has the space to store the result of#
+# training and testing result#
+degree <- 12#
+performance <- vector( mode = "list", length = degree )#
+#
+for( d in 1:degree )#
+{   #
+    # model using different degrees#
+    poly_fit <- lm( y ~ poly( x, degree = 1 ), data = df_train )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[1]] <- data.table( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}#
+#
+performance_df <- rbindlist(performance)
+performance_df
+degree <- 12#
+performance <- vector( mode = "list", length = degree )#
+#
+for( d in 1:degree )#
+{   #
+    # model using different degrees#
+    poly_fit <- lm( y ~ poly( x, degree = d ), data = df_train )#
+#
+    # store the degree#
+    # and calculate the rmse between the original data and the fitted data #
+    performance[[d]] <- data.table( #
+#
+        Degree = d, #
+        Train  = RMSE( df_train$y, poly_fit$fitted ),#
+        Test   = RMSE( df_test$y, predict( poly_fit, newdata = df_test ) )#
+    )#
+}
+performance
+library(tidyr)
+performance_df_long <- gather( performance_df, "key", "value", -Degree )
+ggplot( performance_df_long, aes( Degree, value, linetype = key ) ) + #
+geom_point() + #
+geom_line()
+performance_df_long
+performance_df <- rbindlist(performance)
+performance_df_long <- gather( performance_df, "key", "value", -Degree )
+ggplot( performance_df_long, aes( Degree, value, linetype = key ) ) + #
+geom_point() + #
+geom_line()
+ggplot( performance_df_long, aes( Degree, value, linetype = key, color = key ) ) + #
+geom_point() + #
+geom_line()
+library(glmnet)
+regularize <- glmnet( matrix(x), y )
+x
+matrix(x)
+x <- matrix(x)#
+regularize <- glmnet( x, y )
+lm( y ~ x )
+x <- matrix(x)
+x
+regularize <- glmnet( x, y )
+?glmnet
+set.seed(602957)#
+x <- rnorm(1000)#
+#
+noise <- rnorm( 1000, sd = 1.5 )#
+y <- 3 * sin( 2 * x ) + cos( 0.75 * x ) - 1.5 * ( x^2 ) + noise#
+select <- runif(1000)#
+#
+frame <- data.frame( y = y, x = x )#
+train <- frame[ select > 0.1, ]#
+test  <- frame[ select <= 0.1, ]
+ggplot( frame, aes( x, y ) ) + #
+geom_point()
+library(ggplot2)
+ggplot( frame, aes( x, y ) ) + #
+geom_point()
+ggplot( frame, aes( x, y ) ) + #
+geom_point() + #
+geom_smooth()
+model_linear <- lm( y ~ x )
+summary(model_linear)
+library(mgcv)
+sqrt( mean( ( model_linear$fitted - y )^2 ) )
+glin.model <- gam( y ~ s(x), data = train )
+glin.model$converged
+summary(glin.model)
+names(glin.model)
+model_glin <- gam( y ~ s(x), data = train )#
+#
+# you should only use the algorithm if the converge equals TRUE#
+model_glin$converged
+resid.lin  <- train$y - model_linear$fitted#
+resid.glin <- train$y - model_glin$fitted#
+sqrt( mean( resid.glin^2 ) )#
+sqrt( mean( resid.lin^2 ) )
+model_linear <- lm( y ~ x )
+model_linear$fitted
+train$y
+model_linear <- lm( y ~ x, data = train )
+resid.lin  <- train$y - model_linear$fitted
+sqrt( mean( resid.lin^2 ) )
+sqrt( mean( resid.glin^2 ) )
+class(model_glin)
+plot.gam
+predict( model_glin, type = "term" )
+predict( model_glin, type = "terms" )
+model_linear$fitted
+fit <- predict( model_glin, type = "terms" )
+fit
+class(fit)
+ggplot( xframe, aes( x = x ) ) + #
+geom_point( aes( y = y ), alpha = 0.4 ) +#
+geom_line( aes( y = sx ) )
+xframe <- cbind( train, sx = sx[ , 1 ] )#
+ggplot( xframe, aes( x = x ) ) + #
+geom_point( aes( y = y ), alpha = 0.4 ) +#
+geom_line( aes( y = sx ) )
+fit <- predict( model_glin, type = "terms" )#
+#
+xframe <- cbind( train, fit = fit[ , 1 ] )#
+ggplot( xframe, aes( x = x ) ) + #
+geom_point( aes( y = y ), alpha = 0.4 ) +#
+geom_line( aes( y = fit ) )
+model_glin$fitted
+fit <- model_glin$fitted
+fit[ , 1 ]
+fit <- model_glin$fitted#
+xframe <- cbind( train, fit = fit )#
+#
+ggplot( xframe, aes( x = x ) ) + #
+geom_point( aes( y = y ), alpha = 0.4 ) +#
+geom_line( aes( y = fit ) )
+predict( model_glin, type = "terms" )
+model_glin$fitted
+fit1 <- predict( model_glin, type = "terms" )
+fit2 <- model_glin$fitted
+library(reshape2)#
+library(ggplot2)
+df <- data.frame( fit1 = fit1, fit2 = fit2 ) %>% melt()
+library(dplyr)#
+#
+df <- data.frame( fit1 = fit1, fit2 = fit2 ) %>% melt()
+df
+head(df)
+fit1 <- predict( model_glin, type = "terms" )
+fit2 <- model_glin$fitted
+df <- data.frame( fit1 = fit1, fit2 = fit2 ) %>% melt()
+head(df)
+df <- data.frame( x = x, fit1 = fit1, fit2 = fit2 ) %>% melt( id.vars = "x" )
+x
+fit1
+df <- data.frame( x = x, fit1 = fit1, fit2 = fit2 )
+summary(model_glin)
+names(model_glin)
+coef(model_glin)
+model_glin$formula
+model_glin$model
+names(model_glin)
+model_glin$smooth
+model.matrix(model_glin)
+?model.matrix
+library(ROCR)
+data(ROCR.simple)
+ROCR.simple
+pred <- prediction( ROCR.simple$predictions, ROCR.simple$labels )
+perf <- performance(pred,"tpr","fpr")#
+plot(perf)
+perf
+perf1 <- performance(pred, "prec", "rec")#
+plot(perf1)
+class(perf)
+plot.performance
+plot.ROCR
+library(ggplot2)
+perf@x.values
+df <- data.frame( x = perf@x.values[[1]], y = perf@y.values[[1]] )
+ggplot( df, aes( x = x, y = y ) ) + #
+geom_line()
+library(plyr)#
+library(randomForest)
+rfNews()
+data <- iris
+data
+k <- 5
+sample( 1:k, nrow(data) )
+sample( 1:k, nrow(data), replace = TRUE )
+?randomForest
+?formula
+library(caret)
+head(data)
+?createFolds
+folds <- createFolds( data$Sepal.Length, k = 5, list = TRUE, returnTrain = FALSE )
+folds
+folds[[1]]
+test  <- data[ folds[[1]], ]
+test
+train <- data[ -folds[[1]], ]#
+  test  <- data[ folds[[1]], ]
+model <- randomForest( trainingset$Sepal.Length ~ ., data = train, ntree = 100 )
+train$Sepal.Length
+model <- randomForest( train$Sepal.Length ~ ., data = train, ntree = 100 )
+model
+data.frame( predict( model, test[ , -1 ] ) )
+predict( model, test[ , -1 ] )
+prediction <- vector( mode = "list", length = k )
+actual <- vector( mode = "list", length = k )
+prediction <- vector( mode = "list", length = k )#
+actual <- vector( mode = "list", length = k ) #
+#
+#Creating a progress bar to know the status of CV#
+progress.bar <- create_progress_bar("text")#
+progress.bar$init(k)#
+#
+for( i in 1:k )#
+{#
+    # train / test #
+    train <- data[ -folds[[i]], ]#
+    test  <- data[ folds[[i]], ]#
+#
+    # run a random forest model#
+    model <- randomForest( train$Sepal.Length ~ ., data = train, ntree = 100 )#
+    # remove response column 1, Sepal.Length, and predict#
+    prediction[[i]] <- data.frame( predicted = predict( model, test[ , -1 ] ) )#
+    # append this iteration's test set to the test set copy data frame#
+    # keep only the Sepal Length Column#
+    actual[[i]] <- data.frame( actual = testset[ , 1 ] )#
+    progress.bar$step()#
+}
+progress.bar <- create_progress_bar("text")#
+progress.bar$init(k)#
+#
+for( i in 1:k )#
+{#
+    # train / test #
+    train <- data[ -folds[[i]], ]#
+    test  <- data[ folds[[i]], ]#
+#
+    # run a random forest model#
+    model <- randomForest( train$Sepal.Length ~ ., data = train, ntree = 100 )#
+    # remove response column 1, Sepal.Length, and predict#
+    prediction[[i]] <- data.frame( predicted = predict( model, test[ , -1 ] ) )#
+    # append this iteration's test set to the test set copy data frame#
+    # keep only the Sepal Length Column#
+    actual[[i]] <- data.frame( actual = test[ , 1 ] )#
+    progress.bar$step()#
+}
+prediction
+df <- data.frame( predicted = bind_rows(prediction), actual = bind_rows(actual) )
+library(dplyr)
+df <- data.frame( predicted = bind_rows(prediction), actual = bind_rows(actual) )
+df
+abs( df$actual - df$predicted )
+summary(result$difference)
+result$difference <- abs( df$actual - df$predicted )#
+#
+# mean absolute error as evaluation #
+summary(result$difference)
+df$difference <- abs( df$actual - df$predicted )#
+#
+# mean absolute error as evaluation #
+summary(df$difference)
+prediction <- vector( mode = "list", length = k )#
+actual <- vector( mode = "list", length = k ) #
+#
+# creates a progress bar to know the status of CV#
+progress.bar <- create_progress_bar("text")#
+progress.bar$init(k)#
+#
+for( i in 1:k )#
+{#
+    # train / test #
+    train <- data[ -folds[[i]], ]#
+    test  <- data[ folds[[i]], ]#
+#
+    # run a random forest model#
+    model <- randomForest( train$Sepal.Length ~ ., data = train, ntree = 200 )#
+    # remove response column 1, Sepal.Length, and predict#
+    prediction[[i]] <- data.frame( predicted = predict( model, test[ , -1 ] ) )#
+    # append this iteration's test set to the test set copy data frame#
+    # keep only the Sepal Length Column#
+    actual[[i]] <- data.frame( actual = test[ , 1 ] )#
+    progress.bar$step()#
+}#
+#
+df <- data.frame( predicted = bind_rows(prediction), actual = bind_rows(actual) )#
+#
+df$difference <- abs( df$actual - df$predicted )#
+#
+# mean absolute error as evaluation #
+summary(df$difference)
+library(ggplot2)#
+#
+# example data frame#
+delivery.df <-  data.frame(#
+#
+    Service     = c( rep("Carrier 1", 15), rep("Carrier 2", 15), rep("Carrier 3", 15) ),#
+    Destination = c( rep( c("Office 1", "Office 2", "Office 3", "Office 4", "Office 5" ), 9 ) ),#
+    Time = c( 15.23, 14.32, 14.77, 15.12, 14.05,#
+    15.48, 14.13, 14.46, 15.62, 14.23, 15.19, 14.67, 14.48, 15.34, 14.22,#
+    16.66, 16.27, 16.35, 16.93, 15.05, 16.98, 16.43, 15.95, 16.73, 15.62,#
+    16.53, 16.26, 15.69, 16.97, 15.37, 17.12, 16.65, 15.73, 17.77, 15.52,#
+    16.15, 16.86, 15.18, 17.96, 15.26, 16.36, 16.44, 14.82, 17.62, 15.04)#
+)#
+#
+# display the data, delivery time between three services, across five offices #
+ggplot( delivery.df, aes( x = Destination, y = Time, color = Service ) ) + #
+geom_point()#
+#
+# the plot shows a general pattern of carrier 1 having a shorter delivery time#
+# use a anova test to confirm if there're differences between five offices#
+#
+delivery.mod1 <- aov( Time ~ Destination + Service, data = delivery.df )#
+summary(delivery.mod1)#
+#
+# test to see if there is interaction between the destination and service#
+delivery.mod2 <- aov( Time ~ Destination * Service, data = delivery.df )#
+summary(delivery.mod2)#
+#
+# model.tables works well with anova analysis#
+model.tables( delivery.mod2, "means", se = TRUE )
+delivery.res$M2.Fit   <- fitted(delivery.mod2)#
+delivery.res$M2.Resid <- resid(delivery.mod2)#
+#
+# plot them to see if there're patterns#
+ggplot(delivery.res, aes( M2.Fit, M2.Resid, color = Service ) ) + #
+geom_point() +#
+xlab("Fitted Values") + #
+ylab("Residuals")
+delivery.res <- delivery.df#
+#
+# store the fitted value and residuals#
+delivery.res$M2.Fit   <- fitted(delivery.mod2)#
+delivery.res$M2.Resid <- resid(delivery.mod2)#
+#
+# plot them to see if there're patterns#
+ggplot(delivery.res, aes( M2.Fit, M2.Resid, color = Service ) ) + #
+geom_point() +#
+xlab("Fitted Values") + #
+ylab("Residuals")
+ggplot( delivery.res, aes( sample = M1.Resid ) ) + #
+stat_qq()
+summary(delivery.mod2)
+ggplot( delivery.res, aes( sample = M2.Resid ) ) + #
+stat_qq()
+# logistic regression#
+#
+# environment setting #
+library(ROCR)#
+library(grid)#
+library(broom)#
+library(caret)#
+library(tidyr)#
+library(dplyr)#
+library(scales)#
+library(ggplot2)#
+library(ggthemr)#
+library(ggthemes)#
+library(gridExtra)#
+library(data.table)#
+setwd("/Users/ethen/machine-learning/logistic_regression")#
+#
+# read in HR dataset #
+data <- fread( list.files( "data", full.names = TRUE )[2] )#
+str(data)#
+#
+# using summary to check if columns contain missing values like NAs #
+summary(data)#
+#
+# find correlations to exclude from the model #
+findCorrelation( cor(data), cutoff = .75, names = TRUE )#
+#
+# from this probability table we can see that 16 percent of #
+# your emplyees have left#
+prop.table( table(data$left) )#
+# -------------------------------------------------------------------------#
+#                       Model Training #
+# -------------------------------------------------------------------------#
+#
+# convert the newborn to factor variables#
+data[ , Newborn := as.factor(Newborn) ]#
+#
+# split the dataset into two parts. 80 percent of the dataset will be used to actually #
+# train the model, while the rest will be used to evaluate the accuracy of this model, #
+# i.e. out of sample error#
+set.seed(4321)#
+test <- createDataPartition( data$left, p = .2, list = FALSE )#
+data_train <- data[ -test, ]#
+data_test  <- data[ test, ]#
+rm(data)#
+#
+model_glm <- glm( left ~ . , data = data_train, family = binomial(logit) )#
+summary_glm <- summary(model_glm)#
+#
+# p-value and pseudo r squared #
+list( model_glm_sum$coefficient, #
+      1- ( model_glm_sum$deviance / model_glm_sum$null.deviance ) )#
+#
+# all the p value of the coefficients indicates significance #
+# -------------------------------------------------------------------------#
+#                       Predicting and Assessing the Model #
+# -------------------------------------------------------------------------#
+#
+# obtain the predicted value that a employee will leave in the future on the train#
+# and test set, after that we'll perform a quick evaluation by using the double density plot#
+data_train$prediction <- predict( model_glm, newdata = data_train, type = "response" )#
+data_test$prediction  <- predict( model_glm, newdata = data_test , type = "response" )#
+#
+# given that our model's final objective is to classify new instances #
+# into one of two categories, whether the employee will leave or not#
+# we will want the model to give high scores to positive#
+# instances ( 1: employee left ) and low scores ( 0 : employee stayed ) otherwise. #
+#
+# distribution of the prediction score grouped by known outcome#
+ggplot( data_train, aes( prediction, color = as.factor(left) ) ) + #
+geom_density( size = 1 ) +#
+ggtitle( "Training Set's Predicted Score" ) + #
+scale_color_economist( name = "data", labels = c( "negative", "positive" ) ) + #
+theme_economist()#
+#
+# Ideally you want the distribution of scores to be separated, #
+# with the score of the negative instances to be on the left and the score of the#
+# positive instance to be on the right.#
+# In the current case, both distributions are slight skewed to the left. #
+# Not only is the predicted probability for the negative outcomes low, but #
+# the probability for the positive outcomes are also lower than it should be. #
+# The reason for this is because our dataset only consists of 16 percent of positive #
+# instances ( employees that left ). Thus our predicted scores sort of gets pulled #
+# towards a lower number because of the majority of the data being negative instances.#
+#
+# A slight digression, when developing models for prediction, we all know that we want the model to be#
+# as accurate as possible, or in other words, to do a good job in #
+# predicting the target variable on out of sample observations.#
+#
+# Our plot, however, can actually tell us a very important thing :#
+# Accuracy will not be a suitable measurement for this model #
+#
+# We'll show why below :#
+#
+# Since the prediction of a logistic regression model is a #
+# probability, in order to use it as a classifier, we'll have a choose a cutoff value,#
+# or you can say its a threshold. Where scores above this value will classified as #
+# positive, those below as negative. We'll be using the term cutoff for the rest of #
+# the documentation#
+#
+# Here we'll use a function to loop through several cutoff values and #
+# compute the model's accuracy on both training and testing set#
+source("logistic_regression_code/logistic_functions.R")#
+ggthemr("light")#
+accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, #
+                                     predict = "prediction", actual = "left" )#
+accuracy_info$plot#
+# from the output, you can see that starting from the cutoff value of .6#
+# our accuracy for both training and testing set grows higher and higher showing #
+# no sign of decreasing at all #
+# we'll visualize the confusion matrix of the test set to see what's causing this#
+ggthemr("flat")#
+cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", #
+                                actual = "left", cutoff = .6 )#
+cm_info$plot#
+#
+# wiki : https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Worked_example#
+# The above plot depicts the tradeoff we face upon choosing a reasonable cutoff. #
+#
+# if we increase the cutoff value, #
+# the number of true negative (TN) increases and the number of true positive (TP) decreases.#
+# Or you can say, If we increase the cutoff's value, the number of false positive (FP) is lowered, #
+# while the number of false negative (FN) rises. #
+# Here, because we have very few positive instances, thus our model will be #
+# less likely to make a false negative mistake, so if we keep on adding #
+# the cutoff value, we'll actually increase our model's accuracy, since #
+# we have a higher chance of turning the false positive into true negative. #
+#
+# predict all the test set's outcome as 0#
+prop.table( table( data_test$left ) )#
+#
+# Section conclusion : #
+# Accuracy is not the suitable indicator for the model #
+# for unbalanced distribution or costs#
+#
+# -------------------------------------------------------------------------#
+#                       Choosing the Suitable Cutoff Value #
+# -------------------------------------------------------------------------#
+# use the roc curve to determine the cutoff#
+# it plots the false positive rate (FPR) on the x-axis and the true positive rate (TPR) on the y-axis#
+ggthemr_reset()#
+cm_info$data#
+# different cost for false negative and false positive #
+cost_fp <- 100#
+cost_fn <- 200#
+#
+roc_info <- ROCInfo( data = cm_info$data, predict = "predict", #
+                     actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )#
+grid.draw(roc_info$plot)#
+# re plot the confusion matrix plot #
+ggthemr("flat")#
+cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", #
+                                actual = "left", cutoff = roc_info$cutoff )#
+cm_info$plot
+coefficient <- tidy(model_glm)[ , c( "term", "estimate", "statistic" ) ]
+exp( coefficient$estimate )
+coefficient$estimate <- exp( coefficient$estimate )
+coefficient
+coefficient[ coefficient$term == "S", "estimate" ]

@@ -209,7 +209,7 @@ model_glm &lt;-<span class="st"> </span><span class="kw">glm</span>( left ~<span
 summary_glm &lt;-<span class="st"> </span><span class="kw">summary</span>(model_glm)</code></pre></div>
 <p>Again we’ll quickly check two things for this model. First the p-values. Values below .05 indicates significance, which means the coefficient or so called parameters that are estimated by our model are reliable. And second, the pseudo R square. This value ranging from 0 to 1 indicates how much variance is explained by our model, if you’re familiar with linear regression, this is equivalent to the R squared value, oh, I rounded the value to only show the 2 digits after decimal point.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>( summary_glm$coefficient, 
-     <span class="kw">round</span>( <span class="dv">1</span> -<span class="st"> </span>( summary_glm$deviance /<span class="st"> </span>summary_glm$null.deviance ), <span class="dv">2</span> ) )</code></pre></div>
+      <span class="kw">round</span>( <span class="dv">1</span> -<span class="st"> </span>( summary_glm$deviance /<span class="st"> </span>summary_glm$null.deviance ), <span class="dv">2</span> ) )</code></pre></div>
 <pre><code>## [[1]]
 ##                 Estimate   Std. Error    z value      Pr(&gt;|z|)
 ## (Intercept) -1.250958586 0.1779190471  -7.031055  2.049778e-12
@@ -375,22 +375,22 @@ cm_info$plot</code></pre></div>
 </div>
 <div id="interpretation-and-reporting" class="section level2">
 <h2><span class="header-section-number">0.6</span> Interpretation and Reporting</h2>
-<p>We’ll return to our logistic regression model for a minute, and look at the estiamted parameters (coefficients). Since the model’s parameter the recorded in logit format, we’ll transform it into probability so that it’ll be easier to interpret ( for me … ). The step to do this is to mutiple the parameters by exp, this will give us the odd ratio, then we know that <span class="math inline">\(prob = \frac{odds}{1 + odds} = \frac{1}{1/odds + 1}\)</span>.</p>
+<p>We’ll return to our logistic regression model for a minute, and look at the estiamted parameters (coefficients). Since the model’s parameter the recorded in logit format, we’ll transform it into odds ratio so that it’ll be easier to interpret.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># tidy from the broom package</span>
 coefficient &lt;-<span class="st"> </span><span class="kw">tidy</span>(model_glm)[ , <span class="kw">c</span>( <span class="st">&quot;term&quot;</span>, <span class="st">&quot;estimate&quot;</span>, <span class="st">&quot;statistic&quot;</span> ) ]
 
 <span class="co"># transfrom the coefficient to be in probability format </span>
-coefficient$estimate &lt;-<span class="st"> </span><span class="dv">1</span> /<span class="st"> </span>( <span class="dv">1</span> /<span class="st"> </span><span class="kw">exp</span>( coefficient$estimate ) +<span class="st"> </span><span class="dv">1</span> )
+coefficient$estimate &lt;-<span class="st"> </span><span class="kw">exp</span>( coefficient$estimate )
 coefficient</code></pre></div>
 <pre><code>##          term   estimate  statistic
-## 1 (Intercept) 0.22253425  -7.031055
-## 2           S 0.02256049 -28.104010
-## 3         LPE 0.63706801   2.792652
-## 4          NP 0.40880841 -12.438489
-## 5         ANH 0.50091477   5.264649
-## 6         TIC 0.65157117  20.793447
-## 7    Newborn1 0.16632821 -12.164789</code></pre>
-<p>Some interpretation : With all other input variables unchanged, every unit of increase in the satisfaction level increases the probability of an employee leaving the company by approximately 2 percent.</p>
+## 1 (Intercept) 0.28623029  -7.031055
+## 2           S 0.02308122 -28.104010
+## 3         LPE 1.75533714   2.792652
+## 4          NP 0.69149902 -12.438489
+## 5         ANH 1.00366579   5.264649
+## 6         TIC 1.87002659  20.793447
+## 7    Newborn1 0.19951283 -12.164789</code></pre>
+<p>Some interpretation : With all other input variables unchanged, every unit of increase in the satisfaction level increases the odds of leaving the company (versus not leaving) by a factor of 0.02.</p>
 <p>Now that we have our logistic regression model, we’ll load in the dataset with unknown actual outcome and use the model to predict the probability.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># set the column class </span>
 col_class &lt;-<span class="st"> </span><span class="kw">sapply</span>( data_test, class )[<span class="dv">1</span>:<span class="dv">6</span>]

@@ -108,7 +108,7 @@ Again we'll quickly check two things for this model. First the p-values. Values 
 ```{r}
 
 list( summary_glm$coefficient, 
-	 round( 1 - ( summary_glm$deviance / summary_glm$null.deviance ), 2 ) )
+	  round( 1 - ( summary_glm$deviance / summary_glm$null.deviance ), 2 ) )
 
 ```
 
@@ -294,8 +294,7 @@ The confusion matrix plot clearly shows that when changing the cutoff value to `
 
 ## Interpretation and Reporting 
 
-We'll return to our logistic regression model for a minute, and look at the estiamted parameters (coefficients). Since the model's parameter the recorded in logit format, we'll transform it into probability so that it'll be easier to interpret ( for me ... ). The step to do this is to mutiple the parameters by exp, this will give us the odd ratio, then we know that 
-$prob = \frac{odds}{1 + odds} = \frac{1}{1/odds + 1}$.
+We'll return to our logistic regression model for a minute, and look at the estiamted parameters (coefficients). Since the model's parameter the recorded in logit format, we'll transform it into odds ratio so that it'll be easier to interpret. 
 
 ```{r}
 
@@ -303,12 +302,12 @@ $prob = \frac{odds}{1 + odds} = \frac{1}{1/odds + 1}$.
 coefficient <- tidy(model_glm)[ , c( "term", "estimate", "statistic" ) ]
 
 # transfrom the coefficient to be in probability format 
-coefficient$estimate <- 1 / ( 1 / exp( coefficient$estimate ) + 1 )
+coefficient$estimate <- exp( coefficient$estimate )
 coefficient
 
 ```
 
-Some interpretation : With all other input variables unchanged, every unit of increase in the satisfaction level increases the probability of an employee leaving the company by approximately `r round( coefficient[ coefficient$term == "S", "estimate" ], 2 ) * 100` percent.
+Some interpretation : With all other input variables unchanged, every unit of increase in the satisfaction level increases the odds of leaving the company (versus not leaving) by a factor of `r round( coefficient[ coefficient$term == "S", "estimate" ], 2 )`.
 
 Now that we have our logistic regression model, we'll load in the dataset with unknown actual outcome and use the model to predict the probability.
 

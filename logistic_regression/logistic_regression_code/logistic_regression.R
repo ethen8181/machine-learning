@@ -176,11 +176,11 @@ cm_info$plot
 # tidy from the broom package
 coefficient <- tidy(model_glm)[ , c( "term", "estimate", "statistic" ) ]
 
-# transfrom the coefficient to be in probability format 
-coefficient$estimate <- 1 / ( 1 / exp( coefficient$estimate ) + 1 )
+coefficient$estimate <- exp( coefficient$estimate )
 
+# one unit increase in statisfaction, the odds of leaving the company 
+# (versus not leaving) increase by a factor of
 coefficient[ coefficient$term == "S", "estimate" ]
-
 
 # use the model to predict a unknown outcome data "HR_unknown.csv"
 # specify the column's class 
