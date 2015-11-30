@@ -115,7 +115,7 @@ img {
 <div id="background-information" class="section level2">
 <h2><span class="header-section-number">0.1</span> Background Information</h2>
 <p>Logistic regression is a technique that is well suited for binary classification problems. After giving the model your input parameters ( or called variables, predictors ), the model will calculate the probability that each observation will belong to one of the two classes ( depending on which one you’re choosing as the “positive” class ). The math formula of this regression :</p>
-<p><span class="math display">\[ P(y) = \frac{1}{ 1 + e^{ ( B_0 + B_1X_1 + \dots + B_nX_n ) } } \]</span></p>
+<p><span class="math display">\[ P(y) = \frac{1}{ 1 + e^{ -( B_0 + B_1X_1 + \dots + B_nX_n ) } } \]</span></p>
 <p>Where <span class="math inline">\(P(y)\)</span> is the calculated probability ; the <span class="math inline">\(B\)</span>s denotes the model’s parameters and <span class="math inline">\(X\)</span>s refer to your input parameters.</p>
 </div>
 <div id="problem-description" class="section level2">

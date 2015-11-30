@@ -17,7 +17,7 @@ Link to the dataset and R scripts are provided at the end the documentation.
 
 Logistic regression is a technique that is well suited for binary classification problems. After giving the model your input parameters ( or called variables, predictors ), the model will calculate the probability that each observation will belong to one of the two classes ( depending on which one you're choosing as the "positive" class ). The math formula of this regression : 
 
-$$ P(y) = \frac{1}{ 1 + e^{ ( B_0 + B_1X_1 + \dots + B_nX_n ) } } $$
+$$ P(y) = \frac{1}{ 1 + e^{ -( B_0 + B_1X_1 + \dots + B_nX_n ) } } $$
 
 Where $P(y)$ is the calculated probability ; the $B$s denotes the model's parameters and $X$s refer to your input parameters.
 
