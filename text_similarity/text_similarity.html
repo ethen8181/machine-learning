@@ -136,13 +136,14 @@ img {
 </li>
 <li>Transform all letters to lower cases.<br />
 </li>
-<li>Convert extra white space as a single blank.<br />
-</li>
+<li>Convert extra white space as a single blank, and remove white spaces up front and at the end.</li>
 <li>Split the text string into separate words.</li>
 </ul>
 <p>Link to the dataset is provided at the end.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># environment setting</span>
+<span class="kw">library</span>(dplyr)
 <span class="kw">library</span>(proxy)
+<span class="kw">library</span>(stringr)
 <span class="kw">library</span>(data.table)
 <span class="kw">setwd</span>(<span class="st">&quot;/Users/ethen/machine-learning/text_similarity/data&quot;</span>)
 
@@ -161,7 +162,7 @@ doc</code></pre></div>
 doc1 &lt;-<span class="st"> </span><span class="kw">lapply</span>( doc, function(x)
 {
     text &lt;-<span class="st"> </span><span class="kw">gsub</span>( <span class="st">&quot;[[:punct:]]&quot;</span>, <span class="st">&quot;&quot;</span>, x ) %&gt;%<span class="st"> </span><span class="kw">tolower</span>()
-    text &lt;-<span class="st"> </span><span class="kw">gsub</span>( <span class="st">&quot;</span><span class="ch">\\</span><span class="st">s+&quot;</span>, <span class="st">&quot; &quot;</span>, text )   
+    text &lt;-<span class="st"> </span><span class="kw">gsub</span>( <span class="st">&quot;</span><span class="ch">\\</span><span class="st">s+&quot;</span>, <span class="st">&quot; &quot;</span>, text ) %&gt;%<span class="st"> </span><span class="kw">str_trim</span>()    
     word &lt;-<span class="st"> </span><span class="kw">strsplit</span>( text, <span class="st">&quot; &quot;</span> ) %&gt;%<span class="st"> </span><span class="kw">unlist</span>()
     <span class="kw">return</span>(word)
 })
@@ -185,7 +186,7 @@ Shingling &lt;-<span class="st"> </span>function( document, k )
     <span class="kw">return</span>( <span class="kw">unique</span>(shingles) )  
 }
 
-<span class="co"># &quot;shingle&quot; to our example document, with k = 3</span>
+<span class="co"># &quot;shingle&quot; our example document, with k = 3</span>
 doc1 &lt;-<span class="st"> </span><span class="kw">lapply</span>( doc1, function(x)
 {
     <span class="kw">Shingling</span>( x, <span class="dt">k =</span> <span class="dv">3</span> )
@@ -477,14 +478,14 @@ rows &lt;-<span class="st"> </span><span class="kw">nrow</span>(SM) /<span class
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] data.table_1.9.6 proxy_0.4-15     dplyr_0.4.3     
+## [1] data.table_1.9.6 stringr_1.0.0    proxy_0.4-15     dplyr_0.4.3     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.1     digest_0.6.8    assertthat_0.1  chron_2.3-47   
+##  [1] Rcpp_0.12.2     digest_0.6.8    assertthat_0.1  chron_2.3-47   
 ##  [5] R6_2.1.1        DBI_0.3.1       formatR_1.2.1   magrittr_1.5   
 ##  [9] evaluate_0.8    stringi_1.0-1   lazyeval_0.1.10 rmarkdown_0.8  
-## [13] tools_3.2.2     stringr_1.0.0   yaml_2.1.13     parallel_3.2.2 
-## [17] htmltools_0.2.6 knitr_1.11</code></pre>
+## [13] tools_3.2.2     yaml_2.1.13     parallel_3.2.2  htmltools_0.2.6
+## [17] knitr_1.11</code></pre>
 </div>
 
 

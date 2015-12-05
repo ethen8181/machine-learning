@@ -10,6 +10,8 @@ output:
     toc: yes
 ---
 
+> This documentation assumes you are familiar with hierarchical clustering.
+
 ## Background Information 
 
 tf-idf is short for term frequency–inverse document frequency. This is a numeric measure that's use to score the importance of a word in a document based on how often did it appear in that document and a collection of documents. The intuition for this measurement is : If a word appears frequently in a document, its should be important. we should give that the word a high score. But if a word appears in many documents, it's probably not a unique identifier, give that word a low score. The math formula for this measure :
@@ -84,7 +86,7 @@ Now that we have our matrix with the term frequency and the idf weight, we're re
 # diagonal matrix
 ( idf <- diag(idf) )
 
-tf_idf <- t(tf) %*% idf
+tf_idf <- crossprod( tf, idf )
 colnames(tf_idf) <- rownames(tf)
 tf_idf
 
@@ -131,13 +133,14 @@ Where v and w are the two vectors that you wish to calculate the distance; $v_i$
 a <- c( 3, 4 )
 b <- c( 5, 6 )
 
-# cosine 
+# cosine value and corresponding degree
 l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
-l$numerator / l$denominator
+list( cosine = l$numerator / l$denominator, 
+      degree = acos( l$numerator / l$denominator ) * 180 / pi )
 
 ```
 
-After calculating $cos(\theta)$, you can also obtain the actual $\theta$ (degree) using the `acos` function in R.
+After calculating $cos(\theta)$, you can also obtain the actual $\theta$ (degree) using the `acos` function in R. Note that the function returns the radian, you have to multiply it by 180 and divide by pi to obtain the actual degrees.
 
 As for why we're using this distance measure, remember what we've said in the normalization part, since documents are usually not of equal length, simply computing the difference between two vectors by using euclidean distance has the disadvantage that documents of similar content but different length are not regarded as similar in the vector space.   
 
@@ -157,13 +160,13 @@ These are some news articles collected from the BBC website, data consists of `r
 The following code : 
 
 1. Calculate the tf-idf for this document collection.  
-2. Define our cosine distance.
+2. Define our cosine distance. 
 3. Set this pre-defined cosine distance into R `proxy` library's database (backbone for the `dist` function) and caculate the pairwise distance matrix using cosine distance, performs hierarchical clustering using this matrix and visualize the clustering result with the dendogram. Note that we WON'T be needing to normalize the tf-idf matrix before calculating the cosine distance, cosine distance will do that for us.
 ( This documentation assumes that you are famaliar with heirarchical clustering and how to do it in R, so sorry for not explaining too much. )
 
-```{r, fig.width=10}
+```{r, fig.width=10, fig.height=6}
 
-# -- Step 1 --------------------------------------------------------------------------
+# -- Step 1 --
 # [TFIDF] :
 # @vector = pass in a vector of documents  
 TFIDF <- function( vector )
@@ -176,13 +179,13 @@ TFIDF <- function( vector )
 	# idf
 	idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) %>% diag()
 
-	return( t(tf) %*% idf )
+	return( crossprod( tf, idf ) )
 }
 
 # tf-idf matrix using news' title 
 news_tf_idf <- TFIDF(news$title)
 
-# -- Step 2 --------------------------------------------------------------------------
+# -- Step 2 --
 # [Cosine] :
 # distance between two vectors
 Cosine <- function( x, y )
@@ -194,28 +197,38 @@ Cosine <- function( x, y )
 	return( acos(similarity) * 180 / pi )
 }
 
-# -- Step 3 --------------------------------------------------------------------------
+# -- Step 3 --
 # calculate pair-wise distance matrix 
 pr_DB$set_entry( FUN = Cosine, names = c("Cosine") )
-d <- dist( news_tf_idf, method = "Cosine" )
+d1 <- dist( news_tf_idf, method = "Cosine" )
 pr_DB$delete_entry( "Cosine" )
 
 # heirachical clustering 
-cluster <- hclust( d, method = "ward.D" )
-plot(cluster)
+cluster1 <- hclust( d1, method = "ward.D" )
+plot(cluster1)
+rect.hclust( cluster1, 17 )
 
 ```
 
-After obtaining this dendogram, we'll do a quick manual inspection at the partial results. 
+After plotting the dendogram, I have decided that it should partitioned into 17 cluster ( Simply change it if you disagree ). A quick digression about the code chunck above. There's a built in cosine distance in r already. So you don't have to define one yourself now that you've understand the implementation. Simply change the dist calculation to `dist( news_tf_idf, method = "cosine" )`. 
+
+We'll examine three potential cluster that the algorithm provided and print out the original news to determine whether the result matches our intuition.
 
 ```{r}
 
-# manually examine some potential small cluster 
-list( news$title[ c( 8, 9, 22, 36, 69 ) ], news$title[ c( 55, 57, 66 ) ] )
+# split into 17 clusters
+groups1 <- cutree( cluster1, 17 )
+
+# you can look at the distribution size of each cluster 
+# table(groups1)
+
+news$title[ groups1 == 2 ]
+news$title[ groups1 == 7 ]
+news$title[ groups1 == 17 ]
 
 ```
 
-Overall, the first small cluster seems to be about China and UK, as the second cluster's news are all related Uighurs. Not bad, huh ? Given the fact that we're only using news' title instead of the entire news' article to represent the news. Since clustering is an unsupervised algorithm (meaning there're probably no such thing as a one hundred percent correct answer), I'll leave it to you to decide whether the clustering results are actually acceptable. 
+Overall, news' in the first cluster is mostly referring to something about Taiwan. The second cluster seems to be talking about China and UK, and the third cluster's news are all related Uighurs. Not bad, huh? Given the fact that we're only using news' title instead of the entire news' article to represent the news. Since clustering is an unsupervised algorithm (meaning there're probably no such thing as a one hundred percent correct answer), I'll leave it to you to decide whether the clustering results are actually acceptable. 
 
 One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom). 
 

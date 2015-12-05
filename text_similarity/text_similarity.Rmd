@@ -20,15 +20,17 @@ We'll use three documents as our toy example. The following section loads them i
 
 - Removing any punctuation mark.  
 - Transform all letters to lower cases.  
-- Convert extra white space as a single blank.  
+- Convert extra white space as a single blank, and remove white spaces up front and at the end. 
 - Split the text string into separate words.
 
 Link to the dataset is provided at the end.
 
 ```{r, message = FALSE, warning = FALSE}
 
+# environment setting
 library(dplyr)
 library(proxy)
+library(stringr)
 library(data.table)
 setwd("/Users/ethen/machine-learning/text_similarity/data")
 
@@ -40,7 +42,7 @@ doc
 doc1 <- lapply( doc, function(x)
 {
 	text <- gsub( "[[:punct:]]", "", x ) %>% tolower()
-	text <- gsub( "\\s+", " ", text )	
+	text <- gsub( "\\s+", " ", text ) %>% str_trim()	
 	word <- strsplit( text, " " ) %>% unlist()
 	return(word)
 })
@@ -67,7 +69,7 @@ Shingling <- function( document, k )
 	return( unique(shingles) )	
 }
 
-# "shingle" to our example document, with k = 3
+# "shingle" our example document, with k = 3
 doc1 <- lapply( doc1, function(x)
 {
 	Shingling( x, k = 3 )

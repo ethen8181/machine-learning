@@ -14,7 +14,7 @@ doc <- lapply( list.files(), readLines )
 doc1 <- lapply( doc, function(x)
 {
 	text <- gsub( "[[:punct:]]", "", x ) %>% tolower()
-	text <- gsub( "\\s+", " ", text )	
+	text <- gsub( "\\s+", " ", text ) %>% str_trim()	
 	word <- strsplit( text, " " ) %>% unlist()
 	return(word)
 })
@@ -22,13 +22,13 @@ doc1 <- lapply( doc, function(x)
 
 # ------------------------------------------
 # test code, not implemented
-# doc1 <- lapply( doc, function(x)
-# {
-# 	 text <- gsub( "[[:punct:]]|\\s+", "", x ) %>% tolower()
-#	 return(text)
-# })
+doc1 <- lapply( doc, function(x)
+{
+ 	text <- gsub( "[[:punct:]]|\\s+", "", x ) %>% tolower()
+	return(text)
+})
 
-# letter shingling
+# letter (character) shingling
 Shingling <- function( document, k )
 {
 	shingles <- character( length = nchar(document) - k + 1 )	
@@ -47,7 +47,7 @@ Shingling <- function( document, k )
 #                  Shingling 
 # ---------------------------------------------------------------------------------
 
-# character shingling
+# word shingling
 Shingling <- function( document, k )
 {
 	shingles <- character( length = ( length(document) - k + 1 ) )
@@ -56,7 +56,7 @@ Shingling <- function( document, k )
 	{
 		shingles[i] <- paste( document[ i:( i + k - 1 ) ], collapse = " " )
 	}
-	return(shingles)	
+	return( unique(shingles) )
 }
 
 doc1 <- lapply( doc1, function(x)
@@ -98,7 +98,7 @@ JaccardSimilarity <- function( x, y )
 # create a new entry in the registry
 pr_DB$set_entry( FUN = JaccardSimilarity, names = c("JaccardSimilarity") )
 
-# cosine degree distance matrix 
+# distance matrix 
 d1 <- dist( t(M), method = "JaccardSimilarity" )
 
 # delete entry

@@ -27,7 +27,8 @@ tf <- as.matrix(tdm)
 ( idf <- diag(idf) )
 
 # remember to transpose the original tf matrix
-tf_idf <- t(tf) %*% idf
+# equivalent to t(tf) %*% idf, but crossprod is faster 
+tf_idf <- crossprod( tf, idf )
 colnames(tf_idf) <- rownames(tf)
 tf_idf
 
@@ -38,6 +39,16 @@ tf_idf / sqrt( rowSums( tf_idf^2 ) )
 # -----------------------------------------------------------------------------------
 #                                    Text Clustering
 # -----------------------------------------------------------------------------------
+
+# example 
+a <- c( 3, 4 )
+b <- c( 5, 6 )
+
+# cosine 
+l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
+list( cosine = l$numerator / l$denominator, 
+      degree = acos( l$numerator / l$denominator ) * 180 / pi )
+
 
 setwd("/Users/ethen/machine-learning/tf_idf")
 news <- read.csv( "news.csv", stringsAsFactors = FALSE )
@@ -54,7 +65,7 @@ TFIDF <- function( vector )
 	# idf
 	idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) %>% diag()
 
-	return( t(tf) %*% idf )
+	return( crossprod( tf, idf ) )
 }
 
 # tf-idf matrix using news' title 
@@ -74,14 +85,24 @@ Cosine <- function( x, y )
 
 # calculate pair-wise distance matrix 
 pr_DB$set_entry( FUN = Cosine, names = c("Cosine") )
-d <- dist( news_tf_idf, method = "Cosine" )
+d1 <- dist( news_tf_idf, method = "Cosine" )
 pr_DB$delete_entry( "Cosine" )
 
-# heirachical clustering 
-cluster <- hclust( d, method = "ward.D" )
-plot(cluster)
+# equivalent to the built in "cosine" distance 
+# d <- dist( news_tf_idf, method = "cosine" )
 
-# manually examine some cluster 
-list( news$title[ c( 8, 9, 22, 36, 69 ) ], news$title[ c( 55, 57, 66 ) ] )
+# heirachical clustering 
+cluster1 <- hclust( d1, method = "ward.D" )
+plot(cluster1)
+rect.hclust( cluster1, 17 )
+groups1 <- cutree( cluster1, 17 )
+# table(groups1)
+
+news$title[ groups1 == 2 ]
+news$title[ groups1 == 7 ]
+news$title[ groups1 == 17 ]
+
+
+
 
 

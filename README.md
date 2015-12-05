@@ -1,17 +1,14 @@
 # machine-learning
 
-Learning machine learning and data mining techniques as a novice. Each folder is independent of one another.
+Documenting machine learning and data mining techniques. Each folder’s work is independent of one another.
 
 **Coursera : 2015.10.16** ( fix document later)
 
 Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
 
-- `machine-learning.md` Project report viewable on github.
-- `machine-learning.R` R code for used in the report, it may contain other testing codes that were not used in the report.
-
 **ROC : 2015.10.16** ( kept for personal reference, view the logistic_regression folder instead )
 
-Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset (data included in the folder).
+Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset.
 
 **clustering : 2015.11.6**
 
