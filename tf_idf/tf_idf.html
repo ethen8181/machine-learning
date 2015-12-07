@@ -160,10 +160,10 @@ doc &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&q
     0 &amp; \text{, otherwise}\\
   \end{cases}
 \]</span></p>
-<p>Of course, as with all text mining methods, stop words like “a”, “the” and punctuation marks will removed beforehand.</p>
+<p>Of course, as with common text mining methods: stop words like “a”, “the”, punctuation marks will be removed beforehand and words will all be converted to lower cases.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># create term frequency matrix using functions from tm library</span>
 doc_corpus &lt;-<span class="st"> </span><span class="kw">Corpus</span>( <span class="kw">VectorSource</span>( doc ) )
-control_list &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">removePunctuation =</span> <span class="ot">TRUE</span>, <span class="dt">stopwords =</span> <span class="ot">TRUE</span> )
+control_list &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">removePunctuation =</span> <span class="ot">TRUE</span>, <span class="dt">stopwords =</span> <span class="ot">TRUE</span>, <span class="dt">tolower =</span> <span class="ot">TRUE</span> )
 tdm &lt;-<span class="st"> </span><span class="kw">TermDocumentMatrix</span>( doc_corpus, <span class="dt">control =</span> control_list )
 
 <span class="co"># print</span>
@@ -301,7 +301,7 @@ TFIDF &lt;-<span class="st"> </span>function( vector )
 {
     <span class="co"># tf </span>
     news_corpus  &lt;-<span class="st"> </span><span class="kw">Corpus</span>( <span class="kw">VectorSource</span>(vector) )
-    control_list &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">removePunctuation =</span> <span class="ot">TRUE</span>, <span class="dt">stopwords =</span> <span class="ot">TRUE</span> )
+    control_list &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">removePunctuation =</span> <span class="ot">TRUE</span>, <span class="dt">stopwords =</span> <span class="ot">TRUE</span>, <span class="dt">tolower =</span> <span class="ot">TRUE</span> )
     tf &lt;-<span class="st"> </span><span class="kw">TermDocumentMatrix</span>( news_corpus, <span class="dt">control =</span> control_list ) %&gt;%<span class="st"> </span><span class="kw">as.matrix</span>()
 
     <span class="co"># idf</span>

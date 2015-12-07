@@ -13,7 +13,7 @@ doc <- c( "The sky is blue.", "The sun is bright today.",
 # stop words list 
 # stopwords("english")
 doc_corpus <- Corpus( VectorSource( doc ) )
-control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
 tdm <- TermDocumentMatrix( doc_corpus, control = control_list )
 # inspect(tdm_train)
 
@@ -59,7 +59,7 @@ TFIDF <- function( vector )
 {
 	# tf 
 	news_corpus  <- Corpus( VectorSource(vector) )
-	control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+	control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
 	tf <- TermDocumentMatrix( news_corpus, control = control_list ) %>% as.matrix()
 
 	# idf
@@ -89,7 +89,7 @@ d1 <- dist( news_tf_idf, method = "Cosine" )
 pr_DB$delete_entry( "Cosine" )
 
 # equivalent to the built in "cosine" distance 
-# d <- dist( news_tf_idf, method = "cosine" )
+# d1 <- dist( news_tf_idf, method = "cosine" )
 
 # heirachical clustering 
 cluster1 <- hclust( d1, method = "ward.D" )
@@ -102,7 +102,43 @@ news$title[ groups1 == 2 ]
 news$title[ groups1 == 7 ]
 news$title[ groups1 == 17 ]
 
+# -----------------------------------------------------------------------------------
+# start from here 
+
+rect.hclust( cluster1, 8 )
+groups2 <- cutree( cluster1, 8 )
+
+lapply( 1:length( unique(groups2) ), function(i) news$title[ groups2 == i ] )
+
+LDACaculation <- function(vector)
+{
+	news_corpus  <- Corpus( VectorSource(vector) )
+	control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
+	dtm <- DocumentTermMatrix( news_corpus, control = control_list )
+	lda <- LDA( dtm, k = 8, method = "Gibbs", 
+	   		    control = list( seed = 1234, 
+	   		    				burnin = 500, 
+	   		    				thin = 100, iter = 1000 ) )
+	return(lda)	
+}
+
+lda <- LDACaculation( news$title )
 
 
+topics(lda)
+table( topics(lda) )
+lapply( 1:length( unique( topics(lda) ) ), function(i) news$title[ topics(lda) == i ] )
 
+
+terms( lda, 6 )
+
+lda@gamma
+lda@alpha
+posterior(lda)$documents
+
+best_topics <- data.frame( best = apply( posterior(lda)$topics, 1, max ) )
+
+library(ggplot2)
+ggplot( best_topics, aes( best ) ) + 
+geom_histogram()
 

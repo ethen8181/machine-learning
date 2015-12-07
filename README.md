@@ -1,6 +1,10 @@
 # machine-learning
 
+#### Repository Description
+
 Documenting machine learning and data mining techniques. Each folder’s work is independent of one another.
+
+#### Documentation Listings
 
 **Coursera : 2015.10.16** ( fix document later)
 
@@ -17,6 +21,13 @@ Some useful evaluations when working with hierarchical clustering and k-means cl
 - Calinski-Harabasz index : Determine the right k ( cluster number ) for clustering.
 - Boostrap evaluation of the clustering result’s stability.
 - View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html).
+
+**lda_1 : ** in progress 
+
+Performing text clustering with Latent Dirichlet Allocation(LDA).
+
+- Toy sample code of the gibbs sampling version.
+- View document [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)
 
 **linear regression : 2015.10.30**
 

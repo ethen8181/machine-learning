@@ -1,0 +1,204 @@
+---
+title: "Latent Dirichlet Allocation Using Gibbs Sampling"
+author: "Ming-Yu Liu"
+date: "December 7, 2015"
+output: 
+  html_document: 
+    highlight: tango
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+---
+
+## Background Information 
+
+Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they're on your site. 
+
+Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important and that's where tagging comes in. Everyone’s way of thinking about things may differ so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.
+
+## Latent Dirichlet Allocation
+
+The technique 
+
+
+There're different approaches to this algorithm, the one we'll be using is gibbs sampling. We'll use 8 short strings to represent our set of documents. The following section creates the set the documents and convert each document into word ids, where word ids is just the ids assigned to each unique word in the set of document ( We're dropping the issue of stemming words, removing multiple white spaces and other common preprocessing steps when performing text mining algorithms as this is a fairly simple set of document ).
+
+```{r}
+
+rawdocs <- c(
+
+	"eat turkey on turkey day holiday",
+	"i like to eat cake on holiday",
+	"turkey trot race on thanksgiving holiday",
+	"snail race the turtle",
+	"time travel space race",
+	"movie on thanksgiving",
+	"movie at air and space museum is cool movie",
+	"aspiring movie star"
+)
+docs <- strsplit( rawdocs, split = " " )
+
+# unique words
+vocab <- unique( unlist(docs) )
+
+# replace words in documents with wordIDs
+for( i in 1:length(docs) )
+	docs[[i]] <- match( docs[[i]], vocab )
+docs
+
+```
+
+A slight drawback of latent dirichlet allocation is that you have to specify the number of clusters first, or in other words you have to specify the number of clusters upfront ( denoted by K ). In our cases we'll use 2.
+
+The first step of the algorithm is to go through each document and randomly assign each word in the document to one of the K topics. Apart from generating this **topic assignment list**, we'll also create a **word-topic matrix**, which is the count of each word being assigned to each topic. And a **document-topic matrix**, which is the number of words assigned to each topic for each document (distribution of the topic assignment list). We'll be using the later two matrices throughout the process of the algorithm.
+
+```{r}
+
+# cluster number 
+K <- 2 
+
+# initialize count matrices 
+# @wt : word-topic matrix 
+wt <- matrix( 0, K, length(vocab) )
+colnames(wt) <- vocab
+
+# @ta : topic assignment list
+ta <- lapply( docs, function(x) rep( 0, length(x) ) ) 
+names(ta) <- paste0( "doc", 1:length(docs) )
+
+# @dt : counts correspond to the number of words assigned to each topic for each document
+dt <- matrix( 0, length(docs), K )
+
+set.seed(1234)
+for( d in 1:length(docs) )
+{ 
+	# randomly assign topic to word w
+	for( w in 1:length( docs[[d]] ) )
+	{
+		ta[[d]][w] <- sample( 1:K, 1 ) 
+
+		# extract the topic index, word id and update the corresponding cell 
+		# in the word-topic count matrix  
+		ti <- ta[[d]][w]
+		wi <- docs[[d]][w]
+		wt[ ti, wi ] <- wt[ ti, wi ] + 1    
+	}
+
+	# count words in document d assigned to each topic t
+	for( t in 1:K )
+	{	  
+		dt[ d, t ] <- sum( ta[[d]] == t ) 
+	}
+}
+
+# randomly assigned topic to each word
+print(ta)
+print(wt)
+print(dt)
+
+```
+
+Notice that this random assignment already gives you both the topic representations of all the documents and word distributions of all the topics, albeit not very good ones. So to improve them, we'll employ the gibbs sampling method that performs the following steps for a user-specified iteration: 
+
+For each document d, go through each word w (a double for loop). Reassign a new topic to w, where we choose topic t with the probability of word w given topic t $\times$ probability of topic t given document d, denoted by the following mathematical notations: 
+
+$$ P( z_i = j \text{ }| \text{ } z_{-i}, w_i, d_i ) 
+    = \frac{ C^{WT}_{w_ij} + \eta }{ \sum^W_{ w = 1 }C^{WT}_{wj} + W\eta } \times
+      \frac{ C^{DT}_{d_ij} + \alpha }{ \sum^T_{ t = 1 }C^{DT}_{d_it} + T\alpha }
+$$
+
+Let's try and break that down piece by piece..... 
+
+Starting from the left side of the equal sign:
+
+- **$P(z_i = j)$ :** The probability that token i is assigned to topic j.
+- **$z_{-i}$ :** Represents topic assignments of all other tokens.
+- **$w_i$ :** Word (index) of the $i_{th}$ token.
+- **$d_i$ :** Document containing the $i_{th}$ token.
+
+For the right side of the equal sign:
+
+- **$C^{WT}$ :** Word-topic matrix, the `wt` matrix we generated.
+- **$\sum^W_{ w = 1 }C^{WT}_{wj}$ :** Total number of tokens (words) in each topic.
+- **$C^{DT}$ :** Document-topic matrix, the `dt` matrix we generated.
+- **$\sum^T_{ t = 1 }C^{DT}_{d_it}$ :** Total number of tokens (words) in document i.
+- **$\eta$ :** Think of them as some parameters for the model for now.
+- **$\alpha$ :** Think of them as some parameters for the model for now.
+- **$W$ :** Total number of words in the set of documents. 
+- **$T$ :** Number of topics, equivalent of the K we defined earlier. 
+
+It may be still confusing with all of that notations, the following section goes through the computation for one iteration. The topic of the first word in the first document is resampled as follow: The output will not be printed during the process, since it'll probably make the documentation messier.
+
+```{r}
+
+# parameters 
+alpha <- 1 
+eta <- .001
+
+# initial topics assigned to the first word of the first document
+# and its corresponding word id 
+t0  <- ta[[1]][1]
+wid <- docs[[1]][1]
+
+# z_-i means that we do not include token w in our word-topic and document-topic 
+# count matrix when sampling for token w, 
+# only leave the topic assignments of all other tokens for document 1
+dt[ 1, t0 ]   <- dt[ 1, t0 ] - 1 
+wt[ t0, wid ] <- wt[ t0, wid ] - 1
+
+# Calculate left side and right side of equal sign
+left  <- ( wt[ , wid ] + eta ) / ( rowSums(wt) + length(vocab) * eta )
+right <- ( dt[ 1, ] + alpha ) / ( sum( dt[ 1, ] ) + K * alpha )
+
+# draw new topic for the first word in the first document 
+t1 <- sample( 1:K, 1, prob = left * right )
+t1
+
+```
+
+After the first iteration, the topic for the first word in the first document is updated to `r t1`. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.
+
+To conserve space, we'll put in into a function [`LDA1`][LDA]. It takes the paramters of:
+
+- `docs` Document that have be converted to token (word) ids.
+- `vocab` Unique tokens (words) for all the document collection.
+- `K` Number of topic groups.
+- `alpha` and `eta` Will be explained later.
+- `iterations` Number of iterations to run gibbs sampling to train our model.
+- Returns a list containing the final weight-topic count matrix `wt` and document-topic matrix `dt`.
+
+```{r}
+
+# define parameters
+K <- 2 
+alpha <- 1 
+eta <- .001 
+iterations <- 100
+
+# source in function
+source("/Users/ethen/machine-learning/lda_1/lda_1_functions.R")
+lda1 <- LDA1( docs = docs, vocab = vocab, 
+			  K = K, alpha = 1, eta = .001, iterations = iterations )
+lda1
+
+```
+
+## Reference
+
+1. R code reimplemented for this blog post: http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/
+2. Why tagging matters: http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf
+3. Mathematical Notations:
+https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
+4. Great math free explanation of LDA: http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/
+
+## R Session Information 
+
+```{r}
+
+sessionInfo()
+
+```
+
+
+[LDA]: 
+

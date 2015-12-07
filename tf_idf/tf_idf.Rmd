@@ -45,13 +45,13 @@ $$ tf( t, d ) =
   \end{cases}
 $$
 
-Of course, as with all text mining methods, stop words like "a", "the" and punctuation marks will removed beforehand. 
+Of course, as with common text mining methods: stop words like "a", "the", punctuation marks will be removed beforehand and words will all be converted to lower cases. 
 
 ```{r} 
 
 # create term frequency matrix using functions from tm library
 doc_corpus <- Corpus( VectorSource( doc ) )
-control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
 tdm <- TermDocumentMatrix( doc_corpus, control = control_list )
 
 # print
@@ -173,7 +173,7 @@ TFIDF <- function( vector )
 {
 	# tf 
 	news_corpus  <- Corpus( VectorSource(vector) )
-	control_list <- list( removePunctuation = TRUE, stopwords = TRUE )
+	control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
 	tf <- TermDocumentMatrix( news_corpus, control = control_list ) %>% as.matrix()
 
 	# idf
