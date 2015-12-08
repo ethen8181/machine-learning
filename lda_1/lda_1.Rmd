@@ -34,7 +34,7 @@ $$ \phi \sim Dirichlet(\eta) $$
 
 The utmost goal of LDA is to estimate the $\theta$ and $\phi$ which is equivalent to estimate which words are important for which topic and which topics are important for a particular document, respectively.
 
-The basic idea behind the parameters for the Dirichlet distribution ( here I'm referring to the symmetrical version of the distribution which the general case for LDA ) is: $\alpha$ The higher the value the more likely each document is to contain a mixture of most of the topics instead of any single topic. The same goes for $\eta$, where higher value denotes that each topic is likely to contain a mixture of most of the words, and not any word specifically.
+The basic idea behind the parameters for the Dirichlet distribution ( here I'm referring to the symmetrical version of the distribution, which is the general case for most LDA ) is: $\alpha$ The higher the value the more likely each document is to contain a mixture of most of the topics instead of any single topic. The same goes for $\eta$, where higher value denotes that each topic is likely to contain a mixture of most of the words and not any word specifically.
 
 There're different approaches to this algorithm, the one we'll be using is gibbs sampling. We'll use 8 short strings to represent our set of documents. The following section creates the set the documents and convert each document into word ids, where word ids is just the ids assigned to each unique word in the set of document. We're dropping the issue of stemming words, removing multiple white spaces and other common preprocessing steps when performing text mining algorithms as this is a fairly simple set of document.
 
@@ -137,8 +137,8 @@ For the right side of the equal sign:
 - **$\sum^W_{ w = 1 }C^{WT}_{wj}$ :** Total number of tokens (words) in each topic.
 - **$C^{DT}$ :** Document-topic matrix, the `dt` matrix we generated.
 - **$\sum^T_{ t = 1 }C^{DT}_{d_it}$ :** Total number of tokens (words) in document i.
-- **$\eta$ :** Think of them as some parameters for the model for now. 
-- **$\alpha$ :** Think of them as some parameters for the model for now.
+- **$\eta$ :** Parameter that sets the topic distribution for the words, the higher the more spread out the words will be across the specified number of topics (K). 
+- **$\alpha$ :** Parameter that sets the topic distribution for the documents, the higher the more spread out the documents will be across the specified number of topics (K).
 - **$W$ :** Total number of words in the set of documents. 
 - **$T$ :** Number of topics, equivalent of the K we defined earlier. 
 
@@ -173,12 +173,12 @@ t1
 
 After the first iteration, the topic for the first word in the first document is updated to `r t1`. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update the topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.
 
-To conserve space, we'll put in into a function [`LDA1`][LDA]. It takes the paramters of:
+To conserve space, we'll put all of it into a function [`LDA1`][LDA], which takes the paramters of:
 
 - `docs` Document that have be converted to token (word) ids.
 - `vocab` Unique tokens (words) for all the document collection.
 - `K` Number of topic groups.
-- `alpha` and `eta` Will be explained later.
+- `alpha` and `eta` Distribution parameters as explained earlier.
 - `iterations` Number of iterations to run gibbs sampling to train our model.
 - Returns a list containing the final weight-topic count matrix `wt` and document-topic matrix `dt`.
 
