@@ -18,7 +18,6 @@ LDA1 <- function( docs, vocab, K, alpha, eta, iterations )
 	# @dt : counts correspond to the number of words assigned to each topic for each document
 	dt <- matrix( 0, length(docs), K )
 
-	set.seed(1234)
 	for( d in 1:length(docs) )
 	{ 
 		# randomly assign topic to word w

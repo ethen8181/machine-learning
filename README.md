@@ -1,10 +1,10 @@
 # machine-learning
 
-#### Repository Description
+### Repository Description:
 
 Documenting machine learning and data mining techniques. Each folder’s work is independent of one another.
 
-#### Documentation Listings
+### Documentation Listings:
 
 **Coursera : 2015.10.16** ( fix document later)
 
@@ -22,12 +22,12 @@ Some useful evaluations when working with hierarchical clustering and k-means cl
 - Boostrap evaluation of the clustering result’s stability.
 - View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html).
 
-**lda_1 : ** in progress 
+**lda_1 : 2015.12.8** 
 
-Performing text clustering with Latent Dirichlet Allocation(LDA).
+Performing text clustering with Latent Dirichlet Allocation(LDA) using gibbs sampling.
 
-- Toy sample code of the gibbs sampling version.
-- View document [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)
+- Toy sample code of the gibbs sampling and match results with the *topicmodels* library.
+- View documentation [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html).
 
 **linear regression : 2015.10.30**
 

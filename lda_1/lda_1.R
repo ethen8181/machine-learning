@@ -1,22 +1,5 @@
 # Latent Dirichlet Allocation
 
-# https://sumidiot.wordpress.com/2012/06/13/lda-from-scratch/
-# http://tedunderwood.com/2012/04/07/topic-modeling-made-just-simple-enough/
-
-# http://www.cs.columbia.edu/~blei/papers/Blei2012.pdf
-
-# https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
-# we want to find themes (or topics) in documents
-# and we need a approach that automatically teases out topics
-# note that we do not know the topics beforehand, thus this 
-# will essentially become a clustering problem, where we're clustering
-# both the word and the document.
-
-# the key assumptions behind lda
-# each given documents exhibit multiple topics. 
-# a topic is a distibution over a fixed vocabulary.
-# the number of topics has to be specified a-priori
-
 # ----------------------------------------------------------------------------------------
 #										Reference
 # ----------------------------------------------------------------------------------------
@@ -24,9 +7,30 @@
 # why tagging matters
 # http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf
 
-# ----------------------------------------------------------------------------------------
-#										Reimplementation R code
+# math notations
+# https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
+
+# hyperparameters explanation 
+# http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444
+
+# Reimplementation R code
 # http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/
+
+# ----------------------------------------------------------------------------------------
+#
+# ----------------------------------------------------------------------------------------
+
+# conditioned on a dirichlet distribution 
+# for two class = binomial distribution
+# for K class = multinomial distribution
+# the dirichlet distribution allows us model 
+# the random selection from a multinomial distribution with K classes 
+
+# For the symmetric distribution, a high alpha-value means that each document is 
+# likely to contain a mixture of most of the topics, and not any single topic specifically
+
+# ----------------------------------------------------------------------------------------
+#								Prepare Example
 # ----------------------------------------------------------------------------------------
 
 # toy example 
@@ -98,10 +102,9 @@ print(dt)
 #										Gibbs sampling one iteration 
 # ----------------------------------------------------------------------------------------
 
-alpha <- 1 # hyperparameter. single value indicates symmetric dirichlet prior. higher=>scatters document clusters
-eta <- .001 # hyperparameter
-iterations <- 3 # iterations for collapsed gibbs sampling.  This should be a lot higher than 3 in practice.
-
+# hyperparameters
+alpha <- 1
+eta <- 1
 
 # initial topics assigned to the first word of the first document
 # and its corresponding word id 
@@ -126,22 +129,63 @@ ta[[1]][1] <- t1
 dt[ 1, t1 ]   <- dt[ 1, t1 ] + 1  
 wt[ t1, wid ] <- wt[ t1, wid ] + 1
 
+
 # ----------------------------------------------------------------------------------------
-#										Gibbs sampling iteration 
+#										Gibbs sampling full; topicmodels library 
 # ----------------------------------------------------------------------------------------
 
 # define parameters
-K <- 2 
-alpha <- 1 
-eta <- .001 
-iterations <- 100
+K <- 2
+alpha <- 10
+eta <- 10
+iterations <- 1000
 
 source("/Users/ethen/machine-learning/lda_1/lda_1_functions.R")
+set.seed(4321)
 lda1 <- LDA1( docs = docs, vocab = vocab, 
 			  K = K, alpha = 1, eta = .001, iterations = iterations )
 
 
+# posterior probability 
+# topic probability of every word 
+phi <- ( lda1$wt + eta ) / ( rowSums(lda1$wt) + length(vocab) * eta )
 
+# topic probability of every document
+theta <- ( lda1$dt + alpha ) / ( rowSums(lda1$dt) + K * alpha )
+
+# topic assigned to each document, the one with the highest probability 
+topic <- apply( theta, 1, which.max )
+
+# possible words under each topic 
+# sort the probability and obtain the user-specified number
+Terms <- function( phi, n )
+{
+	term <- matrix( 0, n, K )
+	for( p in 1:nrow(phi) )
+	{
+		term[ , p ] <- names( sort( phi[ p, ], decreasing = TRUE )[1:n] )
+	}
+	return(term)
+}
+term <- Terms( phi = phi, n = 3 )
+
+list( original_text = rawdocs[ topic == 1 ], words = term[ , 1 ] )
+list( original_text = rawdocs[ topic == 2 ], words = term[ , 2 ] )
+
+
+# compare 
+library(tm)
+library(topicmodels)
+
+# @burning : number of omitted Gibbs iterations at beginning
+# @thin : number of omitted in-between Gibbs iterations
+docs1 <- Corpus( VectorSource(rawdocs) )
+dtm <- DocumentTermMatrix(docs1)
+lda <- LDA( dtm, k = 2, method = "Gibbs", 
+	   		control = list( seed = 1234, burnin = 500, thin = 100, iter = 4000 ) )
+
+list( original_text = rawdocs[ topics(lda) == 1 ], words = terms( lda, 3 )[ , 1 ] )
+list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 ] )
 
 
 

@@ -40,16 +40,17 @@ tf_idf / sqrt( rowSums( tf_idf^2 ) )
 #                                    Text Clustering
 # -----------------------------------------------------------------------------------
 
-# example 
+# cosine example 
 a <- c( 3, 4 )
 b <- c( 5, 6 )
 
-# cosine 
+# print cos and degree 
 l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
 list( cosine = l$numerator / l$denominator, 
       degree = acos( l$numerator / l$denominator ) * 180 / pi )
 
 
+# news data
 setwd("/Users/ethen/machine-learning/tf_idf")
 news <- read.csv( "news.csv", stringsAsFactors = FALSE )
 
@@ -103,7 +104,9 @@ news$title[ groups1 == 7 ]
 news$title[ groups1 == 17 ]
 
 # -----------------------------------------------------------------------------------
-# start from here 
+# topic model compare results 
+
+library(topicmodels)
 
 rect.hclust( cluster1, 8 )
 groups2 <- cutree( cluster1, 8 )
@@ -117,12 +120,12 @@ LDACaculation <- function(vector)
 	dtm <- DocumentTermMatrix( news_corpus, control = control_list )
 	lda <- LDA( dtm, k = 8, method = "Gibbs", 
 	   		    control = list( seed = 1234, 
-	   		    				burnin = 500, 
+	   		    				burnin = 1000, 
 	   		    				thin = 100, iter = 1000 ) )
 	return(lda)	
 }
 
-lda <- LDACaculation( news$title )
+lda <- LDACaculation(news$title)
 
 
 topics(lda)

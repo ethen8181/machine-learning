@@ -100,7 +100,7 @@ img {
 <div id="header">
 <h1 class="title">Latent Dirichlet Allocation Using Gibbs Sampling</h1>
 <h4 class="author"><em>Ming-Yu Liu</em></h4>
-<h4 class="date"><em>December 7, 2015</em></h4>
+<h4 class="date"><em>December 8, 2015</em></h4>
 </div>
 
 <div id="TOC">
@@ -112,15 +112,23 @@ img {
 </ul>
 </div>
 
+<p>Code up basic gibbs sampling with base R and compare results with the <em>topicmodels</em> library.</p>
 <div id="background-information" class="section level2">
 <h2><span class="header-section-number">0.1</span> Background Information</h2>
 <p>Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they’re on your site.</p>
-<p>Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important and that’s where tagging comes in. Everyone’s way of thinking about things may differ so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.</p>
+<p>Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important. And that’s where tagging comes in. Everyone’s way of thinking about things may differ ever so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.</p>
 </div>
 <div id="latent-dirichlet-allocation" class="section level2">
 <h2><span class="header-section-number">0.2</span> Latent Dirichlet Allocation</h2>
-<p>The technique</p>
-<p>There’re different approaches to this algorithm, the one we’ll be using is gibbs sampling. We’ll use 8 short strings to represent our set of documents. The following section creates the set the documents and convert each document into word ids, where word ids is just the ids assigned to each unique word in the set of document ( We’re dropping the issue of stemming words, removing multiple white spaces and other common preprocessing steps when performing text mining algorithms as this is a fairly simple set of document ).</p>
+<p><strong>Latent Dirichlet Allocation</strong> (LDA) is a probabilistic topic modeling method that gives us an approach to tease out possible topics from documents that we do not know of beforehand. The key assumptions behind LDA is that each given documents is a mix of multiple topics. Given a set of documents, one can use the LDA framework to learn not only the topic mixture (distribution) that represents each document. But also word (distribution) that are associated with each topic to help understand what the topic might be referring to.</p>
+<p>The topic distribution for each document is distributed as</p>
+<p><span class="math display">\[ \theta \sim Dirichlet(\alpha) \]</span></p>
+<p>Where <span class="math inline">\(Dirichlet(\alpha)\)</span> denotes the Dirichlet distribution for parameter <span class="math inline">\(\alpha\)</span>.</p>
+<p>The term (word) distribution on the other hand is also modeled by a Dirichlet distribution, just under a different parameter <span class="math inline">\(\eta\)</span> ( pronounced “eta”, you’ll see other places refer to it as <span class="math inline">\(\beta\)</span> ).</p>
+<p><span class="math display">\[ \phi \sim Dirichlet(\eta) \]</span></p>
+<p>The utmost goal of LDA is to estimate the <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\phi\)</span> which is equivalent to estimate which words are important for which topic and which topics are important for a particular document, respectively.</p>
+<p>The basic idea behind the parameters for the Dirichlet distribution ( here I’m referring to the symmetrical version of the distribution which the general case for LDA ) is: <span class="math inline">\(\alpha\)</span> The higher the value the more likely each document is to contain a mixture of most of the topics instead of any single topic. The same goes for <span class="math inline">\(\eta\)</span>, where higher value denotes that each topic is likely to contain a mixture of most of the words, and not any word specifically.</p>
+<p>There’re different approaches to this algorithm, the one we’ll be using is gibbs sampling. We’ll use 8 short strings to represent our set of documents. The following section creates the set the documents and convert each document into word ids, where word ids is just the ids assigned to each unique word in the set of document. We’re dropping the issue of stemming words, removing multiple white spaces and other common preprocessing steps when performing text mining algorithms as this is a fairly simple set of document.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rawdocs &lt;-<span class="st"> </span><span class="kw">c</span>(
 
     <span class="st">&quot;eat turkey on turkey day holiday&quot;</span>,
@@ -275,8 +283,8 @@ for( d in <span class="dv">1</span>:<span class="kw">length</span>(docs) )
 </ul>
 <p>It may be still confusing with all of that notations, the following section goes through the computation for one iteration. The topic of the first word in the first document is resampled as follow: The output will not be printed during the process, since it’ll probably make the documentation messier.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># parameters </span>
-alpha &lt;-<span class="st"> </span><span class="dv">1</span> 
-eta &lt;-<span class="st"> </span>.<span class="dv">001</span>
+alpha &lt;-<span class="st"> </span><span class="dv">10</span>
+eta &lt;-<span class="st"> </span><span class="dv">10</span>
 
 <span class="co"># initial topics assigned to the first word of the first document</span>
 <span class="co"># and its corresponding word id </span>
@@ -297,8 +305,8 @@ right &lt;-<span class="st"> </span>( dt[ <span class="dv">1</span>, ] +<span cl
 t1 &lt;-<span class="st"> </span><span class="kw">sample</span>( <span class="dv">1</span>:K, <span class="dv">1</span>, <span class="dt">prob =</span> left *<span class="st"> </span>right )
 t1</code></pre></div>
 <pre><code>## [1] 2</code></pre>
-<p>After the first iteration, the topic for the first word in the first document is updated to 2. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.</p>
-<p>To conserve space, we’ll put in into a function <a href><code>LDA1</code></a>. It takes the paramters of:</p>
+<p>After the first iteration, the topic for the first word in the first document is updated to 2. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update the topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.</p>
+<p>To conserve space, we’ll put in into a function <a href="https://github.com/ethen8181/machine-learning/blob/master/lda_1/lda_1_functions.R"><code>LDA1</code></a>. It takes the paramters of:</p>
 <ul>
 <li><code>docs</code> Document that have be converted to token (word) ids.</li>
 <li><code>vocab</code> Unique tokens (words) for all the document collection.</li>
@@ -309,36 +317,142 @@ t1</code></pre></div>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define parameters</span>
 K &lt;-<span class="st"> </span><span class="dv">2</span> 
-alpha &lt;-<span class="st"> </span><span class="dv">1</span> 
-eta &lt;-<span class="st"> </span>.<span class="dv">001</span> 
-iterations &lt;-<span class="st"> </span><span class="dv">100</span>
+alpha &lt;-<span class="st"> </span><span class="dv">10</span>
+eta &lt;-<span class="st"> </span><span class="dv">10</span> 
+iterations &lt;-<span class="st"> </span><span class="dv">1000</span>
 
 <span class="co"># source in function</span>
 <span class="kw">source</span>(<span class="st">&quot;/Users/ethen/machine-learning/lda_1/lda_1_functions.R&quot;</span>)
+<span class="kw">set.seed</span>(<span class="dv">4321</span>)
 lda1 &lt;-<span class="st"> </span><span class="kw">LDA1</span>( <span class="dt">docs =</span> docs, <span class="dt">vocab =</span> vocab, 
               <span class="dt">K =</span> K, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">eta =</span> .<span class="dv">001</span>, <span class="dt">iterations =</span> iterations )
 lda1</code></pre></div>
 <pre><code>## $wt
 ##      eat turkey on day holiday i like to cake trot race thanksgiving snail
-## [1,]   0      0  0   0       3 0    1  1    1    1    0            2     1
-## [2,]   2      3  4   1       0 1    0  0    0    0    3            0     0
+## [1,]   0      0  0   1       0 0    0  0    1    0    3            2     1
+## [2,]   2      3  4   0       3 1    1  1    0    1    0            0     0
 ##      the turtle time travel space movie at air and museum is cool aspiring
-## [1,]   0      0    0      0     2     0  1   1   1      1  1    1        0
-## [2,]   1      1    1      1     0     4  0   0   0      0  0    0        1
+## [1,]   0      0    1      1     2     4  1   1   1      0  1    1        1
+## [2,]   1      1    0      0     0     0  0   0   0      1  0    0        0
 ##      star
-## [1,]    0
-## [2,]    1
+## [1,]    1
+## [2,]    0
 ## 
 ## $dt
 ##      [,1] [,2]
 ## [1,]    1    5
-## [2,]    4    3
-## [3,]    3    3
-## [4,]    1    3
-## [5,]    1    3
-## [6,]    1    2
-## [7,]    7    2
-## [8,]    0    3</code></pre>
+## [2,]    1    6
+## [3,]    2    4
+## [4,]    2    2
+## [5,]    4    0
+## [6,]    2    1
+## [7,]    8    1
+## [8,]    3    0</code></pre>
+<p>After we’re done with learning the topics for 1000 iterations, we can use the count matrices to convert them a bit to obtain the word-topic distribution and document-topic distribution.</p>
+<p>To compute the probability of word given topic:</p>
+<p><span class="math display">\[\phi_{ij} = \frac{C^{WT}_{ij} + \eta}{\sum^W_{ k = 1 }C^{WT}_{kj} + W\eta}\]</span></p>
+<p>Where <span class="math inline">\(\phi_{ij}\)</span> is the probability of word i for topic j.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic probability of every word </span>
+( phi &lt;-<span class="st"> </span>( lda1$wt +<span class="st"> </span>eta ) /<span class="st"> </span>( <span class="kw">rowSums</span>(lda1$wt) +<span class="st"> </span><span class="kw">length</span>(vocab) *<span class="st"> </span>eta ) )</code></pre></div>
+<pre><code>##             eat     turkey         on        day    holiday          i
+## [1,] 0.03412969 0.03412969 0.03412969 0.03754266 0.03412969 0.03412969
+## [2,] 0.04152249 0.04498270 0.04844291 0.03460208 0.04498270 0.03806228
+##            like         to       cake       trot       race thanksgiving
+## [1,] 0.03412969 0.03412969 0.03754266 0.03412969 0.04436860   0.04095563
+## [2,] 0.03806228 0.03806228 0.03460208 0.03806228 0.03460208   0.03460208
+##           snail        the     turtle       time     travel      space
+## [1,] 0.03754266 0.03412969 0.03412969 0.03754266 0.03754266 0.04095563
+## [2,] 0.03460208 0.03806228 0.03806228 0.03460208 0.03460208 0.03460208
+##           movie         at        air        and     museum         is
+## [1,] 0.04778157 0.03754266 0.03754266 0.03754266 0.03412969 0.03754266
+## [2,] 0.03460208 0.03460208 0.03460208 0.03460208 0.03806228 0.03460208
+##            cool   aspiring       star
+## [1,] 0.03754266 0.03754266 0.03754266
+## [2,] 0.03460208 0.03460208 0.03460208</code></pre>
+<p><span class="math display">\[\theta_{dj} = \frac{C^{DT}_{dj} + \alpha}{\sum^T_{ k = 1 }C^{DT}_{dk} + T\alpha}\]</span></p>
+<p>Where <span class="math inline">\(\theta_{dj}\)</span> is the proportion of topic j in document d.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic probability of every document</span>
+( theta &lt;-<span class="st"> </span>( lda1$dt +<span class="st"> </span>alpha ) /<span class="st"> </span>( <span class="kw">rowSums</span>(lda1$dt) +<span class="st"> </span>K *<span class="st"> </span>alpha ) )</code></pre></div>
+<pre><code>##           [,1]      [,2]
+## [1,] 0.4230769 0.5769231
+## [2,] 0.4074074 0.5925926
+## [3,] 0.4615385 0.5384615
+## [4,] 0.5000000 0.5000000
+## [5,] 0.5833333 0.4166667
+## [6,] 0.5217391 0.4782609
+## [7,] 0.6206897 0.3793103
+## [8,] 0.5652174 0.4347826</code></pre>
+<p>Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word &amp; topic ) we can use this information to see which topic does each document belongs to and what are the possible words under each topic.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic assigned to each document, the one with the highest probability </span>
+topic &lt;-<span class="st"> </span><span class="kw">apply</span>( theta, <span class="dv">1</span>, which.max )
+
+<span class="co"># possible words under each topic </span>
+<span class="co"># sort the probability and obtain the user-specified number</span>
+Terms &lt;-<span class="st"> </span>function( phi, n )
+{
+    term &lt;-<span class="st"> </span><span class="kw">matrix</span>( <span class="dv">0</span>, n, K )
+    for( p in <span class="dv">1</span>:<span class="kw">nrow</span>(phi) )
+    {
+        term[ , p ] &lt;-<span class="st"> </span><span class="kw">names</span>( <span class="kw">sort</span>( phi[ p, ], <span class="dt">decreasing =</span> <span class="ot">TRUE</span> )[<span class="dv">1</span>:n] )
+    }
+    <span class="kw">return</span>(term)
+}
+term &lt;-<span class="st"> </span><span class="kw">Terms</span>( <span class="dt">phi =</span> phi, <span class="dt">n =</span> <span class="dv">3</span> )</code></pre></div>
+<p>We specified that we wanted to see the top 3 terms associated with each topic. The following section prints out the original raw document, which is grouped into 2 groups that we specified and words that are likely to go along with each topic.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>( <span class="dt">original_text =</span> rawdocs[ topic ==<span class="st"> </span><span class="dv">1</span> ], <span class="dt">words =</span> term[ , <span class="dv">1</span> ] )</code></pre></div>
+<pre><code>## $original_text
+## [1] &quot;snail race the turtle&quot;                      
+## [2] &quot;time travel space race&quot;                     
+## [3] &quot;movie on thanksgiving&quot;                      
+## [4] &quot;movie at air and space museum is cool movie&quot;
+## [5] &quot;aspiring movie star&quot;                        
+## 
+## $words
+## [1] &quot;movie&quot;        &quot;race&quot;         &quot;thanksgiving&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>( <span class="dt">original_text =</span> rawdocs[ topic ==<span class="st"> </span><span class="dv">2</span> ], <span class="dt">words =</span> term[ , <span class="dv">2</span> ] )</code></pre></div>
+<pre><code>## $original_text
+## [1] &quot;eat turkey on turkey day holiday&quot;        
+## [2] &quot;i like to eat cake on holiday&quot;           
+## [3] &quot;turkey trot race on thanksgiving holiday&quot;
+## 
+## $words
+## [1] &quot;on&quot;      &quot;turkey&quot;  &quot;holiday&quot;</code></pre>
+<p>The output tells us that the first topic seems to be discussing something about movie and race , while the second is something about turkey and holiday.</p>
+<p>After understanding the computations under the hood, we can now move on and use the R library <em>topicmodels</em> as it provides more efficient computation and other tuning parameters.</p>
+<p>Since the starting point of gibbs sampling is chosen randomly, thus it makes sense to discard the first few iteration ( also known as <code>burnin</code> periods ). Due to the fact that they most likely do not correctly reflect the properties of distribution. And another parameter is <code>thin</code>, the number of iterations ommitted during the training. This serves to prevent correlations between samples during the iteration.</p>
+<p>We’ll use the <code>LDA</code> function from the <em>topicmodels</em> library to implement gibbs sampling method on the same set of raw documents and print out the result for you to compare. Note that library has a default of value of 50 / K for <span class="math inline">\(\alpha\)</span> and 0.1 for <span class="math inline">\(\eta\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># compare </span>
+<span class="kw">library</span>(tm)
+<span class="kw">library</span>(topicmodels)
+
+<span class="co"># @burnin : number of omitted Gibbs iterations at beginning</span>
+<span class="co"># @thin : number of omitted in-between Gibbs iterations</span>
+docs1 &lt;-<span class="st"> </span><span class="kw">Corpus</span>( <span class="kw">VectorSource</span>(rawdocs) )
+dtm &lt;-<span class="st"> </span><span class="kw">DocumentTermMatrix</span>(docs1)
+lda &lt;-<span class="st"> </span><span class="kw">LDA</span>( dtm, <span class="dt">k =</span> <span class="dv">2</span>, <span class="dt">method =</span> <span class="st">&quot;Gibbs&quot;</span>, 
+            <span class="dt">control =</span> <span class="kw">list</span>( <span class="dt">seed =</span> <span class="dv">1234</span>, <span class="dt">burnin =</span> <span class="dv">500</span>, <span class="dt">thin =</span> <span class="dv">100</span>, <span class="dt">iter =</span> <span class="dv">4000</span> ) )
+
+<span class="kw">list</span>( <span class="dt">original_text =</span> rawdocs[ <span class="kw">topics</span>(lda) ==<span class="st"> </span><span class="dv">1</span> ], <span class="dt">words =</span> <span class="kw">terms</span>( lda, <span class="dv">3</span> )[ , <span class="dv">1</span> ] )</code></pre></div>
+<pre><code>## $original_text
+## [1] &quot;i like to eat cake on holiday&quot;              
+## [2] &quot;snail race the turtle&quot;                      
+## [3] &quot;time travel space race&quot;                     
+## [4] &quot;movie at air and space museum is cool movie&quot;
+## 
+## $words
+## [1] &quot;race&quot;  &quot;eat&quot;   &quot;space&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>( <span class="dt">original_text =</span> rawdocs[ <span class="kw">topics</span>(lda) ==<span class="st"> </span><span class="dv">2</span> ], <span class="dt">words =</span> <span class="kw">terms</span>( lda, <span class="dv">3</span> )[ , <span class="dv">2</span> ] )</code></pre></div>
+<pre><code>## $original_text
+## [1] &quot;eat turkey on turkey day holiday&quot;        
+## [2] &quot;turkey trot race on thanksgiving holiday&quot;
+## [3] &quot;movie on thanksgiving&quot;                   
+## [4] &quot;aspiring movie star&quot;                     
+## 
+## $words
+## [1] &quot;movie&quot;   &quot;holiday&quot; &quot;turkey&quot;</code></pre>
+<p>Notice that after training the model for 4000 iterations, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.</p>
+<p>All the R code can be found under this <a href="https://github.com/ethen8181/machine-learning/tree/master/lda_1">link</a>. The functions are general documentation’s codes are in two different scripts.</p>
+<p>Issues and feedbacks are welcomed, you can file them <a href="https://github.com/ethen8181/machine-learning/issues">here</a>.</p>
 </div>
 <div id="reference" class="section level2">
 <h2><span class="header-section-number">0.3</span> Reference</h2>
@@ -347,6 +461,7 @@ lda1</code></pre></div>
 <li>Why tagging matters: <a href="http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf" class="uri">http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf</a></li>
 <li>Mathematical Notations: <a href="https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf" class="uri">https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf</a></li>
 <li>Great math free explanation of LDA: <a href="http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/" class="uri">http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/</a></li>
+<li>Explanation of LDA’s hyperparameter: <a href="http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444" class="uri">http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444</a></li>
 </ol>
 </div>
 <div id="r-session-information" class="section level2">
@@ -362,10 +477,15 @@ lda1</code></pre></div>
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
+## other attached packages:
+## [1] topicmodels_0.2-2 tm_0.6-2          NLP_0.1-8        
+## 
 ## loaded via a namespace (and not attached):
-##  [1] magrittr_1.5    formatR_1.2.1   tools_3.2.2     htmltools_0.2.6
-##  [5] yaml_2.1.13     stringi_1.0-1   rmarkdown_0.8   knitr_1.11     
-##  [9] stringr_1.0.0   digest_0.6.8    evaluate_0.8</code></pre>
+##  [1] digest_0.6.8      slam_0.1-32       stats4_3.2.2     
+##  [4] formatR_1.2.1     magrittr_1.5      evaluate_0.8     
+##  [7] stringi_1.0-1     rmarkdown_0.8     tools_3.2.2      
+## [10] stringr_1.0.0     yaml_2.1.13       parallel_3.2.2   
+## [13] htmltools_0.2.6   knitr_1.11        modeltools_0.2-21</code></pre>
 </div>
 
 
