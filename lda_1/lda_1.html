@@ -317,15 +317,15 @@ t1</code></pre></div>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># define parameters</span>
 K &lt;-<span class="st"> </span><span class="dv">2</span> 
-alpha &lt;-<span class="st"> </span><span class="dv">10</span>
-eta &lt;-<span class="st"> </span><span class="dv">10</span> 
+alpha &lt;-<span class="st"> </span><span class="dv">1</span>
+eta &lt;-<span class="st"> </span><span class="fl">0.001</span>
 iterations &lt;-<span class="st"> </span><span class="dv">1000</span>
 
 <span class="co"># source in function</span>
 <span class="kw">source</span>(<span class="st">&quot;/Users/ethen/machine-learning/lda_1/lda_1_functions.R&quot;</span>)
 <span class="kw">set.seed</span>(<span class="dv">4321</span>)
 lda1 &lt;-<span class="st"> </span><span class="kw">LDA1</span>( <span class="dt">docs =</span> docs, <span class="dt">vocab =</span> vocab, 
-              <span class="dt">K =</span> K, <span class="dt">alpha =</span> <span class="dv">1</span>, <span class="dt">eta =</span> .<span class="dv">001</span>, <span class="dt">iterations =</span> iterations )
+              <span class="dt">K =</span> K, <span class="dt">alpha =</span> alpha, <span class="dt">eta =</span> eta, <span class="dt">iterations =</span> iterations )
 lda1</code></pre></div>
 <pre><code>## $wt
 ##      eat turkey on day holiday i like to cake trot race thanksgiving snail
@@ -354,34 +354,37 @@ lda1</code></pre></div>
 <p>Where <span class="math inline">\(\phi_{ij}\)</span> is the probability of word i for topic j.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic probability of every word </span>
 ( phi &lt;-<span class="st"> </span>( lda1$wt +<span class="st"> </span>eta ) /<span class="st"> </span>( <span class="kw">rowSums</span>(lda1$wt) +<span class="st"> </span><span class="kw">length</span>(vocab) *<span class="st"> </span>eta ) )</code></pre></div>
-<pre><code>##             eat     turkey         on        day    holiday          i
-## [1,] 0.03412969 0.03412969 0.03412969 0.03754266 0.03412969 0.03412969
-## [2,] 0.04152249 0.04498270 0.04844291 0.03460208 0.04498270 0.03806228
-##            like         to       cake       trot       race thanksgiving
-## [1,] 0.03412969 0.03412969 0.03754266 0.03412969 0.04436860   0.04095563
-## [2,] 0.03806228 0.03806228 0.03460208 0.03806228 0.03460208   0.03460208
-##           snail        the     turtle       time     travel      space
-## [1,] 0.03754266 0.03412969 0.03412969 0.03754266 0.03754266 0.04095563
-## [2,] 0.03460208 0.03806228 0.03806228 0.03460208 0.03460208 0.03460208
-##           movie         at        air        and     museum         is
-## [1,] 0.04778157 0.03754266 0.03754266 0.03754266 0.03412969 0.03754266
-## [2,] 0.03460208 0.03460208 0.03460208 0.03460208 0.03806228 0.03460208
-##            cool   aspiring       star
-## [1,] 0.03754266 0.03754266 0.03754266
-## [2,] 0.03460208 0.03460208 0.03460208</code></pre>
+<pre><code>##               eat       turkey           on          day      holiday
+## [1,] 4.342728e-05 4.342728e-05 4.342728e-05 4.347071e-02 4.342728e-05
+## [2,] 1.051663e-01 1.577232e-01 2.102801e-01 5.255689e-05 1.577232e-01
+##                 i         like           to         cake         trot
+## [1,] 4.342728e-05 4.342728e-05 4.342728e-05 4.347071e-02 4.342728e-05
+## [2,] 5.260945e-02 5.260945e-02 5.260945e-02 5.255689e-05 5.260945e-02
+##              race thanksgiving        snail          the       turtle
+## [1,] 1.303253e-01 8.689799e-02 4.347071e-02 4.342728e-05 4.342728e-05
+## [2,] 5.255689e-05 5.255689e-05 5.255689e-05 5.260945e-02 5.260945e-02
+##              time       travel        space        movie           at
+## [1,] 4.347071e-02 4.347071e-02 8.689799e-02 1.737526e-01 4.347071e-02
+## [2,] 5.255689e-05 5.255689e-05 5.255689e-05 5.255689e-05 5.255689e-05
+##               air          and       museum           is         cool
+## [1,] 4.347071e-02 4.347071e-02 4.342728e-05 4.347071e-02 4.347071e-02
+## [2,] 5.255689e-05 5.255689e-05 5.260945e-02 5.255689e-05 5.255689e-05
+##          aspiring         star
+## [1,] 4.347071e-02 4.347071e-02
+## [2,] 5.255689e-05 5.255689e-05</code></pre>
 <p><span class="math display">\[\theta_{dj} = \frac{C^{DT}_{dj} + \alpha}{\sum^T_{ k = 1 }C^{DT}_{dk} + T\alpha}\]</span></p>
 <p>Where <span class="math inline">\(\theta_{dj}\)</span> is the proportion of topic j in document d.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic probability of every document</span>
 ( theta &lt;-<span class="st"> </span>( lda1$dt +<span class="st"> </span>alpha ) /<span class="st"> </span>( <span class="kw">rowSums</span>(lda1$dt) +<span class="st"> </span>K *<span class="st"> </span>alpha ) )</code></pre></div>
 <pre><code>##           [,1]      [,2]
-## [1,] 0.4230769 0.5769231
-## [2,] 0.4074074 0.5925926
-## [3,] 0.4615385 0.5384615
+## [1,] 0.2500000 0.7500000
+## [2,] 0.2222222 0.7777778
+## [3,] 0.3750000 0.6250000
 ## [4,] 0.5000000 0.5000000
-## [5,] 0.5833333 0.4166667
-## [6,] 0.5217391 0.4782609
-## [7,] 0.6206897 0.3793103
-## [8,] 0.5652174 0.4347826</code></pre>
+## [5,] 0.8333333 0.1666667
+## [6,] 0.6000000 0.4000000
+## [7,] 0.8181818 0.1818182
+## [8,] 0.8000000 0.2000000</code></pre>
 <p>Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word &amp; topic ) we can use this information to see which topic does each document belongs to and what are the possible words under each topic.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic assigned to each document, the one with the highest probability </span>
 topic &lt;-<span class="st"> </span><span class="kw">apply</span>( theta, <span class="dv">1</span>, which.max )
@@ -450,7 +453,7 @@ lda &lt;-<span class="st"> </span><span class="kw">LDA</span>( dtm, <span class=
 ## 
 ## $words
 ## [1] &quot;movie&quot;   &quot;holiday&quot; &quot;turkey&quot;</code></pre>
-<p>Notice that after training the model for 4000 iterations, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.</p>
+<p>Notice that after training the model for 4000 iterations and using a different <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\eta\)</span> value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.</p>
 <p>All the R code can be found under this <a href="https://github.com/ethen8181/machine-learning/tree/master/lda_1">link</a>. The functions are general documentation’s codes are in two different scripts.</p>
 <p>Issues and feedbacks are welcomed, you can file them <a href="https://github.com/ethen8181/machine-learning/issues">here</a>.</p>
 </div>

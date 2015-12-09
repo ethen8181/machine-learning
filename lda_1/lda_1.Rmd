@@ -186,15 +186,15 @@ To conserve space, we'll put all of it into a function [`LDA1`][LDA], which take
 
 # define parameters
 K <- 2 
-alpha <- 10
-eta <- 10 
+alpha <- 1
+eta <- 0.001
 iterations <- 1000
 
 # source in function
 source("/Users/ethen/machine-learning/lda_1/lda_1_functions.R")
 set.seed(4321)
 lda1 <- LDA1( docs = docs, vocab = vocab, 
-			  K = K, alpha = 1, eta = .001, iterations = iterations )
+			  K = K, alpha = alpha, eta = eta, iterations = iterations )
 lda1
 
 ```
@@ -282,7 +282,7 @@ list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 
 
 ```
 
-Notice that after training the model for 4000 iterations, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
+Notice that after training the model for 4000 iterations and using a different $\alpha$ and $\eta$ value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
 
 All the R code can be found under this [link](https://github.com/ethen8181/machine-learning/tree/master/lda_1). The functions are general documentation's codes are in two different scripts.
 

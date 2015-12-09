@@ -136,14 +136,14 @@ wt[ t1, wid ] <- wt[ t1, wid ] + 1
 
 # define parameters
 K <- 2
-alpha <- 10
-eta <- 10
+alpha <- 1
+eta <- .001
 iterations <- 1000
 
 source("/Users/ethen/machine-learning/lda_1/lda_1_functions.R")
 set.seed(4321)
 lda1 <- LDA1( docs = docs, vocab = vocab, 
-			  K = K, alpha = 1, eta = .001, iterations = iterations )
+			  K = K, alpha = alpha, eta = eta, iterations = iterations )
 
 
 # posterior probability 
