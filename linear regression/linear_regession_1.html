@@ -319,7 +319,7 @@ Normalize &lt;- function(x) ( x - mean(x) ) / sd(x)</code></pre>
 <ul>
 <li><strong>Note</strong> : Keep in mind that when performing the normalization you should also store the values that was used the scale each of the feature. Because after we’re done learning the parameters of the model, next time when we’re given a new house information containing only the bedroom number and house size we will like to predict its house price. And before directly plugging in the numbers to the model, we will also have to normalize them.</li>
 </ul>
-<p>Now the <code>GradientDescent</code> function for linear regression. Parameters for the function :</p>
+<p>Now the <a href="https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code/gradient_descent.R"><code>GradientDescent</code></a> function for linear regression. Parameters for the function :</p>
 <ul>
 <li><code>data</code> The whole data frame type data.<br />
 </li>
@@ -415,7 +415,7 @@ ggplot( costs_df, aes( iteration, costs ) ) + geom_line()</code></pre>
 ## [1] ggplot2_1.0.1 scales_0.3.0  dplyr_0.4.3  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.1      knitr_1.11       magrittr_1.5     MASS_7.3-43     
+##  [1] Rcpp_0.12.2      knitr_1.11       magrittr_1.5     MASS_7.3-43     
 ##  [5] munsell_0.4.2    colorspace_1.2-6 R6_2.1.1         stringr_1.0.0   
 ##  [9] plyr_1.8.3       tools_3.2.2      parallel_3.2.2   gtable_0.1.2    
 ## [13] DBI_0.3.1        htmltools_0.2.6  yaml_2.1.13      lazyeval_0.1.10 

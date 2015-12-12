@@ -48,7 +48,7 @@ Now what if we have let's say one thousand rows of data or more, then the dendog
 
 So here we'll be using two measures, the Calinski-Harabasz Index, or known as the variance ratio criterion and Total within Sum of Squares for choosing the suitable k. Let's use the function and visualize both measures first, so it'll be easier to explain.
 
-`CHCriterion` Function that calculates both measures for different values of k. Input parameters :     
+[`CHCriterion`][CHCriterion] Function that calculates both measures for different values of k. Input parameters :     
 
 - `data` Quite straightfoward, your dataset. data.frame or matrix type data will both work.
 - `kmax` Maximum cluster number, caculates both measures from 2 cluster to kmax cluster (clustering the data into 1 cluster is the same as performing no clustering, therefore its measures are ommitted).   
@@ -109,7 +109,7 @@ Now that we've decided the suitable number of cluster (k) for our clustering alg
 3. For every cluster in the original cluster, find the most similar cluster in the new clustering, which is the one with the maximum jaccard similarity ( given two vectors, the jaccard similarity is the intersect / union, please look it up if it's still unclear ). 
 4. Repeat step 2 and 3 for a user-specified number of bootstrap iteration. 
 
-`ClusterBootstrap` Function that implements the boostrap. Input parameters :
+[`ClusterBootstrap`][ClusterBootstrap] Function that implements the boostrap. Input parameters :
 
 - `data` Your data.frame or matrix type data, data.frame is preferred, the function will convert matrix type data to data.frame under the hood.
 - `k` Specify the number of cluster for your clustering algorithm.
@@ -162,3 +162,8 @@ Any comments or suggestions is appreciated. That includes bugs or typos report. 
 sessionInfo()
 
 ```
+
+[ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering.R
+[CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering.R
+
+

@@ -252,7 +252,7 @@ Just want to mention, after the z-score normalization, 0 means that the original
 
 - **Note** : Keep in mind that when performing the normalization you should also store the values that was used the scale each of the feature. Because after we're done learning the parameters of the model, next time when we're given a new house information containing only the bedroom number and house size we will like to predict its house price. And before directly plugging in the numbers to the model, we will also have to normalize them.
 
-Now the `GradientDescent` function for linear regression. Parameters for the function :
+Now the [`GradientDescent`][GradientDescent] function for linear regression. Parameters for the function :
 
 - `data` The whole data frame type data.   
 - `target` Takes a character stating column name that serves as the output variable.  
@@ -348,3 +348,5 @@ Any comments or suggestions is appreciated. That includes bugs or typos report. 
 sessionInfo()
 
 ```
+
+[GradientDescent]: https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code/gradient_descent.R

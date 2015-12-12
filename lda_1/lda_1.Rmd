@@ -63,7 +63,7 @@ docs
 
 ```
 
-A slight drawback of latent dirichlet allocation is that you have to specify the number of clusters first, or in other words you have to specify the number of clusters upfront ( denoted by K ). In our cases we'll use 2.
+A slight drawback of latent dirichlet allocation is that you have to specify the number of clusters first. In other words you have to specify the number of topics that you wish to group the set of documents into upfront ( denoted by K ). In our cases we'll use 2.
 
 The first step of the algorithm is to go through each document and randomly assign each word in the document to one of the K topics. Apart from generating this **topic assignment list**, we'll also create a **word-topic matrix**, which is the count of each word being assigned to each topic. And a **document-topic matrix**, which is the number of words assigned to each topic for each document (distribution of the topic assignment list). We'll be using the later two matrices throughout the process of the algorithm.
 

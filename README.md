@@ -2,7 +2,9 @@
 
 ### Repository Description:
 
-Documenting machine learning and data mining techniques. Each folder’s work is independent of one another.
+This repository focuses on documenting machine learning and data mining techniques. Each folder’s work is independent of one another. 
+
+Another repository [Business-Analytics](https://github.com/ethen8181/Business-Analytics) focuses more on documenting data science or business analytic related projects.
 
 ### Documentation Listings:
 
