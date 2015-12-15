@@ -22,7 +22,7 @@ Here we use the built-in mtcars dataset as an example. Note that for clustering 
 ```{r, message=FALSE, warning=FALSE}
 
 # source in the functions 
-source("/Users/ethen/machine-learning/clustering/clustering.R")
+source("/Users/ethen/machine-learning/clustering/clustering_functions.R")
 
 # example dataset, 
 # also remove the row.names or else will produce trivial warnings for later functions
@@ -54,7 +54,9 @@ So here we'll be using two measures, the Calinski-Harabasz Index, or known as th
 - `kmax` Maximum cluster number, caculates both measures from 2 cluster to kmax cluster (clustering the data into 1 cluster is the same as performing no clustering, therefore its measures are ommitted).   
 - `clustermethod` Specify either "hclust" or "kmeanspp" for calculating the measures for heirarchichal or kmeans++ clustering. For those of you who are not famaliar with kmeans++, it is a simple algorithm built on top of kmeans so that it can generate a better k initial random center. You can refer to this [link](https://github.com/ethen8181/Mining-Massive-Dataset/blob/master/kmeans/kmeanspp.R) for some unformal explanation of how it works and the simple code to the algorithm. If it's still unclear then google is your best friend.
 - `...` After specifying the "clustermethod", you can pass in other parameters into the R "hclust" and "kmeans" function. Please refer to the help page (?hclust or ?kmeans in R) for more information.
-- The function returns a data frame of three columns, consisting of cluster number from 2 to kmax and its corresponding both measures' value, each in one column.
+- The function returns a list consisting of:
+    - data : Data frame of three columns, consisting of cluster number from 2 to the specified kmax and its corresponding value for both measures, each in one column.
+    - plot : A side by side facet plot visualizing both measures' value.
 
 ```{r, fig.height=6, fig.width=9}
 
@@ -64,15 +66,9 @@ So here we'll be using two measures, the Calinski-Harabasz Index, or known as th
 criteria <- CHCriterion( data = mtcars_scaled, kmax = 10, 
 	                     clustermethod = "hclust", method = "ward.D" )
 # result 
-head(criteria)
+head(criteria$data)
 
-# convert to long format for plotting 
-criteria_long <- gather( criteria, "index", "value", -1 )
-
-ggplot( criteria_long, aes( k, value, color = index ) ) + 
-geom_line() + geom_point( aes( shape = index ), size = 3 ) +
-facet_wrap( ~ index, scale = "free_y" ) + 
-guides( color = FALSE, shape = FALSE )
+criteria$plot
 
 ```
 
@@ -163,7 +159,7 @@ sessionInfo()
 
 ```
 
-[ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering.R
-[CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering.R
+[ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering_functions.R
+[CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering/clustering_functions.R
 
 

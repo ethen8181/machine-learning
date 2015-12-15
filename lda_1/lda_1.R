@@ -162,9 +162,8 @@ Terms <- function( phi, n )
 {
 	term <- matrix( 0, n, K )
 	for( p in 1:nrow(phi) )
-	{
 		term[ , p ] <- names( sort( phi[ p, ], decreasing = TRUE )[1:n] )
-	}
+
 	return(term)
 }
 term <- Terms( phi = phi, n = 3 )

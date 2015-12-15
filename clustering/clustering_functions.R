@@ -113,14 +113,24 @@ CHCriterion <- function( data, kmax, clustermethod, ...  )
 	# between sum of square
 	bss <- tss - wss[-1]
 
-	# cluster count start from 2 ! 
+	# cluster count start from 2! 
 	numerator <- bss / ( 1:(kmax-1) )
 	denominator <- wss[-1] / ( nrow(data) - 2:kmax )
 
 	criteria <- data.frame( k = 2:kmax,
 	                        CHIndex = numerator / denominator,
 							wss = wss[-1] )
-	return(criteria)
+
+	# convert to long format for plotting 
+	criteria_long <- gather( criteria, "index", "value", -1 )
+
+	plot <- ggplot( criteria_long, aes( k, value, color = index ) ) + 
+			geom_line() + geom_point( aes( shape = index ), size = 3 ) +
+			facet_wrap( ~ index, scale = "free_y" ) + 
+			guides( color = FALSE, shape = FALSE )
+
+	return( list( data = criteria, 
+				  plot = plot ) )
 }
 
 
@@ -131,13 +141,6 @@ CHCriterion <- function( data, kmax, clustermethod, ...  )
 # criteria <- CHCriterion( data = mtcars_scaled, kmax = 10, 
 #	                       clustermethod = "kmeanspp", nstart = 10, iter.max = 100 )
 
-# reformat for plotting 
-# criteria_long <- gather( criteria, "index", "value", -1 )
-
-# ggplot( criteria_long, aes( k, value, color = index ) ) + 
-# geom_line() + geom_point( aes( shape = index ) ) +
-# facet_wrap( ~ index, scale = "free_y" ) + 
-# guides( color = FALSE, shape = FALSE )
 
 # for CHindex, the local maximum should be your ideal cluster number
 # for WWS, the "elbow" center should be your ideal cluster number

@@ -395,9 +395,8 @@ Terms &lt;-<span class="st"> </span>function( phi, n )
 {
     term &lt;-<span class="st"> </span><span class="kw">matrix</span>( <span class="dv">0</span>, n, K )
     for( p in <span class="dv">1</span>:<span class="kw">nrow</span>(phi) )
-    {
         term[ , p ] &lt;-<span class="st"> </span><span class="kw">names</span>( <span class="kw">sort</span>( phi[ p, ], <span class="dt">decreasing =</span> <span class="ot">TRUE</span> )[<span class="dv">1</span>:n] )
-    }
+
     <span class="kw">return</span>(term)
 }
 term &lt;-<span class="st"> </span><span class="kw">Terms</span>( <span class="dt">phi =</span> phi, <span class="dt">n =</span> <span class="dv">3</span> )</code></pre></div>
