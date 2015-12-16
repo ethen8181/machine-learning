@@ -8,7 +8,7 @@ Another repository [Business-Analytics](https://github.com/ethen8181/Business-An
 
 ### Documentation Listings:
 
-**Coursera : 2015.10.16** ( fix document later)
+**Coursera : 2015.10.16** ( kept for personal reference )
 
 Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
 
@@ -31,11 +31,12 @@ Performing text clustering with Latent Dirichlet Allocation(LDA) using gibbs sam
 - Toy sample code of the gibbs sampling and match results with the *topicmodels* library.
 - View documentation [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html).
 
-**linear regression : 2015.10.30**
+**linear_regression : 2015.10.30**
 
 Solving linear regression with gradient descent. 
 
-- View report [here](http://ethen8181.github.io/machine-learning/linear%20regression/linear_regession_1.html).
+- Includes an appendix that briefly covers the interpretation and visualization of linear regression model’s summary output.
+- View report [here](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html).
 
 **logistic_regression : 2015.11.25** 
 

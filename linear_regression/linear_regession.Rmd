@@ -4,6 +4,7 @@ author: "Ming-Yu Liu"
 date: "October 30, 2015"
 output: 
   html_document: 
+    highlight: textmate
     number_sections: yes
     theme: flatly
     toc: yes
@@ -11,7 +12,7 @@ output:
 
 > To all of the machine-learning experts out there, I'm sure people who are not in the statistics, math or computer science department will be very grateful if you could provide simple code examples to go along with mathematical notations.
 
-The following tutorial assumes you know the basics of R programming, e.g. data structure such as list and data.frame, looping, visualization using ggplot2 etc. So we will not go over line by line of the code, but will split the code into moderate size chunks and specify what that code chunk is doing.
+Link to the dataset and R script is provided at the end of the documentation.
 
 ## Background Information
 
@@ -148,9 +149,7 @@ From the output above, we can see that the algorithm converges at iteration `r n
 # create the segment between each points (gradient steps)
 segment <- data.frame( x = double(), y = double(), xend = double(), yend = double() )
 for( i in 1:( nrow(record)-1 ) )
-{
 	segment[ i, ] <- cbind( record[ i, ], record[ i+1, ] )	
-}
 
 # visualize the gradient descent's value 
 ggplot( data.frame( x = c( 0, 4 ) ), aes( x ) ) + 
@@ -171,7 +170,7 @@ Some takeways for this section :
 
 ## Applying it to Linear Regression
 
-Now all of that was just preamble, to get ourselves familiar with gradient descent, it's now time to apply the same concept to linear regression. We'll use the a simple housing data to illustrate the idea. The [link](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/housing.txt) to the dataset.
+Now all of that was just preamble, to get ourselves familiar with gradient descent, it's now time to apply the same concept to linear regression. We'll use the a simple housing data to illustrate the idea.
 
 ```{r}
 
@@ -269,7 +268,7 @@ Now the [`GradientDescent`][GradientDescent] function for linear regression. Par
 ```{r, message=FALSE}
 
 # source in the function to concise the documentation
-source("linear_regession_1_code/gradient_descent.R")
+source("linear_regession_code/gradient_descent.R")
 
 # parameters :
 # learning rate of 0.05, 500 iteration, method = "batch"
@@ -326,13 +325,141 @@ ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
 
 As you can see from the plot, at the beginning when we randomly assign the theta value to our model, the magnitudes of the update is huge. But as it approaches the optimum, then the algorithm will find little need to update the parameters, and therefore, the value of the cost does not change much. This matches the behavior it had with our simple equation example in the Getting Started with Gradient Descent section.
 
-2. Note that gradient descent does not equal to linear regression, there're other approaches to solve or obtain the model's parameters, however, this algorithm, with a little tuning, is still widely used in many other places, such as artifical neural network.
+2. Note that gradient descent does not equal to linear regression, there're other approaches to solve or obtain the model's parameters, however, this algorithm, with a little tuning, is still widely used in many other places, such as **artifical neural network**.
 
 3. If your input variables or features comes in different magnitudes, then normalizing them is an important preprocessing step before applying gradient descent. Or else the results will most likely be heavily affected by the input variables with the larger magnitudes, and in that case the algorithm might either returns a really bad result or worse, will not even work.
 
 4. Tuning parameters including the learning rate, epsilon and iterations will surely affect the result and the speed to converge, and this requires some trial and error. 
 
-All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code). The gradient descent function and the documentation code are in two separate scripts.
+## Appendix on Linear Regression 
+
+Notes on the output of the summary on linear regression.
+
+```{r}
+
+summary(model)
+
+```
+
+**Residuals:**
+
+Linear regression is a model that assumes that the data is normally distributed and it's coefficient is estimated to minimize the sum of squares of the residuals. The term residuals is basically referring to the difference between the actual value of the output and the model's prediction. 
+
+```{r}
+
+summary( model$residuals )
+
+# original price - predicted price by the model (stored in the fitted value )
+summary( normed_data$price - model$fitted.values )
+
+```
+
+A ideal linear model's residual should have a mean of 0, median near 0 and the 1st and 3rd quantile should be symmetric with neither of them too large or too few when compared with the other.
+
+**t-value:**
+
+Before training the model each input variable has a coefficient of 0 with respect to the output ( indicating no linear relationship ) . The term t-value measures how many standard deviation is our estimated coefficient away from the original value of 0. The calculation is basically to divide our coefficient estimate by our standard error. It's actually ( coefficient - 0 ) / standard error, since the baseline assumption is 0 but the minus 0 is dropped since it doesn't affect the outcome. 
+
+```{r}
+library(broom)
+( coefficient <- broom::tidy(model) )
+
+# t-value
+coefficient$estimate / coefficient$std.error
+
+```
+
+A high t-value indicates that we should keep the corresponding feature in our final linear model, since it has a higher chance of being a nonzero coefficient.
+
+**p-value:**
+
+Probably one of the most importatnt indicators. The first concept to calculate this value is the degrees of freedom. You can think of it as the number of training data you have left considering the number of coefficients you wish to solve. Which happens to be the number of observations in our training data minus the model coefficient's total count. 
+
+Back to the p-value. This is a value that turns the t-value into probabilities that tells us: How likely should our coefficient be zero instead of the current value that we've estimated? Or in a sense what is the probability of our t-value being larger or smaller than the ones that our model estimated?  
+
+The probability is calculated based on the student's t distribution, which requires us the specify the degrees of freedom. We can calculate it by converting the t-value into absolute values first, then calculate the upper tail of the distribution to obtain the probabality of being larger and multiply it by 2 to include the probability of being smaller.  
+
+```{r}
+# degrees of freedom
+( df <- nrow(normed_data) - nrow(coefficient) )
+
+# p-value
+pt( abs(coefficient$statistic), df = df, lower.tail = FALSE ) * 2
+
+```
+
+The general rule of thumb is that we should include coefficients that have p-value lesser than **0.05**. Other really important things to mention about this p-value is that:
+
+- We should never compare p-values against each other to gauge which input variable is more important than the others.
+- A input variable with a high p-value does not necessarily indicate that it has no linear relationship with the output. It only claims after including all the other input variables to our model, this feature does not provide any new information to the output.
+
+**R Squared:**
+
+When evaluating the fit of the linear model, another indicator that's worth your attention is the $R^2$ value. In short, we hope that the model we've trained to capture the output's variance as much as possible. The $R^2$ measures the proportion of the output variance that is explained by the model. It can be calculated by:
+
+$$ R^2 = 1 - \frac{RSS}{TSS} = 1- \frac{ \sum^n_{i=1} e_i^2 }{ \sum^n_{i=1} ( y_i - \bar{y} )^2 } $$
+
+Where:
+
+- `RSS` : Stands for Residual Sum of Squares ( the measurement that linear model tries of minimize ). This value captures the variance that is left between our prediction and the actual values of the output.
+- `TSS` : Stands for Total Sum of Squares, which measures the total variance in the output variable. 
+- $e_i$ : Residuals that we've mentioned above. 
+- n : Total number of your data point.
+- $y_i$ : Your output variable.
+- $\bar{y}$ : The average of your original output variable ( pronounced as y bar. ).
+
+```{r}
+
+# @y  : original output value
+# @py : predicted ouput value
+RSquared <- function( y , py )
+{
+	rss <- sum( ( y - py )^2 )
+	tss <- sum( ( y - mean(y) )^2 )
+	return( 1 - rss / tss )
+}
+
+summary(model)$r.squared
+RSquared( normed_data$price, model$fitted.values )
+
+```
+
+This value ranges between 0 and 1. A value close to 1 indicates that the linear model is a good fit as it explains most of the output variable's variance. A low value suggests that you should include other input variables and try to improve the model's fit.
+
+**Adjusted R Square:**
+
+The adjusted $R^2$ is measuring the same thing as the $R^2$, but adjusted for the complexity of the model, i.e. the count of the model's coefficient. The general idea is, if we add another input variable to our current model, the $R^2$ of the new model will still increase even if the new added input variable has no statistical power at all. Hence, adjusted $R^2$ tries to account for this sense of overfitting. The math formula to it:
+
+$$ R^2_{adjusted} = 1 - ( 1 - R^2 ) \times \frac{ n - 1 }{ n - k - 1 } $$
+
+Where:
+
+- n : Total number of your data point.
+- k : Number of coefficients, remember to exclude the intercept.
+
+```{r}
+
+k  <- nrow(coefficient) - 1
+
+# @y  : original output value
+# @py : predicted ouput value
+# @k  : number of the model's coefficient, excluding the intercept
+AdjustedRSquared <- function( y, py, k )
+{	 
+	n  <- length(y)
+	r2 <- RSquared( y, py )	
+	return( 1 - ( 1 - r2 ) * ( n - 1 ) / ( n - k - 1 ) )
+}
+
+summary(model)$adj.r.squared
+AdjustedRSquared( normed_data$price, model$fitted.values, k )
+
+```
+
+
+All the code for this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear_regression/linear_regession_code). The gradient descent function and the documentation code are in two separate scripts.
+
+The [link](https://github.com/ethen8181/machine-learning/blob/master/linear_regression/housing.txt) to the dataset.
 
 Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 
 
@@ -340,6 +467,7 @@ Any comments or suggestions is appreciated. That includes bugs or typos report. 
 
 1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
 2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf
+3. Interpretation of linear regression's summary: http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output
 
 ## R Session Information  
 
@@ -349,4 +477,5 @@ sessionInfo()
 
 ```
 
-[GradientDescent]: https://github.com/ethen8181/machine-learning/blob/master/linear%20regression/linear_regession_1_code/gradient_descent.R
+[GradientDescent]: https://github.com/ethen8181/machine-learning/blob/master/linear_regression/linear_regession_code/gradient_descent.R
+

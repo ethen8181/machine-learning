@@ -21,7 +21,7 @@ ggtitle( expression( 1.2 * (x-2)^2 + 3.2 ) )
 
 
 # ------------------------------------------------------------------------------------
-# gradient descent implementation : 
+# gradient descent toy example : 
 # keep updating the x value until the difference between this iteration and the last 
 # one, is smaller than epsilon (a given small value) or the process count of updating the 
 # x value surpass user-specified iteration
@@ -78,7 +78,7 @@ geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ),
 # housing data
 library(dplyr)
 
-setwd("/Users/ethen/machine-learning/linear regression")
+setwd("/Users/ethen/machine-learning/linear_regression")
 housing <- read.table( "housing.txt", header = TRUE, sep = "," )
 
 # example :
@@ -101,7 +101,8 @@ list( area = sum( row1[1] + row2[1] ), bedrooms = sum( row1[2] + row2[2] ) )
 Normalize <- function(x) ( x - mean(x) ) / sd(x)
 
 # --------------------------------------------------------------------------------------------
-source("linear_regession_1_code/gradient_descent.R")
+# gradient descent 
+source("linear_regession_code/gradient_descent.R")
 
 trace_b <- GradientDescent( target = "price", data = housing, 
 	                        learning_rate = 0.05, iteration = 500, method = "batch" )
@@ -109,7 +110,7 @@ trace_b <- GradientDescent( target = "price", data = housing,
 parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
 
 # linear regression 
-normed <- apply( housing[ , -3 ], 2, Normalize )
+normed <- apply( housing[ , -3 ], 2, scale )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
 
@@ -118,6 +119,70 @@ model <- lm( price ~ ., data = normed_data )
 costs_df <- data.frame( iteration = 1:nrow(trace_b$cost), 
 	                    costs = trace_b$cost / 1e+8 )
 ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
+
+
+# ---------------------------------------------------------------------------
+# appendix : summary of the linear model 
+
+summary(model)
+
+# residuals 
+summary( model$residuals )
+summary( normed_data$price - model$fitted.values )
+
+
+# t-value
+library(broom)
+( coefficient <- tidy(model) )
+coefficient$estimate / coefficient$std.error
+
+
+# p-value
+summary(model)$df
+( df <- nrow(normed_data) - nrow(coefficient) )
+pt( abs(coefficient$statistic), df = df, lower.tail = FALSE ) * 2
+
+
+# r squared
+
+# @y  : original output value
+# @py : predicted ouput value
+RSquared <- function( y , py )
+{
+	rss <- sum( ( y - py )^2 )
+	tss <- sum( ( y - mean(y) )^2 )
+	return( 1 - rss / tss )
+}
+
+summary(model)$r.squared
+RSquared( normed_data$price, model$fitted.values )
+
+
+# adjusted r square 
+k  <- nrow(coefficient) - 1
+
+# @y  : original output value
+# @py : predicted ouput value
+# @k  : number of the model's coefficient, excluding the intercept
+AdjustedRSquared <- function( y, py, k )
+{	 
+	n  <- length(y)
+	r2 <- RSquared( y, py )	
+	return( 1 - ( 1 - r2 ) * ( n - 1 ) / ( n - k - 1 ) )
+}
+summary(model)$r.squared * df / nrow(normed_data)
+summary(model)$adj.r.squared
+AdjustedRSquared( normed_data$price, model$fitted.values, k )
+
+
+
+# variance of inflation : predictive 
+# collinearity : practical data science  
+
+
+# plot for the test set 
+
+
 
 
 # ----------------------------------------------------------------------------
