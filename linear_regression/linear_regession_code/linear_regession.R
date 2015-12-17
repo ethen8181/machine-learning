@@ -6,6 +6,7 @@
 library(grid)
 library(ggplot2)
 
+
 # original formula 
 Formula <- function(x) 1.2 * (x-2)^2 + 3.2
 
@@ -104,12 +105,13 @@ Normalize <- function(x) ( x - mean(x) ) / sd(x)
 # gradient descent 
 source("linear_regession_code/gradient_descent.R")
 
-trace_b <- GradientDescent( target = "price", data = housing, 
+trace_b <- GradientDescent( data = housing, target = "price",  
 	                        learning_rate = 0.05, iteration = 500, method = "batch" )
-
+# final parameters 
 parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
 
 # linear regression 
+housing <- rbind( housing, c( 5000, 8 , 1000000 ) )
 normed <- apply( housing[ , -3 ], 2, scale )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
@@ -180,10 +182,28 @@ AdjustedRSquared( normed_data$price, model$fitted.values, k )
 # collinearity : practical data science  
 
 
-# plot for the test set 
 
+source("/Users/ethen/machine-learning/linear_regression/linear_regession_code/LMPlot.R")
+lm_plot <- LMPlot( model = model, actual = normed_data$price )
+grid.draw(lm_plot$plot)
 
+housing <- rbind( housing, c( 5000, 8 , 1000000 ) )
+normed <- apply( housing[ , -3 ], 2, scale )
+normed_data <- data.frame( cbind( normed, price = housing$price ) )
+model1 <- lm( price ~ ., data = normed_data )
 
+lm_plot <- LMPlot( model = model1, actual = normed_data$price )
+grid.draw(lm_plot$plot)
+lm_plot$outlier
+
+# variance inflation score 
+library(car)
+car::vif(model1)
+
+# area calculation 
+area_model <- lm( area ~ .-price, data = normed_data )
+area_r2 <- RSquared( y = normed_data$area, py = area_model$fitted.values )
+1 / ( 1 - area_r2 )
 
 # ----------------------------------------------------------------------------
 # test code 

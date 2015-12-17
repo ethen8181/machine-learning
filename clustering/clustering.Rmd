@@ -142,6 +142,8 @@ boot_clust$bootdissolved
 
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
+**Sources:**
+
 You can find all the code for this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/clustering.R).
 
 Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 

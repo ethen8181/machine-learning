@@ -448,12 +448,13 @@ rows &lt;-<span class="st"> </span><span class="kw">nrow</span>(SM) /<span class
 ## 3    2     3     2     0
 ## 4    2     0     6     0</code></pre>
 <p>What locality sensitive hashing tells us is : If the signature values of two documents agree in all the rows of at least one band, then these two documents are likely to be similar and should be compared (list it as our candidate pair). Using this small set of documents is probably a really bad example …., since none of them will get chosen as our candidate pair. For instance, if the signature value of document 2 for band 1 becomes [ 0, 0 ] instead of the current [ 2, 0 ] now, then document 2 and document 1 will become a candidate pair as both of their rows in band1 takes the same value of [ 0, 0 ].</p>
-<p><strong>Takeaways :</strong></p>
+<p><strong>Takeaways:</strong></p>
 <ol style="list-style-type: decimal">
 <li>MinHash, or the formal name, min-wise independent permutations locality sensitive hashing scheme computes an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.<br />
 </li>
 <li>To note, there’s also a R library <code>textreuse</code> that implements the techniques that we’ve walked through in this documentation. You should be able understand its vignette with no problem.</li>
 </ol>
+<p><strong>Sources:</strong></p>
 <p>All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in <a href="https://github.com/ethen8181/machine-learning/blob/master/text_similarity">this</a> folder.</p>
 <p>You can file up a new issue or leave comments of any sort <a href="https://github.com/ethen8181/machine-learning/issues">here</a>. This includes feedbacks, bug reports or room for improvements. Thank you !</p>
 </div>

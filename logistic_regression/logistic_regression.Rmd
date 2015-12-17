@@ -404,9 +404,11 @@ head(result)
 
 Then we will obtain a priority score table above. Where the score will be high for the employees we wish to act upon as soon as possible, and lower for the other ones. After obtaining this result, we can schedule a face to face interview with employees starting at the top of the list.
 
-**Conclusion :**
+**Conclusion:**
 
 Using a classification algorithm like logistic regression in this example enabled us to detect events that will happen in the future. That is which employees are more likely to leave the company. Based on this information, we can come up with a more efficient strategy to cope with matter at hand. Hopefully, after this doucmentation, the one thing that you'll still remember is : If there are a lot more negative outcome data than positives, or vice versa, we shouldn't solely use accuracy as the measurement to evaluate our model's performance. 
+
+**Sources:**
 
 All the code and the data can be found under [this](https://github.com/ethen8181/machine-learning/blob/master/logistic_regression) folder. Codes are under the folder "logistic_regression_code", where the general code and function code are in two separate scripts. Data is under the "data" folder.
 

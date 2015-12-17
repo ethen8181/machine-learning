@@ -283,6 +283,8 @@ list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 
 
 Notice that after training the model for 4000 iterations and using a different $\alpha$ and $\eta$ value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
 
+**Sources:**
+
 All the R code can be found under this [link](https://github.com/ethen8181/machine-learning/tree/master/lda_1). The functions are general documentation's codes are in two different scripts.
 
 Issues and feedbacks are welcomed, you can file them [here](https://github.com/ethen8181/machine-learning/issues).

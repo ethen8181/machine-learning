@@ -475,8 +475,9 @@ median_lpe &lt;-<span class="st"> </span>data %&gt;%<span class="st"> </span><sp
 ## 5 0.24 0.93  3 193   5       0  0.7497174 (0.818,0.99] 0.6972371 732
 ## 6 0.24 0.82  3 209   6       0  0.8480916 (0.818,0.99] 0.6954351 235</code></pre>
 <p>Then we will obtain a priority score table above. Where the score will be high for the employees we wish to act upon as soon as possible, and lower for the other ones. After obtaining this result, we can schedule a face to face interview with employees starting at the top of the list.</p>
-<p><strong>Conclusion :</strong></p>
+<p><strong>Conclusion:</strong></p>
 <p>Using a classification algorithm like logistic regression in this example enabled us to detect events that will happen in the future. That is which employees are more likely to leave the company. Based on this information, we can come up with a more efficient strategy to cope with matter at hand. Hopefully, after this doucmentation, the one thing that you’ll still remember is : If there are a lot more negative outcome data than positives, or vice versa, we shouldn’t solely use accuracy as the measurement to evaluate our model’s performance.</p>
+<p><strong>Sources:</strong></p>
 <p>All the code and the data can be found under <a href="https://github.com/ethen8181/machine-learning/blob/master/logistic_regression">this</a> folder. Codes are under the folder “logistic_regression_code”, where the general code and function code are in two separate scripts. Data is under the “data” folder.</p>
 <p>Errors or suggestions can be filed <a href="https://github.com/ethen8181/machine-learning/issues">here</a>, I will gladly fix them as soon as possible ~ This includes poorly written code or grammar mistakes …</p>
 <p>There’s actual more to this HR example. We know who is more likely to leave and who are ones that we’re more interested in retaining, the next question is what should we say to those employees? Is he leaving because the salary is too low or is it because the workload is simply too much and he needs a break? View <a href="http://ethen8181.github.io/Business-Analytics/1_finding_groups/finding_groups.html">this</a> documentation to see how clustering algorithm can give us a little hint on this ( There’s two example in that documentation, please refer to the second one ).</p>
@@ -517,15 +518,15 @@ median_lpe &lt;-<span class="st"> </span>data %&gt;%<span class="st"> </span><sp
 ## [19] caTools_1.17.1      codetools_0.2-14    psych_1.5.8        
 ## [22] evaluate_0.8        labeling_0.3        knitr_1.11         
 ## [25] SparseM_1.7         class_7.3-13        quantreg_5.19      
-## [28] pbkrtest_0.4-2      parallel_3.2.2      proto_0.3-10       
+## [28] pbkrtest_0.4-4      parallel_3.2.2      proto_0.3-10       
 ## [31] Rcpp_0.12.2         KernSmooth_2.23-15  formatR_1.2.1      
-## [34] gdata_2.17.0        BradleyTerry2_1.0-6 lme4_1.1-9         
+## [34] gdata_2.17.0        BradleyTerry2_1.0-6 lme4_1.1-10        
 ## [37] mnormt_1.5-3        digest_0.6.8        stringi_1.0-1      
 ## [40] brglm_0.5-9         tools_3.2.2         bitops_1.0-6       
-## [43] magrittr_1.5        lazyeval_0.1.10     car_2.1-0          
+## [43] magrittr_1.5        lazyeval_0.1.10     car_2.1-1          
 ## [46] MASS_7.3-43         Matrix_1.2-2        assertthat_0.1     
 ## [49] minqa_1.2.4         rmarkdown_0.8       iterators_1.0.7    
-## [52] R6_2.1.1            nnet_7.3-10         nlme_3.1-121</code></pre>
+## [52] R6_2.1.1            nnet_7.3-11         nlme_3.1-121</code></pre>
 </div>
 
 
