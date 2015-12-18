@@ -285,7 +285,7 @@ We've now obtain the parameters of the linear model calculated by the gradient d
 ```{r}
 
 # linear regression 
-normed <- apply( housing[ , -3 ], 2, Normalize )
+normed <- apply( housing[ , -3 ], 2, scale )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
 model
@@ -299,7 +299,7 @@ $$ h_{\theta}(x) = `r comma( round(parameters_b[1]) )` + `r comma( round(paramet
 Now that we've gotten ourselves a bit famliar with gradient descent. I still own you an explanation about the `method` parameter from the gradient descent function call above. Let's recall the math formula for this approach : 
 $$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
 
-First the more formal name to this approach is **batch gradient descent**. From the formula, the part $\sum_{i=1}^m$ tells you that this method looks at every example in the entire training set on every step of the update. Normally, however, the size of our training data is usually very large; For the example dataset we used in this document m was only `r nrow(housing)` this approach will work out fine, but if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, \mathcal{O}(m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the **stochastic gradient descent**, math formula as follow :
+First the more formal name to this approach is **batch gradient descent**. From the formula, the part $\sum_{i=1}^m$ tells you that this method looks at every example in the entire training set on every step of the update. Normally, however, the size of our training data is usually very large. For the example dataset we used in this document, the size of m was only `r nrow(housing)`, hence this approach will work out perfectly fine. But if we were to use this approach on a large training dataset, updating the parameters for each iteration will take us linear time, \mathcal{O}(m), because this method has to scan through the entire training set before taking a single step. An alternative approach to this is the **stochastic gradient descent**, math formula as follow :
 
 $$ \text{for } i \text{ in } 1, 2, \dotsm, m :  $$
 $$ \theta_{j} := \theta_{j} - \alpha ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
@@ -460,12 +460,12 @@ AdjustedRSquared( normed_data$price, model$fitted.values, k )
 
 Useful visualizations when working with linear regression.
 
-[`LMPlot`][LMPlot] : Visualizations that works with linear regression. Input parameters : 
+[`LMPlot`][LMPlot] : Four visualizations that works with linear regression. Input parameters : 
 
 - `model` Linear regression model object.
 - `actual` Data's actual (original) output value.
 - The function returns a list consisting of :
-    - plot : four side by side visualizations. Use grid.draw to plot it.
+    - plot : four side by side visualizations. Wrap grid.draw over it to plot it.
     - outlier : If there're outliers detected using the cooks distance measure, return the possbile outlier's index. If not return NULL.
 
 ```{r, fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
@@ -479,30 +479,19 @@ grid.draw(lm_plot$plot)
 Interpretation of the plot :
 
 - **Upper Left:** Visualizes value predicted by your model versus the actual value of your original data. If the model is considered to a good estimate of the outcome,  there should be strong correlation between the model’s predictions and its actual results, the line should be a close fit to y = x, going from bottom left to upper right.
-- **Upper Right:** Visualizes the cooks distance and the predicted value. Cooks distance is a measurement that goes with linear models. The rule of thumb is, if a data point's cook distance larger than 1 or larger than the number of data / 4, then that data point is considered to be a possible outlier.
+- **Upper Right:** Visualizes the cooks distance and the predicted value. Cooks distance is a measurement that goes with linear models. The rule of thumb is, if a data point's cook distance larger than 1 or larger than the 4 / number of data, then that data point is considered to be a possible outlier.
 - **Bottom Left:** Visualizes the residuals or your model's predicted value. Ideally your plot of the residuals should be symmetrically distributed around the lower digits of the y-axis, with no clear patterns what so ever. Meaning your residuals should not be larger or smaller in a specific range. If there're patterns detected, it could indicate the current input features that you're providing does not have a linear relationship with the output. Or there're still variance in the output that we did not capture and should add new input variables.
 - **Bottom Right:** Visualizes a QQ plot of the residuals. This is way of checking whether there's patterns for your residuals. The plot will be very close to the y = x straight line if the residuals is a close approximation to a normal distribution, which is the ideal scenario. 
 
-This function will also color the outliers for you if it is detected by the cooks distance measurement. Examples provided below where we add a random outlier to our original housing data.
+As you can see this function will also color the outliers for you if it is detected by the cooks distance measurement ( If no outlier is detected then the plot will be single colored ). And the will return the indices of the possible outliers.
 
-```{r, fig.height=6, fig.width=10, message=FALSE, warning=FALSE }
+```{r}
 
-# random outlier and train the linear model 
-housing <- rbind( housing, c( 5000, 8 , 1000000 ) )
-normed <- apply( housing[ , -3 ], 2, scale )
-normed_data <- data.frame( cbind( normed, price = housing$price ) )
-model1 <- lm( price ~ ., data = normed_data )
-
-# input the new model and actual value
-lm_plot <- LMPlot( model = model1, actual = normed_data$price )
-grid.draw(lm_plot$plot)
-
-# index number of the possible outlier
 lm_plot$outlier
 
 ```
 
-This suggests that data point `r lm_plot$outlier` from our data is a possible outlier and should be taken care of. We can simply remove it from our data when training the model if there's only a few of them, but if there's a significant amount of outliers then we should sit down and take a closer look as to why.
+This suggests that data point `r lm_plot$outlier` from our data are possible outliers and should be taken care of. We can simply remove it from our data when training the model if there's only a few of them, but if there's a significant amount of outliers then we should sit down and take a closer look as to why.
 
 **Variance Inflation Factor:**
 
@@ -512,11 +501,11 @@ One common notions is that we should remove variables that have linear relations
 
 One simple approach to identify collinearity among input variables is the use of variance inflation factors (VIF). The score for each input variable is obtained by fitting a linear regression model in which we treat each of the features as the output feature and all the remaining features as regular input features. Then compute VIF for our chosen feature using the formula: 
 
-$$ \frac{1}{1 – R^2} $$
+$$ VIF = \frac{1}{1 – R^2} $$
 
 ```{r, message=FALSE,warning=FALSE}
 library(car)
-car::vif(model1)
+car::vif(model)
 
 # example of calculating the vif score for area
 area_model <- lm( area ~ .-price, data = normed_data )

@@ -111,7 +111,6 @@ trace_b <- GradientDescent( data = housing, target = "price",
 parameters_b <- trace_b$theta[ nrow(trace_b$theta), ]
 
 # linear regression 
-housing <- rbind( housing, c( 5000, 8 , 1000000 ) )
 normed <- apply( housing[ , -3 ], 2, scale )
 normed_data <- data.frame( cbind( normed, price = housing$price ) )
 model <- lm( price ~ ., data = normed_data )
@@ -177,28 +176,16 @@ summary(model)$adj.r.squared
 AdjustedRSquared( normed_data$price, model$fitted.values, k )
 
 
-
-# variance of inflation : predictive 
-# collinearity : practical data science  
-
-
-
+# linear regression plot 
 source("/Users/ethen/machine-learning/linear_regression/linear_regession_code/LMPlot.R")
 lm_plot <- LMPlot( model = model, actual = normed_data$price )
 grid.draw(lm_plot$plot)
-
-housing <- rbind( housing, c( 5000, 8 , 1000000 ) )
-normed <- apply( housing[ , -3 ], 2, scale )
-normed_data <- data.frame( cbind( normed, price = housing$price ) )
-model1 <- lm( price ~ ., data = normed_data )
-
-lm_plot <- LMPlot( model = model1, actual = normed_data$price )
-grid.draw(lm_plot$plot)
 lm_plot$outlier
+
 
 # variance inflation score 
 library(car)
-car::vif(model1)
+car::vif(model)
 
 # area calculation 
 area_model <- lm( area ~ .-price, data = normed_data )

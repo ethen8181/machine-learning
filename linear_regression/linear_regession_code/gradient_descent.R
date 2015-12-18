@@ -1,3 +1,5 @@
+library(dplyr)
+
 # gradient descent for linear regression
 
 # [GradientDescent] :
@@ -56,7 +58,7 @@ GradientDescent <- function( data, target, learning_rate, iteration,
 			descent <- ( t(input) %*% error ) / nrow(output)
 			return( t(descent) )
 		}		
-	}else # stochastic
+	}else # stochastic gradient descent, using one training sample per update 
 	{
 		derivative <- function( input, output, theta, step )
 		{

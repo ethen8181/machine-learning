@@ -6,8 +6,10 @@ library(data.table)
 
 # [LMPlot] : 
 # visualizations that works with linear regression
-# @model : linear regression model object
+# @model  : linear regression model object
 # @actual : your data's actual (original) output value
+# returns : 1. plot    : eturns the four plot in one side by side plot
+#   		2. outlier : observation index of the possible, if none return NULL
 
 LMPlot <- function( model, actual )
 {
@@ -20,8 +22,8 @@ LMPlot <- function( model, actual )
 					 		 residuals 		= model$residuals,
 					 		 cooks_distance = cooks_distance )
 
-	# cooks distance > 1 or > number of data / 4 is considered a possible outlier 
-	boolean <- ( cooks_distance > 1 ) | ( cooks_distance > length(actual) / 4 )
+	# cooks distance > 1 or > 4 / number of data is considered a possible outlier 
+	boolean <- ( cooks_distance > 1 ) | ( cooks_distance > 4 / length(actual) )
 	outlier <- which(boolean)
 	
 	if( length(outlier) > 0 )
@@ -75,15 +77,14 @@ LMPlot <- function( model, actual )
 	}	
 	qqplot <- QQPlot( plot_data = plot_data )
 
-
 	if( length(outlier) > 0 )
 	{		
 		cooks <- cooks + geom_point( aes( color = boolean ), size = 2, shape = 1 ) + 
 				 		 guides( color = FALSE )
 
-		pred  <- pred +	geom_point( aes( color = boolean ), size = 2, shape = 1 ) +
-						geom_smooth( method = "lm" ) + 				 		 
-				 		guides( color = FALSE )
+		pred <- pred + geom_point( aes( color = boolean ), size = 2, shape = 1 ) +
+					   geom_smooth( method = "lm" ) + 				 		 
+				 	   guides( color = FALSE )
 
 		resid <- resid + geom_point( aes( color = boolean ), size = 2, shape = 1 ) +
 						 geom_smooth( aes( x = predicted, y = residuals ) ) +						  				 		  
