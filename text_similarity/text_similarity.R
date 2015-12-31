@@ -53,9 +53,8 @@ Shingling <- function( document, k )
 	shingles <- character( length = ( length(document) - k + 1 ) )
 
 	for( i in 1:( length(document) - k + 1 ) )
-	{
 		shingles[i] <- paste( document[ i:( i + k - 1 ) ], collapse = " " )
-	}
+
 	return( unique(shingles) )
 }
 

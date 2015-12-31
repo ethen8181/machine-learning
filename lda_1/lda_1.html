@@ -206,9 +206,7 @@ for( d in <span class="dv">1</span>:<span class="kw">length</span>(docs) )
 
     <span class="co"># count words in document d assigned to each topic t</span>
     for( t in <span class="dv">1</span>:K )
-    {     
         dt[ d, t ] &lt;-<span class="st"> </span><span class="kw">sum</span>( ta[[d]] ==<span class="st"> </span>t ) 
-    }
 }
 
 <span class="co"># randomly assigned topic to each word</span>
@@ -283,8 +281,8 @@ for( d in <span class="dv">1</span>:<span class="kw">length</span>(docs) )
 </ul>
 <p>It may be still confusing with all of that notations, the following section goes through the computation for one iteration. The topic of the first word in the first document is resampled as follow: The output will not be printed during the process, since it’ll probably make the documentation messier.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># parameters </span>
-alpha &lt;-<span class="st"> </span><span class="dv">10</span>
-eta &lt;-<span class="st"> </span><span class="dv">10</span>
+alpha &lt;-<span class="st"> </span><span class="dv">1</span>
+eta &lt;-<span class="st"> </span><span class="dv">1</span>
 
 <span class="co"># initial topics assigned to the first word of the first document</span>
 <span class="co"># and its corresponding word id </span>
@@ -348,7 +346,7 @@ lda1</code></pre></div>
 ## [6,]    2    1
 ## [7,]    8    1
 ## [8,]    3    0</code></pre>
-<p>After we’re done with learning the topics for 1000 iterations, we can use the count matrices to convert them a bit to obtain the word-topic distribution and document-topic distribution.</p>
+<p>After we’re done with learning the topics for 1000 iterations, we can use the count matrices to obtain the word-topic distribution and document-topic distribution.</p>
 <p>To compute the probability of word given topic:</p>
 <p><span class="math display">\[\phi_{ij} = \frac{C^{WT}_{ij} + \eta}{\sum^W_{ k = 1 }C^{WT}_{kj} + W\eta}\]</span></p>
 <p>Where <span class="math inline">\(\phi_{ij}\)</span> is the probability of word i for topic j.</p>
@@ -385,12 +383,12 @@ lda1</code></pre></div>
 ## [6,] 0.6000000 0.4000000
 ## [7,] 0.8181818 0.1818182
 ## [8,] 0.8000000 0.2000000</code></pre>
-<p>Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word &amp; topic ) we can use this information to see which topic does each document belongs to and what are the possible words under each topic.</p>
+<p>Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word &amp; topic ) we can use this information to see which topic does each document belongs to and the more possible words that are associated with each topic.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># topic assigned to each document, the one with the highest probability </span>
 topic &lt;-<span class="st"> </span><span class="kw">apply</span>( theta, <span class="dv">1</span>, which.max )
 
 <span class="co"># possible words under each topic </span>
-<span class="co"># sort the probability and obtain the user-specified number</span>
+<span class="co"># sort the probability and obtain the user-specified number n</span>
 Terms &lt;-<span class="st"> </span>function( phi, n )
 {
     term &lt;-<span class="st"> </span><span class="kw">matrix</span>( <span class="dv">0</span>, n, K )

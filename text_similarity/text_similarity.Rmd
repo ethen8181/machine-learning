@@ -10,11 +10,11 @@ output:
     toc: yes
 ---
 
-> This documentation assumes you're famaliar with R. All the codes are in "illustrative" form, you shouldn't directly use them for actual production.
+> All codes are in "illustrative" form, thus you shouldn't directly use them for actual production.
 
 ## Background
 
-One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don't show identical news articles to users), and the list goes on.   
+One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don't show identical news articles to users) and the list goes on.   
 
 We'll use three documents as our toy example. The following section loads them in and also preprocess them by :  
 
@@ -34,9 +34,8 @@ library(stringr)
 library(data.table)
 setwd("/Users/ethen/machine-learning/text_similarity/data")
 
-doc <- lapply( list.files(), readLines )
-# the original text 
-doc
+# read in original text 
+( doc <- lapply( list.files(), readLines ) )
 
 # preprocess text
 doc1 <- lapply( doc, function(x)
@@ -53,7 +52,7 @@ doc1[[1]]
 
 ## K-Shingling
 
-The first notion we'll introduce is **Shingling**, the most effective technique of representin documents as sets. Documents are constructed by a string of characters. Given the document, its k-shingle is said to be all the possible consecutive substring of length k found within it. That might be a bit confusing, an example with k = 3 is given below : 
+The first notion we'll introduce is **Shingling**, a common technique of representing documents as sets. Given the document, its k-shingle is said to be all the possible consecutive substring of length k found within it. An example with k = 3 is given below : 
 
 ```{r}
 
@@ -63,9 +62,8 @@ Shingling <- function( document, k )
 	shingles <- character( length = length(document) - k + 1 )
 
 	for( i in 1:( length(document) - k + 1 ) )
-	{
 		shingles[i] <- paste( document[ i:( i + k - 1 ) ], collapse = " " )
-	}
+
 	return( unique(shingles) )	
 }
 
@@ -79,16 +77,16 @@ list( Original = doc[[1]], Shingled = doc1[[1]] )
 
 ```
 
-As you can see from the printed out first document. By picking our k to be 3, the k-shingle of the first document consists of substrings of lenth 3. The first 3-shingle is **`r doc1[[1]][1]`** as it's the first consecutive substring of length 3 in the document, then the second 3-shingle **`r doc1[[1]][2]`** is the next 3 word long substring after removing the first word of the document. And the list goes on. 
+As you can see from the printed out first document. By picking our k to be 3, the k-shingle of the first document consists of substrings of lenth 3. The first 3-shingle is **`r doc1[[1]][1]`** as it's the first consecutive substring of length 3 in the document, then the second 3-shingle **`r doc1[[1]][2]`** is the next 3 word long substring after excluding the first word of the document. And the list goes on. 
 
-Another thing to add is the set of k-shingle of a document consists of unique k-shingles. For example, if the first document above contains more than one **`r doc1[[1]][1]`** then it will still only appear once as the set of k-shingle for the document. 
+Another thing to note is that a document's k-shingle set should only consists of unique k-shingles. For example, if the first document above contains more than one **`r doc1[[1]][1]`** then it will only appear once as the set of k-shingle for that document. 
 
 Now that we have that in mind, we'll construct a "characteristic" matrix that visualizes the relationships between our three documents. The matrix will be a boolean matrix, where its 
 
 - rows = the elements of the universal set (every unique possible combinations of shingles sets across all documents ). 
 - columns = one column per document.
 
-Thus the matrix will have 1 in row i and column j if and only if document j contains the shingle i and 0 otherwise. Example below. ( I will use data frame instead of matrix throughout the whole documentation ).
+Thus the matrix will have 1 in row i and column j if and only if document j contains the shingle i and 0 otherwise. Example below. ( I will use the data frame data structure to replace matrix throughout the whole documentation ).
 
 ```{r}
 
@@ -110,17 +108,17 @@ M
 
 Looking at the first row of the matrix above, all three columns of recorded a 1. This denotes that all three documents contains the 3-shingle **`r rownames(M)[1]`**. As for the second, column cell value of [`r M[2,]`] means that document 2 does not have the 3-shingle **`r rownames(M)[2]`**, while document 1 and 3 do. And so on.
 
-- Note that unlike our toy example, these "characteristic" matrices are almost always *sparse*, therefore, in practice we usually represent these kind of matrices of 0's and 1's only by the positions in which is 1's appear. This is more space efficient.
+- Note that unlike our toy example, these "characteristic" matrices are almost always *sparse*. Therefore, in practice we usually represent these kind of matrices only by the positions in which the 1 appear as it is considered to be more space efficient.
 
 ## Jaccard Similarity
 
-After transforming all the documents into shingle sets, and using characteristic matrix to visualize the relatinoships between our documents. The next question is how do me measure the similarity between documents ? 
+Now that we've transformed all the documents into shingle sets and used characteristic matrix to visualize the relationships between our documents. The next question is how do we measure the similarity between documents? 
 
 One well known measure for determining the degree of similarity is the **Jaccard Similarity**. Given two sets of shingles, set1 and set2. The math formula of this measurement will be :
 
 $$ \frac{ \text{| } set1 \cap set2 \text{ |} }{ \text{| } set1 \cup set2 \text{ |} } $$
 
-This is equivalent to saying for two sets, its jaccard similarity is the size of their intersection divided by their union. For our "characteristic" matrix, if we restrict ourselves to only two columns (documents), then the rows can be divided into three types :
+This is equivalent to saying for any two given sets, its jaccard similarity is the size of their intersection divided by their union. For our "characteristic" matrix, if we restrict ourselves to only two columns (documents), then the rows can be divided into three types :
 
 - Type 1 : rows have 1s in both columns.
 - Type 2 : rows have 1 in one of the columns and 0 in the other.
@@ -128,7 +126,7 @@ This is equivalent to saying for two sets, its jaccard similarity is the size of
 
 Applying the jaccard similarity concept here, the similarities between two sets will then be $\frac{ \text{Type 1} }{ \text{ Type 1 + Type 2 } }$. 
 
-The following section will calculate the pairwise jaccard similarities for all three documents, and print out the original document's content to get a feel of it. One quick way to calculate pairwise distance in R is the `dist` function, which computes and returns the distance/similarity matrix between either rows or columns of a matrix/data frame. We can also define our own measures for the distance/similarity in the proxy library's database.
+The following section will calculate the pairwise jaccard similarities for all three documents and print out the original document's content to get a feel of the performace. One quick way to calculate pairwise distance in R is the `dist` function, which computes and returns the distance/similarity matrix between either rows or columns of a matrix/data frame. We can also define our own measures for the distance/similarity in the proxy library's database.
 
 ```{r}
 
@@ -151,9 +149,10 @@ d1 <- dist( t(M), method = "JaccardSimilarity" )
 pr_DB$delete_entry( "JaccardSimilarity" )
 d1
 doc
+
 ```
 
-The similarity matrix d tells us that document 1 and 3 is the most similar among the three documents, looking at its original content, it seems like it does match our intuition, as both of the documents contains the substring sun is bright and the sky is blue (despite the different ordering in the context) .
+The similarity matrix d1 tells us that document 1 and 3 is the most similar among the three documents. Looking at its original content, it seems like it does match our intuition as both of the documents contains the substring "sun is bright" and "the sky is blue" (despite the different ordering in the context) .
 
 Now that we have calculated the pair-wise similarity between each document in a pretty straightforward way, we're done right ?! Well, it's a yes and a no. For small datasets, this method works out perfectly fine, but imagine if we have a large number of documents to compare instead of just three, let's say the number is N. We will then be forced to do a number of $N \choose 2$ comparisons ( N choose 2 comparisons ). This is obviously not going to scale well.
 
@@ -177,7 +176,7 @@ $$h(x) = (ax + b) \bmod c$$
 Where : 
 
 - `x` is the row numbers of your original characteristic matrix. 
-- `a` and `b` are any random numbers smaller than the maximum number of x, though they both must be unique in each signature. e.g. For signature 1, if you generated a 5 to serve as your a coefficient, you must ensure that this value does not serve as your a coefficient multiple times within signature 1, though you can still use 5 as your b coefficient in signature 1. And this restriction will refresh for the next signature, that is, you can use 5 to serve as your a or b coefficient for signature 2, but again no multiple 5 for signature 2's a coefficient and so on.
+- `a` and `b` are any random numbers smaller or equivalent to the maximum number of x, though they both must be unique in each signature. e.g. For signature 1, if you generated a 5 to serve as your a coefficient, you must ensure that this value does not serve as your a coefficient multiple times within signature 1, though you can still use 5 as your b coefficient in signature 1. And this restriction will refresh for the next signature, that is, you can use 5 to serve as your a or b coefficient for signature 2, but again no multiple 5 for signature 2's a coefficient and so on.
 - `c` is a prime number slightly larger than the total number of shingle sets. You can find suitable prime number for your dataset [here](http://compoasso.free.fr/primelistweb/page/prime/liste_online_en.php). For our example dataset, our total row count is `r nrow(M)`, thus prime number 17 will do fine.
 
 We can see it for ourselves that this simple hash function does in fact generate random permutated rows
@@ -222,19 +221,18 @@ permute_df
 
 ```
 
-From the output shown above, we can see that all `r signature_num` hash functions does in fact produce permutated numbers. There are 0s, but it will not affect our computation, and you'll see why later.
+From the output shown above, we can see that all `r signature_num` hash functions does in fact produce permutated numbers. There are 0s, but it will not affect our computation and you'll see why later.
 
-Using our randomly permutated rows, we'll carry out the second step of the MinHash algorithm, calculating the signatures. The signature value of any column (document) is the number of the first row, in the permutated order, in which the column has a 1. 
+Using our randomly permutated rows, we'll carry out the second step of the MinHash algorithm, calculating the signatures. The signature value of any column (document) is obtained by : Using the permutated order generated by each hash function, the number of the first row in which the column has a 1. 
 
 See example below. We'll combine our randomly permutated rows (generated by hash functions) with our original characteristic matrix and change the row names of the matrix to its row number to illustrate the calculation :
 
 ```{r}
 
+# use the first two signature as an example
 # bind with the original characteristic matrix
 M1 <- cbind( M, permute_df[1:2] )
 rownames(M1) <- 1:nrow(M1)
-
-# use the first two signature as an example
 M1
 
 ```
@@ -247,7 +245,7 @@ According to our first hash function's permutated row order the second row is ro
 
 Again, checking the permutated row order for our first hash function, the third row is row 8. Is document 2's entry for row 8 a 1 ? Yes it is ! Therefore, we're done with calculating the signature values for all three columns using our first hash function!! Which are [0, 2, 1]. 
 
-We can then apply the same notion to calculate the signature value for each column (document) using the second hash function, and so on for the third, fourth, blah blah blah. A quick look at the signature second hash function shows that the first row according to its permutated row order is row 1, and all three document has a 1 in row 1, therefore the signature values generated by our second hash function for all three document are [1, 1, 1].
+We can then apply the same notion to calculate the signature value for each column (document) using the second hash function, and so on for the third, fourth, blah blah blah. A quick look at the signature second hash function shows that the first row according to its permutated row order is row 1 and all three document has a 1 in row 1. Hence, the signature values generated by our second hash function for all three document are [0, 0, 0].
 
 As for these calculated signature values, we will store them into a signature matrix along the way, which will later replace our original characteristic matrix. The following section will calculate the signature values for all `r ncol(M)` columns using all `r signature_num` hash functions, and print out the signature matrix.
 
@@ -295,7 +293,7 @@ list( SigSimilarity = d2, JaccardSimilarity = d1 )
 
 From the difference of the result between the original jaccard similarity and our new similarity obtained using the signature similarity, you might be doubting is this a true estimate ? Well, the short answer is, we said right in the beginning of this section that Minhash's purpose is to provide us with a fast "approximation" to the true jaccard similarity, and this example is simply way too small for the law of large numbers to assure that the estimates are close.
 
-For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing **Locality Sensitive Hashing**, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.
+For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing **Locality Sensitive Hashing**, a technique that allows us to do just that.
 
 ## Locality Sensitive Hashing
 

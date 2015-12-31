@@ -121,7 +121,8 @@ LDACaculation <- function(vector)
 	lda <- LDA( dtm, k = 8, method = "Gibbs", 
 	   		    control = list( seed = 1234, 
 	   		    				burnin = 1000, 
-	   		    				thin = 100, iter = 1000 ) )
+	   		    				thin = 100, 
+	   		    				iter = 1000 ) )
 	return(lda)	
 }
 

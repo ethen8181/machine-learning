@@ -85,10 +85,8 @@ for( d in 1:length(docs) )
 	}
 
 	# count words in document d assigned to each topic t
-	for( t in 1:K )
-	{	  
+	for( t in 1:K )  
 		dt[ d, t ] <- sum( ta[[d]] == t ) 
-	}
 }
 
 # the count of each word being assigned to each topic 
@@ -99,7 +97,7 @@ print(dt)
 
 
 # ----------------------------------------------------------------------------------------
-#										Gibbs sampling one iteration 
+#								Gibbs sampling one iteration 
 # ----------------------------------------------------------------------------------------
 
 # hyperparameters
@@ -108,8 +106,8 @@ eta <- 1
 
 # initial topics assigned to the first word of the first document
 # and its corresponding word id 
-t0  <- ta[[1]][3]
-wid <- docs[[1]][3]
+t0  <- ta[[1]][1]
+wid <- docs[[1]][1]
 
 # z_-i means that we do not include token w in our word-topic and document-topic 
 # count matrix when sampling for token w, 
@@ -125,13 +123,14 @@ right <- ( dt[ 1, ] + alpha ) / ( sum( dt[ 1, ] ) + K * alpha )
 t1 <- sample( 1:K, 1, prob = left * right )
 t1
 
+# refresh the dt and wt with the newly assigned topic 
 ta[[1]][1] <- t1 
 dt[ 1, t1 ]   <- dt[ 1, t1 ] + 1  
 wt[ t1, wid ] <- wt[ t1, wid ] + 1
 
 
 # ----------------------------------------------------------------------------------------
-#										Gibbs sampling full; topicmodels library 
+#								Gibbs sampling ; topicmodels library 
 # ----------------------------------------------------------------------------------------
 
 # define parameters

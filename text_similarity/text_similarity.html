@@ -125,11 +125,11 @@ img {
 </div>
 
 <blockquote>
-<p>This documentation assumes you’re famaliar with R. All the codes are in “illustrative” form, you shouldn’t directly use them for actual production.</p>
+<p>All codes are in “illustrative” form, thus you shouldn’t directly use them for actual production.</p>
 </blockquote>
 <div id="background" class="section level2">
 <h2><span class="header-section-number">0.1</span> Background</h2>
-<p>One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don’t show identical news articles to users), and the list goes on.</p>
+<p>One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don’t show identical news articles to users) and the list goes on.</p>
 <p>We’ll use three documents as our toy example. The following section loads them in and also preprocess them by :</p>
 <ul>
 <li>Removing any punctuation mark.<br />
@@ -147,9 +147,8 @@ img {
 <span class="kw">library</span>(data.table)
 <span class="kw">setwd</span>(<span class="st">&quot;/Users/ethen/machine-learning/text_similarity/data&quot;</span>)
 
-doc &lt;-<span class="st"> </span><span class="kw">lapply</span>( <span class="kw">list.files</span>(), readLines )
-<span class="co"># the original text </span>
-doc</code></pre></div>
+<span class="co"># read in original text </span>
+( doc &lt;-<span class="st"> </span><span class="kw">lapply</span>( <span class="kw">list.files</span>(), readLines ) )</code></pre></div>
 <pre><code>## [[1]]
 ## [1] &quot;The sky is blue and the sun is bright.&quot;
 ## 
@@ -173,16 +172,15 @@ doc1[[<span class="dv">1</span>]]</code></pre></div>
 </div>
 <div id="k-shingling" class="section level2">
 <h2><span class="header-section-number">0.2</span> K-Shingling</h2>
-<p>The first notion we’ll introduce is <strong>Shingling</strong>, the most effective technique of representin documents as sets. Documents are constructed by a string of characters. Given the document, its k-shingle is said to be all the possible consecutive substring of length k found within it. That might be a bit confusing, an example with k = 3 is given below :</p>
+<p>The first notion we’ll introduce is <strong>Shingling</strong>, a common technique of representing documents as sets. Given the document, its k-shingle is said to be all the possible consecutive substring of length k found within it. An example with k = 3 is given below :</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Function for shingling the document </span>
 Shingling &lt;-<span class="st"> </span>function( document, k )
 {
     shingles &lt;-<span class="st"> </span><span class="kw">character</span>( <span class="dt">length =</span> <span class="kw">length</span>(document) -<span class="st"> </span>k +<span class="st"> </span><span class="dv">1</span> )
 
     for( i in <span class="dv">1</span>:( <span class="kw">length</span>(document) -<span class="st"> </span>k +<span class="st"> </span><span class="dv">1</span> ) )
-    {
         shingles[i] &lt;-<span class="st"> </span><span class="kw">paste</span>( document[ i:( i +<span class="st"> </span>k -<span class="st"> </span><span class="dv">1</span> ) ], <span class="dt">collapse =</span> <span class="st">&quot; &quot;</span> )
-    }
+
     <span class="kw">return</span>( <span class="kw">unique</span>(shingles) )  
 }
 
@@ -198,14 +196,14 @@ doc1 &lt;-<span class="st"> </span><span class="kw">lapply</span>( doc1, functio
 ## $Shingled
 ## [1] &quot;the sky is&quot;    &quot;sky is blue&quot;   &quot;is blue and&quot;   &quot;blue and the&quot; 
 ## [5] &quot;and the sun&quot;   &quot;the sun is&quot;    &quot;sun is bright&quot;</code></pre>
-<p>As you can see from the printed out first document. By picking our k to be 3, the k-shingle of the first document consists of substrings of lenth 3. The first 3-shingle is <strong>the sky is</strong> as it’s the first consecutive substring of length 3 in the document, then the second 3-shingle <strong>sky is blue</strong> is the next 3 word long substring after removing the first word of the document. And the list goes on.</p>
-<p>Another thing to add is the set of k-shingle of a document consists of unique k-shingles. For example, if the first document above contains more than one <strong>the sky is</strong> then it will still only appear once as the set of k-shingle for the document.</p>
+<p>As you can see from the printed out first document. By picking our k to be 3, the k-shingle of the first document consists of substrings of lenth 3. The first 3-shingle is <strong>the sky is</strong> as it’s the first consecutive substring of length 3 in the document, then the second 3-shingle <strong>sky is blue</strong> is the next 3 word long substring after excluding the first word of the document. And the list goes on.</p>
+<p>Another thing to note is that a document’s k-shingle set should only consists of unique k-shingles. For example, if the first document above contains more than one <strong>the sky is</strong> then it will only appear once as the set of k-shingle for that document.</p>
 <p>Now that we have that in mind, we’ll construct a “characteristic” matrix that visualizes the relationships between our three documents. The matrix will be a boolean matrix, where its</p>
 <ul>
 <li>rows = the elements of the universal set (every unique possible combinations of shingles sets across all documents ).</li>
 <li>columns = one column per document.</li>
 </ul>
-<p>Thus the matrix will have 1 in row i and column j if and only if document j contains the shingle i and 0 otherwise. Example below. ( I will use data frame instead of matrix throughout the whole documentation ).</p>
+<p>Thus the matrix will have 1 in row i and column j if and only if document j contains the shingle i and 0 otherwise. Example below. ( I will use the data frame data structure to replace matrix throughout the whole documentation ).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># unique shingles sets across all documents</span>
 doc_dict &lt;-<span class="st"> </span><span class="kw">unlist</span>(doc1) %&gt;%<span class="st"> </span><span class="kw">unique</span>()
 
@@ -238,22 +236,22 @@ M</code></pre></div>
 ## bright the sky     0     0     1</code></pre>
 <p>Looking at the first row of the matrix above, all three columns of recorded a 1. This denotes that all three documents contains the 3-shingle <strong>the sky is</strong>. As for the second, column cell value of [1, 0, 1] means that document 2 does not have the 3-shingle <strong>sky is blue</strong>, while document 1 and 3 do. And so on.</p>
 <ul>
-<li>Note that unlike our toy example, these “characteristic” matrices are almost always <em>sparse</em>, therefore, in practice we usually represent these kind of matrices of 0’s and 1’s only by the positions in which is 1’s appear. This is more space efficient.</li>
+<li>Note that unlike our toy example, these “characteristic” matrices are almost always <em>sparse</em>. Therefore, in practice we usually represent these kind of matrices only by the positions in which the 1 appear as it is considered to be more space efficient.</li>
 </ul>
 </div>
 <div id="jaccard-similarity" class="section level2">
 <h2><span class="header-section-number">0.3</span> Jaccard Similarity</h2>
-<p>After transforming all the documents into shingle sets, and using characteristic matrix to visualize the relatinoships between our documents. The next question is how do me measure the similarity between documents ?</p>
+<p>Now that we’ve transformed all the documents into shingle sets and used characteristic matrix to visualize the relationships between our documents. The next question is how do we measure the similarity between documents?</p>
 <p>One well known measure for determining the degree of similarity is the <strong>Jaccard Similarity</strong>. Given two sets of shingles, set1 and set2. The math formula of this measurement will be :</p>
 <p><span class="math display">\[ \frac{ \text{| } set1 \cap set2 \text{ |} }{ \text{| } set1 \cup set2 \text{ |} } \]</span></p>
-<p>This is equivalent to saying for two sets, its jaccard similarity is the size of their intersection divided by their union. For our “characteristic” matrix, if we restrict ourselves to only two columns (documents), then the rows can be divided into three types :</p>
+<p>This is equivalent to saying for any two given sets, its jaccard similarity is the size of their intersection divided by their union. For our “characteristic” matrix, if we restrict ourselves to only two columns (documents), then the rows can be divided into three types :</p>
 <ul>
 <li>Type 1 : rows have 1s in both columns.</li>
 <li>Type 2 : rows have 1 in one of the columns and 0 in the other.</li>
 <li>Type 3 : rows have 0s in both columns.</li>
 </ul>
 <p>Applying the jaccard similarity concept here, the similarities between two sets will then be <span class="math inline">\(\frac{ \text{Type 1} }{ \text{ Type 1 + Type 2 } }\)</span>.</p>
-<p>The following section will calculate the pairwise jaccard similarities for all three documents, and print out the original document’s content to get a feel of it. One quick way to calculate pairwise distance in R is the <code>dist</code> function, which computes and returns the distance/similarity matrix between either rows or columns of a matrix/data frame. We can also define our own measures for the distance/similarity in the proxy library’s database.</p>
+<p>The following section will calculate the pairwise jaccard similarities for all three documents and print out the original document’s content to get a feel of the performace. One quick way to calculate pairwise distance in R is the <code>dist</code> function, which computes and returns the distance/similarity matrix between either rows or columns of a matrix/data frame. We can also define our own measures for the distance/similarity in the proxy library’s database.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># how similar is two given document, jaccard similarity </span>
 JaccardSimilarity &lt;-<span class="st"> </span>function( x, y )
 {
@@ -284,7 +282,7 @@ d1</code></pre></div>
 ## 
 ## [[3]]
 ## [1] &quot;We can see sun is bright, the sky is blue.&quot;</code></pre>
-<p>The similarity matrix d tells us that document 1 and 3 is the most similar among the three documents, looking at its original content, it seems like it does match our intuition, as both of the documents contains the substring sun is bright and the sky is blue (despite the different ordering in the context) .</p>
+<p>The similarity matrix d1 tells us that document 1 and 3 is the most similar among the three documents. Looking at its original content, it seems like it does match our intuition as both of the documents contains the substring “sun is bright” and “the sky is blue” (despite the different ordering in the context) .</p>
 <p>Now that we have calculated the pair-wise similarity between each document in a pretty straightforward way, we’re done right ?! Well, it’s a yes and a no. For small datasets, this method works out perfectly fine, but imagine if we have a large number of documents to compare instead of just three, let’s say the number is N. We will then be forced to do a number of <span class="math inline">\(N \choose 2\)</span> comparisons ( N choose 2 comparisons ). This is obviously not going to scale well.</p>
 <p>Thus in the following sections, we’ll discuss techniques that can be used to help us save computations so that we can compare document similarities on a large scale. The first is <strong>Minhashing</strong>.</p>
 </div>
@@ -299,7 +297,7 @@ d1</code></pre></div>
 <p>Where :</p>
 <ul>
 <li><code>x</code> is the row numbers of your original characteristic matrix.</li>
-<li><code>a</code> and <code>b</code> are any random numbers smaller than the maximum number of x, though they both must be unique in each signature. e.g. For signature 1, if you generated a 5 to serve as your a coefficient, you must ensure that this value does not serve as your a coefficient multiple times within signature 1, though you can still use 5 as your b coefficient in signature 1. And this restriction will refresh for the next signature, that is, you can use 5 to serve as your a or b coefficient for signature 2, but again no multiple 5 for signature 2’s a coefficient and so on.</li>
+<li><code>a</code> and <code>b</code> are any random numbers smaller or equivalent to the maximum number of x, though they both must be unique in each signature. e.g. For signature 1, if you generated a 5 to serve as your a coefficient, you must ensure that this value does not serve as your a coefficient multiple times within signature 1, though you can still use 5 as your b coefficient in signature 1. And this restriction will refresh for the next signature, that is, you can use 5 to serve as your a or b coefficient for signature 2, but again no multiple 5 for signature 2’s a coefficient and so on.</li>
 <li><code>c</code> is a prime number slightly larger than the total number of shingle sets. You can find suitable prime number for your dataset <a href="http://compoasso.free.fr/primelistweb/page/prime/liste_online_en.php">here</a>. For our example dataset, our total row count is 16, thus prime number 17 will do fine.</li>
 </ul>
 <p>We can see it for ourselves that this simple hash function does in fact generate random permutated rows</p>
@@ -350,14 +348,13 @@ permute_df</code></pre></div>
 ## 14      6     12      6     10
 ## 15      1      9      0      9
 ## 16     13      6     11      8</code></pre>
-<p>From the output shown above, we can see that all 4 hash functions does in fact produce permutated numbers. There are 0s, but it will not affect our computation, and you’ll see why later.</p>
-<p>Using our randomly permutated rows, we’ll carry out the second step of the MinHash algorithm, calculating the signatures. The signature value of any column (document) is the number of the first row, in the permutated order, in which the column has a 1.</p>
+<p>From the output shown above, we can see that all 4 hash functions does in fact produce permutated numbers. There are 0s, but it will not affect our computation and you’ll see why later.</p>
+<p>Using our randomly permutated rows, we’ll carry out the second step of the MinHash algorithm, calculating the signatures. The signature value of any column (document) is obtained by : Using the permutated order generated by each hash function, the number of the first row in which the column has a 1.</p>
 <p>See example below. We’ll combine our randomly permutated rows (generated by hash functions) with our original characteristic matrix and change the row names of the matrix to its row number to illustrate the calculation :</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># bind with the original characteristic matrix</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use the first two signature as an example</span>
+<span class="co"># bind with the original characteristic matrix</span>
 M1 &lt;-<span class="st"> </span><span class="kw">cbind</span>( M, permute_df[<span class="dv">1</span>:<span class="dv">2</span>] )
 <span class="kw">rownames</span>(M1) &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">nrow</span>(M1)
-
-<span class="co"># use the first two signature as an example</span>
 M1</code></pre></div>
 <pre><code>##    doc_1 doc_2 doc_3 hash_1 hash_2
 ## 1      1     1     1      3      0
@@ -380,7 +377,7 @@ M1</code></pre></div>
 <p>According to our first hash function’s permutated row order, the first row is row 5 ( why is it row 5 ? because 0 is the smallest value for our randomly generated permutation, and it has a 0 in row 5, making it the first row ). Then we’ll look at row 5’s entry for all three documents and ask “which document’s entry at row 5 is a 1 ?”. Aha!! document 1’s (doc_1) row 5 is a 1, thus the signature value for document 1 generated by our first hash function is 0. But document 2 and 3’s entry at row 5 are both 0, thus we’ll have to keep looking.</p>
 <p>According to our first hash function’s permutated row order the second row is row 15 ( 1 is the second smallest value for our randomly generated permutation, and it has a value of 1 at row 15 ). We apply the same concept as above and found that document 3’s (doc_3) entry for row 15 is a 1, thus the signature value for document 3 generated by our first hash function is 1. Note that we’re already done with document 1, we do not need to check if it contains a 1 anymore. But we’re still not done, document 2’s entry at row 15 is still a 0. So we’ll have to look deeper.</p>
 <p>Again, checking the permutated row order for our first hash function, the third row is row 8. Is document 2’s entry for row 8 a 1 ? Yes it is ! Therefore, we’re done with calculating the signature values for all three columns using our first hash function!! Which are [0, 2, 1].</p>
-<p>We can then apply the same notion to calculate the signature value for each column (document) using the second hash function, and so on for the third, fourth, blah blah blah. A quick look at the signature second hash function shows that the first row according to its permutated row order is row 1, and all three document has a 1 in row 1, therefore the signature values generated by our second hash function for all three document are [1, 1, 1].</p>
+<p>We can then apply the same notion to calculate the signature value for each column (document) using the second hash function, and so on for the third, fourth, blah blah blah. A quick look at the signature second hash function shows that the first row according to its permutated row order is row 1 and all three document has a 1 in row 1. Hence, the signature values generated by our second hash function for all three document are [0, 0, 0].</p>
 <p>As for these calculated signature values, we will store them into a signature matrix along the way, which will later replace our original characteristic matrix. The following section will calculate the signature values for all 3 columns using all 4 hash functions, and print out the signature matrix.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># obtain the non zero rows' index for all columns</span>
 non_zero_rows &lt;-<span class="st"> </span><span class="kw">lapply</span>( <span class="dv">1</span>:<span class="kw">ncol</span>(M), function(j)
@@ -429,7 +426,7 @@ pr_DB$<span class="kw">delete_entry</span>( <span class="st">&quot;SigSimilarity
 ## doc_2 0.09090909           
 ## doc_3 0.25000000 0.08333333</code></pre>
 <p>From the difference of the result between the original jaccard similarity and our new similarity obtained using the signature similarity, you might be doubting is this a true estimate ? Well, the short answer is, we said right in the beginning of this section that Minhash’s purpose is to provide us with a fast “approximation” to the true jaccard similarity, and this example is simply way too small for the law of large numbers to assure that the estimates are close.</p>
-<p>For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing <strong>Locality Sensitive Hashing</strong>, a technique that reduces the dimensionality of a high-dimension data, allowing us to do just that.</p>
+<p>For the next section, suppose your final goal is to compute the similarity of every possible pair ( for text clustering perhaps ), then it will most likely be useless to you. However, if you simply wish to find the pairs that are most likely to be similar, then stay tuned. Because in the next section we will be discussing <strong>Locality Sensitive Hashing</strong>, a technique that allows us to do just that.</p>
 </div>
 <div id="locality-sensitive-hashing" class="section level2">
 <h2><span class="header-section-number">0.5</span> Locality Sensitive Hashing</h2>

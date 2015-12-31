@@ -4,7 +4,7 @@
 
 This repository focuses on documenting machine learning and data mining techniques. Each folder’s work is independent of one another. 
 
-Another repository [Business-Analytics](https://github.com/ethen8181/Business-Analytics) focuses more on documenting data science or business analytic related projects.
+Another repository [Business-Analytics](https://github.com/ethen8181/Business-Analytics) focuses more on documenting data science or business analytic related side-projects.
 
 ### Documentation Listings:
 
@@ -28,7 +28,7 @@ Some useful evaluations when working with hierarchical clustering and k-means cl
 
 Performing text clustering with Latent Dirichlet Allocation(LDA) using gibbs sampling.
 
-- Toy sample code of the gibbs sampling and match results with the *topicmodels* library.
+- Contains a toy sample code of the algorithm and compare results with the *topicmodels* library.
 - View documentation [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html).
 
 **linear_regression : 2015.10.30**
@@ -40,9 +40,9 @@ Solving linear regression with gradient descent.
 
 **logistic_regression : 2015.11.25** 
 
-Focus on choosing the optimal cutoff value for logistic regression ( classification algorithm ) when your dataset is unbalanced. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa.
+Focus on choosing the optimal cutoff value for logistic regression ( classification algorithm ) when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa.
 
-- Visualize two by two standard confusion matrix and ROC curve.
+- Visualize two by two standard confusion matrix and ROC curve with the ggplot2 library.
 - View documentation [here](http://ethen8181.github.io/machine-learning/logistic_regression/logistic_regression.html).
 
 **text_similarity : 2015.11.19** 

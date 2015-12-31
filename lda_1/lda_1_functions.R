@@ -1,9 +1,15 @@
-# Latent Dirichlet Allocation
+# Latent Dirichlet Allocation using gibbs sampling 
 
-# @docs  : document that have be converted to token ids
-# @vocab : unique token for all the document collection 
-# @other parameters 
-
+# @docs  	 : document that have be converted to token ids
+# @vocab 	 : unique token for all the document collection 
+# @K     	 : Number of topic groups
+# @alpha 	 : parameter for the document - topic distribution
+# @eta 	 	 : parameter for the word - topic distribution 
+# @iteration : Number of iterations to run gibbs sampling to train our model
+# returns 	 : the "unnormalized" distribution matrix 
+#			   1. wt : word-topic matrix
+# 			   2. dt : document-topic matrix
+	
 LDA1 <- function( docs, vocab, K, alpha, eta, iterations )
 {
 	# initialize count matrices 
@@ -33,10 +39,8 @@ LDA1 <- function( docs, vocab, K, alpha, eta, iterations )
 		}
 
 		# count words in document d assigned to each topic t
-		for( t in 1:K )
-		{	  
+		for( t in 1:K )  
 			dt[ d, t ] <- sum( ta[[d]] == t ) 
-		}
 	}
 
 	# for each pass through the corpus
@@ -46,7 +50,7 @@ LDA1 <- function( docs, vocab, K, alpha, eta, iterations )
 		for( d in 1:length(docs) )
 		{
 			# for each word
-			for( w in 1:length(docs[[d]]) )
+			for( w in 1:length( docs[[d]] ) )
 			{
 				t0  <- ta[[d]][w]
 				wid <- docs[[d]][w]
@@ -75,3 +79,4 @@ LDA1 <- function( docs, vocab, K, alpha, eta, iterations )
 
 	return( list( wt = wt, dt = dt ) )
 }
+

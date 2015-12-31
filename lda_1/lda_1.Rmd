@@ -101,9 +101,7 @@ for( d in 1:length(docs) )
 
 	# count words in document d assigned to each topic t
 	for( t in 1:K )
-	{	  
 		dt[ d, t ] <- sum( ta[[d]] == t ) 
-	}
 }
 
 # randomly assigned topic to each word
@@ -147,8 +145,8 @@ It may be still confusing with all of that notations, the following section goes
 ```{r}
 
 # parameters 
-alpha <- 10
-eta <- 10
+alpha <- 1
+eta <- 1
 
 # initial topics assigned to the first word of the first document
 # and its corresponding word id 
@@ -199,7 +197,7 @@ lda1
 
 ```
 
-After we're done with learning the topics for `r iterations` iterations, we can use the count matrices to convert them a bit to obtain the word-topic distribution and document-topic distribution.
+After we're done with learning the topics for `r iterations` iterations, we can use the count matrices to obtain the word-topic distribution and document-topic distribution.
 
 To compute the probability of word given topic:
 
@@ -225,7 +223,7 @@ Where $\theta_{dj}$ is the proportion of topic j in document d.
 
 ```
 
-Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word & topic ) we can use this information to see which topic does each document belongs to and what are the possible words under each topic.
+Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word & topic ) we can use this information to see which topic does each document belongs to and the more possible words that are associated with each topic.
 
 ```{r}
 
@@ -233,7 +231,7 @@ Recall that LDA assumes that each document is a mixture of all topics, thus afte
 topic <- apply( theta, 1, which.max )
 
 # possible words under each topic 
-# sort the probability and obtain the user-specified number
+# sort the probability and obtain the user-specified number n
 Terms <- function( phi, n )
 {
 	term <- matrix( 0, n, K )

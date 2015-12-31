@@ -14,7 +14,7 @@ output:
 
 ## Background Information 
 
-tf-idf is short for term frequency–inverse document frequency. This is a numeric measure that's use to score the importance of a word in a document based on how often did it appear in that document and a collection of documents. The intuition for this measurement is : If a word appears frequently in a document, its should be important. we should give that the word a high score. But if a word appears in many documents, it's probably not a unique identifier, give that word a low score. The math formula for this measure :
+tf-idf, short for term frequency–inverse document frequency, is a numeric measure that is use to score the importance of a word in a document based on how often did it appear in that document and a given collection of documents. The intuition for this measure is : If a word appears frequently in a document, then it should be important and we should give that word a high score. But if a word appears in too many other documents, it's probably not a unique identifier, therefore we should assign a lower score to that word. The math formula for this measure :
 
 $$ tfidf( t, d, D ) = tf( t, d ) \times idf( t, D ) $$
 
@@ -69,7 +69,7 @@ $$ idf( t, D ) = log \frac{ \text{| } D \text{ |} }{ 1 + \text{| } \{ d \in D : 
 
 - The numerator : `D` is infering to our document space. It can also be seen as D = ${ d_{1}, d_{2}, \dots, d_{n} }$ where n is the number of documents in your collection. Thus for our example $\text{| } D \text{ |}$, the size of our document space is `r length(doc)`, since we're only using `r length(doc)` documents.
 
-- The denominator : $\text{| } \{ d \in D : t \in d \} \text{ |}$ implies the total number of times in which term t appeared in all of your document d ( the ${d \in D}$ restricts the document to be in your current document space ). Note that this implies it doesn't matter if a term appeard 1 time or 100 times in a document, it will still be counted as 1, since it simply did appear in the document. As for the 1, it is there to avoid zero division.
+- The denominator : $\text{| } \{ d \in D : t \in d \} \text{ |}$ implies the total number of times in which term t appeared in all of your document d ( the ${d \in D}$ restricts the document to be in your current document space ). Note that this implies it doesn't matter if a term appeard 1 time or 100 times in a document, it will still be counted as 1, since it simply did appear in the document. As for the plus 1, it is there to avoid zero division.
 
 Using our term frequency matrix, the idf weight for can be calculated like below.
 
@@ -79,7 +79,7 @@ Using our term frequency matrix, the idf weight for can be calculated like below
 
 ```
 
-Now that we have our matrix with the term frequency and the idf weight, we're ready to calculate the full tf-idf weight. To do this matrix multiplication, we will also have to transform the idf vector into a diagonal matrix. Both calculations shown below.
+Now that we have our matrix with the term frequency and the idf weight, we're ready to calculate the full tf-idf weight. To do this matrix multiplication, we will also have to transform the idf vector into a diagonal matrix. Both calculations are shown below.
 
 ```{r}
 
@@ -125,7 +125,7 @@ To performing document clustering using the tf-idf weight matrix, we'll use the 
 
 $$ cos(\theta) = \frac{ v \cdot w }{ \| v \| \| w \| } = \frac{ \sum_{i=1}^n v_i w_i }{ \sqrt{\sum_{i=1}^n v_i^2} \sqrt{\sum_{i=1}^n w_i^2} } $$
 
-Where v and w are the two vectors that you wish to calculate the distance; $v_i$ and $w_i$ are components of vector v and w repesctively, n is the number of components you have. Calculation of the numerator and denominator are shown below with two simple vector.
+Where v and w are the two vectors that you wish to calculate the distance; $v_i$ and $w_i$ are components of vector v and w respectively; and n is the number of components you have. A toy example of the calculation is shown below with two simple vector.
 
 ```{r}
 
@@ -159,15 +159,15 @@ These are some news articles collected from the BBC website, data consists of `r
 
 The following code : 
 
-1. Calculate the tf-idf for this document collection.  
+1. Calculate the tf-idf score for this document collection.  
 2. Define our cosine distance. 
-3. Set this pre-defined cosine distance into R `proxy` library's database (backbone for the `dist` function) and caculate the pairwise distance matrix using cosine distance, performs hierarchical clustering using this matrix and visualize the clustering result with the dendogram. Note that we WON'T be needing to normalize the tf-idf matrix before calculating the cosine distance, cosine distance will do that for us.
-( This documentation assumes that you are famaliar with heirarchical clustering and how to do it in R, so sorry for not explaining too much. )
+3. Set this pre-defined cosine distance into R `proxy` library's database ( backbone for the `dist` function ) to calculate the pairwise distance matrix.
+4. Performs hierarchical clustering and visualize the clustering result with a dendogram. Note that we WON'T be needing to normalize the tf-idf matrix before calculating the cosine distance, cosine distance will do that for us.
 
 ```{r, fig.width=10, fig.height=6}
 
-# -- Step 1 --
-# [TFIDF] :
+# 
+# 1. [TFIDF] :
 # @vector = pass in a vector of documents  
 TFIDF <- function( vector )
 {
@@ -185,8 +185,7 @@ TFIDF <- function( vector )
 # tf-idf matrix using news' title 
 news_tf_idf <- TFIDF(news$title)
 
-# -- Step 2 --
-# [Cosine] :
+# 2. [Cosine] :
 # distance between two vectors
 Cosine <- function( x, y )
 {
@@ -197,22 +196,21 @@ Cosine <- function( x, y )
 	return( acos(similarity) * 180 / pi )
 }
 
-# -- Step 3 --
-# calculate pair-wise distance matrix 
+# 3. calculate pair-wise distance matrix 
 pr_DB$set_entry( FUN = Cosine, names = c("Cosine") )
 d1 <- dist( news_tf_idf, method = "Cosine" )
 pr_DB$delete_entry( "Cosine" )
 
-# heirachical clustering 
+# 4. heirachical clustering 
 cluster1 <- hclust( d1, method = "ward.D" )
 plot(cluster1)
 rect.hclust( cluster1, 17 )
 
 ```
 
-After plotting the dendogram, I have decided that it should partitioned into 17 cluster ( Simply change it if you disagree ). A quick digression about the code chunck above. There's a built in cosine distance in r already. So you don't have to define one yourself now that you've understand the implementation. Simply change the dist calculation to `dist( news_tf_idf, method = "cosine" )`. 
+After plotting the dendogram, I have decided that it should partitioned into 17 cluster ( Simply change it if you disagree ). A quick digression about the code chunck above. There's already a built in cosine distance in the R's proxy library. So you don't have to define one yourself now that you've understand the implementation. Simply change the dist calculation to `dist( news_tf_idf, method = "cosine" )`. 
 
-We'll examine three potential cluster that the algorithm provided and print out the original news to determine whether the result matches our intuition.
+We'll examine three potential cluster that the algorithm provided and print out the original news' title to determine whether the result matches our intuition.
 
 ```{r}
 
