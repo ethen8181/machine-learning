@@ -77,11 +77,9 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 	result <- data.table( actual = actual, predict = predict )
 
 	# caculating each pred falls into which category for the confusion matrix
-	result$type <- with( result, 
-						 ifelse( predict >= cutoff & actual == 1, "TP",
-						 ifelse( predict >= cutoff & actual == 0, "FP", 
-						 ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) )
-	levels(result$type) <- c( "TP", "FP", "FN", "TN" )
+	result[ , type := ifelse( predict >= cutoff & actual == 1, "TP",
+					  ifelse( predict >= cutoff & actual == 0, "FP", 
+					  ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) %>% as.factor() ]
 
 	# jittering : can spread the points along the x axis 
 	plot <- ggplot( result, aes( actual, predict, color = type ) ) + 

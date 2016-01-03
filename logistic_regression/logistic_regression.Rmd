@@ -36,7 +36,6 @@ library(tidyr)
 library(dplyr)
 library(scales)
 library(ggplot2)
-library(ggthemr)
 library(ggthemes)
 library(gridExtra)
 library(data.table)
@@ -58,7 +57,7 @@ This dataset contains `r nrow(data)` observations and `r ncol(data)` variables, 
 - `Newborn` This variable will take the value 1 if the employee had a newborn within the last 12 month and 0 otherwise.  
 - `left` 1 if the employee left the company, 0 if they're still working here.
 
-We'll do a quick summary to check if columns contain missing values like NAs and requires cleaning. Also findCorrelation to determing if there're any variables that are highly correlated with each other so we can remove them from the model training.
+We'll do a quick summary to check if columns contain missing values like NAs and requires cleaning. Also use the `findCorrelation` function to determine if there're any variables that are highly correlated with each other so we can remove them from the model training.
 
 ```{r}
 
@@ -163,8 +162,6 @@ Here we'll use a function to loop through several cutoff values and compute the 
 # functions are sourced in, to reduce document's length
 source("logistic_regression_code/logistic_functions.R")
 
-# define the theme for the next plot
-ggthemr("light")
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )
 accuracy_info$plot
@@ -187,7 +184,6 @@ We'll use another function to visualize the confusion matrix of the test set to 
 ```{r, fig.height=7, fig.width=10}
 
 # visualize .6 cutoff (lowest point of the previous plot)
-ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
 					 			actual = "left", cutoff = .6 )
 cm_info$plot
@@ -258,8 +254,6 @@ Let's use the function before going any further, so all these notions won't seem
 cost_fp <- 100
 cost_fn <- 200
 
-# reset to default ggplot theme 
-ggthemr_reset()
 roc_info <- ROCInfo( data = cm_info$data, predict = "predict", 
 					 actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
 
@@ -283,7 +277,6 @@ We can re-plot the confusion matrix to see what happened when we switch to this 
 ```{r, fig.height=7, fig.width=10}
 
 # re-plot the confusion matrix plot with the new cutoff value
-ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
                                 actual = "left", cutoff = roc_info$cutoff )
 cm_info$plot
@@ -347,7 +340,6 @@ First, the relationship between the time spent in the company with the probabilt
 median_tic <- data %>% group_by(TIC) %>% 
 					   summarise( prediction = median(prediction), count = n() )
 # plot
-ggthemr_reset()
 ggplot( median_tic, aes( TIC, prediction, size = count ) ) + 
 geom_point() + theme( legend.position = "none" ) +
 labs( title = "Time and Employee Attrition", y = "Attrition Probability", 
@@ -381,7 +373,6 @@ Knowing this information, we can easily create a visualization to tell the story
 
 ```{r}
 
-ggthemr("fresh")
 ggplot( data, aes( prediction, LPE ) ) + 
 geom_point() + 
 ggtitle( "Performace v.s. Probability to Leave" )

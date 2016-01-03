@@ -9,7 +9,7 @@ library(tidyr)
 library(dplyr)
 library(scales)
 library(ggplot2)
-library(ggthemr)
+# library(ggthemr) package incompatible with the latest ggplot2 
 library(ggthemes)
 library(gridExtra)
 library(data.table)
@@ -108,7 +108,9 @@ theme_economist()
 # Here we'll use a function to loop through several cutoff values and 
 # compute the model's accuracy on both training and testing set
 source("logistic_regression_code/logistic_functions.R")
-ggthemr("light")
+
+# define the theme for the next plot
+# ggthemr("light")
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )
 accuracy_info$plot
@@ -118,7 +120,8 @@ accuracy_info$plot
 # our accuracy for both training and testing set grows higher and higher showing 
 # no sign of decreasing at all 
 # we'll visualize the confusion matrix of the test set to see what's causing this
-ggthemr("flat")
+
+# ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
 					 			actual = "left", cutoff = .6 )
 cm_info$plot
@@ -149,7 +152,9 @@ prop.table( table( data_test$left ) )
 
 # use the roc curve to determine the cutoff
 # it plots the false positive rate (FPR) on the x-axis and the true positive rate (TPR) on the y-axis
-ggthemr_reset()
+
+# reset to default ggplot theme 
+# ggthemr_reset()
 cm_info$data
 
 
@@ -163,7 +168,7 @@ grid.draw(roc_info$plot)
 
 
 # re plot the confusion matrix plot 
-ggthemr("flat")
+# ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
                                 actual = "left", cutoff = roc_info$cutoff )
 cm_info$plot
@@ -195,7 +200,7 @@ data <- data[ data$prediction >= roc_info$cutoff, ]
 median_tic <- data %>% group_by(TIC) %>% 
 					   summarise( prediction = median(prediction), count = n() )
 
-ggthemr_reset()
+# ggthemr_reset()
 ggplot( median_tic, aes( TIC, prediction, size = count ) ) + 
 geom_point() + theme( legend.position = "none" ) +
 labs( title = "Time and Employee Attrition", y = "Attrition Probability", 
@@ -222,7 +227,8 @@ labs( title = "Last Project's Evaluation and Employee Attrition",
 # do we wish to retain these employees. Recall that from our dataset, we have the performance
 # information of the employee ( last project evaluation ). 
 # given this table, we can easily create a visualization to tell the story
-ggthemr("fresh")
+
+# ggthemr("fresh")
 ggplot( data, aes( prediction, LPE ) ) + 
 geom_point() + 
 ggtitle( "Performace v.s. Probability to Leave" )
