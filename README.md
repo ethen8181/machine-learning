@@ -6,13 +6,7 @@ This repository focuses on documenting machine learning and data mining techniqu
 
 Another repository [Business-Analytics](https://github.com/ethen8181/Business-Analytics) focuses more on documenting data science or business analytic related side-projects.
 
-### Documentation Listings:
-
-**AB_test :**
-
-A / B testing using frequentist statistics. Process of determining the suitable sample size and interpretation of the result.
-
-- View report [here](http://ethen8181.github.io/machine-learning/AB_test/AB_test.html). 
+### Documentation Listings: 
 
 **Coursera : 2015.10.16** ( kept for personal reference )
 
