@@ -8,6 +8,12 @@ Another repository [Business-Analytics](https://github.com/ethen8181/Business-An
 
 ### Documentation Listings:
 
+**AB_test :**
+
+A / B testing using frequentist statistics. Process of determining the suitable sample size and interpretation of the result.
+
+- View report [here](http://ethen8181.github.io/machine-learning/AB_test/AB_test.html). 
+
 **Coursera : 2015.10.16** ( kept for personal reference )
 
 Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.

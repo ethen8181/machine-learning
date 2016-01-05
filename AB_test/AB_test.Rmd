@@ -1,0 +1,191 @@
+---
+title: "A / B test"
+author: "Ming-Yu Liu"
+date: "January 11, 2016"
+output: 
+  html_document: 
+    highlight: pygments
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+---
+
+## Overview
+
+A / B testing is a general methodology used online to when you want to test out a new feature. What you're doing is you're going show one set of features, the control set ( your existing feature ) to one user group and another set, your experiment set ( your new feature ) to another user group and test how did these users respond differently so that you can determine which set of your feature is better.
+
+Despite its useful functionality, there are still places where A / B testing isn't as useful. For example : 
+
+1. Testing out completely new experiences. An obvious way for thinking about this is if you're dramatically changing the user's experience. The user might prefer the old way of doing things or they've curious about the new features and they simply test out everything ( sometimes called the novelty effect ).
+2. A / B testing can't tell you if you're missing something. Meaning it can tell you if A performs better B or vice versa, but it can't tell you that if you use C, then it will actually perform better than the former two.
+3. Tesing out products that people rarely buy. e.g. cars, apartments. It might be too long before the user actually decides to take actions after seeing the information and you might be unaware of the actual motivation.
+
+When launching a A / B test you need to ask yourself : 
+
+1. What is your baseline for comparison. It's essentially saying that you need to have clear control and metrics.
+2. How much time you need in order to actually have your user adapt to the new experience.
+
+## Examples
+
+Suppose you're running an educational platform and your hypothesis is : Will changing the "Start Now" button from orange to pink increase how many students explore the platform's courses. So in this case the metric that's use to evaluate the change's performance is the click through probability ( Unique visitors who click the button / Unique visitors to page ). Note that it is often times impractical to use metrices such as total number of students that completed the course as it often takes weeks or months before a student can do that.
+
+Next we will jot down the hypothesis that we wish to test out, in our case the our null and alternative hypothesis would be :
+
+**The null hypothesis, H0: ** The experimental and control groups have the same probability of completing a checkout ( clicking the button ). Or equivalent to saying that the differences of the two groups' probability is 0.   
+**The alternative hypothesis, H1: ** The two groups have different probability of completing a checkout.
+
+## Designing the Test
+
+Now that we've defined our hypothesis, the first question that comes into mind is how many tests do we need to run, or in a sense how long should the test last in order for us to make our decisions. To do that we can use a power analysis for two independent samples, which can be calculated using the `power.prop.test` function. Before doing that there are some basic parameters that we should be aware of : 
+
+1. **Significance Level: ** Denoted by $\alpha$, this threshold governs the chance of false positive. A significance level of 0.05 means that there's a 5 percent chance of false positive.
+2. **Statistical power: ** This stands for $1 - \beta$ ( or so called sensitivity ), where $\beta$ represents the probability that you'll get a false negative. So a statistical power of 0.8 means that if there's is in fact a change, there's 80 percent that we'll detect it, which is equivalent to saying that there will be a 20 percent false negative.
+
+The effect of picking a significance level of 0.05 and power of 0.8 means that we are 4 times more likely to obtain a false negative than a false positive. For A / B testing, we’re generally more concerned about getting a false positive : Making a change that doesn’t actually improve things than we are about not making a change at all, which is why we accept a greater likelihood of a false negative. The rule of thumb for $\alpha$ and $1 - \beta$ is 0.5 and 0.8 respectively.
+
+Now suppose that our current baseline is 0.1 ( there's a 10 percent chance that people who saw the button will click it ). And we wish to detect a change of two percent in the click through rate ( This is already consider quite high for online experiment ).
+
+Parameters :
+
+- `baseline` Your current baseline solution. 
+- `delta` Minimum detectable change, smallest effect that will be detected (1-β)% of the time. This parameter can also be referred to as the practical significance boundary.
+- `power` Percent of the time the minimum effect size will be detected, assuming it exists.
+- `sig_level` Percent of the time a difference will be detected, assuming one does NOT exist.
+
+```{r}
+
+# parameters
+baseline  <- 0.1
+delta 	  <- 0.02
+power 	  <- 0.8
+sig_level <- 0.05
+
+result <- power.prop.test( p1 = baseline, p2 = baseline + delta, 
+				 		   power = power, sig.level = sig_level,
+				 		   alternative = "two.sided" )
+result
+
+```
+
+The result shows that we need at least `r round(result$n)` sample size for each scenario to detect if there will actually be a 2 percent more-than-baseline click through probability.
+
+How these parameters affect the sample size you need :
+
+- `baseline` The higher the baseline click through probability ( but still less than 0.5 ), the larger the sample size you'll need. Since the probability is related to the standard deviation, where it reaches the maximum at 0.5.
+- `delta` The smaller the change you wish to detect, the larger the sample size you'll need.
+- `power` The higher the value means that that you wish to increase the confidence that you have in the result. Thus it means that you need a larger sample size.
+- `sig_level` The smaller the value means that you wish to increase the confidence that you have in the result. Thus it means that you need a larger sample size.
+
+## Analyze the Result
+
+Suppose you have run the test and you've obtain the total number of sample sizes and the total number of successes for both groups. Given these variables we can use it to calculate whether the proportional change was due to variation. To do so, we'll calculate the confidence interval for the difference, which can be done by calculating the difference plus and minus the z score times the standard deviation. Math Formula :
+$$p_{experiment} - p_{control} \pm Z \sqrt{ p_{pooled}( 1-p_{pooled} )( \frac{1}{n_{experiment}} + \frac{1}{n_{control}} ) }$$ 
+
+Where you can calculate the $p_{pooled}$, the pooled probability by the sum of the number of successes for both groups divided by the sum of the total number of sample size for both groups.
+
+[`ABTest`][ABTest] Function that calculates the confidence interval. Input parameters :
+
+- `count_control` The number of successes. This is equivalent to the number of people that clicked the button for the control group ( your original feature ).
+- `sizes_control` The total number of sample size for the control group.
+- The same notion can be applied to the experiment's variable `count_experiment` and `sizes_experiment`.
+- Returns : A data.frame consisted of the mean and the confidence interval of the result.
+
+```{r}
+
+# parameters 
+count_control 	 <- 974
+sizes_control 	 <- 10072
+count_experiment <- 1242
+sizes_experiment <- 9886
+
+ABTest <- function( count_control = count_control, 
+					sizes_control = sizes_control,
+					count_experiment = count_experiment, 
+					sizes_experiment = sizes_experiment )
+{
+	# probability of each group 
+	p_control <- count_control / sizes_control
+	p_experiment <- count_experiment / sizes_experiment
+
+	# @p : pooled probability
+	# @std_error pooled standard deviation (error ) 
+	p <- ( count_control + count_experiment ) / ( sizes_experiment + sizes_control )
+	std_error <- sqrt( p * ( 1 - p ) * ( 1 / sizes_control + 1 / sizes_experiment ) )
+
+	# 95 percent confidence interval's z score = 1.96
+	difference <- p_experiment - p_control
+	confidence <- difference + c( -1, 1 ) * 1.96 * std_error
+
+	return( data.frame( lower = confidence[1], 
+						mean  = difference,
+						upper = confidence[2] ) )
+}
+
+confidence <- ABTest( count_control = count_control, 
+					  sizes_control = sizes_control,
+					  count_experiment = count_experiment, 
+					  sizes_experiment = sizes_experiment )
+
+```
+
+In order to launch a change, the change should be larger than the minimum detectable change that you wished to detect, or in other words it should be larger than your practical significance boundary. In our case, the value we've set was `r delta`. From the result above, we can denote that since even the lower bound of the confidence interval is larger than the value. Base on this fact, we'll definitely launch the newer version of the click button. 
+
+Different scenarios of the output :
+
+```{r, warning=FALSE,message=FALSE}
+
+# fixed artifical plot
+# using delta = 0.02 as the minimum detectable boundary 
+library(ggplot2)
+
+scenario <- as.character(2:6)
+lower <- c( -0.008, 0.01, -0.025, -0.005, 0.015   )
+mean  <- c( 0.01, 0.015, 0.005, 0.025, 0.025 )
+upper <- c( 0.018, 0.018, 0.03, 0.04, 0.03 )
+
+examples <- data.frame( scenario, lower, mean, upper )
+examples <- rbind( cbind( scenario = "1", confidence ), examples )
+examples$scenario <- factor( examples$scenario, levels = as.character(6:1) )
+
+ggplot( examples, aes( mean, scenario, color = scenario ) ) + 
+geom_point() + 
+geom_errorbarh( aes( xmin = lower, xmax = upper ), height = 0.1 ) + 
+geom_vline( xintercept = 0, color = "black" ) + 
+geom_vline( xintercept = delta, color = "blue", linetype = "dotted" ) + 
+geom_vline( xintercept = -delta, color = "blue", linetype = "dotted" ) +
+scale_color_discrete( breaks = as.character(1:6) ) +  
+labs( title = "Different Scenarios of Confidence Interval",
+	  x = "confidence interval" )
+
+```
+
+1. **Scenario 1:** The case where even the lower bound of the confidence interval lies above the practical significance boundary. Accept the change of the new feature.
+2. **Scenario 2:** The lower bound of the confidence interval lies below 0 and the upper bound lies below the practical significance boundary. There's no statistically significant change from 0 ( the confidence interval includes 0 ) and that you're also confident that there's not a practical significance change. Given this it's not worth the effort to launch the change.
+3. **Scenario 3:** The lower bound of the confidence interval lies above 0 and the upper end lies below the practical significance boundary. This implies that you're confident that there is a positive change, but it's not practically significant. In other words, you're confident that there was a change, but you don't care about the magnitude of the change.
+4. **Scenario 4:** Both the lower and upper bound of the confidence interval lies beyond the practical significance boundary. This means that the new feature could cause users to increase by the minimum detectable change or it could be cuasing them to decrease by the minimum detectable change.  
+5. **Scenario 5:** The point estimate is beyond the practical significant line, the lower bound of the confidence interval, however, overlaps 0. This means that this change is in fact the effect that you care about, but there's also a chance that there might not be a change at all.
+6. **Scenario 6:** The point estimate is beyond the practical significant line and the lower bound of the confidence interval is greater than 0. This is a situation that indicates the change has a chance of being practically significant and not being practically significant.
+
+For the last three scenario, scenario 4 - 6: If your confidence interval includes your practical significance boundary, would you be sure that the change should not be launched? After all, it's reasonably likely that there was an effect you care about. In these cases, you should run an additional test with greater power if you have the time. But sometimes, you'll have to make a decision even though there's an uncertainty about how real your result is.
+
+**Sources: **
+
+Source [code](https://github.com/ethen8181/machine-learning/AB_test/AB_test.R) to the documentation.
+
+Bugs are comments can be filed [here](https://github.com/ethen8181/machine-learning/issues).
+
+## Reference 
+
+1. Determining the sample size for A / B test : https://signalvnoise.com/posts/3004-ab-testing-tech-note-determining-sample-size
+2. Z-score distribution table : http://www.utdallas.edu/dept/abp/zscoretable.pdf
+
+## R Session Information 
+
+```{r}
+
+sessionInfo()
+
+```
+
+[ABTest]: (https://github.com/ethen8181/machine-learning/AB_test/AB_test.R) 
+
