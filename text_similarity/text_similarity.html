@@ -283,7 +283,7 @@ d1</code></pre></div>
 ## [[3]]
 ## [1] &quot;We can see sun is bright, the sky is blue.&quot;</code></pre>
 <p>The similarity matrix d1 tells us that document 1 and 3 is the most similar among the three documents. Looking at its original content, it seems like it does match our intuition as both of the documents contains the substring “sun is bright” and “the sky is blue” (despite the different ordering in the context) .</p>
-<p>Now that we have calculated the pair-wise similarity between each document in a pretty straightforward way, we’re done right ?! Well, it’s a yes and a no. For small datasets, this method works out perfectly fine, but imagine if we have a large number of documents to compare instead of just three, let’s say the number is N. We will then be forced to do a number of <span class="math inline">\({N \choose 2}\)</span> comparisons ( N choose 2 comparisons ). This is obviously not going to scale well.</p>
+<p>Now that we have calculated the pair-wise similarity between each document in a pretty straightforward way, we’re done right ?! Well, it’s a yes and a no. For small datasets, this method works out perfectly fine, but imagine if we have a large number of documents to compare instead of just three, let’s say the number is N. We will then be forced to do a number of N choose 2 comparisons. This is obviously not going to scale well.</p>
 <p>Thus in the following sections, we’ll discuss techniques that can be used to help us save computations so that we can compare document similarities on a large scale. The first is <strong>Minhashing</strong>.</p>
 </div>
 <div id="minhash" class="section level2">
