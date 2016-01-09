@@ -40,7 +40,7 @@ Solving linear regression with gradient descent.
 
 **logistic_regression : 2015.11.25** 
 
-Focus on choosing the optimal cutoff value for logistic regression ( classification algorithm ) when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa.
+Focus on choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The idea can be extended to any other classification algorithm that can predict class’s probability.
 
 - Visualize two by two standard confusion matrix and ROC curve with the ggplot2 library.
 - View documentation [here](http://ethen8181.github.io/machine-learning/logistic_regression/logistic_regression.html).

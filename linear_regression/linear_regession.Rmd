@@ -22,7 +22,7 @@ For supervised learning problems like linear regression, the way it works is whe
 
 Let's start from a basic formula $1.2\times(x-2)^2 + 3.2$. If you still remember basic calculus, the first derivative of a function gives you the optimal solution to it (whether it be for max or min problems). In this case, it's by solving $2\times1.2\times(x-2)=0$.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 # libraries that we'll use throughout the tutorial
 library(grid)
