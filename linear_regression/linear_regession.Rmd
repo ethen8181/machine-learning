@@ -193,7 +193,7 @@ Now all we have to do is to define the appropriate cost function of the linear r
 
 $$ h_{\theta}(x) = \theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2} + \dotsm + \theta_{n}x_{n}  $$
 
-Here the $\theta_{j}$s (j going from 0 to n) denotes the weights or so called coeffficients of the model. Here we only have 2 variables, so j only goes up to 2, and the $h_{\theta}(x)$ for this dataset would be $\theta_{0} + \theta_{1}x_{area} + \theta_{2}x_{bedrooms}$. And for conciseness, suppose we define $x_{0}$ to be a vector of all 1s (This is a trick is used in the gradient descent function!!). In that case the formula can be rewritten as :
+Here the $\theta_{j}$s (j going from 0 to n) denotes the weights or so called coeffficients of the model. Here we only have 2 variables, so j only goes up to 2, and the $h_{\theta}(x)$ for this dataset would be $\theta_{0} + \theta_{1}x_{area} + \theta_{2}x_{bedrooms}$. And for conciseness, suppose we define $x_{0}$ to be a vector of all 1s (This is a trick that's used in the gradient descent function!!). In that case the formula can be rewritten as :
 
 $$ h_{\theta}(x) = \sum_{j=0}^n \theta_{j}x_{j} $$
 

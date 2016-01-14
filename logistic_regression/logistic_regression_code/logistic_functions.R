@@ -87,6 +87,9 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 			geom_jitter( shape = 1 ) + 
 			geom_hline( yintercept = cutoff, color = "blue", alpha = 0.6 ) + 
 			scale_y_continuous( limits = c( 0, 1 ) ) + 
+			scale_color_discrete( breaks = c( "TP", "FN", "FP", "TN" ) ) + # ordering of the legend 
+			guides( col = guide_legend( nrow = 2 ) ) + # adjust the legend to have two rows 
+			# scale_color_manual( values = c( "#E65E50", "#FAC339", "#4ABEB2", "#A079B4" ) ) + 
 			ggtitle( sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
 
 	# return the datapoint and confusion matrix plot 
