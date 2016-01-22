@@ -77,6 +77,7 @@ LMPlot <- function( model, actual )
 	}	
 	qqplot <- QQPlot( plot_data = plot_data )
 
+	# color the plot to distinguish outlier and normal data point if there is in fact one 
 	if( length(outlier) > 0 )
 	{		
 		cooks <- cooks + geom_point( aes( color = boolean ), size = 2, shape = 1 ) + 

@@ -1,0 +1,268 @@
+---
+title: "H2o Deep Learning"
+author: "Ming-Yu Liu"
+date: "January 22, 2016"
+output: 
+  html_document: 
+    highlight: haddock
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+---
+
+# H2o Deep Learning Hands On
+
+## Environment Setting
+
+```{r, message=FALSE, warning=FALSE}
+
+library(h2o)
+library(dplyr)
+library(data.table)
+setwd("/Users/ethen/machine-learning/h2o")
+
+# h2o.init : Start up a 1-node H2O server on your local machine 
+#            and allow it to use all CPU cores ( nthreads = -1 )
+#            you can specify the @max_mem_size = "2G" to make it use no more than 2GB of memory
+h2o.init( nthreads = -1 )
+
+```
+
+For this example we want to predict the Cover_Type column, a categorical feature with 7 levels and the Deep Learning model will be tasked to perform (multi-class) classification. It uses the other 12 predictors of the dataset, of which 10 are numerical and 2 are categorical with a total of 44 levels. We can expect the Deep Learning model to have 56 input neurons (after automatic one-hot encoding).
+
+The following section import the full cover type dataset (581k rows, 13 columns, 10 numerical, 3 categorical); Split the data 3 ways: 60% for training, 20% for validation (hyper parameter tuning) and 20% for final testing.
+
+```{r}
+
+# h2o.importFile : imports the file to the h2o cluster 
+df <- h2o.importFile( path = "h2o_deep_learning/covtype.full.csv" ) 
+list( dim(df), df )
+
+```
+
+```{r}
+
+# h2o.splitFrame : Split an existing H2O data set according to user-specified ratios.
+# h2o.assign : makes a copy of / rename the dataset 
+splits <- h2o.splitFrame( df, c( 0.6, 0.2 ), seed = 1234 )
+train  <- h2o.assign( splits[[1]], "train.hex" ) # 60%
+valid  <- h2o.assign( splits[[2]], "valid.hex" ) # 20%
+test   <- h2o.assign( splits[[3]], "test.hex" )  # 20%
+
+```
+
+## Different Deep Learning Models and its Parameters 
+
+Specify input and output features.
+
+```{r}
+
+output <- "Cover_Type"
+input  <- setdiff( names(df), output )
+
+```
+
+Basic parameters with `h2o.deeplearning`. h2o will also give you a progress bar of the training, which is nice!
+
+```{r, cache = TRUE }
+
+model_dl_1 <- h2o.deeplearning(
+
+	model_id = "dl_1", # (optional) assign a user-specified id to the model
+	training_frame = train, 
+	validation_frame = valid, # validation dataset: used for scoring and early stopping
+	x = input,
+	y = output,
+	#activation = "Rectifier", # default
+	#hidden = c( 200,200 ),    # default = 2 hidden layers with 200 neurons each
+	epochs = 1, # How many times the dataset should be iterated
+	variable_importances = TRUE # allows obtaining the variable importance, not enabled by default
+)
+
+# h2o.varimp : obtaining the variable of importance
+head( as.data.frame( h2o.varimp(model_dl_1) ) )
+
+```
+
+Other Common Parameters : 
+
+- For sampling : 
+    - `score_validation_samples` : The number of samples that does does the validation. The samples can be randomly sampled or stratified if `balance_classes` is set to TRUE and `score validation_sampling` is "Stratified". To select the entire validation dataset, specify 0, which is the default.
+    - `score_validation_sampling` : Specifies the method used to sample the validation dataset for scoring. The options are "Uniform" and "Stratified". The default is Uniform. 
+    - `balance_classes` : For imbalanced data, setting to TRUE can result in improved predictive accuracy. The default is FALSE.
+
+- For early stopping :
+    - `stopping_rounds`, `stopping_metric`, `stopping_tolerance`. 
+    - e.g. `stopping_rounds` = 5, `stopping_metric` = "MSE", `stopping_tolerance` = 1e-3 means that to stop as soon as the moving average of length 5 of the validation MSE does not improve by at least 1e-3 for 5 consecutive scoring events. Refer to documentation for other types of `stopping metric`.
+
+- Others : 
+    - `l1` L1 regularization, improves generalization and prevents overfitting`
+    - `sparse` : Sparse data handling (more efficient for data with lots of 0 values). Default to FALSE.
+
+Now we run another, smaller network, and we let it stop automatically once the misclassification rate converges (specifically, if the moving average of length 2 does not improve by at least 1% for 2 consecutive scoring events). We also sample the validation set to 10,000 rows for faster scoring.
+
+```{r, cache = TRUE }
+
+model_dl_2 <- h2o.deeplearning(
+
+	model_id = "dl_2", 
+	training_frame = train, 
+	validation_frame = valid,
+	x = input,
+	y = output,
+	hidden = c( 32, 32, 32 ), # smaller network, runs faster
+	epochs = 100, # hopefully converges earlier...
+	score_validation_samples = 10000, # sample the validation dataset (faster)
+	stopping_rounds = 5,
+	stopping_metric = "misclassification", # could be "MSE","logloss","r2", "AUC"
+	stopping_tolerance = 0.01
+)
+
+```
+
+Next we use `h2o.predict`, which returns an H2O Frame object with default predictions predict in the first column (for classification) probabilites that each observation belongs to each classes to obtain the prediction and compare the accuracy between the two models. 
+
+```{r}
+
+pred1 <- h2o.predict( model_dl_1, test )
+pred2 <- h2o.predict( model_dl_2, test )
+list( model_dl_1 = mean( pred1$predict == test$Cover_Type ), 
+      model_dl_2 = mean( pred2$predict == test$Cover_Type ) )
+
+```
+
+## Hyperparamters Tuning 
+
+Since there are a lot of parameters that can impact model accuracy, hyper-parameter tuning is especially important for Deep Learning. One way to do it is with grid search. For speed, we will only train on the first 10,000 rows of the training dataset.
+
+```{r, cache = TRUE }
+
+# train samples of the training data for speed 
+sampled_train <- train[ 1:10000, ]
+
+# specify the list of paramters 
+hyper_params <- list(
+
+	hidden = list( c( 32, 32, 32 ), c( 64, 64 ) ) ,
+	input_dropout_ratio = c( 0, 0.05 ),
+	l1 = c( 1e-4, 1e-3 )
+)
+
+# performs the grid search 
+model_dl_grid <- h2o.grid(
+
+	algorithm = "deeplearning", # name of the algorithm 
+	model_id = "dl_grid", 
+	training_frame = sampled_train,
+	validation_frame = valid, 
+	x = input, 
+	y = output,
+	epochs = 10,
+	stopping_metric = "misclassification",
+	stopping_tolerance = 1e-2, # stop when logloss does not improve by >=1% for 2 scoring events
+	stopping_rounds = 2,
+	score_validation_samples = 10000, # downsample validation set for faster scoring
+	hyper_params = hyper_params
+)
+
+```
+
+Find the best model and its full set of parameters. 
+
+[`BestGridSearch`][BestGridSearch] : Pass in a list of h2o model id obtained by `h2o.grid` and returns the best model its classification error
+
+- Args :
+    - `ids` A list indicating the unique model id of the model to retrieve.
+- Values :
+    - A list containing the slot best_model and best_error.
+
+```{r}
+
+source("h2o_functions.R")
+
+ids <- model_dl_grid@model_ids
+model_best_grid <- BestGridSearch( ids = ids )
+
+# use it obtain the prediction 
+pred3 <- h2o.predict( model_best_grid$best_model, test )
+mean( pred3$predict == test$Cover_Type )
+
+```
+
+Note that we're using less training data to perform the grid search, thus the accuracy is lower.
+
+Often, hyper-parameter search for more than 4 parameters can be done more efficiently with random parameter search than with grid search. Basically, chances are good to find one of many good models in less time than performing an exhaustive grid search. We simply build N models with parameters drawn randomly from user-specified distributions (here, uniform).
+
+# Tips and Tricks for Tuning Deep Learning 
+
+## Understanding Model Complexity
+
+**Model Size Depends on Features and is Independent of Number of Rows or Training Time**
+
+Suppose you're given the dataset with 1111 predictor columns, where 1100 of them are numerical and 10 are categorical variables with 400 levels. And you also have 1 binary response column. 
+
+**Question :** Given two models. Model1 : with 4 layers of 400 neurons [ 400, 400, 400, 400 ] and Model2 with 1 layer that has 500 neurons which one is more complex?
+
+**Answer :** Model2. 
+
+Because categorical variables are one-hot encoded into 4000 dummy variables of 0 and 1s ( 10 categorical variables times 400 levels each ), hence there will be a total of 5100 input neurons ( 1100 numerical variables plus 4000 dummy variables ). 
+
+Having our 5100 input neurons, for model1 our second layer has 400 neurons so after going through the second layer you get 5100 X 400. Where as for model2 our second layer has 500 neurons so after going through the second layer you get 5100 X 500. And this little difference is all that matters. 
+
+The total model complexity of model1 will be 5100 * 400 + 400 * 400 * 3 + 400 * 2, a total of `r 5100 * 400 + 400 * 400 * 3 + 400 * 2` and model2 will be 5100 * 500 + 500 * 2, a total of `r 5100 * 500 + 500 * 2` ( the times 2 is the last layer's neuron number times the binary outcome, which is 2 ).
+
+And the memory size of this model will only take around 2.5M * 4 (float number) * 3 ( safe approximate of some overhead ) = 30 MB. In sum, the model size is small, you do not need to have a big cluster to store it.
+
+## Knowing Your Data
+
+From the last point we know that if the number of input neurons ( input variables ) is large, then training can be inefficient and slow, especially if there're many sparse features produced by high-level categorical variables. Thus try the following remedies:
+
+1. Ignore categorical columns with high factor count.
+2. Use **GLRM** to reduce the dimensionality of the dataset and make sure to apply the same model to the test set.
+ 
+## Use Early Stopping 
+
+Using early stopping will prevent you from taking a long time to train a model that does not improve its performance over time, which will save you tons of time. It's on by default for h2o's deep learning ( the `overwrite_with_best_model` is set to TRUE by default ), but it's not on by default for GBM and RandomForest. 
+
+You can also specify additional convergence criteria with `stopping_rounds`, `stopping_metric`, `stopping_tolerance`. e.g. `stopping_rounds` = 5, `stopping_metric` = "MSE", `stopping_tolerance` = 1e-3 means that to stop as soon as the moving average of length 5 of the validation MSE does not improve by at least 1e-3 for 5 consecutive scoring events.
+
+## Control Scoring Events 
+
+Note that the validation data determines scoring speed and early stopping. So if you provided a very large validation dataset, then even scoring can take a long time. The way to solve this is to : 
+
+1. Provide a smaller validation dataset.
+2. Specify the number of validation set samples for scoring using `score_validation_samples`.
+
+## Perform HyperParameter Search
+
+There're a lot of parameters for H2o's deep learning, thus it is not recommended to do a grid search because it is a cartesian product of all of your parameters and there'll just be too many combinations to try out. So just find one of the many good models. Some parameters worth trying :
+
+- `activation` For activation functions "Rectifier" and "RectifierWithDropout" is recommended.
+- `hidden` Try 2 to 5 layers deep, 10 to 2000 neurons per layer.
+- `l1` Regularization to prevent overfitting, l1 regularization constrains the absolute value of the weights ( can add stability and improve generalization, causes many weights to become 0 ).
+
+## Do Ensembling 
+
+To obtain highest accuracy, it's often more effective to average a few fast and diverse models than to build one large model.
+
+Ideally, use different network architecture, regularization schemes to keep the variance high before ensembling. So given a set of diverse and good (but not the best) models use :
+
+1. Blending : Just Average the models
+2. Gut-Feel Blending : Assign your own weights that add up to 1.
+3. Add Other Models : Add GLM, GBM, RandomForest into the mix.
+
+# Reference
+
+1. Top 10 Deep Learning Tips and Tricks : https://www.youtube.com/watch?v=LM255qs8Zsk
+
+# R Session Information
+
+```{r}
+
+sessionInfo()
+
+```
+
+
+[BestGridSearch]: 
+

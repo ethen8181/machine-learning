@@ -57,3 +57,9 @@ Introducing tf-idf ( term frequency-inverse document frequency ), a text mining 
  
 - View documentation [here](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html).
 
+**h2o :** in progress
+
+Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html).
+
+- View h2o deep learning documentation [here](/Users/ethen/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html).
+
