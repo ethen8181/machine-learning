@@ -15,7 +15,7 @@ h2o.init( nthreads = -1 )
 
 # detailed dataset description
 # # https://archive.ics.uci.edu/ml/datasets/Covertype
-df <- h2o.importFile( path = "h2o_deep_learning/covtype.full.csv" ) 
+df <- h2o.importFile( path = "covtype.full.csv" ) 
 list( dim(df), df )
 
 # h2o.splitFrame : Split an existing H2O data set according to user-specified ratios.
@@ -55,7 +55,7 @@ model_dl_1 <- h2o.deeplearning(
 	x = input,
 	y = output,
 	#activation = "Rectifier", # default
-	#hidden = c( 200,200 ),    # default = 2 hidden layers with 200 neurons each
+	hidden = c( 50, 50 ),    # default = 2 hidden layers with 200 neurons each
 	epochs = 1, # How many times the dataset should be iterated
 	variable_importances = TRUE # allows obtaining the variable importance, not enabled by default
 )
@@ -124,7 +124,7 @@ model_dl_grid <- h2o.grid(
 
 # Find the best model and its full set of parameters
 
-source("h2o_functions.R") # adjust the function location later 
+source("h2o_deep_learning_functions.R") 
 ids <- model_dl_grid@model_ids
 model_best_grid <- BestGridSearch( ids = ids )
 
@@ -137,8 +137,42 @@ mean( pred3$predict == test$Cover_Type )
 # plot(model_dl_2)
 
 
+# ---------------------------------------------------------------------------------------
+#								Binary Classification 
+# ---------------------------------------------------------------------------------------
+
+# convert to binary classification 
+train$bin_output <- ifelse( train[ , output ] == "class_1", 0, 1 ) %>% as.factor()
+
+model_dl_binary <- h2o.deeplearning(
+
+	x = input,
+	y = "bin_output", # specify the character name of the column
+	training_frame = train,
+	hidden = c( 10, 10 ),
+	epochs = 1,
+	l1 = 1e-5
+	#balance_classes = TRUE enable this for high class imbalance
+)
+
+# Now the model metrics contain AUC for binary classification
+summary(model_dl_binary) 
+h2o.auc(model_dl_binary)
+plot( h2o.performance(model_dl_binary) ) # ROC plot 
+
+
+# storing and loading the model 
+# path <- h2o.saveModel( model, path = "mybest_deeplearning_covtype_model", force = TRUE )
+# print(path)
+# loaded <- h2o.loadModel(path)
+
+# 
+h2o.shutdown( prompt = FALSE )
+
 # --------------------------------------
 # start from here 
+
+
 
 # http://www.h2o.ai/resources/
 # http://learn.h2o.ai/content/tutorials/deeplearning/index.html

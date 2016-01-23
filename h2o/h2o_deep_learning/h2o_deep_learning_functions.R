@@ -10,7 +10,6 @@ library(data.table)
 # 					additional argument valid = TRUE to 
 # 					return the performance of the validation set instead of the training set 
 
-
 BestGridSearch <- function( ids )
 {
 	# ------------------------------------------------------------------

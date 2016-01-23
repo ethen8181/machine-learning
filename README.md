@@ -8,21 +8,14 @@ Another repository [Business-Analytics](https://github.com/ethen8181/Business-An
 
 ### Documentation Listings: 
 
-**Coursera : 2015.10.16** ( kept for personal reference )
+Listed in chronological order of the latest complete date.
 
-Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
+**h2o :** in progress
 
-**ROC : 2015.10.16** ( kept for personal reference, view the logistic_regression folder instead )
+Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Note that H2O provides progress bar when training the model, thus you’ll may see a lot of them in the docs.
 
-Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset.
-
-**clustering : 2015.11.6**
-
-Some useful evaluations when working with hierarchical clustering and k-means clustering ( k-means++ is used here ).
-
-- Calinski-Harabasz index : Determine the right k ( cluster number ) for clustering.
-- Boostrap evaluation of the clustering result’s stability.
-- View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html).
+- View quick walkthrough of h2o deep learning [here](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html).
+- View quick walkthrough of h2o gradient boosting and random forest [here](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html).
 
 **lda_1 : 2015.12.8** 
 
@@ -30,13 +23,6 @@ Performing text clustering with Latent Dirichlet Allocation(LDA) using gibbs sam
 
 - Contains a toy sample code of the algorithm and compare results with the *topicmodels* library.
 - View documentation [here](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html).
-
-**linear_regression : 2015.10.30**
-
-Solving linear regression with gradient descent. 
-
-- Includes an appendix that briefly covers the interpretation and visualization of linear regression model’s summary output.
-- View report [here](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html).
 
 **logistic_regression : 2015.11.25** 
 
@@ -57,9 +43,26 @@ Introducing tf-idf ( term frequency-inverse document frequency ), a text mining 
  
 - View documentation [here](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html).
 
-**h2o :** in progress
+**clustering : 2015.11.6**
 
-Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html).
+Some useful evaluations when working with hierarchical clustering and k-means clustering ( k-means++ is used here ).
 
-- View h2o deep learning documentation [here](/Users/ethen/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html).
+- Calinski-Harabasz index : Determine the right k ( cluster number ) for clustering.
+- Boostrap evaluation of the clustering result’s stability.
+- View report [here](http://ethen8181.github.io/machine-learning/clustering/clustering.html).
+
+**linear_regression : 2015.10.30**
+
+Solving linear regression with gradient descent. 
+
+- Includes an appendix that briefly covers the interpretation and visualization of linear regression model’s summary output.
+- View report [here](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html).
+
+**Coursera : 2015.10.16** ( kept for personal reference )
+
+Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
+
+**ROC : 2015.10.16** ( kept for personal reference, view the logistic_regression folder instead )
+
+Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset.
 

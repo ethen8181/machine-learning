@@ -10,6 +10,8 @@ output:
     toc: yes
 ---
 
+h2o is great because all of the actual computation is performed inside the H2O cluster, rather than in R memory.
+
 # H2o Deep Learning Hands On
 
 ## Environment Setting
@@ -35,7 +37,7 @@ The following section import the full cover type dataset (581k rows, 13 columns,
 ```{r}
 
 # h2o.importFile : imports the file to the h2o cluster 
-df <- h2o.importFile( path = "h2o_deep_learning/covtype.full.csv" ) 
+df <- h2o.importFile( path = "covtype.full.csv" ) 
 list( dim(df), df )
 
 ```
@@ -64,7 +66,7 @@ input  <- setdiff( names(df), output )
 
 Basic parameters with `h2o.deeplearning`. h2o will also give you a progress bar of the training, which is nice!
 
-```{r, cache = TRUE }
+```{r}
 
 model_dl_1 <- h2o.deeplearning(
 
@@ -101,7 +103,7 @@ Other Common Parameters :
 
 Now we run another, smaller network, and we let it stop automatically once the misclassification rate converges (specifically, if the moving average of length 2 does not improve by at least 1% for 2 consecutive scoring events). We also sample the validation set to 10,000 rows for faster scoring.
 
-```{r, cache = TRUE }
+```{r, cache=TRUE}
 
 model_dl_2 <- h2o.deeplearning(
 
@@ -112,7 +114,7 @@ model_dl_2 <- h2o.deeplearning(
 	y = output,
 	hidden = c( 32, 32, 32 ), # smaller network, runs faster
 	epochs = 100, # hopefully converges earlier...
-	score_validation_samples = 10000, # sample the validation dataset (faster)
+	score_validation_samples = 1000, # sample the validation dataset (faster)
 	stopping_rounds = 5,
 	stopping_metric = "misclassification", # could be "MSE","logloss","r2", "AUC"
 	stopping_tolerance = 0.01
@@ -133,9 +135,9 @@ list( model_dl_1 = mean( pred1$predict == test$Cover_Type ),
 
 ## Hyperparamters Tuning 
 
-Since there are a lot of parameters that can impact model accuracy, hyper-parameter tuning is especially important for Deep Learning. One way to do it is with grid search. For speed, we will only train on the first 10,000 rows of the training dataset.
+Since there are a lot of parameters that can impact model accuracy, hyper-parameter tuning is especially important for Deep Learning. One way to do it is with **grid search** using `h2o.grid` and specifying the hyper_params. For speed, we will only train on the first 10,000 rows of the training dataset.
 
-```{r, cache = TRUE }
+```{r}
 
 # train samples of the training data for speed 
 sampled_train <- train[ 1:10000, ]
@@ -178,7 +180,7 @@ Find the best model and its full set of parameters.
 
 ```{r}
 
-source("h2o_functions.R")
+source("h2o_deep_learning_functions.R")
 
 ids <- model_dl_grid@model_ids
 model_best_grid <- BestGridSearch( ids = ids )
@@ -191,7 +193,45 @@ mean( pred3$predict == test$Cover_Type )
 
 Note that we're using less training data to perform the grid search, thus the accuracy is lower.
 
-Often, hyper-parameter search for more than 4 parameters can be done more efficiently with random parameter search than with grid search. Basically, chances are good to find one of many good models in less time than performing an exhaustive grid search. We simply build N models with parameters drawn randomly from user-specified distributions (here, uniform).
+Though, often times, hyper-parameter search for more than 4 parameters can be done more efficiently with random parameter search than with grid search. Basically, chances are good to find one of many good models in less time than performing an exhaustive grid search. We simply build N models with parameters drawn randomly ( e.g. with uniform distribution ) from user-specified distributions.
+
+## Binary Classification
+
+Assume we want to turn the multi-class problem above into a binary classification problem. We create a binary response as follows. Note that to perform classification, the response must be turned into a categorical (factor) feature.
+
+```{r}
+
+train$bin_output <- ifelse( train[ , output ] == "class_1", 0, 1 ) %>% as.factor()
+
+model_dl_binary <- h2o.deeplearning(
+
+	x = input,
+	y = "bin_output", # specify the character name of the column
+	training_frame = train,
+	hidden = c( 10, 10 ),
+	epochs = 1,
+	l1 = 1e-5
+	#balance_classes = TRUE enable this for high class imbalance
+)
+
+# Now the model metrics contain AUC for binary classification
+# which you can call h2o.auc to directly obtain the value
+h2o.auc(model_dl_binary)
+
+```
+
+Some other functionality such as saving, loading the model and shutting down the cluster.
+
+```{r}
+
+# storing and loading the model 
+# path <- h2o.saveModel( model, path = "mybest_deeplearning_covtype_model", force = TRUE )
+# print(path)
+# loaded <- h2o.loadModel(path)
+
+h2o.shutdown( prompt = FALSE )
+
+```
 
 # Tips and Tricks for Tuning Deep Learning 
 
@@ -239,7 +279,7 @@ There're a lot of parameters for H2o's deep learning, thus it is not recommended
 
 - `activation` For activation functions "Rectifier" and "RectifierWithDropout" is recommended.
 - `hidden` Try 2 to 5 layers deep, 10 to 2000 neurons per layer.
-- `l1` Regularization to prevent overfitting, l1 regularization constrains the absolute value of the weights ( can add stability and improve generalization, causes many weights to become 0 ).
+- `l1` and `l2` Regularization to prevent overfitting, L1 and L2 penalties can be applied by specifying their parameters. Intuition: L1 lets only strong weights survive ( constant pulling force towards zero ), while L2 prevents any single weight from getting too big.
 
 ## Do Ensembling 
 
