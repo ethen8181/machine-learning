@@ -12,10 +12,11 @@ Listed in chronological order of the latest complete date.
 
 **h2o :** in progress
 
-Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Note that H2O provides progress bar when training the model, thus you’ll may see a lot of them in the docs.
+Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Since H2O provides progress bar when training the model, you’ll may see a lot of them in the quick walkthrough.
 
 - View quick walkthrough of h2o deep learning [here](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html).
 - View quick walkthrough of h2o gradient boosting and random forest [here](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html).
+- View quick walkthrough of h2o’s generalized linear model [here](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html).
 
 **lda_1 : 2015.12.8** 
 

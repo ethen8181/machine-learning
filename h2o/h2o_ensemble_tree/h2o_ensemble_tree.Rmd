@@ -56,9 +56,11 @@ After loading in the data, we'll split the H2O frame we read above; create split
 splits <- h2o.splitFrame( df, c( 0.6, 0.2 ), seed = 1234 )
 
 train <- h2o.assign( splits[[1]], "train.hex" ) # assign h2o id name train.hex  
-valid <- h2o.assign( splits[[2]], "valid.hex" ) # R valid, H2O valid.hex
-test  <- h2o.assign( splits[[3]], "test.hex" ) # R test, H2O test.hex
-train
+valid <- h2o.assign( splits[[2]], "valid.hex" )
+test  <- h2o.assign( splits[[3]], "test.hex" )
+
+# use a subset of the training data for speed
+train <- train[ 1:100000, ]
 
 ```
 
@@ -73,7 +75,7 @@ Run our first randomforest model. Some parameters.
 - `stopping_rounds` IMPORTANT, set this so that there will be a early stopping criteria. It's essentially telling the model to stop when it's sufficiently accurate. To elaborate, it will stop fitting new trees when the n-tree's average is within 0.001 (default) of the prior n-tree's averages. You can change the 0.001 with the `stopping_tolerance` parameter.
 - `score_each_iteration` Predict against training and validation for each tree. Default will skip several.
 
-```{r, cache=TRUE}
+```{r}
 
 # run our first predictive model
 
@@ -191,7 +193,7 @@ h2o.hit_ratio_table( gbm3, valid = TRUE )[ 1, 2 ]
 
 Now the GBM is close to the initial random forest. However, we used a default random forest. And while there are only a few parameters to tune, we can experiment with those to see if it will make a difference. The main parameters to tune are the tree depth and the mtries, which is the number of predictors to use. The default depth of trees is 20. Note that the default mtries depends on whether classification or regression is being run. The default for classification is one-third of the columns, while the default for regression is the square root of the number of columns.
 
-```{r, cache=TRUE}
+```{r}
 
 rf2 <- h2o.randomForest( 
 
@@ -213,7 +215,7 @@ h2o.hit_ratio_table( rf2, valid = TRUE )[ 1, 2 ]
 
 ```
 
-Note that you can also look at the real-time performance through [H2o Flow](http://localhost:54321/flow/index.html). Just click getModels from the GUI and you'll find a list of model id that you've ran or is running. This is also why it's usually a good idea to manually give each single model a corresponding model id that's human distinguishable. 
+While the model is doing its training, you can also look at the real-time performance through [H2o Flow](http://localhost:54321/flow/index.html). Just click getModels from the GUI and you'll find a list of model id that you've ran or is running. This is also why it's usually a good idea to manually give each single model a corresponding model id that's human distinguishable. Though be aware that you have to have a h2o cluster running to see it or else the link won't work.
 
 Lastly we'll create predictions using our latest RF model against the test set to check if there're signs of overfitting.
 
@@ -240,6 +242,11 @@ Some other things worth trying if we were to continue.
 1. We could further experiment with deeper trees or a higher percentage of columns used (mtries). Also we could experiment with the `nbins` and `nbins_cats` settings to control the H2O splitting. The general guidance is to lower the number to increase generalization ( avoid overfitting ). A good example of adjusting this value is for nbins_cats to be increased to match the number of values in a category. Though usually unnecessary, if a problem has a very important categorical predictor, this can improve performance.
 
 2. In a production setting where fine-grain accuracy is beneficial, it is common to set the learning rate to a very small number, such as 0.01 or less and add trees to match. Use of early stopping is very powerful to allow the setting of a low learning rate and then building as many trees as needed until the desired convergence is met.
+
+**Sources: **
+
+- [R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_ensemble_tree/h2o_ensemble_tree.R) to the file.
+- Erratas are welcomed and can be filed [here](https://github.com/ethen8181/machine-learning/issues).
 
 # Reference 
 

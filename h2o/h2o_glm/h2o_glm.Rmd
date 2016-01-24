@@ -1,0 +1,119 @@
+---
+title: "H2o Generalized Linear Model"
+author: "Ming-Yu Liu"
+date: "January 24, 2016"
+output: 
+  html_document: 
+    highlight: haddock
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+---
+
+# Basic Background Information
+
+The strength of Generalized Linear Models are that they are easy to fit; easy to understand. Though it does not deal very well with correlated variables, thus, often times you need to add l1 (lasso) or l2 (ridge) regularization or so called penalty, which is controlled by the `alpha` and `lambda` value.
+
+ lambda search can also be used to efficiently to filter out inactive predictors (known as noise) and only build models for a small subset of predictors.
+
+- `alpha` A value of 1.0 for `alpha` represents lasso, and an alpha value of 0.0 produces ridge regression.
+- `lambda` This is the most important piece of information for someone learning about regularization. It controls how complex the model is allowed to be. The intuition is : when lambda is large, you penalize your model very heavily when it starts to get more complex, on the opposite when the value is 0, you don't penalize it at all and the `alpha` parameter is ignored.
+
+In h2o you can specify to use a `lambda_search` = TRUE. Lambda search enables efficient and automatic search for the optimal value of the lambda parameter. When lambda search is enabled, GLM will first fit a model with maximum regularization and then keep decreasing it until overfitting occurs ( If running lambda search with a validation dataset, the chosen lambda value corresponds to the lambda with the lowest validation error ). The resulting model is based on the best lambda value.
+
+# Quick Hands On
+
+```{r, message=FALSE, warning=FALSE}
+
+library(h2o)
+library(ggplot2)
+# initialize the cluster with all the threads available
+# and clean it just in case 
+h2o.init( nthreads = -1 )
+h2o.removeAll()
+
+setwd("/Users/ethen/machine-learning/h2o")
+
+df <- h2o.importFile( path = normalizePath("covtype.full.csv" ) )
+
+# h2o.summary(df)
+
+y <- "Cover_Type"
+x <- setdiff( names(df), y )
+
+# binomial data
+df_binomial <- df[ df$Cover_Type %in% c( "class_1", "class_2" ), ]
+h2o.setLevels( df_binomial$Cover_Type, c( "class_1","class_2" ) )
+
+# split to train / test / validation
+# use smaller dataset for testing 
+data_binomial <- h2o.splitFrame( df_binomial, ratios = c( .2, .1 ) ) 
+
+```
+
+Grid search over different alpha values. By default h2o's glm will standardize the input variables.
+
+```{r}
+
+hyper_parameters <- list( alpha = c( 0, .5, 1 ) )
+model_glm_grid <- h2o.grid(
+
+	algorithm = "glm", 
+	hyper_params = hyper_parameters,
+	training_frame = data_binomial[[1]], 
+	validation_frame = data_binomial[[2]], 
+	x = x, 
+	y = y,
+	lambda_search = TRUE,
+	family = "binomial"
+)
+
+```
+
+We'll observe one the of model and look at various outputs.
+
+```{r}
+
+m1 <- h2o.getModel(model_glm_grid@model_ids[[1]])
+
+# for binomial output, h2o will choose the cutoff threshold by 
+# maximizing the f1 score.
+h2o.confusionMatrix( m1, valid = TRUE )
+
+# look at different cutoff values for different criteria to optimize
+m1@model$training_metrics@metrics$max_criteria_and_metric_scores
+
+# area under the curve
+h2o.auc( m1, valid = TRUE )
+
+# coefficients ( standardized and non-standardized )
+m1@model$coefficients
+
+# obtain the regularization, alpha and lambda 
+m1@model$model_summary$regularization
+
+# false and true positives and simple ROC curve plot
+fpr <- h2o.fpr( h2o.performance( m1, valid = TRUE ) )
+tpr <- h2o.tpr( h2o.performance( m1, valid = TRUE ) )
+ggplot( data.frame( fpr = fpr, tpr = tpr ), aes( fpr, tpr ) ) + 
+geom_line()
+
+```
+
+**Sources:**
+
+- [R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_glm/h2o_glm.R) to the file.
+- Erratas are welcomed and can be filed [here](https://github.com/ethen8181/machine-learning/issues).
+
+# Reference 
+
+1. H2o GLM : https://www.youtube.com/watch?v=VJPltxh5Q6Q
+
+# R Session Information
+
+```{r}
+
+sessionInfo()
+
+```
+

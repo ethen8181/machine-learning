@@ -138,16 +138,16 @@ img {
 ## H2O is not running yet, starting it now...
 ## 
 ## Note:  In case of errors look at the following log files:
-##     /var/folders/vt/891vkg_56n92b5f3rr4980j80000gn/T//RtmpxgT4Ut/h2o_ethen_started_from_r.out
-##     /var/folders/vt/891vkg_56n92b5f3rr4980j80000gn/T//RtmpxgT4Ut/h2o_ethen_started_from_r.err
+##     /var/folders/vt/891vkg_56n92b5f3rr4980j80000gn/T//Rtmp95bUmM/h2o_ethen_started_from_r.out
+##     /var/folders/vt/891vkg_56n92b5f3rr4980j80000gn/T//Rtmp95bUmM/h2o_ethen_started_from_r.err
 ## 
 ## 
 ## .Successfully connected to http://127.0.0.1:54321/ 
 ## 
 ## R is connected to the H2O cluster: 
-##     H2O cluster uptime:         1 seconds 1 milliseconds 
+##     H2O cluster uptime:         1 seconds 6 milliseconds 
 ##     H2O cluster version:        3.6.0.8 
-##     H2O cluster name:           H2O_started_from_R_ethen_zpq325 
+##     H2O cluster name:           H2O_started_from_R_ethen_mer175 
 ##     H2O cluster total nodes:    1 
 ##     H2O cluster total memory:   3.56 GB 
 ##     H2O cluster total cores:    8 
@@ -155,7 +155,7 @@ img {
 ##     H2O cluster healthy:        TRUE</code></pre>
 <pre><code>## IP Address: 127.0.0.1 
 ## Port      : 54321 
-## Session ID: _sid_9f9b9295041124bbbb06afabdbb940bd 
+## Session ID: _sid_b5cfc6f51b73e08c7c20cb54aa4c4056 
 ## Key Count : 0</code></pre>
 <p>For this example we want to predict the Cover_Type column, a categorical feature with 7 levels and the Deep Learning model will be tasked to perform (multi-class) classification. It uses the other 12 predictors of the dataset, of which 10 are numerical and 2 are categorical with a total of 44 levels. We can expect the Deep Learning model to have 56 input neurons (after automatic one-hot encoding).</p>
 <p>The following section import the full cover type dataset (581k rows, 13 columns, 10 numerical, 3 categorical); Split the data 3 ways: 60% for training, 20% for validation (hyper parameter tuning) and 20% for final testing.</p>
@@ -164,8 +164,6 @@ df &lt;-<span class="st"> </span><span class="kw">h2o.importFile</span>( <span c
 <pre><code>## 
   |                                                                       
   |                                                                 |   0%
-  |                                                                       
-  |==========================================                       |  65%
   |                                                                       
   |=================================================================| 100%</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>( <span class="kw">dim</span>(df), df )</code></pre></div>
@@ -254,19 +252,19 @@ input  &lt;-<span class="st"> </span><span class="kw">setdiff</span>( <span clas
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># h2o.varimp : obtaining the variable of importance</span>
 <span class="kw">head</span>( <span class="kw">as.data.frame</span>( <span class="kw">h2o.varimp</span>(model_dl_1) ) )</code></pre></div>
 <pre><code>##                             variable relative_importance scaled_importance
-## 1             Wilderness_Area.area_0           1.0000000         1.0000000
-## 2    Horizontal_Distance_To_Roadways           0.9750313         0.9750313
-## 3                          Elevation           0.9660224         0.9660224
-## 4 Horizontal_Distance_To_Fire_Points           0.8692668         0.8692668
-## 5             Wilderness_Area.area_2           0.8395414         0.8395414
-## 6             Wilderness_Area.area_3           0.7705865         0.7705865
+## 1    Horizontal_Distance_To_Roadways           1.0000000         1.0000000
+## 2                          Elevation           0.9527429         0.9527429
+## 3             Wilderness_Area.area_0           0.9189595         0.9189595
+## 4             Wilderness_Area.area_2           0.9172970         0.9172970
+## 5 Horizontal_Distance_To_Fire_Points           0.8645972         0.8645972
+## 6             Wilderness_Area.area_3           0.7988669         0.7988669
 ##   percentage
-## 1 0.03177436
-## 2 0.03098099
-## 3 0.03069474
-## 4 0.02762039
-## 5 0.02667589
-## 6 0.02448489</code></pre>
+## 1 0.03219370
+## 2 0.03067232
+## 3 0.02958471
+## 4 0.02953119
+## 5 0.02783459
+## 6 0.02571848</code></pre>
 <p>Other Common Parameters :</p>
 <ul>
 <li>For sampling :
@@ -282,7 +280,7 @@ input  &lt;-<span class="st"> </span><span class="kw">setdiff</span>( <span clas
 </ul></li>
 <li>Others :
 <ul>
-<li><code>l1</code> L1 regularization, improves generalization and prevents overfitting`</li>
+<li><code>l1</code> L1 regularization, improves generalization and prevents overfitting.</li>
 <li><code>sparse</code> : Sparse data handling (more efficient for data with lots of 0 values). Default to FALSE.</li>
 </ul></li>
 </ul>
@@ -294,7 +292,7 @@ input  &lt;-<span class="st"> </span><span class="kw">setdiff</span>( <span clas
     <span class="dt">validation_frame =</span> valid,
     <span class="dt">x =</span> input,
     <span class="dt">y =</span> output,
-    <span class="dt">hidden =</span> <span class="kw">c</span>( <span class="dv">32</span>, <span class="dv">32</span>, <span class="dv">32</span> ), <span class="co"># smaller network, runs faster</span>
+    <span class="dt">hidden =</span> <span class="kw">c</span>( <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span> ), <span class="co"># smaller network, runs faster</span>
     <span class="dt">epochs =</span> <span class="dv">100</span>, <span class="co"># hopefully converges earlier...</span>
     <span class="dt">score_validation_samples =</span> <span class="dv">1000</span>, <span class="co"># sample the validation dataset (faster)</span>
     <span class="dt">stopping_rounds =</span> <span class="dv">5</span>,
@@ -305,71 +303,43 @@ input  &lt;-<span class="st"> </span><span class="kw">setdiff</span>( <span clas
   |                                                                       
   |                                                                 |   0%
   |                                                                       
-  |                                                                 |   1%
-  |                                                                       
   |=                                                                |   1%
   |                                                                       
   |=                                                                |   2%
   |                                                                       
   |==                                                               |   3%
   |                                                                       
-  |==                                                               |   4%
-  |                                                                       
-  |===                                                              |   4%
-  |                                                                       
   |===                                                              |   5%
   |                                                                       
   |====                                                             |   6%
   |                                                                       
-  |====                                                             |   7%
-  |                                                                       
   |=====                                                            |   7%
-  |                                                                       
-  |=====                                                            |   8%
   |                                                                       
   |======                                                           |   9%
   |                                                                       
-  |=======                                                          |  10%
+  |======                                                           |  10%
   |                                                                       
   |=======                                                          |  11%
   |                                                                       
   |========                                                         |  12%
   |                                                                       
-  |========                                                         |  13%
-  |                                                                       
   |=========                                                        |  13%
-  |                                                                       
-  |=========                                                        |  14%
   |                                                                       
   |==========                                                       |  15%
   |                                                                       
   |==========                                                       |  16%
   |                                                                       
-  |===========                                                      |  16%
-  |                                                                       
   |===========                                                      |  17%
-  |                                                                       
-  |============                                                     |  18%
   |                                                                       
   |============                                                     |  19%
   |                                                                       
-  |=============                                                    |  19%
-  |                                                                       
   |=============                                                    |  20%
-  |                                                                       
-  |=============                                                    |  21%
-  |                                                                       
-  |==============                                                   |  21%
   |                                                                       
   |==============                                                   |  22%
   |                                                                       
   |===============                                                  |  23%
   |                                                                       
-  |===============                                                  |  24%
-  |                                                                       
   |================                                                 |  24%
-  |                                                                       
-  |================                                                 |  25%
   |                                                                       
   |=================                                                |  26%
   |                                                                       
@@ -377,77 +347,87 @@ input  &lt;-<span class="st"> </span><span class="kw">setdiff</span>( <span clas
   |                                                                       
   |==================                                               |  28%
   |                                                                       
-  |===================                                              |  29%
-  |                                                                       
   |===================                                              |  30%
-  |                                                                       
-  |====================                                             |  30%
   |                                                                       
   |====================                                             |  31%
   |                                                                       
-  |=====================                                            |  32%
-  |                                                                       
   |=====================                                            |  33%
-  |                                                                       
-  |======================                                           |  33%
   |                                                                       
   |======================                                           |  34%
   |                                                                       
   |=======================                                          |  35%
   |                                                                       
-  |=======================                                          |  36%
-  |                                                                       
-  |========================                                         |  36%
-  |                                                                       
   |========================                                         |  37%
-  |                                                                       
-  |========================                                         |  38%
   |                                                                       
   |=========================                                        |  38%
   |                                                                       
-  |=========================                                        |  39%
-  |                                                                       
-  |==========================                                       |  39%
-  |                                                                       
   |==========================                                       |  40%
-  |                                                                       
-  |==========================                                       |  41%
   |                                                                       
   |===========================                                      |  41%
   |                                                                       
-  |===========================                                      |  42%
-  |                                                                       
   |============================                                     |  42%
   |                                                                       
-  |============================                                     |  43%
-  |                                                                       
   |============================                                     |  44%
-  |                                                                       
-  |=============================                                    |  44%
   |                                                                       
   |=============================                                    |  45%
   |                                                                       
   |==============================                                   |  46%
   |                                                                       
-  |==============================                                   |  47%
-  |                                                                       
-  |===============================                                  |  47%
-  |                                                                       
   |===============================                                  |  48%
   |                                                                       
   |================================                                 |  49%
-  |                                                                       
-  |================================                                 |  50%
-  |                                                                       
-  |=================================                                |  50%
   |                                                                       
   |=================================                                |  51%
   |                                                                       
   |==================================                               |  52%
   |                                                                       
-  |==================================                               |  53%
+  |===================================                              |  53%
   |                                                                       
-  |===================================                              |  54%
+  |====================================                             |  55%
+  |                                                                       
+  |=====================================                            |  56%
+  |                                                                       
+  |=====================================                            |  58%
+  |                                                                       
+  |======================================                           |  59%
+  |                                                                       
+  |=======================================                          |  60%
+  |                                                                       
+  |========================================                         |  62%
+  |                                                                       
+  |=========================================                        |  63%
+  |                                                                       
+  |==========================================                       |  65%
+  |                                                                       
+  |===========================================                      |  66%
+  |                                                                       
+  |============================================                     |  68%
+  |                                                                       
+  |=============================================                    |  69%
+  |                                                                       
+  |==============================================                   |  71%
+  |                                                                       
+  |===============================================                  |  72%
+  |                                                                       
+  |================================================                 |  73%
+  |                                                                       
+  |=================================================                |  75%
+  |                                                                       
+  |==================================================               |  76%
+  |                                                                       
+  |===================================================              |  78%
+  |                                                                       
+  |===================================================              |  79%
+  |                                                                       
+  |====================================================             |  81%
+  |                                                                       
+  |=====================================================            |  82%
+  |                                                                       
+  |======================================================           |  84%
+  |                                                                       
+  |=======================================================          |  85%
+  |                                                                       
+  |========================================================         |  87%
   |                                                                       
   |=================================================================| 100%</code></pre>
 <p>Next we use <code>h2o.predict</code>, which returns an H2O Frame object with default predictions predict in the first column (for classification) probabilites that each observation belongs to each classes to obtain the prediction and compare the accuracy between the two models.</p>
@@ -456,10 +436,10 @@ pred2 &lt;-<span class="st"> </span><span class="kw">h2o.predict</span>( model_d
 <span class="kw">list</span>( <span class="dt">model_dl_1 =</span> <span class="kw">mean</span>( pred1$predict ==<span class="st"> </span>test$Cover_Type ), 
       <span class="dt">model_dl_2 =</span> <span class="kw">mean</span>( pred2$predict ==<span class="st"> </span>test$Cover_Type ) )</code></pre></div>
 <pre><code>## $model_dl_1
-## [1] 0.8240822
+## [1] 0.8149855
 ## 
 ## $model_dl_2
-## [1] 0.8696686</code></pre>
+## [1] 0.7862709</code></pre>
 </div>
 <div id="hyperparamters-tuning" class="section level2">
 <h2><span class="header-section-number">1.3</span> Hyperparamters Tuning</h2>
@@ -511,7 +491,7 @@ model_dl_grid &lt;-<span class="st"> </span><span class="kw">h2o.grid</span>(
   |                                                                       
   |=================================================================| 100%</code></pre>
 <p>Find the best model and its full set of parameters.</p>
-<p><a href><code>BestGridSearch</code></a> : Pass in a list of h2o model id obtained by <code>h2o.grid</code> and returns the best model its classification error</p>
+<p><a href="https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_deep_learning/h2o_deep_learning_functions.R"><code>BestGridSearch</code></a> : Pass in a list of h2o model id obtained by <code>h2o.grid</code> and returns the best model its classification error</p>
 <ul>
 <li>Args :
 <ul>
@@ -530,7 +510,7 @@ model_best_grid &lt;-<span class="st"> </span><span class="kw">BestGridSearch</s
 <span class="co"># use it obtain the prediction </span>
 pred3 &lt;-<span class="st"> </span><span class="kw">h2o.predict</span>( model_best_grid$best_model, test )
 <span class="kw">mean</span>( pred3$predict ==<span class="st"> </span>test$Cover_Type )</code></pre></div>
-<pre><code>## [1] 0.731193</code></pre>
+<pre><code>## [1] 0.7404871</code></pre>
 <p>Note that we’re using less training data to perform the grid search, thus the accuracy is lower.</p>
 <p>Though, often times, hyper-parameter search for more than 4 parameters can be done more efficiently with random parameter search than with grid search. Basically, chances are good to find one of many good models in less time than performing an exhaustive grid search. We simply build N models with parameters drawn randomly ( e.g. with uniform distribution ) from user-specified distributions.</p>
 </div>
@@ -553,11 +533,13 @@ model_dl_binary &lt;-<span class="st"> </span><span class="kw">h2o.deeplearning<
   |                                                                       
   |                                                                 |   0%
   |                                                                       
+  |======                                                           |  10%
+  |                                                                       
   |=================================================================| 100%</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Now the model metrics contain AUC for binary classification</span>
 <span class="co"># which you can call h2o.auc to directly obtain the value</span>
 <span class="kw">h2o.auc</span>(model_dl_binary)</code></pre></div>
-<pre><code>## [1] 0.8806146</code></pre>
+<pre><code>## [1] 0.8912965</code></pre>
 <p>Some other functionality such as saving, loading the model and shutting down the cluster.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># storing and loading the model </span>
 <span class="co"># path &lt;- h2o.saveModel( model, path = &quot;mybest_deeplearning_covtype_model&quot;, force = TRUE )</span>
@@ -620,6 +602,11 @@ model_dl_binary &lt;-<span class="st"> </span><span class="kw">h2o.deeplearning<
 <li>Gut-Feel Blending : Assign your own weights that add up to 1.</li>
 <li>Add Other Models : Add GLM, GBM, RandomForest into the mix.</li>
 </ol>
+<p><strong>Sources:</strong></p>
+<ul>
+<li>The R code, h2o_deep_learning.R, and the sourced in function code ,h2o_deep_learning_functions.R, can be found <a href="https://github.com/ethen8181/machine-learning/tree/master/h2o/h2o_deep_learning">here</a>.</li>
+<li>Comments or issues are welcomed can be filed <a href="https://github.com/ethen8181/machine-learning/issues">here</a>.</li>
+</ul>
 </div>
 </div>
 <div id="reference" class="section level1">
@@ -645,12 +632,12 @@ model_dl_binary &lt;-<span class="st"> </span><span class="kw">h2o.deeplearning<
 ## [1] data.table_1.9.6 dplyr_0.4.3      h2o_3.6.0.8      statmod_1.4.22  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_0.12.2      rstudioapi_0.3.1 knitr_1.11       magrittr_1.5    
-##  [5] R6_2.1.1         stringr_1.0.0    tools_3.2.2      parallel_3.2.2  
-##  [9] DBI_0.3.1        htmltools_0.2.6  yaml_2.1.13      digest_0.6.8    
-## [13] assertthat_0.1   formatR_1.2.1    bitops_1.0-6     codetools_0.2-14
-## [17] RCurl_1.95-4.7   evaluate_0.8     rmarkdown_0.8    stringi_1.0-1   
-## [21] jsonlite_0.9.17  chron_2.3-47</code></pre>
+##  [1] Rcpp_0.12.2      assertthat_0.1   digest_0.6.8     bitops_1.0-6    
+##  [5] chron_2.3-47     R6_2.1.1         DBI_0.3.1        jsonlite_0.9.17 
+##  [9] formatR_1.2.1    magrittr_1.5     evaluate_0.8     stringi_1.0-1   
+## [13] rstudioapi_0.3.1 rmarkdown_0.8    tools_3.2.2      stringr_1.0.0   
+## [17] RCurl_1.95-4.7   parallel_3.2.2   yaml_2.1.13      htmltools_0.2.6 
+## [21] knitr_1.11</code></pre>
 </div>
 
 

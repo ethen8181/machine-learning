@@ -98,12 +98,12 @@ Other Common Parameters :
     - e.g. `stopping_rounds` = 5, `stopping_metric` = "MSE", `stopping_tolerance` = 1e-3 means that to stop as soon as the moving average of length 5 of the validation MSE does not improve by at least 1e-3 for 5 consecutive scoring events. Refer to documentation for other types of `stopping metric`.
 
 - Others : 
-    - `l1` L1 regularization, improves generalization and prevents overfitting`
+    - `l1` L1 regularization, improves generalization and prevents overfitting.
     - `sparse` : Sparse data handling (more efficient for data with lots of 0 values). Default to FALSE.
 
 Now we run another, smaller network, and we let it stop automatically once the misclassification rate converges (specifically, if the moving average of length 2 does not improve by at least 1% for 2 consecutive scoring events). We also sample the validation set to 10,000 rows for faster scoring.
 
-```{r, cache=TRUE}
+```{r}
 
 model_dl_2 <- h2o.deeplearning(
 
@@ -112,7 +112,7 @@ model_dl_2 <- h2o.deeplearning(
 	validation_frame = valid,
 	x = input,
 	y = output,
-	hidden = c( 32, 32, 32 ), # smaller network, runs faster
+	hidden = c( 10, 10, 10 ), # smaller network, runs faster
 	epochs = 100, # hopefully converges earlier...
 	score_validation_samples = 1000, # sample the validation dataset (faster)
 	stopping_rounds = 5,
@@ -291,6 +291,11 @@ Ideally, use different network architecture, regularization schemes to keep the 
 2. Gut-Feel Blending : Assign your own weights that add up to 1.
 3. Add Other Models : Add GLM, GBM, RandomForest into the mix.
 
+**Sources:**
+
+- The R code, h2o_deep_learning.R, and the sourced in function code ,h2o_deep_learning_functions.R, can be found [here](https://github.com/ethen8181/machine-learning/tree/master/h2o/h2o_deep_learning).
+- Comments or issues are welcomed can be filed [here](https://github.com/ethen8181/machine-learning/issues).
+
 # Reference
 
 1. Top 10 Deep Learning Tips and Tricks : https://www.youtube.com/watch?v=LM255qs8Zsk
@@ -304,5 +309,5 @@ sessionInfo()
 ```
 
 
-[BestGridSearch]: 
+[BestGridSearch]: https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_deep_learning/h2o_deep_learning_functions.R
 
