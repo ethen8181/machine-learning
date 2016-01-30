@@ -25,12 +25,7 @@ FeatureEngineering <- function( data, is_train, income_medians )
 
 	# replacing columns names that contains "-" with "To"
 	columns_containing_hyphen <- grep( "-", colnames(data), value = TRUE )
-	setnames( data, columns_containing_hyphen, gsub( "-", "To", columns_containing_hyphen ) )
-
-	# convert output column to factor, so it'll be recognize as a classification problem
-	# by the machine learning library, note that testing data does not include this column
-	if(is_train)
-		data[ , SeriousDlqin2yrs := as.factor(SeriousDlqin2yrs) ]
+	setnames( data, columns_containing_hyphen, gsub( "-", "To", columns_containing_hyphen ) )	
 
 	# add up the number of times past due regardless of how many days
 	data[ , SumPastDueNotWorse := NumberOfTime30To59DaysPastDueNotWorse + 
@@ -74,9 +69,14 @@ FeatureEngineering <- function( data, is_train, income_medians )
 		log10( x + 1 )
 	}), .SDcols = columns_log_transform ]
 
+	# return 
+	# also convert output column to factor, so it'll be recognize as a classification problem
+	# by the machine learning library, note that testing data does not include this column
 	if(is_train)
-		return( list( data = data, log_median = log_median ) )
-	else
+	{
+		data[ , SeriousDlqin2yrs := as.factor(SeriousDlqin2yrs) ]
+		return( list( data = data, log_median = log_median ) )	
+	}else
 		return(data)	
 }
 
