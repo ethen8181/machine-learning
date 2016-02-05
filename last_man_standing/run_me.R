@@ -75,4 +75,3 @@ Submit( predict = pred_gbm_2, filename = "submission_gbm_2.csv" )
 SubmitEnsemble( predict1 = pred_gbm_1, predict2 = pred_gbm_2, 
 				weight1 = 0.7, weight2 = 0.3, filename = "submission_ensemble.csv" )
 
-

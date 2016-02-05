@@ -1,6 +1,5 @@
 # utility functions
 
-
 FeatureEngineering <- function( data, is_train, income_medians )
 {
 	# --------------------------------------------------------------------------------------
@@ -57,7 +56,6 @@ FeatureEngineering <- function( data, is_train, income_medians )
 	}else
 		data[ , MonthlyIncome := ifelse( is.na(MonthlyIncome), income_medians, log_income ) ]
 
-
 	# log transform extremely skew-distributed columns, 
 	# plus 1 to avoid taking log 0
 	# @columns are columns that will not be transformed 
@@ -84,10 +82,8 @@ FeatureEngineering <- function( data, is_train, income_medians )
 #					H2o Models
 # --------------------------------------------------------------------------
 
-
 # Note that the ensemble results above are not reproducible since 
-# h2o.deeplearning is not reproducible when using multiple cores,
-
+# h2o.deeplearning is not reproducible when using multiple cores.
 # each function is a wrapper specifying the model used for h2o ensemble  
 
 h2o.deeplearning.1 <- function( ..., hidden = c( 50, 50 ), 
@@ -96,7 +92,7 @@ h2o.deeplearning.1 <- function( ..., hidden = c( 50, 50 ),
 								balance_classes = TRUE, 
 								stopping_rounds = 5, 
 								stopping_metric = "AUC",
-								stopping_tolerance = 0.1,
+								stopping_tolerance = 0.05,
 								variable_importances = TRUE )
 {
 	h2o.deeplearning.wrapper(
@@ -113,12 +109,12 @@ h2o.deeplearning.1 <- function( ..., hidden = c( 50, 50 ),
 }
 
 h2o.deeplearning.2 <- function( ..., hidden = c( 100, 100, 100 ), 
-								epochs = 50,
+								epochs = 60,
 								activation = "Rectifier", 
 								balance_classes = TRUE, 
 								stopping_rounds = 5, 
 								stopping_metric = "AUC",
-								stopping_tolerance = 0.1,
+								stopping_tolerance = 0.05,
 								variable_importances = TRUE,
 								l1 = 0.02 )
 {
@@ -137,11 +133,11 @@ h2o.deeplearning.2 <- function( ..., hidden = c( 100, 100, 100 ),
 }
 
 h2o.randomForest.1 <- function( ..., ntrees = 250,
-								max_depth = 10, 
+								max_depth = 6, 
 								balance_classes = TRUE,
 								stopping_rounds = 5, 
 								stopping_metric = "AUC",
-								stopping_tolerance = 0.1 )
+								stopping_tolerance = 0.05 )
 {
 	h2o.randomForest.wrapper(
 	 	..., 
@@ -154,14 +150,14 @@ h2o.randomForest.1 <- function( ..., ntrees = 250,
 	)
 }
 
-h2o.gbm.1 <- function( ..., ntrees = 100, 
-					   learn_rate = 0.1,
-					   max_depth = 5,
+h2o.gbm.1 <- function( ..., ntrees = 200, 
+					   learn_rate = 0.05,
+					   max_depth = 6,
 					   sample_rate = 0.9,
 					   balance_classes = TRUE,
 					   stopping_rounds = 5, 
 					   stopping_metric = "AUC",
-					   stopping_tolerance = 0.1 )
+					   stopping_tolerance = 0.05 )
 {
 	h2o.gbm.wrapper(
 		...,
@@ -176,16 +172,7 @@ h2o.gbm.1 <- function( ..., ntrees = 100,
 	)
 }
 
-# not used 
+# h2o.glm
 # @alpha : 1 = lasso regression
 # lambda_search is not currently supported in conjunction with N-fold cross-validation
-h2o.glm.1 <- function( ..., alpha = 1,
-					   max_iterations = 150 )
-{
-	h2o.glm.wrapper(
-		...,
-		alpha = alpha,
-		max_iterations = max_iterations
-	)
-}
 
