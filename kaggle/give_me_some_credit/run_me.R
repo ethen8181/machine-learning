@@ -7,7 +7,7 @@ library(h2o)
 library(dplyr)
 library(data.table)
 library(h2oEnsemble)
-setwd("/Users/ethen/machine-learning/kaggle_give_me_some_credit")
+setwd("/Users/ethen/machine-learning/kaggle/give_me_some_credit")
 data_train <- fread( "data/cs-training.csv", select = 2:12 )
 
 # source in functions including :

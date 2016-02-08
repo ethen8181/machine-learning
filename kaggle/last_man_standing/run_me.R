@@ -2,7 +2,7 @@
 
 library(h2o)
 library(data.table)
-setwd("/Users/ethen/machine-learning/last_man_standing")
+setwd("/Users/ethen/machine-learning/kaggle/last_man_standing")
 
 # source in helper functions, including :
 # [FeatureEngineering]

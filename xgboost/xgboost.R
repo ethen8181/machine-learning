@@ -138,4 +138,58 @@ xgb_cv_1 <- xgb.cv(
 # http://stats.stackexchange.com/questions/171043/how-to-tune-hyperparameters-of-xgboost-trees
 
 
+# --------------------------------------------------------------------
+# 							xgboost  
+# --------------------------------------------------------------------
+
+# template of splitting into training and validaion, did not work well .... 
+ library(Matrix)
+library(xgboost)
+
+# xgboost only takes numeric features,
+# 1. use sparse.model.matrix to one hot encode the factor variables 
+# 	 the formula takes the : output variable ~ .-1, where the -1 is used
+# 	 to remove the intercept column that is added by the function
+# 2. convert the output column for factor variable back to numeric 
+set.seed(1234)
+train_info$data[ , QuoteConversion_Flag := QuoteConversion_Flag %>% 
+										   as.character() %>% as.numeric() ]
+index <- createDataPartition( train_info$data[["QuoteConversion_Flag"]], p = 0.8, list = FALSE )
+train <- train_info$data[ index, ]
+valid <- train_info$data[ -index, ]
+
+formula <- as.formula( paste( "QuoteConversion_Flag", "~ .-1" ) )
+xgb_train <- xgb.DMatrix( data  = sparse.model.matrix( formula, data = train ), 
+						  label = train[["QuoteConversion_Flag"]] )
+xgb_valid <- xgb.DMatrix( data  = sparse.model.matrix( formula, data = valid ), 
+						  label = valid[["QuoteConversion_Flag"]] )
+xgb_all   <- xgb.DMatrix( data  = sparse.model.matrix( formula, data = train_info$data ), 
+						  label = train_info$data[["QuoteConversion_Flag"]] )
+
+model_xgb_1 <- xgb.train(
+	data = xgb_train,
+	objective = "binary:logistic",
+	nrounds = 400,
+	eta = 0.001,
+	max.depth = 8,
+	colsample_bytree = 0.8,
+	verbose = 1,
+	print.every.n = 5,
+	watchlist = list( valid = xgb_valid ),
+	eval_metric = "auc",	
+	early.stop.round = 5
+)
+model_xgb_2 <- xgb.train( 
+	data = xgb_all,
+	objective = "binary:logistic",
+	nrounds = model_xgb_1$bestInd,
+	eta = 0.001,
+	max.depth = 8,
+	colsample_bytree = 0.8,
+	verbose = 0
+)
+pred_xgb <- predict( model_xgb_2, sparse.model.matrix( ~ .-1, data = data_test ) )
+submit <- data.table( fread( "data/test.csv", select = 1 ),
+					  QuoteConversion_Flag = pred_xgb )
+write.csv( submit, "submission2.csv", row.names = FALSE )
 

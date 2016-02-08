@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(gridExtra)
 library(data.table)
-setwd("/Users/ethen/Desktop/loan_prediction/data")
+setwd("/Users/ethen/machine-learning/kaggle/give_me_some_credit/data")
 
 # objective :
 # Predict the probability that somebody will experience financial distress in the next two years.

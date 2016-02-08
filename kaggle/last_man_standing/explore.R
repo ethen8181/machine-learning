@@ -3,7 +3,7 @@
 library(ggplot2)
 library(gridExtra)
 library(data.table)
-setwd("/Users/ethen/machine-learning/last_man_standing/data")
+setwd("/Users/ethen/machine-learning/kaggle/last_man_standing/data")
 data_train <- fread( "Train.csv", select = 2:10 )
 data_test  <- fread( "Test.csv", select = 2:9 )
 

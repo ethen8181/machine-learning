@@ -199,13 +199,15 @@ $$ h_{\theta}(x) = \sum_{j=0}^n \theta_{j}x_{j} $$
 
 So for linear regression, these parameters $\theta_{j}$s from the formula above are what we want find out or train. So given a training dataset, how do we learn them? One reasonable method is to make the value produced by function F(x) to be as close to the original $y^{(i)}$ as possible (at least for the training dataset we now have). That is after plugging in the combinations of the number of bedrooms and the area size of the house into the function, we want the house price calculated by the function to be as close to the original value of the house price as possible (for every row of dataset). This gives us the cost function $F(\theta)$ below.
 
-$$ F(\theta) = \frac{1}{2} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} )^2 $$
+$$ F(\theta) = \frac{1}{2m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} )^2 $$
 
 The $\frac{1}{2}$ is there to minimize the math loading for later when we take the first derivative of the function. Again, the meaning for the formula above means after plugging in our input variables $x^{(i)}$ (recall that i denotes the ith row in the dataset) into the function and obtaining the value, which is the $h_{\theta}(x^{(i)})$ part. We will calculate its distance with the original $y^{(i)}$. Therefore the process of the gradient descent is to start some value for $\theta$ and keep updating it to reduce $F_{\theta}$, with the goal of minimizing the summed up differences for all rows. This summed of difference is often referred to as the sum squared error. 
 
-Next, we'll state without proving that after taking the first derivative of the function $F_{\theta}$ and putting it back inside the gradient descent algorithm we'll obtain the formula below (Please refer to the reference if you're interested in the proof):
+Next, we'll state without proving that after taking the first derivative of the function $F_{\theta}$ and putting it back inside the gradient descent algorithm we'll obtain the formula below:
 
 $$ \theta_{j} := \theta_{j} - \alpha \frac{1}{m} \sum_{i=1}^m ( h_{\theta}(x^{(i)}) - y^{(i)} ) x_{j}^{(i)} $$
+
+Please refer to this [link](http://math.stackexchange.com/questions/70728/partial-derivative-in-gradient-descent-for-two-variables) if you're interested in the proof.
 
 Now all that formula may look a might formidable. The notion is, after you have calculated difference (error) between $h_{\theta}(x^{(i)}) - y^{(i)}$ for each row i you multiply that difference to all of the $x_{j}$s for each row and sum them up. A small example using two rows :
 
