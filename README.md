@@ -1,14 +1,19 @@
 # machine-learning
 
-## Repository Description
+## Overall Description
 
-This repository focuses on documenting machine learning and data mining techniques ( Stuffs that you’ll generally see in a machine learning or data mining book ). Each folder’s work is independent of one another. 
+This is one of the continuously updated repositories that documents personal data science journey. Currently, contents are organized into different repositories based on the following table's description.
 
-Repository [Business-Analytics](https://github.com/ethen8181/Business-Analytics) focuses more on documenting data science or business analytic related approaches.
+| Repository | Documentation Focus |
+| ---------- | ----------- |
+| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning in R. |
+| [programming](https://github.com/ethen8181/programming) | Machine learning in python. |
+| [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All the other data analytic related stuffs that are not solely about machine-learning. |
+| [database](https://github.com/ethen8181/database) | Database (MySQL). | 
 
 ## Documentation Listings
 
-Listed in chronological order of the latest complete date.
+Listed in chronological order of the latest complete date. Each folder’s work is independent of one another. 
 
 **h2o : 2016.1.24**
 
