@@ -35,7 +35,7 @@ Performing text clustering with Latent Dirichlet Allocation(LDA).
 
 Focus on choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The idea can be extended to any other classification algorithm that can predict class’s probability.
 
-- Visualize two by two standard confusion matrix and ROC curve with the ggplot2 library.
+- Visualize two by two standard confusion matrix and ROC curve with costs using the ggplot2 library.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/logistic_regression/logistic_regression.html)]
 
 **text_similarity : 2015.11.19** 
@@ -65,13 +65,4 @@ Solving linear regression with gradient descent.
 - Includes an appendix that briefly covers the interpretation and visualization of linear regression model’s summary output.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
 
-## Kept For Personal Reference
-
-**Coursera : 2015.10.16**
-
-Course project for the Practical Machine Learning on Coursera. Using R’s tree and rpart library for classification.
-
-**ROC : 2015.10.16** ( view the logistic_regression folder instead )
-
-Use of ROC curve and cost to determine the threshold for logistic regression on the titanic dataset.
 

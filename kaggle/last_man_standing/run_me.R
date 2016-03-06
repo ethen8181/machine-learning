@@ -1,5 +1,9 @@
 # http://datahack.analyticsvidhya.com/contest/last-man-standing
 
+# top3 solutions links
+# http://discuss.analyticsvidhya.com/t/last-man-standing-reveal-your-approach/7208
+# http://www.analyticsvidhya.com/blog/2016/02/secrets-winners-signature-hackathon-last-man-standing/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+AnalyticsVidhya+%28Analytics+Vidhya%29
+
 library(h2o)
 library(data.table)
 setwd("/Users/ethen/machine-learning/kaggle/last_man_standing")
@@ -52,7 +56,7 @@ data_test <- fread( "data/Test.csv", select = 2:9 )
 data_test <- FeatureEngineering( data = data_test, is_train = FALSE, 
 								 Number_Weeks_Used_impute = train_info$log_median,
 								 Number_Doses_Week_breaks = train_info$doses_breaks )
-test  <- as.h2o(data_test)
+test <- as.h2o(data_test)
 
 
 # load the h2o model, make the prediction and output the file
