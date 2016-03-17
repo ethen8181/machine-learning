@@ -2,14 +2,13 @@
 
 ## Overall Description
 
-This is one of the continuously updated repositories that documents personal data science journey. Currently, contents are organized into different repositories based on the following table's description.
+This is one of the continuously updated repositories that documents personal data science journey. Currently, contents are organized into three different repositories based on the following table's description.
 
 | Repository | Documentation Focus |
 | ---------- | ----------- |
-| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning in R. |
-| [programming](https://github.com/ethen8181/programming) | Machine learning in python. |
+| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning in R / python. |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All the other data analytic related stuffs that are not solely about machine-learning. |
-| [database](https://github.com/ethen8181/database) | Database (MySQL). | 
+| [programming](https://github.com/ethen8181/programming) | Walking through books / online courses. |
 
 ## Documentation Listings
 
