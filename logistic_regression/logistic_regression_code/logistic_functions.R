@@ -88,11 +88,9 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 			geom_hline( yintercept = cutoff, color = "blue", alpha = 0.6 ) + 
 			scale_y_continuous( limits = c( 0, 1 ) ) + 
 			scale_color_discrete( breaks = c( "TP", "FN", "FP", "TN" ) ) + # ordering of the legend 
-			guides( col = guide_legend( nrow = 2 ) ) + # adjust the legend to have two rows 
-			# scale_color_manual( values = c( "#E65E50", "#FAC339", "#4ABEB2", "#A079B4" ) ) + 
+			guides( col = guide_legend( nrow = 2 ) ) + # adjust the legend to have two rows  
 			ggtitle( sprintf( "Confusion Matrix with Cutoff at %.2f", cutoff ) )
 
-	# return the datapoint and confusion matrix plot 
 	return( list( data = result, plot = plot ) )
 }
 
@@ -142,7 +140,7 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	# area under the curve
 	auc <- performance( pred, "auc" )@y.values[[1]]
 
-	# normalize the cost 
+	# normalize the cost to assign colors to 1
 	normalize <- function(v) ( v - min(v) ) / diff( range(v) )
 	
 	# create color from a palette to assign to the 100 generated threshold between 0 ~ 1
@@ -174,7 +172,6 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 	plot <- arrangeGrob( roc_plot, cost_plot, ncol = 2, 
 						 top = textGrob( sub_title, gp = gpar( fontsize = 16, fontface = "bold" ) ) )
 	
-	# return 
 	return( list( plot 		  = plot, 
 				  cutoff 	  = best_cutoff, 
 				  totalcost   = best_cost, 
@@ -182,7 +179,4 @@ ROCInfo <- function( data, predict, actual, cost.fp, cost.fn )
 				  sensitivity = best_tpr, 
 				  specificity = 1 - best_fpr ) )
 }
-
-
-
 

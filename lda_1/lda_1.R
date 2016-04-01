@@ -1,31 +1,9 @@
 # Latent Dirichlet Allocation
-
-# ----------------------------------------------------------------------------------------
-#										Reference
-# ----------------------------------------------------------------------------------------
-
-# why tagging matters
-# http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf
-
-# math notations
-# https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
-
-# hyperparameters explanation 
-# http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444
-
-# Reimplementation R code
-# http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/
-
-# ----------------------------------------------------------------------------------------
-#
-# ----------------------------------------------------------------------------------------
-
 # conditioned on a dirichlet distribution 
 # for two class = binomial distribution
 # for K class = multinomial distribution
 # the dirichlet distribution allows us model 
 # the random selection from a multinomial distribution with K classes 
-
 # For the symmetric distribution, a high alpha-value means that each document is 
 # likely to contain a mixture of most of the topics, and not any single topic specifically
 
@@ -185,6 +163,18 @@ lda <- LDA( dtm, k = 2, method = "Gibbs",
 list( original_text = rawdocs[ topics(lda) == 1 ], words = terms( lda, 3 )[ , 1 ] )
 list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 ] )
 
+# ----------------------------------------------------------------------------------------
+#										Reference
+# ----------------------------------------------------------------------------------------
 
+# why tagging matters
+# http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf
 
+# math notations
+# https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
 
+# hyperparameters explanation 
+# http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444
+
+# Reimplementation R code
+# http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/

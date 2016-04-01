@@ -36,6 +36,7 @@ library(tidyr)
 library(dplyr)
 library(scales)
 library(ggplot2)
+library(ggthemr)
 library(ggthemes)
 library(gridExtra)
 library(data.table)
@@ -164,6 +165,8 @@ source("logistic_regression_code/logistic_functions.R")
 
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )
+# define the theme for the next plot
+ggthemr("light")
 accuracy_info$plot
 
 ````
@@ -186,6 +189,7 @@ We'll use another function to visualize the confusion matrix of the test set to 
 # visualize .6 cutoff (lowest point of the previous plot)
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
 					 			actual = "left", cutoff = .6 )
+ggthemr("flat")
 cm_info$plot
 
 ```
@@ -221,7 +225,7 @@ We'll use the data returned by the [`ConfusionMatrixInfo`][ConfusionMatrixInfo] 
 
 ```{r}
 
-cm_info$data
+print(cm_info$data)
 
 ```
 
@@ -235,7 +239,7 @@ Note that you don't have to use this data, as long as you're data consists of yo
 - `cost.fp` Associated cost for a false positive instance. 
 - `cost.fn` Associated cost for a false negative instance. 
 - The function returns a list consisting of : 
-    - plot : A side by side roc and cost plot, title showing optimal cutoff value title showing optimal cutoff, total cost, and area under the curve (auc). Wrap the gride.draw function around the plot to visualize it !!
+    - plot : A side by side roc and cost plot, title showing optimal cutoff value title showing optimal cutoff, total cost, and area under the curve (auc). Wrap the `gride.draw` function around the plot to visualize it!!
     - cutoff : Optimal cutoff value according to the specified FP and FN cost .
     - totalcost : Total cost according to the specified FP and FN cost.
     - auc : Area under the curve.
@@ -250,19 +254,19 @@ Let's use the function before going any further, so all these notions won't seem
 
 ```{r, fig.height=6, fig.width=10}
 
-# user-defined different cost for false negative and false positive 
+# reset to default ggplot theme 
+ggthemr_reset()
+
+# user-defined different cost for false negative and false positive
 cost_fp <- 100
 cost_fn <- 200
-
 roc_info <- ROCInfo( data = cm_info$data, predict = "predict", 
 					 actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
-
-# visualize the side by side plot 
 grid.draw(roc_info$plot)
 
 ```
 
-So what does this side by side plot tell us ?
+So what does this side by side plot tell us?
 
 1. The title of the entire plot tells us that when we assigned the cost for a false negative (FN) and false positive (FP) to be 100 and 200 respectively, our optimal cutoff is actually `r round( roc_info$cutoff, 2 )`, and the total cost for choosing this cutoff value is `r comma(roc_info$totalcost)`. 
 
@@ -279,6 +283,7 @@ We can re-plot the confusion matrix to see what happened when we switch to this 
 # re-plot the confusion matrix plot with the new cutoff value
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
                                 actual = "left", cutoff = roc_info$cutoff )
+ggthemr("flat")
 cm_info$plot
 
 ```
@@ -339,7 +344,7 @@ First, the relationship between the time spent in the company with the probabilt
 # compute the median estiamted probability for each TIC group
 median_tic <- data %>% group_by(TIC) %>% 
 					   summarise( prediction = median(prediction), count = n() )
-# plot
+ggthemr("fresh")
 ggplot( median_tic, aes( TIC, prediction, size = count ) ) + 
 geom_point() + theme( legend.position = "none" ) +
 labs( title = "Time and Employee Attrition", y = "Attrition Probability", 

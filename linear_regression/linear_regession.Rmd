@@ -49,7 +49,7 @@ That was easy, however if the function starts to get really complicated then sol
 $$\text{Repeat until converge} \{ x:=x-\alpha\triangledown F(x) \}$$
 
 - The notation := stands for overwriting the value on the left of := with values on the right of := .
-- $\triangledown$ stands for taking the first derivative of the function.
+- $\triangledown$ stands for the gradient of a function, which is the collection of all its partial derivatives into a vector ( taking the first derivative of the function with respect to all possible x ).
 - $\alpha$ stands for the learning rate which is set manually.
 
 Let's break that down piece by piece. Putting the formula in plain English: Imagine gradient descent as when you're at the top of a mountain and you want to get down to the very bottom, you have to choose two things. First the direction you wish to descend and second the size of the steps you wish to take. After choosing both of these things, you will keep on taking that step size and that direction until you reach the bottom. Now back to the formula. $\alpha$ corresponds to the size of the steps you wish to take and $\triangledown F(x)$ gives you the direction that you should take for your given formula. The following code, is a small example starting with one iteration of the process. Note that in order for the formula to start calculating you will have to assign an initial value for x.

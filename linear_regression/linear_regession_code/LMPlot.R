@@ -8,8 +8,8 @@ library(data.table)
 # visualizations that works with linear regression
 # @model  : linear regression model object
 # @actual : your data's actual (original) output value
-# returns : 1. plot    : eturns the four plot in one side by side plot
-#   		2. outlier : observation index of the possible, if none return NULL
+# returns : 1. plot    : returns the four plot in one side by side plot
+#   		2. outlier : observation index of the possible outliers, if none return NULL
 
 LMPlot <- function( model, actual )
 {
@@ -72,7 +72,6 @@ LMPlot <- function( model, actual )
 		  		  scale_y_continuous( labels = comma ) +
 			 	  geom_abline( slope = slope, intercept = intercept, color = "blue" ) + 
 			 	  ggtitle( "Residual's QQ Plot " )
-
 		return(qqplot)
 	}	
 	qqplot <- QQPlot( plot_data = plot_data )
@@ -95,9 +94,7 @@ LMPlot <- function( model, actual )
 				  		   guides( color = FALSE )
 
 		plot <- arrangeGrob( pred, cooks, resid, qqplot )
-
 		return( list( plot = plot, outlier = outlier ) )
-
 	}else
 	{
 		cooks <- cooks + geom_point( size = 2, shape = 1 )
@@ -111,10 +108,7 @@ LMPlot <- function( model, actual )
 		qqplot <- qqplot + stat_qq( size = 2, shape = 1 )
 
 		plot <- arrangeGrob( pred, cooks, resid, qqplot )
-
 		return( list( plot = plot, outlier = NULL ) )	
 	}		
 }
-
-
 

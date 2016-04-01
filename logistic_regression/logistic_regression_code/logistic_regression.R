@@ -9,7 +9,7 @@ library(tidyr)
 library(dplyr)
 library(scales)
 library(ggplot2)
-# library(ggthemr) package incompatible with the latest ggplot2 
+library(ggthemr) 
 library(ggthemes)
 library(gridExtra)
 library(data.table)
@@ -52,11 +52,7 @@ summary_glm <- summary(model_glm)
 # p-value and pseudo r squared 
 list( model_glm_sum$coefficient, 
 	  1- ( model_glm_sum$deviance / model_glm_sum$null.deviance ) )
-
 # all the p value of the coefficients indicates significance 
-
-
-
 
 
 # -------------------------------------------------------------------------
@@ -109,10 +105,10 @@ theme_economist()
 # compute the model's accuracy on both training and testing set
 source("logistic_regression_code/logistic_functions.R")
 
-# define the theme for the next plot
-# ggthemr("light")
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )
+# define the theme for the next plot
+ggthemr("light")
 accuracy_info$plot
 
 
@@ -120,10 +116,9 @@ accuracy_info$plot
 # our accuracy for both training and testing set grows higher and higher showing 
 # no sign of decreasing at all 
 # we'll visualize the confusion matrix of the test set to see what's causing this
-
-# ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
 					 			actual = "left", cutoff = .6 )
+ggthemr("flat")
 cm_info$plot
 
 # wiki : https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Worked_example
@@ -149,28 +144,25 @@ prop.table( table( data_test$left ) )
 #						Choosing the Suitable Cutoff Value 
 # -------------------------------------------------------------------------
 
-
 # use the roc curve to determine the cutoff
 # it plots the false positive rate (FPR) on the x-axis and the true positive rate (TPR) on the y-axis
+print(cm_info$data)
 
-# reset to default ggplot theme 
-# ggthemr_reset()
-cm_info$data
-
-
+ggthemr_reset()
 # different cost for false negative and false positive 
 cost_fp <- 100
 cost_fn <- 200
-
 roc_info <- ROCInfo( data = cm_info$data, predict = "predict", 
 					 actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
+
+# reset to default ggplot theme 
 grid.draw(roc_info$plot)
 
 
 # re plot the confusion matrix plot 
-# ggthemr("flat")
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
                                 actual = "left", cutoff = roc_info$cutoff )
+ggthemr("flat")
 cm_info$plot
 
 
@@ -199,8 +191,7 @@ data <- data[ data$prediction >= roc_info$cutoff, ]
 # time spent in the company 
 median_tic <- data %>% group_by(TIC) %>% 
 					   summarise( prediction = median(prediction), count = n() )
-
-# ggthemr_reset()
+ggthemr("fresh")
 ggplot( median_tic, aes( TIC, prediction, size = count ) ) + 
 geom_point() + theme( legend.position = "none" ) +
 labs( title = "Time and Employee Attrition", y = "Attrition Probability", 
@@ -210,7 +201,6 @@ labs( title = "Time and Employee Attrition", y = "Attrition Probability",
 data$LPECUT <- cut( data$LPE, breaks = quantile(data$LPE), include.lowest = TRUE )
 median_lpe <- data %>% group_by(LPECUT) %>% 
 					   summarise( prediction = median(prediction), count = n() )
-
 
 ggplot( median_lpe, aes( LPECUT, prediction ) ) + 
 geom_point( aes( size = count ), color = "royalblue3" ) + 
@@ -227,8 +217,6 @@ labs( title = "Last Project's Evaluation and Employee Attrition",
 # do we wish to retain these employees. Recall that from our dataset, we have the performance
 # information of the employee ( last project evaluation ). 
 # given this table, we can easily create a visualization to tell the story
-
-# ggthemr("fresh")
 ggplot( data, aes( prediction, LPE ) ) + 
 geom_point() + 
 ggtitle( "Performace v.s. Probability to Leave" )
@@ -263,6 +251,3 @@ result <- data %>%
 # document later, strange statistic test 
 # http://www.r-bloggers.com/evaluating-logistic-regression-models/
 		  	
-
-
-

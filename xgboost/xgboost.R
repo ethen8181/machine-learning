@@ -143,7 +143,7 @@ xgb_cv_1 <- xgb.cv(
 # --------------------------------------------------------------------
 
 # template of splitting into training and validaion, did not work well .... 
- library(Matrix)
+library(Matrix)
 library(xgboost)
 
 # xgboost only takes numeric features,
