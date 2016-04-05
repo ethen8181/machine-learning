@@ -410,7 +410,7 @@ All the code and the data can be found under [this](https://github.com/ethen8181
 
 Errors or suggestions can be filed [here](https://github.com/ethen8181/machine-learning/issues), I will gladly fix them as soon as possible ~ This includes poorly written code or grammar mistakes ...
 
-There's actual more to this HR example. We know who is more likely to leave and who are ones that we're more interested in retaining, the next question is what should we say to those employees? Is he leaving because the salary is too low or is it because the workload is simply too much and he needs a break? View [this](http://ethen8181.github.io/Business-Analytics/1_finding_groups/finding_groups.html) documentation to see how clustering algorithm can give us a little hint on this ( There's two example in that documentation, please refer to the second one ). 
+There's actual more to this HR example. We know who is more likely to leave and who are ones that we're more interested in retaining, the next question is what should we say to those employees? Is he leaving because the salary is too low or is it because the workload is simply too much and he needs a break? View [this](http://ethen8181.github.io/Business-Analytics/finding_groups/finding_groups.html) documentation to see how clustering algorithm can give us a little hint on this ( There's two example in that documentation, please refer to the second one ). 
 
 ## Reference 
 
