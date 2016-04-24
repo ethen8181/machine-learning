@@ -1,7 +1,5 @@
 # machine-learning
 
-## Overall Description
-
 This is one of the continuously updated repositories that documents personal data science journey. Currently, contents are organized into three different repositories based on the following table's description.
 
 | Repository | Documentation Focus |
@@ -12,7 +10,16 @@ This is one of the continuously updated repositories that documents personal dat
 
 ## Documentation Listings
 
-Listed in chronological order of the latest complete date. Each folder’s work is independent of one another. 
+Listed in chronological order of the latest complete date. Each folder’s work is independent of one another.
+
+
+**ga : 2016.4.25**
+
+Using Genetic Algorithm to solve a simple optimization problem.
+
+- Contains math-free explanation and python code from scratch
+- View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
+
 
 **h2o : 2016.1.24**
 
@@ -24,6 +31,7 @@ Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/in
 - h2o's deep learning, gradient boosting and random forest. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
 - h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
 
+
 **lda_1 : 2015.12.8** 
 
 Performing text clustering with Latent Dirichlet Allocation(LDA).
@@ -31,24 +39,28 @@ Performing text clustering with Latent Dirichlet Allocation(LDA).
 - Contains a toy sample code of the algorithm (gibbs sampling) and compare results with the *topicmodels* library.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)]
 
+
 **logistic_regression : 2015.11.25** 
 
 Focus on choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The idea can be extended to any other classification algorithm that can predict class’s probability.
 
-- Visualize two by two standard confusion matrix and ROC curve with costs using the ggplot2 library.
+- Visualize two by two standard confusion matrix and ROC curve with costs using *ggplot2*.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/logistic_regression/logistic_regression.html)]
+
 
 **text_similarity : 2015.11.19** 
 
-Illustrates k-shingle, Minhash and locality sensitive hashing for solving the problem of finding textually similar documents. 
+Illustrates k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. 
 
 - View [[R markdown](http://ethen8181.github.io/machine-learning/text_similarity/text_similarity.html)]
+
 
 **tf_idf : 2015.11.17** 
 
 Introducing tf-idf ( term frequency-inverse document frequency ), a text mining technique. Also uses it to perform text clustering via hierarchical clustering.
  
 - View [[R markdown](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html)]
+
 
 **clustering : 2015.11.6**
 
@@ -58,11 +70,12 @@ Some useful evaluations when working with hierarchical clustering and k-means cl
 - Boostrap evaluation of the clustering result’s stability.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/clustering/clustering.html)]
 
+
 **linear_regression : 2015.10.30**
 
 Solving linear regression with gradient descent. 
 
-- Includes an appendix that briefly covers the interpretation and visualization of linear regression model’s summary output.
+- Briefly covers the interpretation and visualization of linear regression's summary output.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
 
 
