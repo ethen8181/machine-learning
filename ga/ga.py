@@ -2,10 +2,6 @@ import random
 from collections import namedtuple
 
 
-def chromosome( chromo_len, lower_bound, upper_bound ):
-	return [ random.randint( lower_bound, upper_bound ) for _ in range(chromo_len) ]
-
-
 def population( pop_size, chromo_len, lower_bound, upper_bound ):
 	"""
 	creates a collection of chromosomes (i.e. a population)
@@ -25,6 +21,9 @@ def population( pop_size, chromo_len, lower_bound, upper_bound ):
 	-------
 	(list) each element is a chromosome
 	"""
+	def chromosome( chromo_len, lower_bound, upper_bound ):
+		return [ random.randint( lower_bound, upper_bound ) for _ in range(chromo_len) ]
+
 	return [ chromosome( chromo_len, lower_bound, upper_bound ) for _ in range(pop_size) ]
 
 
@@ -103,10 +102,11 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 	# element of the other
 	while len(children) < desired_len:
 
-		index1 = random.randint( 0, parents_len - 1 )
-		index2 = random.randint( 0, parents_len - 1 )
-		
-		if index1 != index2 and ( index1, index2 ) not in children_index:
+		index1 = index2 = random.randint( 0, parents_len - 1 )
+		while index1 == index2:
+			index2 = random.randint( 0, parents_len - 1 )
+
+		if ( index1, index2 ) not in children_index:
 			male   = parents[index1]
 			female = parents[index2]
 			pivot  = len(male) // 2
@@ -114,9 +114,8 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 			child2 = female[:pivot] + male[pivot:]
 			children.append(child1)
 			children.append(child2)
-
-		children_index.add( ( index1, index2 ) )
-		children_index.add( ( index2, index1 ) )
+			children_index.add( ( index1, index2 ) )
+			children_index.add( ( index2, index1 ) )
 
 	# mutation :
 	# randomly change one element of the chromosome
@@ -135,7 +134,7 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 
 
 # --------------------------------------------------------------------------
-random.seed(1234)
+# example
 
 pop_size = 100
 chromo_len = 5
