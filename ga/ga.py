@@ -102,9 +102,7 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 	# element of the other
 	while len(children) < desired_len:
 
-		index1 = index2 = random.randint( 0, parents_len - 1 )
-		while index1 == index2:
-			index2 = random.randint( 0, parents_len - 1 )
+		index1, index2 = random.sample( range(parents_len - 1), k = 2 )
 
 		if ( index1, index2 ) not in children_index:
 			male   = parents[index1]
