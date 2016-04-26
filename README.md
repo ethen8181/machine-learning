@@ -17,7 +17,7 @@ Listed in chronological order of the latest complete date. Each folder’s work 
 
 Using Genetic Algorithm to solve a simple optimization problem.
 
-- Contains math-free explanation and python code from scratch
+- Contains math-free explanation and python code from scratch.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
 

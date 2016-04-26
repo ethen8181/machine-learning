@@ -2,17 +2,14 @@
 title: "TF-IDF, Term Frequency-Inverse Document Frequency"
 author: "Ming-Yu Liu"
 date: "November 17, 2015"
-output: 
-  html_document: 
-    highlight: tango
-    number_sections: yes
-    theme: cosmo
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
 
-> This documentation assumes you are familiar with hierarchical clustering.
+> This documentation assumes you are familiar with hierarchical clustering. To follow along, all the code (tf-idf.R) and the news data (news.csv) can be found [here](https://github.com/ethen8181/machine-learning/blob/master/tf_idf). 
 
-## Background Information 
+# TF-IDF
 
 tf-idf, short for term frequency–inverse document frequency, is a numeric measure that is use to score the importance of a word in a document based on how often did it appear in that document and a given collection of documents. The intuition for this measure is : If a word appears frequently in a document, then it should be important and we should give that word a high score. But if a word appears in too many other documents, it's probably not a unique identifier, therefore we should assign a lower score to that word. The math formula for this measure :
 
@@ -22,7 +19,7 @@ Where `t` denotes the terms; `d` denotes each document; `D` denotes the collecti
 
 In the following documentation, we'll break down this formula using four small documents to illustrate the idea. 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 
 # environment 
 library(tm)
@@ -228,19 +225,15 @@ news$title[ groups1 == 17 ]
 
 Overall, news' in the first cluster is mostly referring to something about Taiwan. The second cluster seems to be talking about China and UK, and the third cluster's news are all related Uighurs. Not bad, huh? Given the fact that we're only using news' title instead of the entire news' article to represent the news. Since clustering is an unsupervised algorithm (meaning there're probably no such thing as a one hundred percent correct answer), I'll leave it to you to decide whether the clustering results are actually acceptable. 
 
-One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom). 
+One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom).
 
-**Sources:**
 
-All the code (tf-idf.R) and the news data (news.csv) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/tf_idf) folder. 
+# Reference
 
-If you happen to find any errors, you can file new issues [here](https://github.com/ethen8181/machine-learning/issues). Feedbacks or suggestions of improvements are also welcomed !
+- [Machine Learning :: Text feature extraction](http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/)
 
-## Reference
 
-1. Document reimplemented from this python blog : http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/
-
-## R Session Information
+# R Session Information
 
 ```{r}
 

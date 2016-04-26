@@ -2,18 +2,18 @@
 title: "Choosing Logisitic Regression’s Cutoff Value for Unbalanced Dataset"
 author: "Ming-Yu Liu"
 date: "November 25, 2015"
-output: 
-  html_document: 
-    highlight: haddock
-    number_sections: yes
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
+
+> All the code ("logistic_regression_code") and the data ("data" folder) can be found  [here](https://github.com/ethen8181/machine-learning/blob/master/logistic_regression).
+
 
 This documentation focuses on choosing the optimal cutoff value for logistic regression when dealing with unbalanced dataset. Notion also applies to other classification algorithms where the model's prediction on unknown outcome is a score. We'll not be giving a thorough introduction on logistic regression, there're tons of resources on the web or statistic books that already does this, look it up if you're not familiar with it. Discussion of why not choose other algorithms to boost classification performace is also overlooked.
 
-Link to the dataset and R scripts are provided at the end the documentation.
+# Getting Started 
 
-## Background Information 
 
 Logistic regression is a technique that is well suited for binary classification problems. After giving the model your input parameters ( or called variables, predictors ), the model will calculate the probability that each observation will belong to one of the two classes ( depending on which one you're choosing as the "positive" class ). The math formula of this regression : 
 
@@ -211,9 +211,7 @@ prop.table( table( data_test$left ) )
 
 Then what happens is, we'll still obtain a 84 percent accuracy !! Which is pretty much the same compared to our logistic model....
 
-**Section Takeaway :**   
-
-> Accuracy is not the suitable indicator for the model when you have unbalanced distribution or costs.
+**Section Takeaway:** Accuracy is not the suitable indicator for the model when you have unbalanced distribution or costs.
 
 ## Choosing the Suitable Cutoff Value 
 
@@ -402,21 +400,16 @@ Then we will obtain a priority score table above. Where the score will be high f
 
 **Conclusion:**
 
-Using a classification algorithm like logistic regression in this example enabled us to detect events that will happen in the future. That is which employees are more likely to leave the company. Based on this information, we can come up with a more efficient strategy to cope with matter at hand. Hopefully, after this doucmentation, the one thing that you'll still remember is : If there are a lot more negative outcome data than positives, or vice versa, we shouldn't solely use accuracy as the measurement to evaluate our model's performance. 
-
-**Sources:**
-
-All the code and the data can be found under [this](https://github.com/ethen8181/machine-learning/blob/master/logistic_regression) folder. Codes are under the folder "logistic_regression_code", where the general code and function code are in two separate scripts. Data is under the "data" folder.
-
-Errors or suggestions can be filed [here](https://github.com/ethen8181/machine-learning/issues), I will gladly fix them as soon as possible ~ This includes poorly written code or grammar mistakes ...
+Using a classification algorithm like logistic regression in this example enabled us to detect events that will happen in the future. That is which employees are more likely to leave the company. Based on this information, we can come up with a more efficient strategy to cope with matter at hand. Hopefully, after this doucmentation, the one thing that you'll still remember is: If the dataset happens to be unbalanced, meaning that there are a lot more negative outcome data than positives, or vice versa, we shouldn't use accuracy as the measurement to evaluate our model's performance. 
 
 There's actual more to this HR example. We know who is more likely to leave and who are ones that we're more interested in retaining, the next question is what should we say to those employees? Is he leaving because the salary is too low or is it because the workload is simply too much and he needs a break? View [this](http://ethen8181.github.io/Business-Analytics/finding_groups/finding_groups.html) documentation to see how clustering algorithm can give us a little hint on this ( There's two example in that documentation, please refer to the second one ). 
 
-## Reference 
 
-1. ROC curve associated with cost reimplemented from this blog post : http://www.r-bloggers.com/illustrated-guide-to-roc-and-auc/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29
+# Reference 
 
-## R Session Information
+- [ROC curve associated with cost](http://www.r-bloggers.com/illustrated-guide-to-roc-and-auc/?utm_source=feedburner&utm_medium=email&utm_campaign=Feed%3A+RBloggers+%28R+bloggers%29) 
+
+# R Session Information
 
 ```{r}
 

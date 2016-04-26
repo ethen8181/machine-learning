@@ -2,23 +2,20 @@
 title: "Latent Dirichlet Allocation Using Gibbs Sampling"
 author: "Ming-Yu Liu"
 date: "December 8, 2015"
-output: 
-  html_document: 
-    highlight: tango
-    number_sections: yes
-    theme: cerulean
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
 
-Code up basic gibbs sampling with base R and compare results with the *topicmodels* library.
+> You can find all all the R code to this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/lda_1).
 
-## Background Information 
 
 Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they're on your site. 
 
 Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important. And that's where tagging comes in. Everyone’s way of thinking about things may differ ever so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.
 
-## Latent Dirichlet Allocation
+
+# Latent Dirichlet Allocation
 
 **Latent Dirichlet Allocation** (LDA) is a probabilistic topic modeling method that gives us an approach to tease out possible topics from documents that we do not know of beforehand. The key assumptions behind LDA is that each given documents is a mix of multiple topics. Given a set of documents, one can use the LDA framework to learn not only the topic mixture (distribution) that represents each document. But also word (distribution) that are associated with each topic to help understand what the topic might be referring to. 
 
@@ -281,22 +278,16 @@ list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 
 
 Notice that after training the model for 4000 iterations and using a different $\alpha$ and $\eta$ value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
 
-**Sources:**
 
-All the R code can be found under this [link](https://github.com/ethen8181/machine-learning/tree/master/lda_1). The functions are general documentation's codes are in two different scripts.
+# Reference
 
-Issues and feedbacks are welcomed, you can file them [here](https://github.com/ethen8181/machine-learning/issues).
+- [LDA under the hood](http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/)
+- [Why tagging matters](http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf)
+- [LDA mathematical notations](https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf)
+- [Math free explanation of LDA](http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/)
+- [Explanation of LDA's hyperparameter](http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444)
 
-## Reference
-
-1. R code reimplemented for this blog post: http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/
-2. Why tagging matters: http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf
-3. Mathematical Notations:
-https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf
-4. Great math free explanation of LDA: http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/
-5. Explanation of LDA's hyperparameter: http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444
-
-## R Session Information 
+# R Session Information 
 
 ```{r}
 

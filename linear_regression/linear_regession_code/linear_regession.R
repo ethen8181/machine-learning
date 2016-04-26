@@ -1,19 +1,16 @@
-# gradient descent in r 
-# http://www.r-bloggers.com/gradient-descent-in-r/
-
-# -----------------------------------------------------------------------------------
-# drawing function formula after giving the x coordinates 
+# linear regression
 library(grid)
+library(dplyr)
+library(scales)
 library(ggplot2)
+setwd("/Users/ethen/machine-learning/linear_regression")
 
 
 # original formula 
 Formula <- function(x) 1.2 * (x-2)^2 + 3.2
 
-# first derivative of the formula
-Derivative <- function(x) 2 * 1.2 * (x-2) 
-
 # visualize the function, and the optimal solution
+# drawing function formula after giving the x coordinates 
 ggplot( data.frame( x = c( 0, 4 ) ), aes( x ) ) + 
 stat_function( fun = Formula ) + 
 geom_point( data = data.frame( x = 2, y = Formula(2) ), aes( x, y ), 
@@ -26,6 +23,9 @@ ggtitle( expression( 1.2 * (x-2)^2 + 3.2 ) )
 # keep updating the x value until the difference between this iteration and the last 
 # one, is smaller than epsilon (a given small value) or the process count of updating the 
 # x value surpass user-specified iteration
+
+# first derivative of the formula
+Derivative <- function(x) 2 * 1.2 * (x-2) 
 
 # x_new : initial guess for the x value
 # x_old : assign a random value to start for the first iteration 
@@ -77,9 +77,7 @@ geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ),
 
 # --------------------------------------------------------------------------------
 # housing data
-library(dplyr)
 
-setwd("/Users/ethen/machine-learning/linear_regression")
 housing <- read.table( "housing.txt", header = TRUE, sep = "," )
 
 # example :
@@ -100,6 +98,7 @@ list( area = sum( row1[1] + row2[1] ), bedrooms = sum( row1[2] + row2[2] ) )
 
 # z-score normalize 
 Normalize <- function(x) ( x - mean(x) ) / sd(x)
+
 
 # --------------------------------------------------------------------------------------------
 # gradient descent 

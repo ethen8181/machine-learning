@@ -2,17 +2,14 @@
 title: "Text Similarity"
 author: "Ming-Yu Liu"
 date: "November 19, 2015"
-output: 
-  html_document: 
-    highlight: haddock
-    number_sections: yes
-    theme: readable
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
 
-> All codes are in "illustrative" form, thus you shouldn't directly use them for actual production.
+> All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/text_similarity) folder.  
 
-## Background
+# Text Similarity
 
 One of the most common data-mining problem is to find similar items in the given dataset, this also applies for text data. Examples that comes directly into our mind includes detecting plagiarism, news recommendation (don't show identical news articles to users) and the list goes on.   
 
@@ -313,25 +310,20 @@ select( band, everything() )
 
 ```
 
-What locality sensitive hashing tells us is : If the signature values of two documents agree in all the rows of at least one band, then these two documents are likely to be similar and should be compared (list it as our candidate pair). Using this small set of documents is probably a really bad example ...., since none of them will get chosen as our candidate pair. For instance, if the signature value of document 2 for band 1 becomes [ 0, 0 ] instead of the current [ 2, 0 ] now, then document 2 and document 1 will become a candidate pair as both of their rows in band1 takes the same value of [ 0, 0 ].
+What locality sensitive hashing tells us is: If the signature values of two documents agree in all the rows of at least one band, then these two documents are likely to be similar and should be compared (list it as our candidate pair). Using this small set of documents is probably a really bad example ...., since none of them will get chosen as our candidate pair. For instance, if the signature value of document 2 for band 1 becomes [ 0, 0 ] instead of the current [ 2, 0 ] now, then document 2 and document 1 will become a candidate pair as both of their rows in band1 takes the same value of [ 0, 0 ].
 
 **Takeaways:**
 
 1. MinHash, or the formal name, min-wise independent permutations locality sensitive hashing scheme computes an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.  
 2. To note, there's also a R library `textreuse` that implements the techniques that we've walked through in this documentation. You should be able understand its vignette with no problem.
 
-**Sources:**
 
-All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/text_similarity) folder. 
+# Reference
 
-You can file up a new issue or leave comments of any sort [here](https://github.com/ethen8181/machine-learning/issues). This includes feedbacks, bug reports or room for improvements. Thank you !
+- [Mining Massive Datasets Chapter 3](http://infolab.stanford.edu/~ullman/mmds/ch3.pdf) 
+- [Blog on the same topic written from a Java coder's perspective](http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html)
 
-## Reference
-
-1. For more in-depth detail, Mining Massive Datasets : http://infolab.stanford.edu/~ullman/mmds/ch3.pdf
-2. Blog on the same topic written from a Java coder's perspective http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html
-
-## R Session Information
+# R Session Information
 
 ```{r}
 

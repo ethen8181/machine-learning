@@ -2,33 +2,29 @@
 title: 'Gradient Descent with Linear Regression'
 author: "Ming-Yu Liu"
 date: "October 30, 2015"
-output: 
-  html_document: 
-    highlight: textmate
-    number_sections: yes
-    theme: flatly
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
 
-> To all of the machine-learning experts out there, I'm sure people who are not in the statistics, math or computer science department will be very grateful if you could provide simple code examples to go along with mathematical notations.
+> All the code (in the "linear_regession_code" folder) and the data (housing.txt) used in this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear_regression).
 
-Link to the dataset and R script is provided at the end of the documentation.
-
-## Background Information
 
 For supervised learning problems like linear regression, the way it works is when given some set of numbers input variable, we wish to predict another set of numbers. For instance given the number of bedrooms and the size of the house, we wish to predict the price in which the house will be sold. So what we want to know, is how much do "variables" such as the number of bedrooms or the size of the house affects the house's price. One easy approach to calculate these "variables" is by gradient descent.
 
-## Getting Started With Gradient Descent 
+
+# Getting Started With Gradient Descent 
 
 Let's start from a basic formula $1.2\times(x-2)^2 + 3.2$. If you still remember basic calculus, the first derivative of a function gives you the optimal solution to it (whether it be for max or min problems). In this case, it's by solving $2\times1.2\times(x-2)=0$.
 
 ```{r, message=FALSE, warning=FALSE}
 
-# libraries that we'll use throughout the tutorial
 library(grid)
 library(dplyr)
 library(scales)
 library(ggplot2)
+setwd("/Users/ethen/machine-learning/linear_regression")
+
 
 # original formula 
 Formula <- function(x) 1.2 * (x-2)^2 + 3.2
@@ -310,6 +306,7 @@ The notion for stochastic gradient descent is, for each iteration, we will updat
 
 In sum, compared to batch gradient descent, this method is more widely used for LARGE training datasets, as it converges faster.
 
+
 ## Conclusions
 
 Some takeways about gradient descent : 
@@ -333,7 +330,8 @@ As you can see from the plot, at the beginning when we randomly assign the theta
 
 4. Tuning parameters including the learning rate, epsilon and iterations will surely affect the result and the speed to converge, and this requires some trial and error. 
 
-## Appendix on Linear Regression 
+
+# Appendix on Linear Regression 
 
 Notes on the output of the summary on linear regression.
 
@@ -343,9 +341,9 @@ summary(model)
 
 ```
 
-**Residuals:**
+## Residuals
 
-Linear regression is a model that assumes that the data is normally distributed and it's coefficient is estimated to minimize the sum of squares of the residuals. The term residuals is basically referring to the difference between the actual value of the output and the model's prediction. 
+Linear regression is a model that assumes that the data is normally distributed and it's coefficient is estimated to minimize the sum of squares of the residuals. The term **residuals** is basically referring to the difference between the actual value of the output and the model's prediction. 
 
 ```{r}
 
@@ -358,9 +356,10 @@ summary( normed_data$price - model$fitted.values )
 
 A ideal linear model's residual should have a mean of 0, median near 0 and the 1st and 3rd quantile should be symmetric with neither of them too large or too few when compared with the other.
 
-**t-value:**
 
-Before training the model each input variable has a coefficient of 0 with respect to the output ( indicating no linear relationship ) . The term t-value measures how many standard deviation is our estimated coefficient away from the original value of 0. The calculation is basically to divide our coefficient estimate by our standard error. It's actually ( coefficient - 0 ) / standard error, since the baseline assumption is 0 but the minus 0 is dropped since it doesn't affect the outcome. 
+## t-value
+
+Before training the model each input variable has a coefficient of 0 with respect to the output ( indicating no linear relationship ) . The term **t-value** measures how many standard deviation is our estimated coefficient away from the original value of 0. The calculation is basically to divide our coefficient estimate by our standard error. It's actually ( coefficient - 0 ) / standard error, since the baseline assumption is 0 but the minus 0 is dropped since it doesn't affect the outcome. 
 
 ```{r}
 library(broom)
@@ -373,11 +372,11 @@ coefficient$estimate / coefficient$std.error
 
 A high t-value indicates that we should keep the corresponding feature in our final linear model, since it has a higher chance of being a nonzero coefficient.
 
-**p-value:**
+## p-value
 
 Probably one of the most importatnt indicators. The first concept to calculate this value is the degrees of freedom. You can think of it as the number of training data you have left considering the number of coefficients you wish to solve. Which happens to be the number of observations in our training data minus the model coefficient's total count. 
 
-Back to the p-value. This is a value that turns the t-value into probabilities that tells us: How likely should our coefficient be zero instead of the current value that we've estimated? Or in a sense what is the probability of our t-value being larger or smaller than the ones that our model estimated?  
+Back to the **p-value**. This is a value that turns the t-value into probabilities that tells us: How likely should our coefficient be zero instead of the current value that we've estimated? Or in a sense what is the probability of our t-value being larger or smaller than the ones that our model estimated?  
 
 The probability is calculated based on the student's t distribution, which requires us the specify the degrees of freedom. We can calculate it by converting the t-value into absolute values first, then calculate the upper tail of the distribution to obtain the probabality of being larger and multiply it by 2 to include the probability of being smaller.  
 
@@ -395,11 +394,12 @@ The general rule of thumb is that we should include coefficients that have p-val
 - We should never compare p-values against each other to gauge which input variable is more important than the others.
 - A input variable with a high p-value does not necessarily indicate that it has no linear relationship with the output. It only claims after including all the other input variables to our model, this feature does not provide any new information to the output.
 
-**R Squared:**
+
+## R Squared
 
 When evaluating the fit of the linear model, another indicator that's worth your attention is the $R^2$ value. In short, we hope that the model we've trained to capture the output's variance as much as possible. The $R^2$ measures the proportion of the output variance that is explained by the model. It can be calculated by:
 
-$$ R^2 = 1 - \frac{RSS}{TSS} = 1- \frac{ \sum^n_{i=1} e_i^2 }{ \sum^n_{i=1} ( y_i - \bar{y} )^2 } $$
+$$R^2 = 1 - \frac{RSS}{TSS} = 1- \frac{ \sum^n_{i=1} e_i^2 }{ \sum^n_{i=1} ( y_i - \bar{y} )^2 }$$
 
 Where:
 
@@ -428,7 +428,7 @@ RSquared( normed_data$price, model$fitted.values )
 
 This value ranges between 0 and 1. A value close to 1 indicates that the linear model is a good fit as it explains most of the output variable's variance. A low value suggests that you should include other input variables and try to improve the model's fit.
 
-**Adjusted R Square:**
+## Adjusted R Square
 
 The adjusted $R^2$ is measuring the same thing as the $R^2$, but adjusted for the complexity of the model, i.e. the count of the model's coefficient. The general idea is, if we add another input variable to our current model, the $R^2$ of the new model will still increase even if the new added input variable has no statistical power at all. Hence, adjusted $R^2$ tries to account for this sense of overfitting. The math formula to it:
 
@@ -458,7 +458,8 @@ AdjustedRSquared( normed_data$price, model$fitted.values, k )
 
 ```
 
-**Visualizations:**
+
+## Visualizations
 
 Useful visualizations when working with linear regression.
 
@@ -518,19 +519,15 @@ area_r2 <- RSquared( y = normed_data$area, py = area_model$fitted.values )
 
 The interpretation is quite straightforward, the higher the value, the higher the collinearity. The rule of thumb for this value is those with a score of 4 and above is a suspect; those with the scores larger than 10 indicates a strong likelihood of collinearity and that feature should be discarded.
 
-**Sources:**
 
-All the code and the data (housing.txt) used in this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear_regression). The codes are under the "linear_regession_code" folder. The gradient descent function, LMPlot and general R code are in three separate scripts.
+# References
 
-Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 
+- [Gradient Descent Example](http://www.r-bloggers.com/gradient-descent-in-r/)
+- [Linear Regression with Gradient Descent](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
+- [Interpretation of linear regression's summary](http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output)
 
-## References
 
-1. Gradient Descent Example: http://www.r-bloggers.com/gradient-descent-in-r/
-2. Linear Regression with Gradient Descent, Notations and Proofs: http://cs229.stanford.edu/notes/cs229-notes1.pdf
-3. Interpretation of linear regression's summary: http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output
-
-## R Session Information  
+# R Session Information  
 
 ```{r}
 

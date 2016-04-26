@@ -1,21 +1,18 @@
 ---
-title: "Calinski-Harabasz Index and Boostrap Evaluation with K-means and Hierarchical Clustering"
+title: "Calinski-Harabasz Index and Boostrap Evaluation with Clustering Methods"
 author: "Ming-Yu Liu"
 date: "November 6, 2015"
-output: 
-  html_document: 
-    number_sections: yes
-    theme: cerulean
-    toc: yes
+output:
+  rmdformats::readthedown:
+    highlight: pygments
 ---
 
-## Background Information
+> To follow along, all the code to the documentation can be found [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/).
 
-When working with kmeans and hierarchichal clustering (this documentation assumes that you're familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result. 
+When working with k-means and hierarchichal clustering (this documentation assumes that you're familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result. 
 
-> For this documentation we're dropping the issue on which variables should we include in the dataset. Note that, in practice this is an important preprocessing step before applying any sorts of algorithms.
 
-## Preparing 
+# Preparing 
 
 Here we use the built-in mtcars dataset as an example. Note that for clustering algorithms, units of the variables do matter. When the columns' units comes in different magnitudes ( e.g. weight is recorded in kilograms, height is recorded in centimeters ), a common approach to resolve this issue is to normalize the dataset. Here we use the `scale` function for doing this, which transforms all the variables to have a mean value of 0 and a standard deviation of 1.
 
@@ -46,7 +43,7 @@ rect.hclust( test, k = 4 )
 
 Now what if we have let's say one thousand rows of data or more, then the dendogram will probably be a blur and will most likely be useless in helping us choose the suitable cluster number (k) to group the data. Not to mention when you're working with kmeans where you have to specify the k before you run the algorithm.
 
-So here we'll be using two measures, the Calinski-Harabasz Index, or known as the variance ratio criterion and Total within Sum of Squares for choosing the suitable k. Let's use the function and visualize both measures first, so it'll be easier to explain.
+So here we'll be using two measures, the **Calinski-Harabasz Index**, or known as the variance ratio criterion and **Total within Sum of Squares** for choosing the suitable k. Let's use the function and visualize both measures first, so it'll be easier to explain.
 
 [`CHCriterion`][CHCriterion] Function that calculates both measures for different values of k. Input parameters :     
 
@@ -142,18 +139,14 @@ boot_clust$bootdissolved
 
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
-**Sources:**
 
-You can find all the code for this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/).
+# Reference 
 
-Any comments or suggestions is appreciated. That includes bugs or typos report. You can file these new issues [here](https://github.com/ethen8181/machine-learning/issues). 
+- [Math formula of the two measures used to determine the suitable k](http://www.mathworks.com/help/stats/clustering.evaluation.calinskiharabaszevaluation-class.html)
+- [Practical Data Science with R Chapter 8 Unsupervised Method](https://manning-content.s3.amazonaws.com/download/e/dc31390-3cb7-49dd-ab02-937c1af1c2e1/PDSwR_CH08.pdf)
 
-## Reference 
 
-1. Math formula of the two measures used to determine the suitable k http://www.mathworks.com/help/stats/clustering.evaluation.calinskiharabaszevaluation-class.html
-2. Some content drawn from Chapter 8 unsupervised method of the book Practical Data Science with R https://www.manning.com/books/practical-data-science-with-r
-
-## R Session Information  
+# R Session Information  
 
 ```{r}
 
