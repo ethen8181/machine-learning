@@ -2,6 +2,24 @@ import random
 from collections import namedtuple
 
 
+def ga( pop_size = 15, chromo_len = 2, lower_bound = 0, upper_bound = 100,
+		retain = 0.5, mutate = 0.2, generation = 5, target = 200 ):
+	
+	# randomly generate the initial population
+	pop = population( pop_size, chromo_len, lower_bound, upper_bound )
+
+	# store the best chromosome and its cost for each generation,
+	# so we can get an idea of when the algorithm converged
+	generation_history = []
+	for i in range(generation):
+		pop, generation_best = evolve( pop, target, retain, mutate, 
+									   chromo_len, lower_bound, upper_bound )
+		generation_history.append(generation_best)
+		print( "iteration {}'s best generation: {}".format( i + 1, generation_best ) )
+
+	return generation_history
+
+
 def population( pop_size, chromo_len, lower_bound, upper_bound ):
 	"""
 	creates a collection of chromosomes (i.e. a population)
@@ -27,28 +45,7 @@ def population( pop_size, chromo_len, lower_bound, upper_bound ):
 	return [ chromosome( chromo_len, lower_bound, upper_bound ) for _ in range(pop_size) ]
 
 
-def calculate_cost( chromosome, target ):
-	"""
-	Determine the cost of an chromosome. lower is better
-
-	Parameters
-	----------
-	chromosome : list
-		each chromosome of the entire population
-
-	target : int
-		the sum that the chromosomes are aiming for
-	
-	Returns
-	-------
-	(int) absolute difference between the sum of the numbers 
-	in the chromosome and the target
-	"""
-	summed = sum(chromosome)
-	return abs(target - summed)
-
-
-def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
+def evolve( pop, target, retain, mutate, chromo_len, lower_bound, upper_bound ):
 	"""
 	evolution of the genetic algorithm
 
@@ -66,6 +63,12 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 
 	mutate : float
 		the probability that each chromosome will mutate
+
+	chromo_len : int
+		number of possible values per chromosome
+
+	lower_bound, upper_bound : int
+		lower_bound and upper_bound possible value of the randomly generated chromosome
 
 	Returns
 	-------
@@ -131,27 +134,29 @@ def evolve( pop, target, retain = 0.5, mutate = 0.1 ):
 	return children, generation_best
 
 
-# --------------------------------------------------------------------------
-# example
+def calculate_cost( chromosome, target ):
+	"""
+	Determine the cost of an chromosome. lower is better
 
-pop_size = 100
-chromo_len = 5
-lower_bound = 0
-upper_bound = 100
-pop = population( pop_size, chromo_len, lower_bound, upper_bound )
+	Parameters
+	----------
+	chromosome : list
+		each chromosome of the entire population
 
-retain = 0.5
-target = 200
-mutate = 0.1
-generation = 10
+	target : int
+		the sum that the chromosomes are aiming for
+	
+	Returns
+	-------
+	(int) absolute difference between the sum of the numbers 
+	in the chromosome and the target
+	"""
+	summed = sum(chromosome)
+	return abs(target - summed)
 
-# store the best chromosome and its cost for each generation,
-# so we can get an idea of when the algorithm converged
-generation_history = []
-generation_info = namedtuple( "generation_info", [ "cost", "chromo" ] )
 
-for i in range(generation):
-	pop, generation_best = evolve( pop, target, retain, mutate )
-	generation_history.append(generation_best)
-	print( "iteration {}'s best generation: {}".format( i + 1, generation_best ) )
+if __name__ == '__main__':
+	random.seed(1234)
+	ga1 = ga()
+	print(ga1)
 
