@@ -81,7 +81,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <h2><a href="#content">Calinski-Harabasz Index and Boostrap Evaluation with Clustering Methods</a></h2>
     <div id="text-table-of-contents">
       <ul>
-      <li><a href="#preparing">Preparing</a><ul>
+      <li><a href="#diving-in">Diving In</a><ul>
       <li><a href="#choosing-the-right-clustering-number">Choosing the Right Clustering Number</a></li>
       <li><a href="#bootstrap-evaluation">Bootstrap Evaluation</a></li>
       </ul></li>
@@ -96,8 +96,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>To follow along, all the code to the documentation can be found <a href="https://github.com/ethen8181/machine-learning/tree/master/clustering/">here</a>.</p>
 </blockquote>
 <p>When working with k-means and hierarchichal clustering (this documentation assumes that you’re familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result.</p>
-<div id="preparing" class="section level1">
-<h1>Preparing</h1>
+<div id="diving-in" class="section level1">
+<h1>Diving In</h1>
 <p>Here we use the built-in mtcars dataset as an example. Note that for clustering algorithms, units of the variables do matter. When the columns’ units comes in different magnitudes ( e.g. weight is recorded in kilograms, height is recorded in centimeters ), a common approach to resolve this issue is to normalize the dataset. Here we use the <code>scale</code> function for doing this, which transforms all the variables to have a mean value of 0 and a standard deviation of 1.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># source in the functions </span>
 <span class="kw">source</span>(<span class="st">&quot;/Users/ethen/machine-learning/clustering/clustering_functions.R&quot;</span>)

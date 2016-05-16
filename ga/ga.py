@@ -122,7 +122,7 @@ def evolve( pop, target, retain, mutate, chromo_len, lower_bound, upper_bound ):
 	# randomly change one element of the chromosome
 	for chromosome in children:
 		if mutate > random.random():
-			index_to_mutate = random.randint( 0, chromo_len - 1 )
+			index_to_mutate = random.randrange(chromo_len)
 			chromosome[index_to_mutate] = random.randint( lower_bound, upper_bound )
 
 	# evaluate the children chromosome and retain the overall best

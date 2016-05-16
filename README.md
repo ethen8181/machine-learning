@@ -13,6 +13,15 @@ This is one of the continuously updated repositories that documents personal dat
 Listed in chronological order of the latest complete date. Each folder’s work is independent of one another.
 
 
+**santander : 2016.5.16**
+
+Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with xgboost and H2O's API. Note that the auc score for the script is 0.823068, which is still far off from the best score for the competition, which is 0.829072.
+
+- Includes scripts for performing cross validation with xgboost; Obtaining feature importance, saving and loading the model for xgboost and H2O. Details are commented in the following notebooks. 
+- run_me.ipynb: Data preprocessing and xgboost. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/run_me.ipynb)]
+- h2o.ipynb: H2O's randomforest and gradient boosting on the already preprocessed data. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/h2o.ipynb)]
+
+
 **ga : 2016.4.25**
 
 Using Genetic Algorithm to solve a simple optimization problem.
@@ -25,11 +34,13 @@ Using Genetic Algorithm to solve a simple optimization problem.
 
 Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Since H2O provides progress bar when training the model, you’ll may see a lot of them in doc. The walkthrough does basically zero feature engineering with the example dataset as it is just browsing through its function calls and parameters.
 
-- h2o’s deep learning. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
-- h2o’s gradient boosting and random forest. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
-- h2o’s generalized linear model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
-- h2o's deep learning, gradient boosting and random forest. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
-- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
+- R's API
+	- h2o’s deep learning. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
+	- h2o’s gradient boosting and random forest. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
+	- h2o’s generalized linear model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
+	- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
+- Python's API
+	- h2o's deep learning, gradient boosting and random forest. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
 
 
 **lda_1 : 2015.12.8** 

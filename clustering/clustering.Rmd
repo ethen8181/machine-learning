@@ -12,7 +12,7 @@ output:
 When working with k-means and hierarchichal clustering (this documentation assumes that you're familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result. 
 
 
-# Preparing 
+# Diving In
 
 Here we use the built-in mtcars dataset as an example. Note that for clustering algorithms, units of the variables do matter. When the columns' units comes in different magnitudes ( e.g. weight is recorded in kilograms, height is recorded in centimeters ), a common approach to resolve this issue is to normalize the dataset. Here we use the `scale` function for doing this, which transforms all the variables to have a mean value of 0 and a standard deviation of 1.
 
