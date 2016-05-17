@@ -15,7 +15,7 @@ Listed in chronological order of the latest complete date. Each folder’s work 
 
 **santander : 2016.5.16**
 
-Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with xgboost and H2O's API. Note that the auc score for the script is 0.823068, which is still far off from the best score for the competition, which is 0.829072.
+Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with xgboost and H2O's API. Note that the script's auc store 0.823068 is still far off from the best score for the competition, 0.829072.
 
 - Includes scripts for performing cross validation with xgboost; Obtaining feature importance, saving and loading the model for xgboost and H2O. Details are commented in the following notebooks. 
 - run_me.ipynb: Data preprocessing and xgboost. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/run_me.ipynb)]
