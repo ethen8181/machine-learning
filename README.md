@@ -12,6 +12,14 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+**regularization : 2016.5.25**
+
+Regularization techniques: ridge and lasso regression. 
+
+- Building intuition with regularization using scikit-learn. 
+- View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
+
+
 **santander : 2016.5.16**
 
 Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with python's xgboost and H2O's API. Note that the script's auc store 0.823068 is still far off from the best score for the competition, 0.829072.
@@ -25,7 +33,7 @@ Kaggle competition on predicting customer satisfaction. The goal is to familiari
 
 Using Genetic Algorithm to solve a simple optimization problem.
 
-- Contains math-free explanation and python code from scratch.
+- Math-free explanation and python code from scratch. 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
 
@@ -46,7 +54,7 @@ Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/in
 
 Performing text clustering with Latent Dirichlet Allocation(LDA).
 
-- Contains a toy sample code of the algorithm (gibbs sampling) and compare results with the *topicmodels* library.
+- Contains a toy sample code of the algorithm (gibbs sampling) and usage of the topicmodels library.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)]
 
 
