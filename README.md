@@ -16,7 +16,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 Regularization techniques: ridge and lasso regression. 
 
-- Building intuition with regularization using scikit-learn. 
+- Building intuition using scikit-learn, it's best if you already understand linear regression and cross validation. 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
 
 
