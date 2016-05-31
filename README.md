@@ -58,12 +58,12 @@ Performing text clustering with Latent Dirichlet Allocation(LDA).
 - View [[R markdown](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)]
 
 
-**logistic_regression : 2015.11.25** 
+**unbalanced : 2015.11.25** 
 
-Focus on choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. The majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The idea can be extended to any other classification algorithm that can predict class’s probability.
+Choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. Majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The method uses the cost of mistakes, meaning when the cost of misclassification might differ between the two classes. The notion can be extended to any other classification algorithm that can predict class’s probability, this documentation just uses logistic regression for illustration purpose.
 
 - Visualize two by two standard confusion matrix and ROC curve with costs using ggplot2.
-- View [[R markdown](http://ethen8181.github.io/machine-learning/logistic_regression/logistic_regression.html)]
+- View [[R markdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
 
 
 **text_similarity : 2015.11.19** 

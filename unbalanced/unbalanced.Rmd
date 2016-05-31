@@ -7,13 +7,12 @@ output:
     highlight: pygments
 ---
 
-> All the code ("logistic_regression_code") and the data ("data" folder) can be found  [here](https://github.com/ethen8181/machine-learning/blob/master/logistic_regression).
+> All the code ("unbalanced_code") and the data ("data" folder) can be found  [here](https://github.com/ethen8181/machine-learning/blob/master/unbalanced).
 
 
-This documentation focuses on choosing the optimal cutoff value for logistic regression when dealing with unbalanced dataset. Notion also applies to other classification algorithms where the model's prediction on unknown outcome is a score. We'll not be giving a thorough introduction on logistic regression, there're tons of resources on the web or statistic books that already does this, look it up if you're not familiar with it. Discussion of why not choose other algorithms to boost classification performace is also overlooked.
+This documentation focuses on choosing the optimal cutoff value for logistic regression when dealing with unbalanced dataset. Notion also applies to other classification algorithms where the model's prediction on unknown outcome can be a probability. We'll not be giving a thorough introduction on logistic regression and discussion of why not choose other algorithms to boost classification performace is also overlooked.
 
 # Getting Started 
-
 
 Logistic regression is a technique that is well suited for binary classification problems. After giving the model your input parameters ( or called variables, predictors ), the model will calculate the probability that each observation will belong to one of the two classes ( depending on which one you're choosing as the "positive" class ). The math formula of this regression : 
 
@@ -40,7 +39,7 @@ library(ggthemr)
 library(ggthemes)
 library(gridExtra)
 library(data.table)
-setwd("/Users/ethen/machine-learning/logistic_regression")
+setwd("/Users/ethen/machine-learning/unbalanced")
 
 # read in the dataset ("HR.csv")
 data <- fread( list.files( "data", full.names = TRUE )[2] )
@@ -161,7 +160,7 @@ Here we'll use a function to loop through several cutoff values and compute the 
 ```{r}
 
 # functions are sourced in, to reduce document's length
-source("logistic_regression_code/logistic_functions.R")
+source("unbalanced_code/unbalanced_functions.R")
 
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )
@@ -417,7 +416,7 @@ sessionInfo()
 
 ```
 
-[AccuracyCutoffInfo]: https://github.com/ethen8181/machine-learning/blob/master/logistic_regression/logistic_regression_code/logistic_functions.R
-[ConfusionMatrixInfo]: https://github.com/ethen8181/machine-learning/blob/master/logistic_regression/logistic_regression_code/logistic_functions.R  
-[ROCInfo]: https://github.com/ethen8181/machine-learning/blob/master/logistic_regression/logistic_regression_code/logistic_functions.R
+[AccuracyCutoffInfo]: https://github.com/ethen8181/machine-learning/blob/master/unbalanced/unbalanced_code/unbalanced.R
+[ConfusionMatrixInfo]: https://github.com/ethen8181/machine-learning/blob/master/unbalanced/unbalanced_code/unbalanced.R  
+[ROCInfo]: https://github.com/ethen8181/machine-learning/blob/master/unbalanced/unbalanced_code/unbalanced.R
 
