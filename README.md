@@ -12,6 +12,12 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+
+**text_classification** (in progress)
+
+- Basic text classification with naive bayes and logistic regression using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics.ipynb)]
+
+
 **regularization : 2016.5.25**
 
 Regularization techniques: ridge and lasso regression. 
