@@ -1,0 +1,691 @@
+hank_aaron[ , .( x = seq( .27, .33, .0005 ) ), by = playerID ]
+hank_aaron[ , .( x = seq( .27, .33, .0005 ) ), by = playerID ][hank_aaron]
+hank_aaron[ hank_aaron[ , .( x = seq( .27, .33, .0005 ) ), by = playerID ] ]
+( hank_aaron <- career[ name == "Hank Aaron", ] )
+hank_aaron[ hank_aaron[ , .( x = seq( .27, .33, .0005 ) ), by = playerID ] ]
+hank_aaron <- hank_aaron[ hank_aaron[ , .( x = seq( .27, .33, .0005 ) ), by = playerID ] ]
+hank_aaron[ , density := dbeta( x, alpha1, beta1 ) ]
+hank_aaron
+ggplot( hank_aaron, aes( x, density ) ) + geom_line() +#
+geom_ribbon( aes( ymin = 0, ymax = density * ( x < .3 ) ),#
+                  alpha = .1, fill = "red" ) +#
+geom_vline( color = "red", lty = 2, xintercept = .3 )
+( hank_aaron <- career[ name == "Hank Aaron", ] )#
+#
+# posterior beta#
+# merge the original data.table with the generated sequence ones,#
+hank_aaron <- hank_aaron[ hank_aaron[ , .( x = seq( .27, .33, .0004 ) ), by = playerID ] ]#
+hank_aaron[ , density := dbeta( x, alpha1, beta1 ) ]#
+ggplot( hank_aaron, aes( x, density ) ) + geom_line() +#
+geom_ribbon( aes( ymin = 0, ymax = density * ( x < .3 ) ),#
+                  alpha = .1, fill = "red" ) +#
+geom_vline( color = "red", lty = 2, xintercept = .3 )
+hank_aaron
+threshold <- .3
+threshold
+career[ , PEP := pbeta( threshold, alpha1, beta1 ) ]
+career
+ggplot( career, aes(PEP) ) +#
+geom_histogram( binwidth = .02 ) +#
+xlab("Posterior Error Probability (PEP)") +#
+xlim( 0, 1 )
+ggplot( career, aes( estimate, PEP, color = AB ) ) + geom_point( size = 1 ) +#
+xlab("(Shrunken) batting average estimate") +#
+ylab("Posterior Error Probability (PEP)") +#
+geom_vline( color = "red", lty = 2, xintercept = .3 ) +#
+scale_colour_gradient( trans = "log", breaks = 10^(1:5) )
+?row_number
+career
+career %>%#
+          arrange(PEP)
+career %>%#
+          arrange(PEP) %>%#
+          mutate( rank = row_number() )
+?row_number
+x <- c(5, 1, 3, 2, 2, NA)#
+row_number(x)
+min_rank(x)
+career %>%#
+          arrange(PEP) %>%#
+          mutate( rank = row_number(PEP) ) %>%#
+          select( rank, name, H, AB, eb_estimate, PEP )
+career %>%#
+          arrange(PEP) %>%#
+          mutate( rank = row_number(PEP) ) %>%#
+          select( rank, name, H, AB, estimate, PEP )
+dense_rank(x)
+career[ order(PEP), ]
+career[ order(PEP), rank := 1:nrow(career) ]
+career
+career[ , rank := NULL ]
+career
+career <- career[ order(PEP), ]
+career
+career[ , rank := 1:nrow(career) #
+               ][ , .( rank, name, H, AB, estimate, PEP ) ]
+career
+by_PEP <- career[ , rank := 1:nrow(career) #
+               ][ , .( rank, name, H, AB, estimate, PEP ) ]
+by_PEP
+by_PEP[ 90:100, ]
+career
+top_players <- career[ 1:100, ]
+top_players
+sum(top_players$PEP)
+mean(top_players$PEP)
+?cummean
+career
+cummean
+career[ , qvalue := cumsum(PEP) / nrow(career) ]
+career
+career[ qvalue < .25, ]
+ggplot( career[ qvalue < .25, ], aes( qvalue, rank ) ) + geom_line() +#
+labs( x = "q-value cutoff", y = "Number of players included" )
+career[ qvalue < .05, ]
+nrow(career)
+career[ , qvalue := cummean(PEP) ]
+career[ qvalue < .05, ]
+ggplot( career[ qvalue < .25, ], aes( qvalue, rank ) ) + geom_line() +#
+labs( x = "q-value cutoff", y = "Number of players included" )
+career[ , qvalue := cumsum(PEP) / 1:nrow(career) ]
+career[ qvalue < .05, ]
+library(ggplot2)#
+library(data.table)#
+#
+# set float numbers to print only three digits after the decimal point#
+options( digits = 3 )#
+#
+# -----------------------------------------------------------------------#
+# beta distribution#
+# http://varianceexplained.org/statistics/beta_distribution_and_baseball/#
+# -----------------------------------------------------------------------#
+#
+# simulated data,#
+# generate a sequence of numbers for each combination of a and b#
+# to plot the probability density function.#
+# "\u03B1" unicode for the greek letter alpha#
+sim <- data.table( a = c( 81, 82, 81 + 100 ),#
+                   b = c( 219, 219, 219 + 200 ) )#
+sim <- sim[ , .( x = seq( 0, 1, by = 0.002 ) ), by = .( a, b ) ]#
+#
+sim[ , `:=`( y = dbeta( x, a, b ),#
+             parameters = paste0( "\u03B1 = ", a, ", \u03B2 = ", b ) ) ]#
+sim[ , parameters := factor( parameters, levels = unique(parameters) ) ]#
+# plot of the distribution#
+PlotBeta <- function(sim)#
+{#
+    ggplot( sim, aes( x, y, color = parameters ) ) + geom_line() +#
+    xlim( 0, .5 ) + ylab("Density of beta") + theme_bw()#
+}#
+PlotBeta( sim = sim[ a == 81, ] )#
+#
+# update 1 hit of 1 bat#
+PlotBeta( sim = sim[ a %in% c( 81, 82 ), ] )#
+#
+# update 100 hit of 300 bat#
+PlotBeta( sim = sim )#
+# -----------------------------------------------------------------------#
+# empirical bayes#
+# http://varianceexplained.org/r/empirical_bayes_baseball/#
+# -----------------------------------------------------------------------#
+#
+# load the batting and pitching data from the Lahman package#
+# the Master is used to get further details e.g. corresponding #
+# player name for the player id column in the Batting and Pitching data#
+library(Lahman)#
+data(Master)#
+data(Batting)#
+data(Pitching)#
+#
+master   <- data.table( Master  , key = "playerID" )#
+pitching <- data.table( Pitching, key = "playerID" )#
+batting  <- data.table( Batting , key = "playerID" )#
+#
+# ! stands for not join,#
+# return all rows from x, where there're no matching values in y#
+# H = hits#
+# AB = at bats#
+career <- batting[ AB > 0, ][!pitching]#
+career <- career[ , .( H = sum(H), AB = sum(AB) ), by = playerID ]#
+career[ , average := H / AB ]#
+#
+# map the player name to player id#
+master <- master[ , .( playerID, nameFirst, nameLast ) ]
+master[ , name := paste( nameFirst, nameLast ) ][career]
+master[ , name := paste( nameFirst, nameLast ) ][career, nomatch = 0]
+library(dplyr)#
+library(gapminder)
+gapminder
+gapminder <- gapminder %>% mutate( year1950 = year - 1950 )
+gapminder
+nest
+nest()
+library(tidyr)
+nest
+select_vars
+?select_vars
+nest_
+class(gapminder)
+nest_.tbl_df
+nest_.data.frame
+col_name
+?col_name
+gapminder %>%#
+group_by( continent, country ) %>%#
+nest()
+by_country <- gapminder %>%#
+              group_by( continent, country ) %>%#
+              nest()#
+#
+country_model <- function(df){#
+    lm( lifeExp ~ year1950, data = df )#
+}#
+models <- by_country %>%#
+          mutate( mod = map( data, country_model ) )
+library(purrr)
+by_country <- gapminder %>%#
+              group_by( continent, country ) %>%#
+              nest()#
+#
+country_model <- function(df){#
+    lm( lifeExp ~ year1950, data = df )#
+}#
+models <- by_country %>%#
+          mutate( mod = map( data, country_model ) )
+models
+mtcars
+map_dbl( mtcars, mean )
+map_dbl
+mtcars[[1]]
+models
+gapminder <- gapminder %>% mutate( year1950 = year - 1950 )#
+by_country <- gapminder %>%#
+              group_by( continent, country ) %>%#
+              nest()#
+#
+country_model <- function(df){#
+    lm( lifeExp ~ year1950, data = df )#
+}#
+models <- by_country %>%#
+          mutate( mod = map( data, country_model ) )
+library(tidyr)#
+library(dplyr)#
+library(purrr)#
+library(gapminder)#
+# number of years since 1950#
+gapminder <- gapminder %>% mutate( year1950 = year - 1950 )#
+by_country <- gapminder %>%#
+              group_by( continent, country ) %>%#
+              nest()#
+#
+country_model <- function(df){#
+    lm( lifeExp ~ year1950, data = df )#
+}#
+models <- by_country %>%#
+          mutate( mod = map( data, country_model ) )
+models
+models %>% filter( continent == "Africa" )
+library(broom)
+models <- models %>% #
+          mutate( tidy = map( model, broom::tidy ),#
+                  glance = map( model, broom::glance ),#
+                  augment = map( model, broom::augment ) )
+?qbeta
+models <- models %>% #
+          mutate( tidy = map( models, broom::tidy ),#
+                  glance = map( models, broom::glance ),#
+                  augment = map( models, broom::augment ) )
+modela
+models
+models$data
+class(models$data)
+models
+models$mod[[1]]
+tidy(models$mod[[1]])
+glance(models$mod[[1]])#
+augment(models$mod[[1]])
+models <- models %>% #
+          mutate( tidy = map( mod, broom::tidy ),#
+                  glance = map( mod, broom::glance ),#
+                  augment = map( mod, broom::augment ) )
+models
+models <- by_country %>%#
+          mutate( mod = map( data, country_model ) )
+by_country
+models <- models %>% #
+          mutate( tidy = map( mod, broom::tidy ),#
+                  glance = map( mod, broom::glance ),#
+                  augment = map( mod, broom::augment ),#
+                  rsq = glance %>% map_dbl("r.squared") )
+models
+unnest( models, data )
+models
+library(ggplot2) # devtools::install_github("hadley/ggplot2") or subtitles won't work#
+library(tidyr)#
+library(dplyr)#
+library(readr)#
+library(scales)
+file <- "nytimes_vote.tsv"#
+if( !file.exists(file) ){#
+    url <- "https://static01.nyt.com/newsgraphics/2016/04/21/undervote/ad8bd3e44231c1091e75621b9f27fe31d116999f/data.tsv"#
+    download.file( url, file )#
+}
+df <- read_tsv(file)
+library(readr)
+df <- read_tsv(file)
+df
+rename(df, `Someone else`=undervt, `Hilary Clinton`=clintonpct, `Bernie Sanders`=sanderspct)
+?rename
+df <- df %>% rename( "Someone else" = undervt, #
+                     "Hilary Clinton" = clintonpct, #
+                     "Bernie Sanders" = sanderspct )
+df
+select(df, -tvotes)
+gather(select(df, -tvotes), party, pct, -ratio, -fips)
+?gather
+df <- gather( select( df, -tvotes ), party, pct, -ratio, -fips )#
+df <- arrange( df, fips, ratio )#
+df <- df %>% mutate( #
+    party = factor( party, levels = c("Hilary Clinton", "Bernie Sanders", "Someone else" ) )#
+)#
+df
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point()
+ggplot( df, aes( x = ratio, y = pct, color = party ) ) + #
+geom_point()
+ggplot( df, aes( x = ratio, y = pct, color = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white" )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white" )
+ggplot( df, aes( x = ratio, y = pct, color = party ) ) + #
+geom_point( size = 3, alpha = 0.8, fill = "white" )
+ggplot( df, aes( x = ratio, y = pct, color = party ) ) + #
+geom_point( size = 3, alpha = 0.8, fill = "white", shape = 21 )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, shape = 21 )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, fill = "white", shape = 21 )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 )
+ggplot( df, aes( x = ratio, y = pct ) ) + #
+geom_point( size = 3, alpha = 0.8, shape = 21 )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 )
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 ) + #
+scale_fill_manual( name = "", values = c( "Hilary Clinton" = "#5fa0d6",#
+                                          "Bernie Sanders" = "#83BC57",#
+                                          "Someone else" = "#d65454" ) )
+fill_color <- c( #
+    "Hilary Clinton" = "#5fa0d6",#
+    "Bernie Sanders" = "#83BC57",#
+    "Someone else" = "#d65454" #
+)#
+#
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 ) + #
+scale_fill_manual( name = "", values = fill_color )
+library(ggplot2) # devtools::install_github("hadley/ggplot2") or subtitles won't work#
+library(tidyr)#
+library(dplyr)#
+library(readr)#
+library(scales)
+sessionInfo()
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 ) + #
+scale_fill_manual( name = "", values = fill_color ) +#
+labs( x = "Ratio of registered Democrats to Obama voters →", #
+      y = NULL, title = "The Kinds of Places Sanders Beats Clinton",#
+      subtitle = "Each dot on this chart represents the share of a county's vote for a candidate in the 2016 Democratic primary" )
+?labs
+ggplot( df, aes( x = ratio, y = pct, fill = party ) ) + #
+geom_point( size = 3, alpha = 0.8, color = "white", shape = 21 ) + #
+scale_fill_manual( name = "", values = fill_color ) +#
+labs( x = "Ratio of registered Democrats to Obama voters →", #
+      y = NULL, title = "The Kinds of Places Sanders Beats Clinton",#
+      subtitle = "Each dot on this chart represents the share of a county's vote for a candidate in the 2016 Democratic primary" )
+library(Advertising)
+library(ISLR)
+Advertising
+data(Advertising)
+library(dplyr)
+data(flights)
+library(nycflights13)
+data(flights)
+flights
+?write.csv
+write.csv( flights, file = 'flights.csv', quote = FALSE, row.names = FALSE )
+x <- seq( -4, 6, 0.1 )#
+mean1 <- 0.00#
+mean2 <- 2.47#
+dat <- data.frame(x = x, y1 = dnorm(x, mean1, 1), y2 = dnorm(x, mean2, 1))#
+ggplot(dat, aes(x = x)) +#
+geom_line(aes(y = y1, colour = 'H0 is true'), size = 1.2) +#
+geom_line(aes(y = y2, colour = 'H1 is true'), size = 1.2) +#
+geom_area(aes(y = y1, x = ifelse(x > 1.65, x, NA)), fill = 'black') +#
+geom_area(aes(y = y2, x = ifelse(x > 1.65, x, NA)), fill = 'blue', alpha = 0.3) +#
+xlab("") + ylab("") + theme(legend.title = element_blank()) +#
+scale_colour_manual(breaks = c("H0 is true", "H1 is true"), values = c("blue", "red"))
+library(ggplot2)
+ggplot(dat, aes(x = x)) +#
+geom_line(aes(y = y1, colour = 'H0 is true'), size = 1.2) +#
+geom_line(aes(y = y2, colour = 'H1 is true'), size = 1.2) +#
+geom_area(aes(y = y1, x = ifelse(x > 1.65, x, NA)), fill = 'black') +#
+geom_area(aes(y = y2, x = ifelse(x > 1.65, x, NA)), fill = 'blue', alpha = 0.3) +#
+xlab("") + ylab("") + theme(legend.title = element_blank()) +#
+scale_colour_manual(breaks = c("H0 is true", "H1 is true"), values = c("blue", "red"))
+2500 / 0.8
+2500 * 0.8
+size <- 2500#
+a_count <- 2500 * 0.08#
+b_count <- 2500 * 0.1#
+#
+pooled <- ( a_count + b_count ) / ( size + size )#
+0.02 / sqrt( pooled * ( 1 - pooled ) * ( 1 / size ) * ( 1 / size ) )
+sqrt( pooled * ( 1 - pooled ) * ( 1 / size ) * ( 1 / size ) )
+pooled
+pooled <- ( a_count + b_count ) / ( size + size )#
+0.02 / sqrt( pooled * ( 1 - pooled ) * ( 1 / size ) + ( 1 / size ) )
+0.02 / sqrt( pooled * ( 1 - pooled ) * ( 1 / size + 1 / size ) )
+pnorm(Z)
+Z <- ( p_b - p_a ) / sqrt( p_pooled * ( 1 - p_pooled ) * ( 1 / size + 1 / size ) )#
+Z
+size <- 2500#
+p_a  <- 0.08#
+p_b  <- 0.1#
+count_a  <- 2500 * p_a#
+count_b  <- 2500 * p_b#
+p_pooled <- ( count_a  + count_b ) / ( size + size )#
+Z <- ( p_b - p_a ) / sqrt( p_pooled * ( 1 - p_pooled ) * ( 1 / size + 1 / size ) )#
+Z
+pnorm(Z)
+PlotPower <- function( size, min_diff ){#
+    size_a <- size_b <- size * 0.5 # size are assumed to be equal#
+    p_a <- 0.08 # baseline#
+    p_b <- p_a + min_diff#
+    count_a  <- size_a * p_a#
+    count_b  <- size_b * p_b#
+    p_pooled <- ( count_a  + count_b ) / ( size_a + size_b )#
+    Z <- ( p_b - p_a ) / sqrt( p_pooled * ( 1 - p_pooled ) * ( 1 / size_a + 1 / size_b ) )#
+#
+    # Z corresponds to the mean of the normal distribution#
+    mean1 <- 0#
+    mean2 <- Z#
+#
+    x <- seq( -4, 6, 0.1 ) # use for generating the x axis of the normal distribution#
+    data <- data.frame( x = x, y1 = dnorm( x, mean1, 1 ) , y2 = dnorm( x, mean2, 1 ) )#
+#
+    plot <- ggplot( data, aes( x = x ) ) +#
+            geom_line( aes( y = y1, colour = 'H0 is true' ), size = 1.2 ) +#
+            geom_line( aes( y = y2, colour = 'H1 is true' ), size = 1.2 ) +#
+            geom_area( aes( y = y1, x = ifelse( x > 1.65, x, NA ) ), fill = 'black' ) +#
+            geom_area( aes( y = y2, x = ifelse( x > 1.65, x, NA ) ), fill = 'blue', alpha = 0.3 ) +#
+            labs( x = '', y = '', title = sprintf( 'p1 = %s, p2 = %s, size = %d', p_a, p_b, size ) ) + #
+            theme( legend.title = element_blank() ) +#
+            scale_colour_manual( breaks = c( "H0 is true", "H1 is true" ), #
+                                 values = c( "blue", "red" ) )#
+    return(plot)#
+}#
+#
+PlotPower( size = 5000, min_diff = 0.02 )
+library(ggplot2)
+baseline  <- 0.1  # baseline conversion rate #
+delta     <- 0.02 # minimum detectable boundary (practical significance boundary)#
+power     <- 0.8  # sensitivity #
+sig_level <- 0.05 # specificity #
+#
+result <- power.prop.test( p1 = baseline, p2 = baseline + delta, #
+                           power = power, sig.level = sig_level,#
+                           alternative = "two.sided" )#
+round(result$n)
+result <- power.prop.test( p1 = baseline, p2 = baseline - delta, #
+                           power = power, sig.level = sig_level,#
+                           alternative = "two.sided" )#
+round(result$n)
+?power.prop.test
+baseline  <- 0.1 # baseline rate#
+power     <- 0.8  # sensitivity #
+sig_level <- 0.05#
+dd <- seq( from = 0.01, to = 0.03, by = 0.0001 )
+dd
+result <- power.prop.test( p1 = baseline, p2 = baseline - dd, #
+                           power = power, sig.level = sig_level,#
+                           alternative = "two.sided" )
+result <- data.table( matrix( nrow = length(dd), ncol = 2 ) )
+result <- data.frame( matrix( nrow = length(dd), ncol = 2 ) )
+result
+library(data.table)
+?data.table
+result <- data.table( matrix( nrow = length(dd), ncol = 2 ) )
+result
+result <- matrix( nrow = length(dd), ncol = 2 )#
+result[ , 1 ] <- dd
+result
+for( i in 1:length(dd) ){#
+    result[ i, 2 ] <- power.prop.test( p1 = baseline, p2 = baseline - dd[i], #
+                                       power = power, sig.level = sig_level,#
+                                       alternative = "two.sided" )#
+}
+baseline  <- 0.1 # baseline rate#
+power     <- 0.8  # sensitivity #
+sig_level <- 0.05#
+dd <- seq( from = 0.01, to = 0.03, by = 0.0001 ) # detectable differences#
+result <- matrix( nrow = length(dd), ncol = 2 )#
+result[ , 1 ] <- dd#
+for( i in 1:length(dd) ){#
+    result[ i, 2 ] <- power.prop.test( p1 = baseline, p2 = baseline - dd[i], #
+                                       power = power, sig.level = sig_level,#
+                                       alternative = "two.sided" )#
+}
+baseline  <- 0.1 # baseline rate#
+power     <- 0.8  # sensitivity #
+sig_level <- 0.05#
+dd <- seq( from = 0.01, to = 0.03, by = 0.0001 ) # detectable differences#
+result <- matrix( nrow = length(dd), ncol = 2 )#
+result[ , 1 ] <- dd#
+for( i in 1:length(dd) ){#
+    result[ i, 2 ] <- power.prop.test( p1 = baseline, p2 = baseline - dd[i], #
+                                       power = power, sig.level = sig_level,#
+                                       alternative = "two.sided" )$n#
+}
+result
+result <- data.table(result)#
+setnames( result, c( 'dd', 'sample_size' ) )
+result
+library(scales)
+baseline  <- 0.1 # baseline rate#
+power     <- 0.8  # sensitivity #
+sig_level <- 0.05#
+dd <- seq( from = 0.01, to = 0.03, by = 0.0001 ) # detectable differences#
+result <- matrix( nrow = length(dd), ncol = 2 )#
+result[ , 1 ] <- dd#
+for( i in 1:length(dd) ){#
+    result[ i, 2 ] <- power.prop.test( p1 = baseline, p2 = baseline - dd[i], #
+                                       power = power, sig.level = sig_level,#
+                                       alternative = "two.sided" )$n#
+}#
+#
+result <- data.table(result)#
+setnames( result, c( 'dd', 'n' ) )#
+#
+ggplot(data = result, aes( x = dd, y = n ) ) +#
+geom_line() + ylab("required sample size") + xlab("Detectable difference")
+pnorm(0.95)
+pnorm(95)
+?pnorm
+qnorm( 0.95 )
+qnorm( 0.75 )
+qnorm( 0.975 )
+library(dplyr)#
+library(ggplot2)#
+library(data.table)#
+setwd('/Users/ethen/Desktop/airline-twitter-sentiment')#
+# The dataset contains 14640 tweets and 15 variables (columns)#
+# which we'll explore#
+tweets <- fread( 'Tweets.csv', na.strings = c( '', ' ', 'NA' ) )#
+dim(tweets)#
+#
+# check which columns contain NA and how many#
+# Airline_sentiment_gold and nevative_reason_gold are mostly empty columns, #
+# i.e., they contain almost no information#
+apply( tweets, 2, function(x) sum( is.na(x) ) )#
+# Proportion of tweets with each sentiment#
+# We can see from the bar plot that most tweets contain negative sentiment#
+sentiment_freq <- data.table( prop.table( table(tweets$airline_sentiment) ) )#
+setnames( sentiment_freq, c( 'sentiment', 'percentage' ) )#
+#
+# plot#
+ggplot( sentiment_freq, aes( sentiment, percentage, fill = sentiment ) ) + #
+geom_bar( stat = "identity" ) + guides( fill = FALSE ) + #
+ggtitle('Overall Sentiment Distribution') + #
+theme( plot.title = element_text( size = 14, face = 'bold' ) )#
+# Proportion of sentiment tweets per airline#
+sentiment_per_airline <- with( tweets, table( airline_sentiment, airline ) %>%#
+                         prop.table() %>%#
+                         data.table()#
+setnames( sentiment_per_airline, c( 'sentiment', 'airline', 'percentage' ) )#
+#
+ggplot( sentiment_per_airline, aes( airline, y = percentage, fill = sentiment ) ) + #
+geom_bar( stat = "identity", position = 'fill' ) + #
+ggtitle('Proportion of Tweets per Airline') +#
+theme( plot.title = element_text( size = 14, face = 'bold', hjust = 0.5 ), #
+       axis.title.x = element_text( vjust = -1 ) )#
+# The filled bar chart allows us to grasp the proportion of negative sentiment tweets #
+# per airline. We see that American, United and US Airways directed tweets #
+# are mostly negative. On the contrary, tweets directed towards Delta, #
+# Southwest and Virgin contain a good proportion of neutral and positive sentiment tweets.#
+# Reasons for negative sentiment per airline#
+negativereason_per_airline <- with( tweets, table( airline, negativereason ) ) %>%#
+                              prop.table() %>%#
+                              data.table()#
+# some of the negative reasons have been left blank we'll change them to not specified#
+negativereason_per_airline[ negativereason == '', negativereason := 'not specified' ]#
+#
+ggplot( negativereason_per_airline, aes( negativereason, N, fill = airline ) ) + #
+geom_bar( stat = "identity" ) + guides( fill = FALSE ) + #
+facet_wrap( ~ airline ) + #
+theme( plot.title = element_text( size = 14, face = 'bold', vjust = 1 ), #
+       axis.text.x = element_text( angle = 90, size = 10, vjust = 1 ) )
+sentiment_per_airline <- with( tweets, table( airline_sentiment, airline ) ) %>%#
+                         prop.table() %>%#
+                         data.table()#
+setnames( sentiment_per_airline, c( 'sentiment', 'airline', 'percentage' ) )#
+#
+ggplot( sentiment_per_airline, aes( airline, y = percentage, fill = sentiment ) ) + #
+geom_bar( stat = "identity", position = 'fill' ) + #
+ggtitle('Proportion of Tweets per Airline') +#
+theme( plot.title = element_text( size = 14, face = 'bold', hjust = 0.5 ), #
+       axis.title.x = element_text( vjust = -1 ) )
+location <- tweets$tweet_coord
+location
+location <- location[ complete.cases(location), ]
+location <- location[ !is.na(location), ]
+location <- location[ !is.na(location) ]
+location
+location <- data.table( count = 1, location = location )
+sapply( location, class )
+location
+location[ , .( count = sum(count) ), by = location ]
+location[ , .( count = sum(count) ), by = location ][ order(count) ]
+location[ , .( count = sum(count) ), by = location ][ -order(count) ]
+location[ , .( count = sum(count) ), by = location ][ order(-count) ]
+?tstrsplit
+world_map <- map_data("world")
+?world
+world_map
+head(world_map)
+?map_data
+ggplot() + #
+geom_polygon( data = world_map, aes( x = long, y = lat, group = group ), #
+              color = "black", fill = 'lightblue' )
+location
+location <- location[ , .( count = sum(count) ), by = location ][ order(-count) ]
+location[ , c( 'long', 'lat') := tstrsplit( location, ',' ) ]
+location
+location[ , location := gsub( '[(.*)]', '\\1', location ) ]
+location
+location <- tweets$tweet_coord#
+location <- location[ !is.na(location) ]#
+#
+# add a count column filled with 1s#
+location <- data.table( count = 1, location = location )
+location <- location[ , .( count = sum(count) ), by = location ][ order(-count) ]
+location[ , location := gsub( '\\[(.*)\\]', '\\1', location ) ]
+location
+location[ , c( 'long', 'lat') := tstrsplit( location, ',' ) ]
+location
+location[ , location := NULL ]
+sapply( location, class )
+location[ , lapply( .SD, as.numeric ), .SDcols = c( 'long', 'lat' ) ]
+location[ , `:=`( long = as.numeric(long),#
+                  lat = as.numeric(lat) ) ]
+location
+dim(location)
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color="coral1")#
+ggtitle("Location of tweets across the World") + #
+ylim( -50, 80 )
+location <- tweets$tweet_coord#
+location <- location[ !is.na(location) ]#
+#
+# add a count column filled with 1s#
+# remove duplicate locations and count the times they appeared#
+location <- data.table( count = 1, location = location )#
+location <- location[ , .( count = sum(count) ), by = location ][ order(-count) ]#
+#
+location[ , location := gsub( '\\[(.*)\\]', '\\1', location ) ]#
+location[ , c( 'lat', 'long') := tstrsplit( location, ',' ) ]#
+location[ , location := NULL ]#
+location[ , `:=`( long = as.numeric(long),#
+                  lat = as.numeric(lat) ) ]
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color = "coral1" )#
+ggtitle("Location of tweets across the World") + #
+ylim( -50, 80 )
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color = "coral1" )#
+ggtitle("Location of tweets across the World") + #
+ylim( c( -50, 80 ) )
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color = "coral1" ) +#
+ggtitle("Location of tweets across the World") + #
+ylim( c( -50, 80 ) )
+location
+location <- location[ lat == 0 & long == 0,  ]
+location
+location <- tweets$tweet_coord#
+location <- location[ !is.na(location) ]#
+#
+# add a count column filled with 1s#
+# remove duplicate locations and count the times they appeared#
+location <- data.table( count = 1, location = location )#
+location <- location[ , .( count = sum(count) ), by = location ][ order(-count) ]#
+#
+location[ , location := gsub( '\\[(.*)\\]', '\\1', location ) ]#
+location[ , c( 'lat', 'long') := tstrsplit( location, ',' ) ]#
+location[ , location := NULL ]#
+location[ , `:=`( long = as.numeric(long),#
+                  lat = as.numeric(lat) ) ]#
+#
+# removes row containing coords [0,0] which are probably wrong#
+location <- location[ !( lat == 0 & long == 0 ),  ]
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color = "coral1" ) +#
+ggtitle("Location of tweets across the World") + #
+ylim( c( -50, 80 ) )
+ggplot() + #
+geom_polygon( data = world_map, aes( long, lat, group = group ), #
+              color = "black", fill = 'lightblue' ) + #
+geom_point( data = location, aes( long, lat, size = count ), color = "coral1" ) +#
+ggtitle("Location of tweets across the World") + #
+ylim( c( -50, 80 ) ) + scale_size( name = "Total Tweets" )
