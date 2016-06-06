@@ -18,7 +18,7 @@ Within each section, documentations are listed in reverse chronological order of
 Naive bayes and logistic regression for text classification.
 
 - Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics.ipynb)]
-- Bernoulli and multinomial naive bayes with python code from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes.ipynb)]
+- Bernoulli and multinomial naive bayes with python code from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
 - Logistic regression (stochastic gradient descent) from scratch.
 - Sentiment analysis case study.
 
