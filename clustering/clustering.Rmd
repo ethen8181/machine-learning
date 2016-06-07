@@ -122,11 +122,14 @@ Here we'll use the "kmeanspp" as our `clustermethod` so we can demonstrate some 
 
 ```{r}
 
-# parameters : k = 4, clustermethod = "kmeanspp", bootstrap = 200
-# set seed : reproducibility for sampling 
-set.seed(1234)
-boot_clust <- ClusterBootstrap( data = mtcars_scaled, k = 4, bootstrap = 200, 
-                                clustermethod = "kmeanspp", nstart = 10, iter.max = 100  )
+boot_clust <- ClusterBootstrap( 
+     data = mtcars_scaled, 
+     k = 4, 
+     bootstrap = 100, 
+     clustermethod = "kmeanspp", 
+     nstart = 10, 
+     iter.max = 100
+)
 # print the returned list for clarity
 boot_clust
 
@@ -135,6 +138,7 @@ boot_clust
 boot_clust$bootmean
 
 boot_clust$bootdissolved
+
 ```
 
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
