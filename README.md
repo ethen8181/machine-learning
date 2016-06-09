@@ -13,14 +13,13 @@ Within each section, documentations are listed in reverse chronological order of
 ## Documentation Listings
 
 
-#### text_classification (in progress, don't look at it yet ...)
+#### text_classification : 2016.6.9
 
 Naive bayes and logistic regression for text classification.
 
-- Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics/basics.ipynb)]
+- Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics.ipynb)]
 - Bernoulli and multinomial naive bayes with python code from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
-- Logistic regression (stochastic gradient descent) from scratch.
-- Sentiment analysis case study.
+- Logistic regression (stochastic gradient descent) from scratch, it's best if you're already familiar with gradient descent. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression.ipynb)]
 
 
 #### regularization : 2016.5.25
