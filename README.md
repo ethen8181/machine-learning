@@ -13,7 +13,7 @@ Within each section, documentations are listed in reverse chronological order of
 ## Documentation Listings
 
 
-#### text_classification : 2016.6.9
+#### text_classification : 2016.6.10
 
 Naive bayes and logistic regression for text classification.
 
@@ -111,6 +111,7 @@ Training linear regression with gradient descent.
 
 #### python
 
+- 2016.6.10 | unittest. [[python code](https://github.com/ethen8181/machine-learning/blob/master/python/test.py)]
 - 2016.4.26 | Some pre-implemented data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
 - 2016.4.26 | Tricks with strings and text. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/2_strings_and_text.ipynb)]
 - 2016.4.17 | python's decorators (useful script for logging and timing function). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/decorators/decorators.ipynb)]

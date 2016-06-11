@@ -1,21 +1,19 @@
+# Reference
 
 # setting up the twitter R package for text analytics
 # http://www.r-bloggers.com/setting-up-the-twitter-r-package-for-text-analytics/
 
-# a list of positive and negative opinion words for English
-# http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar
-
 # twitter sentiment analysis tutorial
 # https://github.com/jeffreybreen/twitter-sentiment-analysis-tutorial-201107
 
+# a list of positive and negative opinion words for English
+# http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar
 library(dplyr)
 library(ggplot2)
 library(stringr)
 library(twitteR)
 library(data.table)
 setwd('/Users/ethen/Desktop')
-
-
 setup_twitter_oauth( consumer_key, consumer_secret, access_token, access_secret )
 
 delta_tweets <- searchTwitter( '@delta', n = 1500 )
@@ -85,6 +83,7 @@ ScoreSentiment <- function( sentences, pos_words, neg_words ){
 	return(sentence_scores)
 }
 
+# obtain the score of the sentiment
 sentence_score <- ScoreSentiment( 
 	sentences = delta_text, 
 	pos_words = pos_words, 
