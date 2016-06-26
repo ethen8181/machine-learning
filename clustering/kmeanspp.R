@@ -91,6 +91,9 @@ test <- function(){
 	results$center
 	results$size
 	table( iris$Species, results$cluster )
+
+	iris_data[ , `:=`( Species = iris$Species, cluster = results$cluster ) ]
+	split( iris_data, iris_data$cluster )
 	"
 	print('testing')
 }

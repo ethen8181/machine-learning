@@ -4,7 +4,7 @@ This is one of the continuously updated repositories that documents personal dat
 
 | Repository | Documentation Focus |
 | ---------- | ----------- |
-| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning and programming in R / python. |
+| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / python. |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations. |
 
 Within each section, documentations are listed in reverse chronological order of the latest complete date and each of them are independent of one another unless specified.
@@ -13,13 +13,22 @@ Within each section, documentations are listed in reverse chronological order of
 ## Documentation Listings
 
 
-#### text_classification : 2016.6.10
+#### text_classification : 2016.6.15
 
 Naive bayes and logistic regression for text classification.
 
 - Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics/basics.ipynb)]
 - Bernoulli and multinomial naive bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
-- Logistic regression (stochastic gradient descent) from scratch, it's assumed that you're already familiar with gradient descent. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression.ipynb)]
+- Logistic regression (stochastic gradient descent) from scratch, it's assumed that you're already familiar with gradient descent. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression/logistic.ipynb)]
+- Softmax regression (logistic regression that generalizes to muti-class classification) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression/softmax.ipynb)]
+
+
+#### networkx : 2016.6.13
+
+PyCon 2016: Practical Network Analysis Made Simple 
+
+- Quickstart to networkx api. Includes some basic plotting, algorithms.
+- View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)]
 
 
 #### regularization : 2016.5.25
@@ -30,7 +39,7 @@ Regularization techniques: ridge and lasso regression.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
 
 
-#### santander : 2016.5.16
+#### santander : 2016.5.16 (will come back to this in the future)
 
 Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with python's xgboost and H2O's API. Note that the script's auc store 0.823068 is still far off from the best score for the competition, 0.829072.
 
@@ -41,9 +50,9 @@ Kaggle competition on predicting customer satisfaction. The goal is to familiari
 
 #### ga : 2016.4.25
 
-Using Genetic Algorithm to solve a simple optimization problem.
+Genetic Algorithm. Math-free explanation and code from scratch.
 
-- Math-free explanation and python code from scratch. 
+- Starting from a simple optimization problem and extending it it travel salesman problem (tsp).
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
 
@@ -111,6 +120,7 @@ Training linear regression with gradient descent.
 
 #### python
 
+- 2016.6.22 | pandas's category type. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas_category.ipynb)]
 - 2016.6.10 | unittest. [[python code](https://github.com/ethen8181/machine-learning/blob/master/python/test.py)]
 - 2016.4.26 | Some pre-implemented data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
 - 2016.4.26 | Tricks with strings and text. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/2_strings_and_text.ipynb)]

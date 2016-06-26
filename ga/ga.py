@@ -84,32 +84,31 @@ def evolve( pop, target, retain, mutate, chromo_len, lower_bound, upper_bound ):
 	# take the proportion of the best performing chromosomes
 	# judged by the calculate_cost function and these high-performers 
 	# will be the parents of the next generation
+	desired_len = len(pop)
+	retain_len = int( desired_len * retain )
+	generation_info = namedtuple( "generation_info", [ "cost", "chromo" ] )
 	graded = [ generation_info( calculate_cost( p, target ), p ) for p in pop ]
 	graded = sorted(graded)
-	parents = [ g.chromo for g in graded ]
-	retain_len = int( len(parents) * retain )
-	parents = parents[:retain_len]
+	graded = graded[:retain_len]
+	parent = [ g.chromo for g in graded ]
 
 	# the children_index set is used to
-	# check for duplicate index1, index2. since
-	# choosing chromosome ( a, b ) to crossover is the same
-	# as choosing chromosome ( b, a )
+	# check for duplicate index1, index2
+	# also assume that choosing chromosome ( a, b ) 
+	# to crossover is the same as choosing chromosome ( b, a )
 	children = []
 	children_index = set()
-	desired_len = len(pop)
-	parents_len = len(parents)
 	
 	# generate the the children (the parent for the next generation),
 	# the children is mated by randomly choosing two parents and
 	# mix the first half element of one parent with the later half 
 	# element of the other
 	while len(children) < desired_len:
-
-		index1, index2 = random.sample( range(parents_len), k = 2 )
+		index1, index2 = random.sample( range(retain_len), k = 2 )
 
 		if ( index1, index2 ) not in children_index:
-			male   = parents[index1]
-			female = parents[index2]
+			male   = parent[index1]
+			female = parent[index2]
 			pivot  = len(male) // 2
 			child1 = male[:pivot] + female[pivot:]
 			child2 = female[:pivot] + male[pivot:]
@@ -126,8 +125,8 @@ def evolve( pop, target, retain, mutate, chromo_len, lower_bound, upper_bound ):
 			chromosome[index_to_mutate] = random.randint( lower_bound, upper_bound )
 
 	# evaluate the children chromosome and retain the overall best
-	graded_childen = [ generation_info( calculate_cost( p, target ), p ) for p in children ]
-	graded.extend(graded_childen)
+	graded_children = [ generation_info( calculate_cost( p, target ), p ) for p in children ]
+	graded.extend(graded_children)
 	graded = sorted(graded)
 	generation_best = graded[0]
 	children = [ g.chromo for g in graded[:desired_len] ]
