@@ -48,7 +48,14 @@ class SoftmaxRegression(object):
 		# `i` keeps track of the starting index of 
 		# current batch, so we can do batch training
 		i = 0
-		for _ in range(self.epochs):
+
+		# note that epochs refers to the number of passes over the
+		# entire dataset, thus if we're using batches, we need to multiply it
+		# with the number of iterations, we also make sure the batch size 
+		# doesn't exceed the number of training samples, if it does use batch size of 1    
+		iterations = self.epochs * max( data_num // self.minibatches, 1 )
+		
+		for _ in range(iterations):
 			batch = slice( i, i + self.minibatches )
 			batch_X, batch_y_encode = X[batch], y_encode[batch]
 

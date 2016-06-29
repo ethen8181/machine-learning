@@ -1,6 +1,6 @@
 # machine-learning
 
-This is one of the continuously updated repositories that documents personal data science journey. Currently, contents are organized into two separate repositories based on the following table's description.
+This is one of the continuously updated repositories that documents my personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
 | Repository | Documentation Focus |
 | ---------- | ----------- |
@@ -25,9 +25,9 @@ Naive bayes and logistic regression for text classification.
 
 #### networkx : 2016.6.13
 
-PyCon 2016: Practical Network Analysis Made Simple 
+PyCon 2016: Practical Network Analysis Made Simple.
 
-- Quickstart to networkx api. Includes some basic plotting, algorithms.
+- Quickstart to networkx's api. Includes some basic graph plotting and algorithms.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)]
 
 
@@ -52,7 +52,7 @@ Kaggle competition on predicting customer satisfaction. The goal is to familiari
 
 Genetic Algorithm. Math-free explanation and code from scratch.
 
-- Starting from a simple optimization problem and extending it it travel salesman problem (tsp).
+- Start from a simple optimization problem and extending it to the travel salesman problem (tsp).
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
 
