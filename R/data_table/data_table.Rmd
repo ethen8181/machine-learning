@@ -7,7 +7,35 @@ output:
     highlight: pygments
 ---
 
-> The **source of this tutorial**, including the example datasets, is available [here on GitHub](https://github.com/ethen8181/programming/blob/master/R/data_table) 
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
+> The **source of this tutorial**, including the example datasets, is available [here on GitHub](https://github.com/ethen8181/machine-learning/blob/master/R/data_table) 
+
 
 # SQL Joins
 
@@ -28,7 +56,7 @@ The example data consists of the following two tables:
 
 library(knitr)
 library(data.table)
-setwd("/Users/ethen/programming/R/data_table")
+setwd("/Users/ethen/machine-learning/R/data_table")
 
 employees   <- fread("data/employees.csv")
 departments <- fread("data/departments.csv")
@@ -203,8 +231,8 @@ Notice that `.N` here is used to retrieve the last row.
 
 ## Reference
 
-1. [JOINing data in R using data.table](https://rstudio-pubs-static.s3.amazonaws.com/52230_5ae0d25125b544caab32f75f0360e775.html)
-2. [Data Analysis in R using data.table](https://rpubs.com/davoodastaraky/dataTable)
+1. [Joining data in R using data.table](https://rstudio-pubs-static.s3.amazonaws.com/52230_5ae0d25125b544caab32f75f0360e775.html)
+2. [Data analysis in R using data.table](https://rpubs.com/davoodastaraky/dataTable)
 
 
 ## R Session Information

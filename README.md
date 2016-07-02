@@ -13,6 +13,14 @@ Within each section, documentations are listed in reverse chronological order of
 ## Documentation Listings
 
 
+#### keras : 2016.6.29
+
+Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a api walkthrough, NOT a tutorial on the details of deep learning. Currently, the documentation only includes api walkthrough for basic milti-layers neural network.
+
+- Keras basics. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/1_basic_intro.ipynb)]
+- Hyperparameter tuning keras with scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/2_hyperparameter_tuning.ipynb)]
+
+
 #### text_classification : 2016.6.15
 
 Naive bayes and logistic regression for text classification.

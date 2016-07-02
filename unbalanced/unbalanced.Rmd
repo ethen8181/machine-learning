@@ -7,6 +7,33 @@ output:
     highlight: pygments
 ---
 
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
 > All the code ("unbalanced_code") and the data ("data" folder) can be found  [here](https://github.com/ethen8181/machine-learning/blob/master/unbalanced).
 
 
@@ -117,7 +144,7 @@ A fast check on all the p-values of the model indicates significance, meaning th
 
 For this section we start off by obtaining the predicted value that a employee will leave in the future on both training and testing set, after that we'll perform a quick evaluation on the training set by plotting the probability (score) estimated by our model with a double density plot. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 # prediction
 data_train$prediction <- predict( model_glm, newdata = data_train, type = "response" )
@@ -137,11 +164,7 @@ In the current case, both distributions are slight skewed to the left. Not only 
 
 A slight digression, when developing models for prediction, we all know that we want the model to be as accurate as possible, or in other words, to do a good job in predicting the target variable on out of sample observations.
 
-Our *skewed* double density plot, however, can actually tell us a very important thing :
-
-**Accuracy will not be a suitable measurement for this model.** 
-
-We'll show why below :
+Our *skewed* double density plot, however, can actually tell us a very important thing: **Accuracy will not be a suitable measurement for this model.** We'll show why below.
 
 Since the prediction of a logistic regression model is a probability, in order to use it as a classifier, we'll have to choose a cutoff value, or you can say its a threshold value. Where scores above this value will classified as positive, those below as negative. ( We'll be using the term cutoff throughout the rest of the documentation ).
 
@@ -157,7 +180,7 @@ Here we'll use a function to loop through several cutoff values and compute the 
     - data : data.table with three columns. Each row indicates the cutoff value and the accuracy for the train and test set respectively.   
     - plot : a single plot that visualizes the data.table.   
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 # functions are sourced in, to reduce document's length
 source("unbalanced_code/unbalanced_functions.R")
@@ -183,7 +206,7 @@ We'll use another function to visualize the confusion matrix of the test set to 
     - data : A data.table consisting of three columns. First two columns stores the original value of the prediction and actual outcome from the passed in data frame. The third indicates the type, which is after choosing the cutoff value, will this row be a true/false positive/negative. 
     - plot : Plot that visualizes the data.table.
 
-```{r, fig.height=7, fig.width=10}
+```{r, fig.height=7, fig.width=10, message=FALSE, warning=FALSE}
 
 # visualize .6 cutoff (lowest point of the previous plot)
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
@@ -275,7 +298,7 @@ So what does this side by side plot tell us?
 
 We can re-plot the confusion matrix to see what happened when we switch to this cutoff value.
 
-```{r, fig.height=7, fig.width=10}
+```{r, fig.height=7, fig.width=10, message=FALSE, warning=FALSE}
 
 # re-plot the confusion matrix plot with the new cutoff value
 cm_info <- ConfusionMatrixInfo( data = data_test, predict = "prediction", 
@@ -336,7 +359,7 @@ Given these estimated probability there're two things worth noticing through sim
 
 First, the relationship between the time spent in the company with the probabilty that they will leave the company (attrition). We compute the median attrition rate for each value of `TIC` ( time spent in the company ) and the number of employees for each value of `TIC`. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 # compute the median estiamted probability for each TIC group
 median_tic <- data %>% group_by(TIC) %>% 
@@ -353,7 +376,7 @@ You'll notice that, the probability tells us that the estimated probability of a
 
 The second is the relationship between `LPE` last project evaluation by client and the estimated probability to leave. We'll do same thing as we did for the last plot, Except for one thing. . Unlike `TIC` time spent in the company that has only five different values, `LPE` is a numeric index ranging from 0 to 1, so in order to plot it with the same fashion as the last one we'll use an extra step cut (split) the `LPE` variable into four groups. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 data$LPECUT <- cut( data$LPE, breaks = quantile(data$LPE), include.lowest = TRUE )
 median_lpe <- data %>% group_by(LPECUT) %>% 
@@ -373,7 +396,7 @@ Now, back to where we were on retaining our employees, apart from we knowing who
 
 Knowing this information, we can easily create a visualization to tell the story
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 
 ggplot( data, aes( prediction, LPE ) ) + 
 geom_point() + 

@@ -10,7 +10,7 @@
 
 <meta name="author" content="Ming-Yu Liu" />
 
-<meta name="date" content="2016-04-15" />
+<meta name="date" content="2016-07-01" />
 
 <title>R’s data.table</title>
 
@@ -100,8 +100,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 
 <div id="main">
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
 <blockquote>
-<p>The <strong>source of this tutorial</strong>, including the example datasets, is available <a href="https://github.com/ethen8181/programming/blob/master/R/data_table">here on GitHub</a></p>
+<p>The <strong>source of this tutorial</strong>, including the example datasets, is available <a href="https://github.com/ethen8181/machine-learning/blob/master/R/data_table">here on GitHub</a></p>
 </blockquote>
 <div id="sql-joins" class="section level1">
 <h1>SQL Joins</h1>
@@ -141,7 +167,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The example data consists of the following two tables:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
 <span class="kw">library</span>(data.table)
-<span class="kw">setwd</span>(<span class="st">&quot;/Users/ethen/programming/R/data_table&quot;</span>)
+<span class="kw">setwd</span>(<span class="st">&quot;/Users/ethen/machine-learning/R/data_table&quot;</span>)
 
 employees   &lt;-<span class="st"> </span><span class="kw">fread</span>(<span class="st">&quot;data/employees.csv&quot;</span>)
 departments &lt;-<span class="st"> </span><span class="kw">fread</span>(<span class="st">&quot;data/departments.csv&quot;</span>)
@@ -350,8 +376,8 @@ employees[!departments]</code></pre></div>
                   <span class="dt">z =</span> <span class="kw">sample</span>( <span class="dv">1</span>:<span class="dv">14</span>,<span class="dv">7</span> ) ) 
 DT[ , <span class="kw">c</span>( <span class="kw">lapply</span>( .SD, sum ), .N ), by =<span class="st"> </span>x ]</code></pre></div>
 <pre><code>##    x  y  z N
-## 1: 1 14 18 3
-## 2: 2 38 32 4</code></pre>
+## 1: 2 17 17 3
+## 2: 1 33 23 4</code></pre>
 </div>
 <div id="key-indexing" class="section level2">
 <h2>Key Indexing</h2>
@@ -411,8 +437,8 @@ DT[ <span class="kw">c</span>( <span class="st">&quot;b&quot;</span>, <span clas
 <div id="reference" class="section level2">
 <h2>Reference</h2>
 <ol style="list-style-type: decimal">
-<li><a href="https://rstudio-pubs-static.s3.amazonaws.com/52230_5ae0d25125b544caab32f75f0360e775.html">JOINing data in R using data.table</a></li>
-<li><a href="https://rpubs.com/davoodastaraky/dataTable">Data Analysis in R using data.table</a></li>
+<li><a href="https://rstudio-pubs-static.s3.amazonaws.com/52230_5ae0d25125b544caab32f75f0360e775.html">Joining data in R using data.table</a></li>
+<li><a href="https://rpubs.com/davoodastaraky/dataTable">Data analysis in R using data.table</a></li>
 </ol>
 </div>
 <div id="r-session-information" class="section level2">
@@ -435,7 +461,7 @@ DT[ <span class="kw">c</span>( <span class="st">&quot;b&quot;</span>, <span clas
 ##  [1] Rcpp_0.12.4     digest_0.6.9    mime_0.4        chron_2.3-47   
 ##  [5] R6_2.1.2        xtable_1.8-2    formatR_1.3     magrittr_1.5   
 ##  [9] evaluate_0.8.3  rmdformats_0.2  highr_0.5.1     stringi_1.0-1  
-## [13] miniUI_0.1.1    rstudioapi_0.5  rmarkdown_0.9.5 tools_3.2.4    
+## [13] miniUI_0.1.1    rstudioapi_0.5  rmarkdown_0.9.6 tools_3.2.4    
 ## [17] stringr_1.0.0   questionr_0.5   shiny_0.13.2    httpuv_1.3.3   
 ## [21] yaml_2.1.13     htmltools_0.3.5</code></pre>
 </div>
@@ -447,7 +473,7 @@ DT[ <span class="kw">c</span>( <span class="st">&quot;b&quot;</span>, <span clas
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
 <p class="author"><span class="glyphicon glyphicon-user"></span> Ming-Yu Liu</p>
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2016-04-15</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2016-07-01</p>
 </div>
 
 

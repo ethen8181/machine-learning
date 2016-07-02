@@ -7,6 +7,33 @@ output:
     highlight: pygments
 ---
 
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
 > All the code (in the "linear_regession_code" folder) and the data (housing.txt) used in this documentation can be found [here](https://github.com/ethen8181/machine-learning/blob/master/linear_regression).
 
 
