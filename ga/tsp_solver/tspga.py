@@ -80,7 +80,7 @@ class TSPGA(object):
 		"""
 		
 		# store the coordinate and total number of cities
-		self.city_num  = tsp_data.shape[0]
+		self.city_num = tsp_data.shape[0]
 		self.cities = tsp_data[['x', 'y']].values
 		
 		# a mapping from city to index to make life easier to

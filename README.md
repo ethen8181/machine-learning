@@ -1,13 +1,13 @@
 # machine-learning
 
-This is one of the continuously updated repositories that documents my personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
+This is one of the continuously updated repositories that documents my own personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
 | Repository | Documentation Focus |
 | ---------- | ----------- |
 | [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / python. |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations. |
 
-Within each section, documentations are listed in reverse chronological order of the latest complete date and each of them are independent of one another unless specified.
+Within each section, documentations are listed in reverse chronological order of the latest complete date and each of them are independent of one another unless specified. If you find it helpful, give it a star ^^.
 
 
 ## Documentation Listings
@@ -87,7 +87,7 @@ Performing text clustering with Latent Dirichlet Allocation(LDA).
 
 #### unbalanced : 2015.11.25
 
-Choosing the optimal cutoff value for logistic regression when your dataset has unbalanced binary classes. e.g. Majority of the observations in the dataset have a positive outcome, while few have negative, or vice versa. The method uses the cost of mistakes, meaning when the cost of misclassification might differ between the two classes. The notion can be extended to any other classification algorithm that can predict class’s probability, this documentation just uses logistic regression for illustration purpose.
+Choosing the optimal cutoff value for logistic regression using cost-sensitive mistakes (meaning when the cost of misclassification might differ between the two classes) when your dataset consists of unbalanced binary classes. e.g. Majority of the data points in the dataset have a positive outcome, while few have negative, or vice versa. The notion can be extended to any other classification algorithm that can predict class’s probability, this documentation just uses logistic regression for illustration purpose.
 
 - Visualize two by two standard confusion matrix and ROC curve with costs using ggplot2.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
