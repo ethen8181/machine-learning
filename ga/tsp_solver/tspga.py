@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import namedtuple
+from itertools import combinations
 
 class TSPGA(object):
 	"""
@@ -103,7 +104,6 @@ class TSPGA(object):
 		
 		self.best_tour = self.generation_history[self.generation - 1]
 		self.is_fitted = True
-		
 		return self
 
 
@@ -112,12 +112,10 @@ class TSPGA(object):
 		readable but not optimized way of computing and storing 
 		the symmetric pairwise distance for between all city pairs
 		"""
-		pairwise_distance = np.zeros( ( self.city_num, self.city_num ) )		
-		for i1 in self.city_dict.values():
-			for i2 in self.city_dict.values():
-				if i1 < i2:
-					distance = np.linalg.norm( self.cities[i1] - self.cities[i2] )
-					pairwise_distance[i1][i2] = pairwise_distance[i2][i1] = distance
+		pairwise_distance = np.zeros( ( self.city_num, self.city_num ) )
+		for i1, i2 in combinations( self.city_dict.values(), 2 ):
+			distance = np.linalg.norm( self.cities[i1] - self.cities[i2] )
+			pairwise_distance[i1][i2] = pairwise_distance[i2][i1] = distance
 
 		return pairwise_distance
 
@@ -141,7 +139,6 @@ class TSPGA(object):
 		population = [ self.tour_info( dist, tour ) 
 					   for dist, tour in zip( tours_dist, tours ) ]
 		population = sorted(population)
-
 		return population
 
 	
@@ -187,7 +184,7 @@ class TSPGA(object):
 		children = []
 		while len(children) < self.population_size:			
 			child = self._crossover(parent)
-			child = self._mutate(child)	    
+			child = self._mutate(child) 
 			children.append(child)
 
 		# evaluate the children chromosome and retain the overall best,
@@ -209,7 +206,6 @@ class TSPGA(object):
 			population = population_backup
 		
 		generation_best = population[0]
-
 		return population, generation_best
 
 
@@ -230,8 +226,7 @@ class TSPGA(object):
 		subset  = slice( pos_start, pos_end )
 		boolean = np.in1d( female, male[subset], invert = True )
 		not_in_male = female[boolean]
-		child = np.r_[ not_in_male[:pos_start], male[subset], not_in_male[pos_start:] ]
-		
+		child = np.r_[ not_in_male[:pos_start], male[subset], not_in_male[pos_start:] ]		
 		return child
 
 

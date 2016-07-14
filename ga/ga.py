@@ -1,161 +1,129 @@
 import random
+import numpy as np
 from collections import namedtuple
 
 
-def ga( pop_size = 15, chromo_len = 2, lower_bound = 0, upper_bound = 100,
-		retain = 0.5, mutate = 0.2, generation = 5, target = 200 ):
-	
-	# randomly generate the initial population
-	pop = population( pop_size, chromo_len, lower_bound, upper_bound )
-
-	# store the best chromosome and its cost for each generation,
-	# so we can get an idea of when the algorithm converged
-	generation_history = []
-	for i in range(generation):
-		pop, generation_best = evolve( pop, target, retain, mutate, 
-									   chromo_len, lower_bound, upper_bound )
-		generation_history.append(generation_best)
-		print( "iteration {}'s best generation: {}".format( i + 1, generation_best ) )
-
-	return generation_history
-
-
-def population( pop_size, chromo_len, lower_bound, upper_bound ):
+class GA:
 	"""
-	creates a collection of chromosomes (i.e. a population)
+	Genetic Algorithm for a simple optimization problem
 
 	Parameters
 	----------
+	generation : int
+		number of iteration to train the algorithm
+
 	pop_size : int
 		number of chromosomes in the population
 
-	chromo_len : int
-		number of possible values per chromosome
+	chromo_size : int
+		number of possible values (genes) per chromosome
 
-	lower_bound, upper_bound : int
+	low, high : int
 		lower_bound and upper_bound possible value of the randomly generated chromosome
 
-	Returns
-	-------
-	(list) each element is a chromosome
-	"""
-	def chromosome( chromo_len, lower_bound, upper_bound ):
-		return [ random.randint( lower_bound, upper_bound ) for _ in range(chromo_len) ]
-
-	return [ chromosome( chromo_len, lower_bound, upper_bound ) for _ in range(pop_size) ]
-
-
-def evolve( pop, target, retain, mutate, chromo_len, lower_bound, upper_bound ):
-	"""
-	evolution of the genetic algorithm
-
-	Parameters
-	----------
-	pop : list
-		the initial population for this generation
-
-	target : int
-		the targeted solution
-
-	retain : float
+	retain_rate : float 0 ~ 1
 		the fraction of the best chromosome to retain. used to mate
 		the children for the next generation
 
-	mutate : float
+	mutate_rate : float 0 ~ 1
 		the probability that each chromosome will mutate
-
-	chromo_len : int
-		number of possible values per chromosome
-
-	lower_bound, upper_bound : int
-		lower_bound and upper_bound possible value of the randomly generated chromosome
-
-	Returns
-	-------
-	children : list
-		the crossovered and mutated population for the next generation
-
-	generation_best : namedtuple( "cost", "chromo" )
-		the current generation's best chromosome and its cost 
-		(evaluated by the cost function)
 	"""
-
-	# evolution :
-	# take the proportion of the best performing chromosomes
-	# judged by the calculate_cost function and these high-performers 
-	# will be the parents of the next generation
-	desired_len = len(pop)
-	retain_len = int( desired_len * retain )
-	generation_info = namedtuple( "generation_info", [ "cost", "chromo" ] )
-	graded = [ generation_info( calculate_cost( p, target ), p ) for p in pop ]
-	graded = sorted(graded)
-	graded = graded[:retain_len]
-	parent = [ g.chromo for g in graded ]
-
-	# the children_index set is used to
-	# check for duplicate index1, index2
-	# also assume that choosing chromosome ( a, b ) 
-	# to crossover is the same as choosing chromosome ( b, a )
-	children = []
-	children_index = set()
+	def __init__( self, generation, pop_size, chromo_size, low, high, 
+				  retain_rate, mutate_rate ):		
+		self.low  = low
+		self.high = high
+		self.pop_size = pop_size
+		self.chromo_size = chromo_size
+		self.generation  = generation
+		self.retain_len  = int( pop_size * retain_rate )
+		self.mutate_rate = mutate_rate
+		self.info = namedtuple( 'info', [ 'cost', 'chromo' ] )
 	
-	# generate the the children (the parent for the next generation),
-	# the children is mated by randomly choosing two parents and
-	# mix the first half element of one parent with the later half 
-	# element of the other
-	while len(children) < desired_len:
-		index1, index2 = random.sample( range(retain_len), k = 2 )
+	def fit( self, target ):
+		"""
+		target : int
+        	the targeted solution
+		"""
+		
+		# randomly generate the initial population, and evaluate its cost
+		array_size = self.pop_size, self.chromo_size
+		pop = np.random.random_integers( self.low, self.high, array_size )
+		graded_pop = self._compute_cost( pop, target )
 
-		if ( index1, index2 ) not in children_index:
-			male   = parent[index1]
-			female = parent[index2]
-			pivot  = len(male) // 2
-			child1 = male[:pivot] + female[pivot:]
-			child2 = female[:pivot] + male[pivot:]
-			children.append(child1)
-			children.append(child2)
-			children_index.add( ( index1, index2 ) )
-			children_index.add( ( index2, index1 ) )
+		# store the best chromosome and its cost for each generation,
+    	# so we can get an idea of when the algorithm converged
+		self.generation_history = []
+		for _ in range(self.generation):
+			graded_pop, generation_best = self._evolve( graded_pop, target )
+			self.generation_history.append(generation_best)
 
-	# mutation :
-	# randomly change one element of the chromosome
-	for chromosome in children:
-		if mutate > random.random():
-			index_to_mutate = random.randrange(chromo_len)
-			chromosome[index_to_mutate] = random.randint( lower_bound, upper_bound )
-
-	# evaluate the children chromosome and retain the overall best
-	graded_children = [ generation_info( calculate_cost( p, target ), p ) for p in children ]
-	graded.extend(graded_children)
-	graded = sorted(graded)
-	generation_best = graded[0]
-	children = [ g.chromo for g in graded[:desired_len] ]
-	return children, generation_best
+		self.best = self.generation_history[self.generation - 1]
+		self.is_fitted = True
+		return self
 
 
-def calculate_cost( chromosome, target ):
-	"""
-	Determine the cost of an chromosome. lower is better
+	def _compute_cost( self, pop, target ):
+		"""
+		combine the cost and chromosome into one list and sort them
+		in ascending order
+		"""
+		cost = np.abs( np.sum( pop, axis = 1 ) - target )
+		graded = [ self.info( c, list(p) ) for p, c in zip( pop, cost ) ]
+		graded = sorted(graded)
+		return graded
 
-	Parameters
-	----------
-	chromosome : list
-		each chromosome of the entire population
-
-	target : int
-		the sum that the chromosomes are aiming for
 	
-	Returns
-	-------
-	(int) absolute difference between the sum of the numbers 
-	in the chromosome and the target
-	"""
-	summed = sum(chromosome)
-	return abs(target - summed)
+	def _evolve( self, graded_pop, target ):
+		"""
+		core method that does the crossover, mutation to generate
+		the possibly best children for the next generation
+		"""
+		
+		# retain the best chromos (number determined by the retain_len)
+		graded_pop = graded_pop[:self.retain_len]
+		parent = [ p.chromo for p in graded_pop ]
+
+		# generate the children for the next generation 
+		children = []
+		while len(children) < self.pop_size:
+			child = self._crossover(parent)
+			child = self._mutate(child)
+			children.append(child)
+
+		# evaluate the children chromosome and retain the overall best,
+		# overall simply means the best from the parent and the children, where
+		# the size retained is determined by the population size
+		graded_children = self._compute_cost( children, target )
+		graded_pop.extend(graded_children)
+		graded_pop = sorted(graded_pop)
+		graded_pop = graded_pop[:self.pop_size]
+		
+		# also return the current generation's best chromosome and its cost
+		generation_best = graded_pop[0]
+		return graded_pop, generation_best 
+
+	
+	def _crossover( self, parent ):
+		"""
+		mate the children by randomly choosing two parents and mix 
+		the first half element of one parent with the later half 
+		element of the other
+		"""
+		index1, index2 = random.sample( range(self.retain_len), k = 2 )
+		male, female = parent[index1], parent[index2]
+		pivot = len(male) // 2
+		child = male[:pivot] + female[pivot:]
+		return child
 
 
-if __name__ == '__main__':
-	random.seed(1234)
-	ga1 = ga()
-	print(ga1)
+	def _mutate( self, child ):
+		"""
+		randomly change one element of the chromosome if it
+		exceeds the user-specified threshold (mutate_rate)
+		"""
+		if self.mutate_rate > random.random():
+			idx_to_mutate = random.randrange(self.chromo_size)
+			child[idx_to_mutate] = random.randint( self.low, self.high )
+
+		return child
 
