@@ -39,6 +39,7 @@ class GA:
 		self.mutate_rate = mutate_rate
 		self.info = namedtuple( 'info', [ 'cost', 'chromo' ] )
 	
+	
 	def fit( self, target ):
 		"""
 		target : int

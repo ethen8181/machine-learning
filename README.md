@@ -7,10 +7,18 @@ This is one of the continuously updated repositories that documents my own perso
 | [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / python. |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations. |
 
-Within each section, documentations are listed in reverse chronological order of the latest complete date and each of them are independent of one another unless specified. If you find it helpful, give it a star ^^.
+Within each section, documentations are listed in reverse chronological order of the latest complete date and each of them are independent of one another unless specified.
 
 
 ## Documentation Listings
+
+#### deep_learning : 2016.7.23
+
+Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some network without having to worry about backpropagation.
+
+- Softmax regression from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb)]
+- Softmax regression using Tensorflow. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_softmax.ipynb)]
+- multi-layers neural network using Tensorflow. Includes notes on various activation functions, dropouts, batchnorm etc. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_nn.ipynb.ipynb)]
 
 
 #### keras : 2016.6.29
@@ -18,7 +26,7 @@ Within each section, documentations are listed in reverse chronological order of
 Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a api walkthrough, NOT a tutorial on the details of deep learning. Currently, the documentation only includes api walkthrough for basic milti-layers neural network.
 
 - Keras basics. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/1_basic_intro.ipynb)]
-- Hyperparameter tuning keras with scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/2_hyperparameter_tuning.ipynb)]
+- Hyperparameter tuning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/2_hyperparameter_tuning.ipynb)]
 
 
 #### text_classification : 2016.6.15
@@ -27,8 +35,7 @@ Naive bayes and logistic regression for text classification.
 
 - Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics/basics.ipynb)]
 - Bernoulli and multinomial naive bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
-- Logistic regression (stochastic gradient descent) from scratch, it's assumed that you're already familiar with gradient descent. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression/logistic.ipynb)]
-- Softmax regression (logistic regression that generalizes to muti-class classification) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic_regression/softmax.ipynb)]
+- Logistic regression (stochastic gradient descent) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic.ipynb)]
 
 
 #### networkx : 2016.6.13
