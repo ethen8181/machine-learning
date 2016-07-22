@@ -10,9 +10,9 @@ from keras.layers.normalization import BatchNormalization
 
 # make sure you get the number of feature and class correct
 # and also one-hot encode the class
-feature_num = X.shape[1]
-class_num = np.unique(y).shape[0]
-y_encode = np_utils.to_categorical( y, class_num )
+n_input = X.shape[1]
+n_class = np.unique(y).shape[0]
+y_encode = np_utils.to_categorical( y, n_class )
 
 
 def create_model( hidden_layers = [ 64, 64, 64 ], dropout_rate = 0, 
@@ -20,7 +20,7 @@ def create_model( hidden_layers = [ 64, 64, 64 ], dropout_rate = 0,
 	"""
 	Fixed parameters in include the activation function and
 	it will always uses batch normalization after the activation.
-	note that feature_num and class_num are global variables that
+	note that n_input and n_class are global variables that
 	are not defined inside the function
 	
 	Parameters
@@ -44,21 +44,23 @@ def create_model( hidden_layers = [ 64, 64, 64 ], dropout_rate = 0,
 	for index, layers in enumerate(hidden_layers):       
 		if not index:
 			# specify the input_dim to be the number of features for the first layer
-			model.add( Dense( layers, input_dim = feature_num, W_regularizer = l2(l2_penalty) ) )
+			model.add( Dense( layers, input_dim = n_input, W_regularizer = l2(l2_penalty) ) )
 		else:
 			model.add( Dense( layers, W_regularizer = l2(l2_penalty) ) )
-        
-		model.add( PReLU() )
+		
+		# insert BatchNorm layer immediately after fully connected layers
+		# and before activation layer
 		model.add( BatchNormalization() )
+		model.add( PReLU() )
 		if dropout_rate:
 			model.add( Dropout( p = dropout_rate ) )
     
-	model.add( Dense(class_num) )
+	model.add( Dense(n_class) )
 	model.add( Activation('softmax') )
 	
 	# the loss for binary and muti-class classification is different 
 	loss = 'binary_crossentropy'
-	if class_num > 2:
+	if n_class > 2:
 		loss = 'categorical_crossentropy'
     
 	model.compile( loss = loss, optimizer = optimizer, metrics = ['accuracy'] )  

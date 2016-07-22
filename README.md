@@ -17,8 +17,8 @@ Within each section, documentations are listed in reverse chronological order of
 Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some network without having to worry about backpropagation.
 
 - Softmax regression from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb)]
-- Softmax regression using Tensorflow. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_softmax.ipynb)]
-- multi-layers neural network using Tensorflow. Includes notes on various activation functions, dropouts, batchnorm etc. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_nn.ipynb.ipynb)]
+- Softmax regression using Tensorflow (includes Tensorflow hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_softmax.ipynb)]
+- multi-layers neural network using Tensorflow. (includes some neural network tips and tricks). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_nn.ipynb)]
 
 
 #### keras : 2016.6.29
