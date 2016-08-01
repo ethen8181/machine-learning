@@ -12,7 +12,14 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
-#### deep_learning : 2016.7.23
+
+#### data_science_is_software : 2016.08.01  
+
+Best practices for doing data science (in python).
+
+- View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
+
+#### deep_learning : 2016.07.23
 
 Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some network without having to worry about backpropagation.
 
@@ -21,7 +28,7 @@ Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is use
 - multi-layers neural network using Tensorflow. (includes some neural network tips and tricks). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_nn.ipynb)]
 
 
-#### keras : 2016.6.29
+#### keras : 2016.06.29
 
 Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a api walkthrough, NOT a tutorial on the details of deep learning. Currently, the documentation only includes api walkthrough for basic multi-layers neural network.
 
@@ -29,7 +36,7 @@ Walking through [keras](https://github.com/fchollet/keras), a deep learning libr
 - Hyperparameter tuning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/2_hyperparameter_tuning.ipynb)]
 
 
-#### text_classification : 2016.6.15
+#### text_classification : 2016.06.15
 
 Naive bayes and logistic regression for text classification.
 
@@ -38,7 +45,7 @@ Naive bayes and logistic regression for text classification.
 - Logistic regression (stochastic gradient descent) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic.ipynb)]
 
 
-#### networkx : 2016.6.13
+#### networkx : 2016.06.13
 
 PyCon 2016: Practical Network Analysis Made Simple.
 
@@ -46,7 +53,7 @@ PyCon 2016: Practical Network Analysis Made Simple.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)]
 
 
-#### regularization : 2016.5.25
+#### regularization : 2016.05.25
 
 Regularization techniques: ridge and lasso regression. 
 
@@ -54,7 +61,7 @@ Regularization techniques: ridge and lasso regression.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
 
 
-#### santander : 2016.5.16 (will come back to this in the future)
+#### santander : 2016.05.16 (will come back to this in the future)
 
 Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with python's xgboost and H2O's API. Note that the script's auc store 0.823068 is still far off from the best score for the competition, 0.829072.
 
@@ -63,7 +70,7 @@ Kaggle competition on predicting customer satisfaction. The goal is to familiari
 - H2O's randomforest and gradient boosting on the already preprocessed data. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/h2o.ipynb)]
 
 
-#### ga : 2016.4.25
+#### ga : 2016.04.25
 
 Genetic Algorithm. Math-free explanation and code from scratch.
 
@@ -71,7 +78,7 @@ Genetic Algorithm. Math-free explanation and code from scratch.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
 
-#### h2o : 2016.1.24
+#### h2o : 2016.01.24
 
 Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Since H2O provides progress bar when training the model, you’ll may see a lot of them in doc. The walkthrough does basically zero feature engineering with the example dataset as it is just browsing through its function calls and parameters.
 
@@ -135,20 +142,20 @@ Training linear regression with gradient descent.
 
 #### python
 
-- 2016.6.22 | pandas's category type. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas_category.ipynb)]
-- 2016.6.10 | unittest. [[python code](https://github.com/ethen8181/machine-learning/blob/master/python/test.py)]
-- 2016.4.26 | Some pre-implemented data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
-- 2016.4.26 | Tricks with strings and text. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/2_strings_and_text.ipynb)]
-- 2016.4.17 | python's decorators (useful script for logging and timing function). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/decorators/decorators.ipynb)]
-- 2016.3.18 | pandas's pivot table. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pivot_table/pivot_table.ipynb)]
-- 2016.3.02 | @classmethod, @staticmethod and @property. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/class.ipynb)]
-- 2016.2.22 | sorting with itemgetter and attrgetter. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/sorting_with_itemgetter.ipynb)]
-- 2016.2.19 | for .. else .. statement. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/for_else.ipynb)] 
-- 2016.2.18 | namedtuple and defaultdict. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/collections_module.ipynb)]
+- 2016.06.22 | pandas's category type. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas_category.ipynb)]
+- 2016.06.10 | unittest. [[python code](https://github.com/ethen8181/machine-learning/blob/master/python/test.py)]
+- 2016.04.26 | Some pre-implemented data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
+- 2016.04.26 | Tricks with strings and text. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/2_strings_and_text.ipynb)]
+- 2016.04.17 | python's decorators (useful script for logging and timing function). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/decorators/decorators.ipynb)]
+- 2016.03.18 | pandas's pivot table. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pivot_table/pivot_table.ipynb)]
+- 2016.03.02 | @classmethod, @staticmethod and @property. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/class.ipynb)]
+- 2016.02.22 | sorting with itemgetter and attrgetter. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/sorting_with_itemgetter.ipynb)]
+- 2016.02.19 | for .. else .. statement. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/for_else.ipynb)] 
+- 2016.02.18 | namedtuple and defaultdict. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/collections_module.ipynb)]
 
 
 #### R
 
-- 2016.4.15 | data.table joining and other tricks. [[R markdown](http://ethen8181.github.io/machine-learning/R/data_table/data_table.html)]
+- 2016.04.15 | data.table joining and other tricks. [[R markdown](http://ethen8181.github.io/machine-learning/R/data_table/data_table.html)]
 
 
