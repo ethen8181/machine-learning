@@ -3,8 +3,8 @@
 @import url('http://fonts.googleapis.com/css?family=Vollkorn');
 @import url('http://fonts.googleapis.com/css?family=Arimo');
 @import url('http://fonts.googleapis.com/css?family=Fira_sans');
-
-    div.cell{
+    
+    div.cell {
         width: 1000px;
         margin-left: 0% !important;
         margin-right: auto;
@@ -16,7 +16,7 @@
         font-size: 12pt;
         font-style: bold;
         font-family:  'Source Code Pro', Consolas, monocco, monospace;
-   }
+    }
     h1 {
         font-family: 'Open sans',verdana,arial,sans-serif;
 	}
@@ -99,20 +99,10 @@
         text-align:justify;
         text-justify:inter-word;
     }
-    div.output_subarea.output_text.output_pyout {
-        overflow-x: auto;
-        overflow-y: scroll;
-        max-height: 50000px;
-    }
-    div.output_subarea.output_stream.output_stdout.output_text {
-        overflow-x: auto;
-        overflow-y: scroll;
-        max-height: 50000px;
-    }
     div.output_wrapper{
         margin-top:0.2em;
         margin-bottom:0.2em;
-}
+    }
 
     code{
       font-size: 70%;
