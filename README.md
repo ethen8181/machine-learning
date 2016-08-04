@@ -19,21 +19,24 @@ Data Science is Software | SciPy 2016 Tutorial. Best practices for doing data sc
 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
 
+
 #### deep_learning : 2016.07.23
 
 Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some network without having to worry about backpropagation.
 
 - Softmax regression from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb)]
-- Softmax regression using Tensorflow (includes Tensorflow hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_softmax.ipynb)]
-- Multi-layers neural network using Tensorflow. (includes some neural network tips and tricks). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tensorflow_nn.ipynb)]
+- Softmax regression using Tensorflow (includes Tensorflow hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax_tensorflow.ipynb)]
+- Multi-layers neural network using Tensorflow. (includes some neural network tips and tricks). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/nn_tensorflow.ipynb)]
+- Convolutional neural network (for image). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/cnn.ipynb)]
 
 
 #### keras : 2016.06.29
 
 Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a api walkthrough, NOT a tutorial on the details of deep learning.
 
-- Multi-layers neural network using keras (basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/1_basic_intro.ipynb)]
-- Multi-layers neural network hyperparameter tuning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/2_hyperparameter_tuning.ipynb)]
+- Multi-layers neural network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
+- Multi-layers neural network hyperparameter tuning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
+- Convolutional neural network (for image). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_keras.ipynb)]
 
 
 #### text_classification : 2016.06.15
