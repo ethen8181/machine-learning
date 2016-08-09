@@ -59,24 +59,22 @@
     }
 
     h1 {
-        font-size: 1.5rem !important;
-        font-weight: 300 !important;
-         !important;
+        font-size: 2rem !important;
+        font-weight: 500 !important;
         letter-spacing: 3px !important;
         text-transform: uppercase !important;
     }
 
     h2 {
-        font-size: 1rem !important;
-        font-weight: 500 !important;
-         !important;
+        font-size: 1.8rem !important;
+        font-weight: 400 !important;
         letter-spacing: 3px !important;
         text-transform: none !important;
     }
 
     h3 {
-        font-size: 1rem !important;
-        font-weight: 300 !important;
+        font-size: 1.5rem !important;
+        font-weight: 400 !important;
         font-style: italic !important;
         display: block !important;
     }
@@ -85,7 +83,7 @@
     h5,
     h6 {
         font-size: 1rem !important;
-        font-weight: 500 !important;
+        font-weight: 400 !important;
         display: block !important;
     }
 
@@ -202,15 +200,6 @@
         border: thin solid #CF5804;
     }
 
-    div.text_cell_render,
-    div.output_html {
-        ;
-    }
-
-    span.ansiblack {
-        ;
-    }
-
     span.ansiblue {
         color: #00A397;
     }
@@ -245,7 +234,6 @@
 
     .cm-s-ipython.CodeMirror {
         background: #F8F8F8;
-        ;
     }
 
     .cm-s-ipython div.CodeMirror-selected {
