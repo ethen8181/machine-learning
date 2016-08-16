@@ -16,8 +16,7 @@ Within each section, documentations are listed in reverse chronological order of
 #### clustering : 2015.08.16
 
 - python:
-	- Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master//Users/ethen/machine-learning/clustering/python/topic_model/LDA.ipynb)]
-
+	- Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/python/topic_model/LDA.ipynb)]
 - R: (old post will be updated)
 	- 2015.12.8 | Contains a toy sample code of the LDA algorithm (gibbs sampling) and usage of the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning//clustering/R/topic_model/LDA.html)]
 	- 2015.11.6 |Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here). Including Calinski-Harabasz index for determine the right k (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering/R/clustering/clustering.html)]
