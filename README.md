@@ -12,6 +12,17 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+
+#### clustering : 2015.08.16
+
+- python:
+	- Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master//Users/ethen/machine-learning/clustering/python/topic_model/LDA.ipynb)]
+
+- R: (old post will be updated)
+	- 2015.12.8 | Contains a toy sample code of the LDA algorithm (gibbs sampling) and usage of the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning//clustering/R/topic_model/LDA.html)]
+	- 2015.11.6 |Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here). Including Calinski-Harabasz index for determine the right k (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering/R/clustering/clustering.html)]
+
+
 #### data_science_is_software : 2016.08.01  
 
 SciPy 2016: Data Science is Software. Best practices for doing data science (in python).
@@ -84,21 +95,13 @@ Genetic Algorithm. Math-free explanation and code from scratch.
 
 Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Since H2O provides progress bar when training the model, you’ll may see a lot of them in doc. The walkthrough does basically zero feature engineering with the example dataset as it is just browsing through its function calls and parameters.
 
-- R's API
+- R's API:
 	- h2o’s deep learning. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
 	- h2o’s gradient boosting and random forest. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
 	- h2o’s generalized linear model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
 	- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
-- Python's API
+- Python's API:
 	- h2o's deep learning, gradient boosting and random forest. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
-
-
-#### lda_1 : 2015.12.8
-
-Performing text clustering with Latent Dirichlet Allocation(LDA).
-
-- Contains a toy sample code of the algorithm (gibbs sampling) and usage of the topicmodels library.
-- View [[R markdown](http://ethen8181.github.io/machine-learning/lda_1/lda_1.html)]
 
 
 #### unbalanced : 2015.11.25
@@ -121,15 +124,6 @@ Illustrates k-shingle, Minhash and Locality Sensitive Hashing for solving the pr
 Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering.
  
 - View [[R markdown](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html)]
-
-
-#### clustering : 2015.11.6
-
-Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here).
-
-- Calinski-Harabasz index : Determine the right k (cluster number) for clustering.
-- Boostrap evaluation of the clustering result’s stability.
-- View [[R markdown](http://ethen8181.github.io/machine-learning/clustering/clustering.html)]
 
 
 #### linear_regression : 2015.10.30

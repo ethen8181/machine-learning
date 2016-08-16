@@ -1,0 +1,335 @@
+---
+title: "Latent Dirichlet Allocation Using Gibbs Sampling"
+author: "Ming-Yu Liu"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: pygments
+---
+
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(knitr)
+opts_chunk$set( message = FALSE, warning = FALSE )
+
+```
+
+
+> You can find all all the R code to this documentation [here](https://github.com/ethen8181/machine-learning/tree/master//clustering/R/topic_model/).
+
+
+Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they're on your site. 
+
+Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important. And that's where tagging comes in. Everyone’s way of thinking about things may differ ever so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.
+
+
+# Latent Dirichlet Allocation
+
+**Latent Dirichlet Allocation** (LDA) is a probabilistic topic modeling method that gives us an approach to tease out possible topics from documents that we do not know of beforehand. The key assumptions behind LDA is that each given documents is a mix of multiple topics. Given a set of documents, one can use the LDA framework to learn not only the topic mixture (distribution) that represents each document. But also word (distribution) that are associated with each topic to help understand what the topic might be referring to. 
+
+The topic distribution for each document is distributed as 
+
+$$ \theta \sim Dirichlet(\alpha) $$
+
+Where $Dirichlet(\alpha)$ denotes the Dirichlet distribution for parameter $\alpha$.
+
+The term (word) distribution on the other hand is also modeled by a Dirichlet distribution, just under a different parameter $\eta$ ( pronounced "eta", you'll see other places refer to it as $\beta$ ).
+
+$$ \phi \sim Dirichlet(\eta) $$
+
+The utmost goal of LDA is to estimate the $\theta$ and $\phi$ which is equivalent to estimate which words are important for which topic and which topics are important for a particular document, respectively.
+
+The basic idea behind the parameters for the Dirichlet distribution ( here I'm referring to the symmetrical version of the distribution, which is the general case for most LDA ) is: $\alpha$ The higher the value the more likely each document is to contain a mixture of most of the topics instead of any single topic. The same goes for $\eta$, where higher value denotes that each topic is likely to contain a mixture of most of the words and not any word specifically.
+
+There're different approaches to this algorithm, the one we'll be using is gibbs sampling. We'll use 8 short strings to represent our set of documents. The following section creates the set the documents and convert each document into word ids, where word ids is just the ids assigned to each unique word in the set of document. We're dropping the issue of stemming words, removing multiple white spaces and other common preprocessing steps when performing text mining algorithms as this is a fairly simple set of document.
+
+```{r}
+
+rawdocs <- c(
+
+	"eat turkey on turkey day holiday",
+	"i like to eat cake on holiday",
+	"turkey trot race on thanksgiving holiday",
+	"snail race the turtle",
+	"time travel space race",
+	"movie on thanksgiving",
+	"movie at air and space museum is cool movie",
+	"aspiring movie star"
+)
+docs <- strsplit( rawdocs, split = " " )
+
+# unique words
+vocab <- unique( unlist(docs) )
+
+# replace words in documents with wordIDs
+for( i in 1:length(docs) )
+	docs[[i]] <- match( docs[[i]], vocab )
+docs
+
+```
+
+A slight drawback of latent dirichlet allocation is that you have to specify the number of clusters first. In other words you have to specify the number of topics that you wish to group the set of documents into upfront ( denoted by K ). In our cases we'll use 2.
+
+The first step of the algorithm is to go through each document and randomly assign each word in the document to one of the K topics. Apart from generating this **topic assignment list**, we'll also create a **word-topic matrix**, which is the count of each word being assigned to each topic. And a **document-topic matrix**, which is the number of words assigned to each topic for each document (distribution of the topic assignment list). We'll be using the later two matrices throughout the process of the algorithm.
+
+```{r}
+
+# cluster number 
+K <- 2 
+
+# initialize count matrices 
+# @wt : word-topic matrix 
+wt <- matrix( 0, K, length(vocab) )
+colnames(wt) <- vocab
+
+# @ta : topic assignment list
+ta <- lapply( docs, function(x) rep( 0, length(x) ) ) 
+names(ta) <- paste0( "doc", 1:length(docs) )
+
+# @dt : counts correspond to the number of words assigned to each topic for each document
+dt <- matrix( 0, length(docs), K )
+
+set.seed(1234)
+for( d in 1:length(docs) )
+{ 
+	# randomly assign topic to word w
+	for( w in 1:length( docs[[d]] ) )
+	{
+		ta[[d]][w] <- sample( 1:K, 1 ) 
+
+		# extract the topic index, word id and update the corresponding cell 
+		# in the word-topic count matrix  
+		ti <- ta[[d]][w]
+		wi <- docs[[d]][w]
+		wt[ ti, wi ] <- wt[ ti, wi ] + 1    
+	}
+
+	# count words in document d assigned to each topic t
+	for( t in 1:K )
+		dt[ d, t ] <- sum( ta[[d]] == t ) 
+}
+
+# randomly assigned topic to each word
+print(ta)
+print(wt)
+print(dt)
+
+```
+
+Notice that this random assignment already gives you both the topic representations of all the documents and word distributions of all the topics, albeit not very good ones. So to improve them, we'll employ the gibbs sampling method that performs the following steps for a user-specified iteration: 
+
+For each document d, go through each word w (a double for loop). Reassign a new topic to w, where we choose topic t with the probability of word w given topic t $\times$ probability of topic t given document d, denoted by the following mathematical notations: 
+
+$$ P( z_i = j \text{ }| \text{ } z_{-i}, w_i, d_i ) 
+    = \frac{ C^{WT}_{w_ij} + \eta }{ \sum^W_{ w = 1 }C^{WT}_{wj} + W\eta } \times
+      \frac{ C^{DT}_{d_ij} + \alpha }{ \sum^T_{ t = 1 }C^{DT}_{d_it} + T\alpha }
+$$
+
+Let's try and break that down piece by piece..... 
+
+Starting from the left side of the equal sign:
+
+- **$P(z_i = j)$ :** The probability that token i is assigned to topic j.
+- **$z_{-i}$ :** Represents topic assignments of all other tokens.
+- **$w_i$ :** Word (index) of the $i_{th}$ token.
+- **$d_i$ :** Document containing the $i_{th}$ token.
+
+For the right side of the equal sign:
+
+- **$C^{WT}$ :** Word-topic matrix, the `wt` matrix we generated.
+- **$\sum^W_{ w = 1 }C^{WT}_{wj}$ :** Total number of tokens (words) in each topic.
+- **$C^{DT}$ :** Document-topic matrix, the `dt` matrix we generated.
+- **$\sum^T_{ t = 1 }C^{DT}_{d_it}$ :** Total number of tokens (words) in document i.
+- **$\eta$ :** Parameter that sets the topic distribution for the words, the higher the more spread out the words will be across the specified number of topics (K). 
+- **$\alpha$ :** Parameter that sets the topic distribution for the documents, the higher the more spread out the documents will be across the specified number of topics (K).
+- **$W$ :** Total number of words in the set of documents. 
+- **$T$ :** Number of topics, equivalent of the K we defined earlier. 
+
+It may be still confusing with all of that notations, the following section goes through the computation for one iteration. The topic of the first word in the first document is resampled as follow: The output will not be printed during the process, since it'll probably make the documentation messier.
+
+```{r}
+
+# parameters 
+alpha <- 1
+eta <- 1
+
+# initial topics assigned to the first word of the first document
+# and its corresponding word id 
+t0  <- ta[[1]][1]
+wid <- docs[[1]][1]
+
+# z_-i means that we do not include token w in our word-topic and document-topic 
+# count matrix when sampling for token w, 
+# only leave the topic assignments of all other tokens for document 1
+dt[ 1, t0 ]   <- dt[ 1, t0 ] - 1 
+wt[ t0, wid ] <- wt[ t0, wid ] - 1
+
+# Calculate left side and right side of equal sign
+left  <- ( wt[ , wid ] + eta ) / ( rowSums(wt) + length(vocab) * eta )
+right <- ( dt[ 1, ] + alpha ) / ( sum( dt[ 1, ] ) + K * alpha )
+
+# draw new topic for the first word in the first document 
+t1 <- sample( 1:K, 1, prob = left * right )
+t1
+
+```
+
+After the first iteration, the topic for the first word in the first document is updated to `r t1`. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update the topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.
+
+To conserve space, we'll put all of it into a function [`LDA1`][LDA], which takes the paramters of:
+
+- `docs` Document that have be converted to token (word) ids.
+- `vocab` Unique tokens (words) for all the document collection.
+- `K` Number of topic groups.
+- `alpha` and `eta` Distribution parameters as explained earlier.
+- `iterations` Number of iterations to run gibbs sampling to train our model.
+- Returns a list containing the final weight-topic count matrix `wt` and document-topic matrix `dt`.
+
+```{r}
+
+# define parameters
+K <- 2 
+alpha <- 1
+eta <- 0.001
+iterations <- 1000
+
+source("/Users/ethen/machine-learning/clustering/R/topic_model/LDA_functions.R")
+set.seed(4321)
+lda1 <- LDA1( docs = docs, vocab = vocab, 
+			  K = K, alpha = alpha, eta = eta, iterations = iterations )
+lda1
+
+```
+
+After we're done with learning the topics for `r iterations` iterations, we can use the count matrices to obtain the word-topic distribution and document-topic distribution.
+
+To compute the probability of word given topic:
+
+$$\phi_{ij} = \frac{C^{WT}_{ij} + \eta}{\sum^W_{ k = 1 }C^{WT}_{kj} + W\eta}$$
+
+Where $\phi_{ij}$ is the probability of word i for topic j.
+
+```{r}
+
+# topic probability of every word 
+( phi <- ( lda1$wt + eta ) / ( rowSums(lda1$wt) + length(vocab) * eta ) )
+
+```
+
+$$\theta_{dj} = \frac{C^{DT}_{dj} + \alpha}{\sum^T_{ k = 1 }C^{DT}_{dk} + T\alpha}$$
+
+Where $\theta_{dj}$ is the proportion of topic j in document d.
+
+```{r}
+
+# topic probability of every document
+( theta <- ( lda1$dt + alpha ) / ( rowSums(lda1$dt) + K * alpha ) )
+
+```
+
+Recall that LDA assumes that each document is a mixture of all topics, thus after computing the probability that each document belongs to each topic ( same goes for word & topic ) we can use this information to see which topic does each document belongs to and the more possible words that are associated with each topic.
+
+```{r}
+
+# topic assigned to each document, the one with the highest probability 
+topic <- apply( theta, 1, which.max )
+
+# possible words under each topic 
+# sort the probability and obtain the user-specified number n
+Terms <- function( phi, n )
+{
+	term <- matrix( 0, n, K )
+	for( p in 1:nrow(phi) )
+		term[ , p ] <- names( sort( phi[ p, ], decreasing = TRUE )[1:n] )
+
+	return(term)
+}
+term <- Terms( phi = phi, n = 3 )
+
+```
+
+We specified that we wanted to see the top 3 terms associated with each topic. The following section prints out the original raw document, which is grouped into `r K` groups that we specified and words that are likely to go along with each topic.
+
+```{r}
+
+list( original_text = rawdocs[ topic == 1 ], words = term[ , 1 ] )
+list( original_text = rawdocs[ topic == 2 ], words = term[ , 2 ] )
+
+```
+
+The output tells us that the first topic seems to be discussing something about movie and race , while the second is something about turkey and holiday. 
+
+After understanding the computations under the hood, we can now move on and use the R library *topicmodels* as it provides more efficient computation and other tuning parameters.
+
+Since the starting point of gibbs sampling is chosen randomly, thus it makes sense to discard the first few iteration ( also known as `burnin` periods ). Due to the fact that they most likely do not correctly reflect the properties of distribution. And another parameter is `thin`, the number of iterations ommitted during the training. This serves to prevent correlations between samples during the iteration.
+
+We'll use the `LDA` function from the *topicmodels* library to implement gibbs sampling method on the same set of raw documents and print out the result for you to compare. Note that library has a default of value of 50 / K for $\alpha$ and 0.1 for $\eta$.
+
+```{r, message=FALSE, warning=TRUE}
+
+# compare 
+library(tm)
+library(topicmodels)
+
+# @burnin : number of omitted Gibbs iterations at beginning
+# @thin : number of omitted in-between Gibbs iterations
+docs1 <- Corpus( VectorSource(rawdocs) )
+dtm <- DocumentTermMatrix(docs1)
+lda <- LDA( dtm, k = 2, method = "Gibbs", 
+	   		control = list( seed = 1234, burnin = 500, thin = 100, iter = 4000 ) )
+
+list( original_text = rawdocs[ topics(lda) == 1 ], words = terms( lda, 3 )[ , 1 ] )
+list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 ] )
+
+```
+
+Notice that after training the model for 4000 iterations and using a different $\alpha$ and $\eta$ value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
+
+
+# Reference
+
+- [LDA under the hood](http://brooksandrew.github.io/simpleblog/articles/latent-dirichlet-allocation-under-the-hood/)
+- [Why tagging matters](http://cyber.law.harvard.edu/wg_home/uploads/507/07-WhyTaggingMatters.pdf)
+- [LDA mathematical notations](https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf)
+- [Math free explanation of LDA](http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/)
+- [Explanation of LDA's hyperparameter](http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444)
+
+
+# R Session Information 
+
+```{r}
+
+sessionInfo()
+
+```
+
+[LDA]: https://github.com/ethen8181/machine-learning/blob/master/clustering/R/topic_model/LDA_functions.R
+
