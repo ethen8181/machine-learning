@@ -178,7 +178,7 @@ CHCriterion <- function( data, kmax, clustermethod, ...  )
 
 # kmeans++ explanation and source code
 # source in function Kmeanspp
-source("/Users/ethen/machine-learning/clustering/R/clustering/kmeanspp.R")
+source("/Users/ethen/machine-learning/clustering_old/clustering/kmeanspp.R")
 
 # @data          = data frame type data, matrix also works 
 # @k             = specify the number of clusters

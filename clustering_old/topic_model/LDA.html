@@ -10,7 +10,6 @@
 
 <meta name="author" content="Ming-Yu Liu" />
 
-<meta name="date" content="2016-08-16" />
 
 <title>Latent Dirichlet Allocation Using Gibbs Sampling</title>
 
@@ -117,7 +116,7 @@ pre { /* Code block */
 }
 </style>
 <blockquote>
-<p>You can find all all the R code to this documentation <a href="https://github.com/ethen8181/machine-learning/tree/master//clustering/R/topic_model/">here</a>.</p>
+<p>You can find all all the R code to this documentation <a href="https://github.com/ethen8181/machine-learning/tree/master/clustering_old/topic_model">here</a>.</p>
 </blockquote>
 <p>Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they’re on your site.</p>
 <p>Another usage of text clustering is for document organization or indexing (tagging). With the plethora amount of information available on the Internet, the topic of knowledge management has become ever so more important. And that’s where tagging comes in. Everyone’s way of thinking about things may differ ever so slightly, a team of information architects may argue for years over which word is the right term to represent a document. Tagging, on the other hand, users can use whatever term works for them ( You will be inclined to use the same tags that the majority does ). This is now a common way (e.g. on Twitter, StackOverflow) to sort relevant topics together so that they can be easily found by people of the same interested.</p>
@@ -307,7 +306,7 @@ t1 &lt;-<span class="st"> </span><span class="kw">sample</span>( <span class="dv
 t1</code></pre></div>
 <pre><code>## [1] 2</code></pre>
 <p>After the first iteration, the topic for the first word in the first document is updated to 2. Hopefully, that is clears out the confusing of all those mathematical notations. We can now apply the whole thing to a user-specified iteration. Just remember after drawing the new topic we also have to update the topic assignment list with newly sampled topic for token w; re-increment the word-topic and document-topic count matrices with the new sampled topic for token w.</p>
-<p>To conserve space, we’ll put all of it into a function <a href="https://github.com/ethen8181/machine-learning/blob/master/clustering/R/topic_model/LDA_functions.R"><code>LDA1</code></a>, which takes the paramters of:</p>
+<p>To conserve space, we’ll put all of it into a function <a href="https://github.com/ethen8181/machine-learning/blob/master/clustering_old/topic_model/LDA_functions.R"><code>LDA1</code></a>, which takes the paramters of:</p>
 <ul>
 <li><code>docs</code> Document that have be converted to token (word) ids.</li>
 <li><code>vocab</code> Unique tokens (words) for all the document collection.</li>
@@ -322,7 +321,7 @@ alpha &lt;-<span class="st"> </span><span class="dv">1</span>
 eta &lt;-<span class="st"> </span><span class="fl">0.001</span>
 iterations &lt;-<span class="st"> </span><span class="dv">1000</span>
 
-<span class="kw">source</span>(<span class="st">&quot;/Users/ethen/machine-learning/clustering/R/topic_model/LDA_functions.R&quot;</span>)
+<span class="kw">source</span>(<span class="st">&quot;/Users/ethen/machine-learning/clustering_old/topic_model/LDA_functions.R&quot;</span>)
 <span class="kw">set.seed</span>(<span class="dv">4321</span>)
 lda1 &lt;-<span class="st"> </span><span class="kw">LDA1</span>( <span class="dt">docs =</span> docs, <span class="dt">vocab =</span> vocab, 
               <span class="dt">K =</span> K, <span class="dt">alpha =</span> alpha, <span class="dt">eta =</span> eta, <span class="dt">iterations =</span> iterations )
@@ -498,7 +497,7 @@ lda &lt;-<span class="st"> </span><span class="kw">LDA</span>( dtm, <span class=
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
 <p class="author"><span class="glyphicon glyphicon-user"></span> Ming-Yu Liu</p>
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2016-08-16</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2015.12.8</p>
 </div>
 
 

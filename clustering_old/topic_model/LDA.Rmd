@@ -1,7 +1,7 @@
 ---
 title: "Latent Dirichlet Allocation Using Gibbs Sampling"
 author: "Ming-Yu Liu"
-date: "`r Sys.Date()`"
+date: "2015.12.8"
 output:
   rmdformats::readthedown:
     highlight: pygments
@@ -43,8 +43,7 @@ opts_chunk$set( message = FALSE, warning = FALSE )
 ```
 
 
-> You can find all all the R code to this documentation [here](https://github.com/ethen8181/machine-learning/tree/master//clustering/R/topic_model/).
-
+> You can find all all the R code to this documentation [here](https://github.com/ethen8181/machine-learning/tree/master/clustering_old/topic_model).
 
 Text clustering is a widely used techniques to automatically draw out patterns from a set of documents. This notion can be extended to customer segmentation in the digital marketing field. As one of its main core is to understand what drives visitors to come, leave and behave on site. One simple way to do this is by reviewing words that they used to arrive on site and what words they used ( what things they searched ) once they're on your site. 
 
@@ -221,7 +220,7 @@ alpha <- 1
 eta <- 0.001
 iterations <- 1000
 
-source("/Users/ethen/machine-learning/clustering/R/topic_model/LDA_functions.R")
+source("/Users/ethen/machine-learning/clustering_old/topic_model/LDA_functions.R")
 set.seed(4321)
 lda1 <- LDA1( docs = docs, vocab = vocab, 
 			  K = K, alpha = alpha, eta = eta, iterations = iterations )
@@ -331,5 +330,5 @@ sessionInfo()
 
 ```
 
-[LDA]: https://github.com/ethen8181/machine-learning/blob/master/clustering/R/topic_model/LDA_functions.R
+[LDA]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/topic_model/LDA_functions.R
 

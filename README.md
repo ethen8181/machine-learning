@@ -15,11 +15,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 #### clustering : 2015.08.16
 
-- python:
-	- Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/python/topic_model/LDA.ipynb)]
-- R: (old post will be updated)
-	- 2015.12.8 | Contains a toy sample code of the LDA algorithm (gibbs sampling) and usage of the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning//clustering/R/topic_model/LDA.html)]
-	- 2015.11.6 |Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here). Including Calinski-Harabasz index for determine the right k (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering/R/clustering/clustering.html)]
+- Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb)]
 
 
 #### data_science_is_software : 2016.08.01  
@@ -111,18 +107,14 @@ Choosing the optimal cutoff value for logistic regression using cost-sensitive m
 - View [[R markdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
 
 
-#### text_similarity : 2015.11.19
+#### clustering_old
 
-Illustrates k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. 
+A collection of scattered and old clustering post in R, will be updated.
 
-- View [[R markdown](http://ethen8181.github.io/machine-learning/text_similarity/text_similarity.html)]
-
-
-#### tf_idf : 2015.11.17
-
-Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering.
- 
-- View [[R markdown](http://ethen8181.github.io/machine-learning/tf_idf/tf_idf.html)]
+- 2015.12.08 | Toy sample code of the LDA algorithm (gibbs sampling) and the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/topic_model/LDA.html)]
+- 2015.11.19 | k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/text_similarity/text_similarity.html)]
+- 2015.11.17 | Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/tf_idf/tf_idf.html)]
+- 2015.11.06 | Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here). Including Calinski-Harabasz index for determine the right k (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
 
 
 #### linear_regression : 2015.10.30

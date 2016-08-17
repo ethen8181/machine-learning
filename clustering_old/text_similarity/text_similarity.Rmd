@@ -7,7 +7,35 @@ output:
     highlight: pygments
 ---
 
-> All the code (text_similarity.R) and data used in the documentation (the data folder) can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/text_similarity) folder.  
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
+> All the code text_similarity.R and data used in the documentation the data folder can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/clustering_old/text_similarity) folder.  
+
 
 # Text Similarity
 
@@ -29,7 +57,7 @@ library(dplyr)
 library(proxy)
 library(stringr)
 library(data.table)
-setwd("/Users/ethen/machine-learning/text_similarity/data")
+setwd("/Users/ethen/machine-learning/clustering_old/text_similarity/data")
 
 # read in original text 
 ( doc <- lapply( list.files(), readLines ) )

@@ -1,7 +1,7 @@
 ---
 title: "Calinski-Harabasz Index and Boostrap Evaluation with Clustering Methods"
 author: "Ming-Yu Liu"
-date: "`r Sys.Date()`"
+date: "2015.11.6"
 output:
   rmdformats::readthedown:
     highlight: pygments
@@ -43,7 +43,7 @@ opts_chunk$set( message = FALSE, warning = FALSE )
 ```
 
 
-> To follow along, all the code to the documentation can be found [here](https://github.com/ethen8181/machine-learning/tree/master/clustering/R/clustering/).
+> To follow along, all the code to the documentation can be found [here](https://github.com/ethen8181/machine-learning/tree/master/clustering_old/clustering).
 
 When working with k-means and hierarchichal clustering (this documentation assumes that you're familiar with these two algorithms), Calinski-Harabasz index and boostrap evaluation are two useful functions. The former is a kind of estimate that can help us chooses the proper clustering number before performing the algorithm. The later is used for evaulating the stability of the clustering result. 
 
@@ -55,7 +55,7 @@ Here we use the built-in mtcars dataset as an example. Note that for clustering 
 ```{r, message=FALSE, warning=FALSE}
 
 # source in the functions 
-source("/Users/ethen/machine-learning/clustering/R/clustering/clustering_functions.R")
+source("/Users/ethen/machine-learning/clustering_old/clustering/clustering_functions.R")
 
 # example dataset, 
 # also remove the row.names or else will produce trivial warnings for later functions
@@ -85,7 +85,7 @@ So here we'll be using two measures, the **Calinski-Harabasz Index**, or known a
 
 - `data` Quite straightfoward, your dataset. data.frame or matrix type data will both work.
 - `kmax` Maximum cluster number, caculates both measures from 2 cluster to kmax cluster (clustering the data into 1 cluster is the same as performing no clustering, therefore its measures are ommitted).   
-- `clustermethod` Specify either "hclust" or "kmeanspp" for calculating the measures for heirarchichal or kmeans++ clustering. For those of you who are not famaliar with kmeans++, it is a simple algorithm built on top of kmeans so that it can generate a better k initial random center. You can refer to this [link](https://github.com/ethen8181/machine-learning/blob/master/clustering/kmeanspp.R) for some unformal explanation of how it works and the simple code to the algorithm. If it's still unclear then perhaps google is your best friend. Note that under the hood, the helper function that we've sourced in also source in the [`Kmeanspp`][Kmeanspp] function from another script. 
+- `clustermethod` Specify either "hclust" or "kmeanspp" for calculating the measures for heirarchichal or kmeans++ clustering. For those of you who are not famaliar with kmeans++, it is a simple algorithm built on top of kmeans so that it can generate a better k initial random center. You can refer to this [link](https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/kmeanspp.R) for some unformal explanation of how it works and the simple code to the algorithm. If it's still unclear then perhaps google is your best friend. Note that under the hood, the helper function that we've sourced in also source in the [`Kmeanspp`][Kmeanspp] function from another script. 
 - `...` After specifying the "clustermethod", you can pass in other parameters into the R "hclust" and "kmeans" function. Please refer to the help page (?hclust or ?kmeans in R) for more information.
 - The function returns a list consisting of:
     - data : Data frame of three columns, consisting of cluster number from 2 to the specified kmax and its corresponding value for both measures, each in one column.
@@ -161,7 +161,7 @@ Here we'll use the "kmeanspp" as our `clustermethod` so we can demonstrate some 
 boot_clust <- ClusterBootstrap( 
      data = mtcars_scaled, 
      k = 4, 
-     bootstrap = 100, 
+     bootstrap = 150, 
      clustermethod = "kmeanspp", 
      nstart = 10, 
      iter.max = 100
@@ -177,7 +177,7 @@ boot_clust$bootdissolved
 
 ```
 
-From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster 3 has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
+From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster `r which.max(boot_clust$bootdissolved)` has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
 
 # Reference 
@@ -194,8 +194,8 @@ sessionInfo()
 
 ```
 
-[ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering/R/clustering/clustering_functions.R
-[CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering/R/clustering/clustering_functions.R
-[Kmeanspp]: https://github.com/ethen8181/machine-learning/blob/master/clustering/R/clustering/kmeanspp.R
+[ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/clustering_functions.R
+[CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/clustering_functions.R
+[Kmeanspp]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/kmeanspp.R
 
 
