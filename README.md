@@ -15,6 +15,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 #### clustering : 2015.08.16
 
+- TF-IDF (text frequency - inverse document frequency). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/TFIDF.ipynb)]
 - Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb)]
 
 

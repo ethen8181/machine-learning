@@ -138,14 +138,7 @@ doc &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&q
           <span class="st">&quot;The sun in the sky is bright.&quot;</span>, <span class="st">&quot;We can see the shining sun, the bright sun.&quot;</span> )</code></pre></div>
 <div id="tf-term-frequency" class="section level2">
 <h2>TF Term Frequency</h2>
-<p>The first part of the formula <span class="math inline">\(tf( t, d )\)</span> is simply to calculate the number of times each word appeared in each document.</p>
-<p><span class="math display">\[ tf( t, d ) =
-  \begin{cases}
-    1 &amp; \text{, if } t \text{ occurs in d}\\
-    0 &amp; \text{, otherwise}\\
-  \end{cases}
-\]</span></p>
-<p>Of course, as with common text mining methods: stop words like “a”, “the”, punctuation marks will be removed beforehand and words will all be converted to lower cases.</p>
+<p>The first part of the formula <span class="math inline">\(tf( t, d )\)</span> is simply to calculate the number of times each word appeared in each document. Of course, as with common text mining methods: stop words like “a”, “the”, punctuation marks will be removed beforehand and words will all be converted to lower cases.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># create term frequency matrix using functions from tm library</span>
 doc_corpus &lt;-<span class="st"> </span><span class="kw">Corpus</span>( <span class="kw">VectorSource</span>( doc ) )
 control_list &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">removePunctuation =</span> <span class="ot">TRUE</span>, <span class="dt">stopwords =</span> <span class="ot">TRUE</span>, <span class="dt">tolower =</span> <span class="ot">TRUE</span> )

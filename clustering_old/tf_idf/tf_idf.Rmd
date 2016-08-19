@@ -60,16 +60,7 @@ doc <- c( "The sky is blue.", "The sun is bright today.",
 
 ## TF Term Frequency
 
-The first part of the formula $tf( t, d )$ is simply to calculate the number of times each word appeared in each document.
-
-$$ tf( t, d ) =
-  \begin{cases}
-    1 & \text{, if } t \text{ occurs in d}\\
-    0 & \text{, otherwise}\\
-  \end{cases}
-$$
-
-Of course, as with common text mining methods: stop words like "a", "the", punctuation marks will be removed beforehand and words will all be converted to lower cases. 
+The first part of the formula $tf( t, d )$ is simply to calculate the number of times each word appeared in each document. Of course, as with common text mining methods: stop words like "a", "the", punctuation marks will be removed beforehand and words will all be converted to lower cases. 
 
 ```{r} 
 
