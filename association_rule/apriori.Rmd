@@ -1,0 +1,136 @@
+---
+title: "Association Rules"
+author: "Ming-Yu Liu"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: pygments
+---
+
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+
+> To follow along, code (apriori.R) and dataset (titanic.raw.rdata) can be found in this [link](https://github.com/ethen8181/machine-learning/tree/master/association)
+
+The goal of unsupervised learning is to discover previously unknown patterns (easy) that are also interesting (more challenging) from data. In most cases unsupervised learning isn’t strong enough to provide much value alone, but can provide value for knowledge discovery in highly exploratory settings. Particularly knowledge discovery of data quirks and structure. **Association analysis** is one branch of unsupervised learning that takes the form of "When X occurs, Y also occurs Z% of the time". While generating rules is a straightforward procedure that requires little to no knowledge of the underlying data, post-processing large collection of rules to identify the interesting and valid ones often requires a lot more effort.
+
+
+# Association Rules with Tabular Data
+
+In market basket analysis problems, association rules can be useful and drive business decisions by themselves. But the same algorithm can be applied to traditional tabular data (spreadsheets or tables from a relational database), where each row is treated as a transaction and all transactions have the same number of items (one per column). Items are represented by the variable name and the value of that variable for the given row. For example, one row from a five column dataset of students could be represented as: {finalMathGrade=B, eyeColor=brown, state=Minnesota, playSports=YES, inBand=NO}. Traditional association rules run on categorical data. If a table contains continuous data of interest, it can be discretized into bins prior to conducting the analysis.
+
+This is a handy first-step approach to develop a deeper understanding of a new dataset that we're not famailiar with and inform more sophisticated analyses. As the lists of association rules is like a lists of facts about the data at hand. Here are some scenarios where these association rules can be helpful:
+
+**Learn About The Data**
+
+This is especially important if we're unfamiliar with the dataset that was given to us. In this case, rules with a perfect confidence of 1 will explain ground truths in your data that are usually indicative of business rules, which would be difficult to uncover without documentation or a domain expert. For example when column V1 takes tha value of A or B, column V5 will always equals C. Since association rules handles only categorical variables, imputation or exclusion of missing values to accommodate numerical computation is not necessary. Missing values are commonly coded as just another possible category rather than discarded.   
+
+Although most of the rules will simply expose database quality issues rather than “big picture” issues, it can be a productive first step. After generating the association rules, we can then home in on interesting rules and generate hypotheses to investigate further. Likewise, rules can always be pruned if they are uninteresting.
+
+**Learn The Domain**
+
+Association rules are often (and rightly) criticized for generating gobs of trivial and redundant rules. However, rules that are trivial to a seasoned domain expert might provide new and useful information to a data scientist jumping into a new domain. This can be used to start the conversation and knowledge sharing process between analysts, domain experts and stakeholders. We often find ourselves in the chicken-egg scenarios where domain experts ask us (the consulting data scientists) what we need to know. But we often know so little about the domain and the data context that we don’t even know how to start asking meaningful questions. Association rules can be that starting point.
+
+> In sum, association analysis can be used as a exploratory data analysis tool. We can utilize it to familiar with a dataset’s structure, its domain and generate interesting questions or hypothesis to pursue further with more sophisticated analysis.
+
+
+# Apriori with R
+
+We'll use the the Titanic dataset as our toy dataset. This is a 4-dimensional
+table with summarized information on the fate of passengers (survival) on the Titanic according to their social class, sex, age.
+
+```{r, message=FALSE, warning=FALSE}
+
+library(DT) # for interactive data frame
+library(arules)
+library(data.table)
+
+# load in the data and convert it to 
+# a transactions class (so apriori can use it)
+load('titanic.raw.rdata')
+dt <- data.table(titanic.raw)
+titanic <- as( dt, 'transactions' )
+
+# we can do a summary on the item frequency to 
+# get a sense of the threshold we should set for
+# the support
+summary( itemFrequency(titanic) )
+
+```
+
+`apriori` takes a transaction class data or any data format that can be transformed to it (e.g. data.frame or matrix), and a parameter argument that takes a list of arguments to specify the parameter for the algorithm.
+
+```{r}
+
+# train apriori
+rules <- apriori( 
+    titanic,
+
+	# the min/max len denotes the min/max number of items in a itemset
+	parameter = list( support = 0.05, confidence = 0.7, minlen = 2, maxlen = 5 ),
+    
+    # for appearance we can specify we only want rules with rhs 
+    # containing "Survived" only (we then specfiy the default parameter
+    # to 'lhs' to tell the algorithm that every other variables that
+    # has not been specified can go in the left hand side
+    appearance = list( rhs = c( 'Survived=No', 'Survived=Yes' ), default = 'lhs' ),
+
+	# don't print the algorthm's training message
+	control = list( verbose = FALSE )
+)
+
+```
+
+After training the algorithm, we convert the rules' info, such as left and right hand side, and all the quality measures, including support, confidence and lift a to data.table (also sort the row order by lift). If you only want to print out the rules' info (without converting it into a data.frame or a data.table) there's also a function called `inspect(rules)`.
+
+```{r}
+
+# http://stackoverflow.com/questions/25730000/converting-object-of-class-rules-to-data-frame-in-r
+rules_dt <- data.table( lhs = labels( lhs(rules) ), 
+                        rhs = labels( rhs(rules) ), 
+                        quality(rules) )[ order(-lift), ]
+
+DT::datatable(rules_dt)
+
+```
+
+Looking at the first row of the rules' data.table, we can immediately infer that Female passengers from 1st Class has a high chance of surviving the titanic accident (confidence is nearly 1 and the lift measure is also positive).
+
+
+# R Session Info
+
+```{r}
+
+sessionInfo()
+
+```
+
+
+# Reference
+
+- [Blog: Association rule analysis beyond transaction data](http://brooksandrew.github.io/simpleblog/articles/association-rules-beyond-transactional-data/)
+- [RDataMining slides: Association Rule Mining](http://www.rdatamining.com/docs/association-rule-mining-with-r)
