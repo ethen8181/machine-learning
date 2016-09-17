@@ -16,7 +16,7 @@ Within each section, documentations are listed in reverse chronological order of
 #### association_rule : 2015.09.16
 
 - Apriori from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/association_rule/association_rule.ipynb)]
-- Using R's arules package (aprori) on tabular data. [[R markdown](http://ethen8181.github.io/machine-learning/association_rule/apriori.html)]
+- Using R's arules package (aprori) on tabular data. [[R markdown](http://ethen8181.github.io/machine-learning/association_rule/R/apriori.html)]
 
 
 #### clustering : 2015.08.16

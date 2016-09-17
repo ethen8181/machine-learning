@@ -10,7 +10,7 @@
 
 <meta name="author" content="Ming-Yu Liu" />
 
-<meta name="date" content="2016-09-16" />
+<meta name="date" content="2016-09-17" />
 
 <title>Association Rules</title>
 
@@ -123,7 +123,7 @@ pre { /* Code block */
 }
 </style>
 <blockquote>
-<p>To follow along, code (apriori.R) and dataset (titanic.raw.rdata) can be found in this <a href="https://github.com/ethen8181/machine-learning/tree/master/association">link</a></p>
+<p>To follow along, code (apriori.R) and dataset (titanic.raw.rdata) can be found in this <a href="https://github.com/ethen8181/machine-learning/tree/master/association_rule/R">link</a></p>
 </blockquote>
 <p>The goal of unsupervised learning is to discover previously unknown patterns (easy) that are also interesting (more challenging) from data. In most cases unsupervised learning isn’t strong enough to provide much value alone, but can provide value for knowledge discovery in highly exploratory settings. Particularly knowledge discovery of data quirks and structure. <strong>Association analysis</strong> is one branch of unsupervised learning that takes the form of “When X occurs, Y also occurs Z% of the time”. While generating rules is a straightforward procedure that requires little to no knowledge of the underlying data, post-processing large collection of rules to identify the interesting and valid ones often requires a lot more effort.</p>
 <div id="association-rules-with-tabular-data" class="section level1">
@@ -182,8 +182,8 @@ rules_dt &lt;-<span class="st"> </span><span class="kw">data.table</span>( <span
                         <span class="kw">quality</span>(rules) )[ <span class="kw">order</span>(-lift), ]
 
 DT::<span class="kw">datatable</span>(rules_dt)</code></pre></div>
-<div id="htmlwidget-9985" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9985">{"x":{"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"],["{Class=1st,Sex=Female}","{Class=1st,Sex=Female,Age=Adult}","{Sex=Female,Age=Adult}","{Sex=Female}","{Class=2nd,Sex=Male,Age=Adult}","{Class=2nd,Sex=Male}","{Class=3rd,Sex=Male,Age=Adult}","{Class=3rd,Sex=Male}","{Sex=Male,Age=Adult}","{Sex=Male}","{Class=Crew,Sex=Male}","{Class=Crew,Sex=Male,Age=Adult}","{Class=Crew}","{Class=Crew,Age=Adult}","{Class=3rd,Age=Adult}","{Class=3rd}"],["{Survived=Yes}","{Survived=Yes}","{Survived=Yes}","{Survived=Yes}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}"],[0.0640617900954112,0.0636074511585643,0.143571104043617,0.156292594275329,0.0699681962744207,0.0699681962744207,0.175829168559746,0.191731031349387,0.603816447069514,0.619718309859155,0.304407087687415,0.304407087687415,0.305770104497955,0.305770104497955,0.216265333939119,0.239890958655157],[0.972413793103448,0.972222222222222,0.743529411764706,0.731914893617021,0.916666666666667,0.860335195530726,0.837662337662338,0.827450980392157,0.797240551889622,0.787983824378972,0.777262180974478,0.777262180974478,0.76045197740113,0.76045197740113,0.759170653907496,0.747875354107649],[3.01024297977593,3.00964994530395,2.30169934640523,2.26574498009995,1.35408277404922,1.27087098346519,1.23737906388913,1.2222950388209,1.1776687615497,1.1639948976229,1.14815708746633,1.14815708746633,1.12332537064422,1.12332537064422,1.12143262365799,1.10474741905432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>lhs\u003c/th>\n      <th>rhs\u003c/th>\n      <th>support\u003c/th>\n      <th>confidence\u003c/th>\n      <th>lift\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"callback":null,"filter":"none","selection":"multiple"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-2816" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2816">{"x":{"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"],["{Class=1st,Sex=Female}","{Class=1st,Sex=Female,Age=Adult}","{Sex=Female,Age=Adult}","{Sex=Female}","{Class=2nd,Sex=Male,Age=Adult}","{Class=2nd,Sex=Male}","{Class=3rd,Sex=Male,Age=Adult}","{Class=3rd,Sex=Male}","{Sex=Male,Age=Adult}","{Sex=Male}","{Class=Crew,Sex=Male}","{Class=Crew,Sex=Male,Age=Adult}","{Class=Crew}","{Class=Crew,Age=Adult}","{Class=3rd,Age=Adult}","{Class=3rd}"],["{Survived=Yes}","{Survived=Yes}","{Survived=Yes}","{Survived=Yes}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}","{Survived=No}"],[0.0640617900954112,0.0636074511585643,0.143571104043617,0.156292594275329,0.0699681962744207,0.0699681962744207,0.175829168559746,0.191731031349387,0.603816447069514,0.619718309859155,0.304407087687415,0.304407087687415,0.305770104497955,0.305770104497955,0.216265333939119,0.239890958655157],[0.972413793103448,0.972222222222222,0.743529411764706,0.731914893617021,0.916666666666667,0.860335195530726,0.837662337662338,0.827450980392157,0.797240551889622,0.787983824378972,0.777262180974478,0.777262180974478,0.76045197740113,0.76045197740113,0.759170653907496,0.747875354107649],[3.01024297977593,3.00964994530395,2.30169934640523,2.26574498009995,1.35408277404922,1.27087098346519,1.23737906388913,1.2222950388209,1.1776687615497,1.1639948976229,1.14815708746633,1.14815708746633,1.12332537064422,1.12332537064422,1.12143262365799,1.10474741905432]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> \u003c/th>\n      <th>lhs\u003c/th>\n      <th>rhs\u003c/th>\n      <th>support\u003c/th>\n      <th>confidence\u003c/th>\n      <th>lift\u003c/th>\n    \u003c/tr>\n  \u003c/thead>\n\u003c/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"callback":null,"filter":"none","selection":"multiple"},"evals":[],"jsHooks":[]}</script>
 <p>Looking at the first row of the rules’ data.table, we can immediately infer that Female passengers from 1st Class has a high chance of surviving the titanic accident (confidence is nearly 1 and the lift measure is also positive).</p>
 </div>
 <div id="r-session-info" class="section level1">
@@ -225,7 +225,7 @@ DT::<span class="kw">datatable</span>(rules_dt)</code></pre></div>
 
 <div id="postamble" data-toggle="wy-nav-shift" class="status">
 <p class="author"><span class="glyphicon glyphicon-user"></span> Ming-Yu Liu</p>
-<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2016-09-16</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> 2016-09-17</p>
 </div>
 
 

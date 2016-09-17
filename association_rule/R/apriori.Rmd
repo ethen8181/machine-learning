@@ -34,7 +34,7 @@ pre { /* Code block */
 }
 </style>
 
-> To follow along, code (apriori.R) and dataset (titanic.raw.rdata) can be found in this [link](https://github.com/ethen8181/machine-learning/tree/master/association)
+> To follow along, code (apriori.R) and dataset (titanic.raw.rdata) can be found in this [link](https://github.com/ethen8181/machine-learning/tree/master/association_rule/R)
 
 The goal of unsupervised learning is to discover previously unknown patterns (easy) that are also interesting (more challenging) from data. In most cases unsupervised learning isn’t strong enough to provide much value alone, but can provide value for knowledge discovery in highly exploratory settings. Particularly knowledge discovery of data quirks and structure. **Association analysis** is one branch of unsupervised learning that takes the form of "When X occurs, Y also occurs Z% of the time". While generating rules is a straightforward procedure that requires little to no knowledge of the underlying data, post-processing large collection of rules to identify the interesting and valid ones often requires a lot more effort.
 
