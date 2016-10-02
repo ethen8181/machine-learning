@@ -8,10 +8,10 @@ output:
 ---
 
 <style type="text/css">
-p{ /* Normal  */
+p { /* Normal  */
    font-size: 18px;
 }
-body{ /* Normal  */
+body { /* Normal  */
    font-size: 18px;
 }
 td {  /* Table  */
@@ -401,7 +401,7 @@ A high t-value indicates that we should keep the corresponding feature in our fi
 
 ## p-value
 
-Probably one of the most importatnt indicators. The first concept to calculate this value is the degrees of freedom. You can think of it as the number of training data you have left considering the number of coefficients you wish to solve. Which happens to be the number of observations in our training data minus the model coefficient's total count. 
+Probably one of the most important indicators. In order to compute this value, the first concept that we need to have is the degrees of freedom. You can think of it as the number of training data you have left considering the number of coefficients you wish to solve. Which happens to be the number of observations in our training data minus the model coefficient's total count. 
 
 Back to the **p-value**. This is a value that turns the t-value into probabilities that tells us: How likely should our coefficient be zero instead of the current value that we've estimated? Or in a sense what is the probability of our t-value being larger or smaller than the ones that our model estimated?  
 
