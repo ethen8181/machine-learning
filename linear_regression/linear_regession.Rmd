@@ -1,6 +1,6 @@
 ---
 title: 'Gradient Descent with Linear Regression'
-author: "Ming-Yu Liu"
+author: "Ming-Yu (Ethen) Liu"
 date: "October 30, 2015"
 output:
   rmdformats::readthedown:
@@ -510,7 +510,7 @@ Interpretation of the plot :
 
 - **Upper Left:** Visualizes value predicted by your model versus the actual value of your original data. If the model is considered to a good estimate of the outcome,  there should be strong correlation between the model’s predictions and its actual results, the line should be a close fit to y = x, going from bottom left to upper right.
 - **Upper Right:** Visualizes the cooks distance and the predicted value. Cooks distance is a measurement that goes with linear models. The rule of thumb is, if a data point's cook distance larger than 1 or larger than the 4 / number of data, then that data point is considered to be a possible outlier.
-- **Bottom Left:** Visualizes the residuals or your model's predicted value. Ideally your plot of the residuals should be symmetrically distributed around the lower digits of the y-axis, with no clear patterns what so ever. Meaning your residuals should not be larger or smaller in a specific range. If there're patterns detected, it could indicate the current input features that you're providing does not have a linear relationship with the output. Or there're still variance in the output that we did not capture and should add new input variables.
+- **Bottom Left:** Visualizes the residuals and the linear model’s predicted value. Ideally, the residuals should be symmetrically distributed around the lower digits of the y-axis, with no clear patterns what so ever. Meaning it should not be larger or smaller in a specific range. If there’re patterns detected, it could indicate the current input features does not have a linear relationship with the output. Or there’re still variance in the output that we did not capture and new input variables should be added.
 - **Bottom Right:** Visualizes a QQ plot of the residuals. This is way of checking whether there's patterns for your residuals. The plot will be very close to the y = x straight line if the residuals is a close approximation to a normal distribution, which is the ideal scenario. 
 
 As you can see this function will also color the outliers for you if it is detected by the cooks distance measurement ( If no outlier is detected then the plot will be single colored ). And the will return the indices of the possible outliers.
