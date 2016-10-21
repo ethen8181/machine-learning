@@ -527,9 +527,9 @@ This suggests that data point `r lm_plot$outlier` from our data are possible out
 
 Feature selection is an extremely important task for every single statistical (machine learning) models. 
 
-One common notions is that we should remove variables that have linear relationships with other variables as after obtaining one of them, you can use the relationship to trace back the result of the other. As that being said, collinearity is a property that denotes when two features are approximately in a linear relationship. A commonly seen illustration of collinearity is when seeing coefficients with an unexpected sign in your model. e.g. you obtain a negative coefficient on educational background for a linear model that predicts income, which does not match our intuition.
+One common notions is that we should remove variables that have linear relationships with other variables as after obtaining one of them, you can use the relationship to trace back the result of the other. With that being said, collinearity is a property that denotes when two features are approximately in a linear relationship. A commonly seen illustration of collinearity is when seeing coefficients with an unexpected sign in your model. e.g. you obtain a negative coefficient on educational background for a linear model that predicts income, which does not match our intuition.
 
-One simple approach to identify collinearity among input variables is the use of variance inflation factors (VIF). The score for each input variable is obtained by fitting a linear regression model in which we treat each of the features as the output feature and all the remaining features as regular input features. Then compute VIF for our chosen feature using the formula: 
+One simple approach to identify collinearity among input variables is the use of **variance inflation factors (VIF)**. The score for each input variable is obtained by fitting a linear regression model in which we treat each of the features as the output feature and all the remaining features as regular input features. Then compute VIF for our chosen feature using the formula: 
 
 $$ VIF = \frac{1}{1 – R^2} $$
 
