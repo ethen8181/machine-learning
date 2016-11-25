@@ -388,7 +388,7 @@ A ideal linear model's residual should have a mean of 0, median near 0 and the 1
 
 Before training the model each input variable has a coefficient of 0 with respect to the output ( indicating no linear relationship ) . The term **t-value** measures how many standard deviation is our estimated coefficient away from the original value of 0. The calculation is basically to divide our coefficient estimate by our standard error. It's actually ( coefficient - 0 ) / standard error, since the baseline assumption is 0 but the minus 0 is dropped since it doesn't affect the outcome. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(broom)
 ( coefficient <- broom::tidy(model) )
 

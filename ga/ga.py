@@ -48,7 +48,7 @@ class GA:
 		
 		# randomly generate the initial population, and evaluate its cost
 		array_size = self.pop_size, self.chromo_size
-		pop = np.random.random_integers( self.low, self.high, array_size )
+		pop = np.random.randint( self.low, self.high + 1, array_size )
 		graded_pop = self._compute_cost( pop, target )
 
 		# store the best chromosome and its cost for each generation,

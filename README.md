@@ -4,8 +4,8 @@ This is one of the continuously updated repositories that documents my own perso
 
 | Repository | Documentation Focus |
 | ---------- | ----------- |
-| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / python. |
-| [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations. |
+| [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / Python |
+| [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations |
 
 Within each section, documentations are listed in reverse chronological order of the start date and each of them are independent of one another unless specified.
 
@@ -21,15 +21,17 @@ Within each section, documentations are listed in reverse chronological order of
 
 #### clustering : 2015.08.16
 
+TF-IDF and Topic Modeling are techniques that are specifically for text analytics.
+
 - TF-IDF (text frequency - inverse document frequency). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/TFIDF.ipynb)]
-- Kmeans, Kmeans++ from scratch; Elbow method for choosing K. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/kmeans.ipynb)]
-- Gaussian Mixture Model from scratch; AIC and BIC for choosing the number of guassians. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/GMM/GMM.ipynb)]
+- K-means, K-means++ from scratch; Elbow method for choosing K. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/kmeans.ipynb)]
+- Gaussian Mixture Model from scratch; AIC and BIC for choosing the number of Gaussians. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/GMM/GMM.ipynb)]
 - Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb)]
 
 
 #### data_science_is_software : 2016.08.01  
 
-SciPy 2016: Data Science is Software. Best practices for doing data science (in python).
+SciPy 2016: Data Science is Software. Best practices for doing data science (in Python).
 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
 
@@ -79,15 +81,6 @@ Regularization techniques: ridge and lasso regression.
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
 
 
-#### santander : 2016.05.16 (will come back to this in the future)
-
-Kaggle competition on predicting customer satisfaction. The goal is to familiarize myself with python's xgboost and H2O's API. Note that the script's auc store 0.823068 is still far off from the best score for the competition, 0.829072.
-
-- Includes scripts for performing cross validation with xgboost; Obtaining feature importance, saving and loading the model for xgboost and H2O. Details are commented in the following notebooks. 
-- Data preprocessing and xgboost. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/run_me.ipynb)]
-- H2O's randomforest and gradient boosting on the already preprocessed data. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/santander/h2o.ipynb)]
-
-
 #### ga : 2016.04.25
 
 Genetic Algorithm. Math-free explanation and code from scratch.
@@ -124,7 +117,7 @@ A collection of scattered old clustering documents in R.
 - 2015.12.08 | Toy sample code of the LDA algorithm (gibbs sampling) and the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/topic_model/LDA.html)]
 - 2015.11.19 | k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/text_similarity/text_similarity.html)]
 - 2015.11.17 | Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/tf_idf/tf_idf.html)]
-- 2015.11.06 | Some useful evaluations when working with hierarchical clustering and k-means clustering (k-means++ is used here). Including Calinski-Harabasz index for determine the right k (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
+- 2015.11.06 | Some useful evaluations when working with hierarchical clustering and K-means clustering (K-means++ is used here). Including Calinski-Harabasz index for determine the right K (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
 
 
 #### linear_regression : 2015.10.30
