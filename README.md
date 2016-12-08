@@ -12,8 +12,13 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+#### trees : 2015.12.08
+
+- Xgboost API walkthrough (includes hyperparmeter tuning via scikit-learn API). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb)]
 
 #### association_rule : 2015.09.16
+
+Also known as market-basket analysis.
 
 - Apriori from scratch (including use cases). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/association_rule/apriori.ipynb)]
 - Using R's arules package (aprori) on tabular data. [[R markdown](http://ethen8181.github.io/machine-learning/association_rule/R/apriori.html)]
@@ -48,10 +53,10 @@ Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is use
 
 #### keras : 2016.06.29
 
-Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a api walkthrough, NOT a tutorial on the details of deep learning.
+Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a API walkthrough, NOT a tutorial on the details of deep learning.
 
 - Multi-layers neural network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
-- Multi-layers neural network hyperparameter tuning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
+- Multi-layers neural network hyperparameter tuning via scikit-learn API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
 - Convolutional neural network (image classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_image_keras.ipynb)]
 - Convolutional neural network and Glove word embedding (text classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_glove/cnn_glove.ipynb)]
 
