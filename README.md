@@ -12,8 +12,10 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
-#### trees : 2015.12.08
+#### trees : 2015.12.10
 
+- Decision tree from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb)]
+- Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)]
 - Xgboost API walkthrough (includes hyperparmeter tuning via scikit-learn API). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb)]
 
 #### association_rule : 2015.09.16
@@ -26,9 +28,9 @@ Also known as market-basket analysis.
 
 #### clustering : 2015.08.16
 
-TF-IDF and Topic Modeling are techniques that are specifically for text analytics.
+TF-IDF and Topic Modeling are techniques specifically used for text analytics.
 
-- TF-IDF (text frequency - inverse document frequency). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/TFIDF.ipynb)]
+- TF-IDF (text frequency - inverse document frequency) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/TFIDF.ipynb)]
 - K-means, K-means++ from scratch; Elbow method for choosing K. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/kmeans.ipynb)]
 - Gaussian Mixture Model from scratch; AIC and BIC for choosing the number of Gaussians. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/GMM/GMM.ipynb)]
 - Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb)]
@@ -53,7 +55,7 @@ Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is use
 
 #### keras : 2016.06.29
 
-Walking through [keras](https://github.com/fchollet/keras), a deep learning library's api. Note that this is only a API walkthrough, NOT a tutorial on the details of deep learning.
+Walking through [keras](https://github.com/fchollet/keras), a deep learning library. Note that this is only a API walkthrough, NOT a tutorial on the details of deep learning.
 
 - Multi-layers neural network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
 - Multi-layers neural network hyperparameter tuning via scikit-learn API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
