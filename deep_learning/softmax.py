@@ -30,7 +30,6 @@ class SoftmaxRegression:
 		self.minibatches = minibatches
 		self.l2 = l2
 
-
 	def fit(self, X, y):
 		data_num = X.shape[0]
 		feature_num = X.shape[1]
@@ -84,7 +83,6 @@ class SoftmaxRegression:
 		self._is_fitted = True
 		return self
 
-
 	def _one_hot_encode(self, y, class_num):
 		y_encode = np.zeros( (y.shape[0], class_num) )
 		for idx, val in enumerate(y):
@@ -92,29 +90,24 @@ class SoftmaxRegression:
 		
 		return y_encode
 
-
 	def _shuffle(self, X, y_encode, data_num):
 		permutation = np.random.permutation(data_num)
 		X, y_encode = X[permutation], y_encode[permutation]
 		return X, y_encode
 
-
 	def _net_input(self, X):
 		net = X.dot(self.w) + self.b
 		return net
-
 
 	def _softmax(self, z):
 		softm = np.exp(z) / np.sum( np.exp(z), axis = 1, keepdims = True )
 		return softm
 
-
 	def _cross_entropy_cost(self, output, y_target):
 		cross_entropy = np.mean( -np.sum( np.log(output) * y_target, axis = 1 ) )
-		l2_penalty = 0.5 * self.l2 * np.sum( self.w ** 2 )
+		l2_penalty = 0.5 * self.l2 * np.sum(self.w ** 2)
 		cost = cross_entropy + l2_penalty
 		return cost
-
 
 	def predict_proba(self, X):
 		if not self._is_fitted:
@@ -123,7 +116,6 @@ class SoftmaxRegression:
 		net = self._net_input(X)
 		softm = self._softmax(net)
 		return softm
-
 
 	def predict(self, X):
 		softm = self.predict_proba(X)
