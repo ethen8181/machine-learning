@@ -25,7 +25,7 @@ Tree-based models both regression and classification tasks.
 
 Also known as market-basket analysis.
 
-- Apriori from scratch (including use cases). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/association_rule/apriori.ipynb)]
+- Apriori from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/association_rule/apriori.ipynb)]
 - Using R's arules package (aprori) on tabular data. [[R markdown](http://ethen8181.github.io/machine-learning/association_rule/R/apriori.html)]
 
 
