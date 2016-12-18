@@ -12,6 +12,13 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+#### recsys : 2016.12.17
+
+Recommendation System.
+
+- Alternating Least Squares. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)]
+
+
 #### trees : 2016.12.10
 
 Tree-based models both regression and classification tasks.
@@ -20,6 +27,7 @@ Tree-based models both regression and classification tasks.
 - Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)]
 - Gradient Boosting from scratch. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)
 - Xgboost API walkthrough (includes hyperparmeter tuning via scikit-learn like API). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb)]
+
 
 #### association_rule : 2016.09.16
 
