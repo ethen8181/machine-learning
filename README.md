@@ -16,11 +16,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 Recommendation System.
 
-<<<<<<< HEAD
-- [Alternating Least Squares](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)
-=======
 - Alternating Least Squares. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)]
->>>>>>> master
 
 
 #### trees : 2016.12.10
