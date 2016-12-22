@@ -7,12 +7,12 @@ from Cython.Build import cythonize
 # of the application and which extensions it
 # needs to build 
 # 1. for the cython modules, we're using glob patterns
-# e.g. *.pyx for every .pyx file or simply pass in
-# the filename.pyx
+# e.g. '*.pyx' for every .pyx file or simply pass in
+# a list of the filename.pyx
 # 2. include_dirs, makes sure we can include numpy
 setup(
 	name = 'Hello',
-	ext_modules = cythonize('*.pyx'),
+	ext_modules = cythonize(['helloworld.pyx', 'pairwise1.pyx', 'pairwise2.pyx']),
 	include_dirs = [np.get_include()]
 )
 

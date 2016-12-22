@@ -1,0 +1,6 @@
+pairwise3.c
+setup_parallel.py
+pairwise3.egg-info/PKG-INFO
+pairwise3.egg-info/SOURCES.txt
+pairwise3.egg-info/dependency_links.txt
+pairwise3.egg-info/top_level.txt
