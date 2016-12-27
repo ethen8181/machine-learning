@@ -1,0 +1,12 @@
+h2o
+tqdm
+pymc
+keras
+numba
+gensim
+seaborn
+networkx
+requests
+watermark
+tensorflow
+load_dotenv
