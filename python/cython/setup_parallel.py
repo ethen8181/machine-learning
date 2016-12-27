@@ -1,4 +1,5 @@
 # usually the name should only be setup.py
+# on the terminal run
 # python setup_parallel.py install
 import os
 import sys
@@ -13,13 +14,16 @@ except ImportError:
 # top-level information
 NAME = 'pairwise3'
 VERSION = '0.0.1'
+USE_OPENMP = True
 
 
 def set_gcc(use_openmp):
     """
     try to find and use GCC on OSX for OpenMP support.
-    copied from glove-python project
-    https://github.com/maciejkula/glove-python
+    
+    Reference
+    ---------
+    https://github.com/maciejkula/glove-python/blob/master/setup.py
     """
     # For macports and homebrew
     patterns = ['/opt/local/bin/gcc-mp-[0-9].[0-9]',
@@ -41,11 +45,7 @@ def set_gcc(use_openmp):
             use_openmp = False
             logging.warning('No GCC available. Install gcc from Homebrew '
                             'using brew install gcc.')
-
     return use_openmp
-
-use_openmp = True
-use_openmp = set_gcc(use_openmp)
 
 def define_extensions(use_cython, use_openmp):
     if sys.platform.startswith('win'):
@@ -75,11 +75,11 @@ def define_extensions(use_cython, use_openmp):
         return modules
 
 
-
+USE_OPENMP = set_gcc(USE_OPENMP)
 setup(
     name = NAME,
     version = VERSION,
     description = 'pairwise distance quickstart',
-    ext_modules = define_extensions(use_cython, use_openmp)
+    ext_modules = define_extensions(use_cython, USE_OPENMP)
 )
 

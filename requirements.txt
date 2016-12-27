@@ -1,0 +1,11 @@
+h2o
+tqdm
+keras
+numba
+gensim
+seaborn
+networkx
+requests
+watermark
+tensorflow
+python-dotenv
