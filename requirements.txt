@@ -1,6 +1,5 @@
 h2o
 tqdm
-pymc
 keras
 numba
 gensim
