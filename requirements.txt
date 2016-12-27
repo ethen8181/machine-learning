@@ -9,4 +9,4 @@ networkx
 requests
 watermark
 tensorflow
-load_dotenv
+python-dotenv
