@@ -5,7 +5,7 @@
 This is one of the continuously updated repositories that documents my own personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
 | Repository | Documentation Focus |
-| ---------- | ----------- |
+| ---------- | ------------------- |
 | [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming in R / Python |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, articles, visualizations |
 
@@ -23,7 +23,7 @@ Recommendation System.
 
 #### trees : 2016.12.10
 
-Tree-based models both regression and classification tasks.
+Tree-based models for both regression and classification tasks.
 
 - Decision Tree from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb)]
 - Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)]
@@ -58,44 +58,44 @@ SciPy 2016: Data Science is Software. Best practices for doing data science (in 
 
 #### deep_learning : 2016.07.23
 
-Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some network without having to worry about backpropagation.
+Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is used to implement some of the models.
 
-- Softmax regression from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb)]
-- Softmax regression using Tensorflow (includes Tensorflow hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax_tensorflow.ipynb)]
-- Multi-layers neural network. (includes some neural network tips and tricks). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/nn_tensorflow.ipynb)]
-- Convolutional neural network. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/cnn_image_tensorflow.ipynb)]
+- Softmax Regression from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb)]
+- Softmax Regression using Tensorflow (includes Tensorflow hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax_tensorflow.ipynb)]
+- Multi-layers Neural Network. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/nn_tensorflow.ipynb)]
+- Convolutional Neural Network. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/cnn_image_tensorflow.ipynb)]
 
 
 #### keras : 2016.06.29
 
 Walking through [keras](https://github.com/fchollet/keras), a deep learning library. Note that this is only a API walkthrough, NOT a tutorial on the details of deep learning.
 
-- Multi-layers neural network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
-- Multi-layers neural network hyperparameter tuning via scikit-learn like API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
-- Convolutional neural network (image classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_image_keras.ipynb)]
-- Convolutional neural network and Glove word embedding (text classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_glove/cnn_glove.ipynb)]
+- Multi-layers Neural Network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
+- Multi-layers Neural Network hyperparameter tuning via scikit-learn like API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
+- Convolutional Neural Network (image classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_image_keras.ipynb)]
+- Convolutional Neural Network and Glove word embedding (text classification). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_glove/cnn_glove.ipynb)]
 
 
 #### text_classification : 2016.06.15
 
-Naive bayes and logistic regression for text classification.
+Naive Bayes and Logistic Regression for text classification.
 
 - Building intuition with spam classification using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics/basics.ipynb)]
-- Bernoulli and multinomial naive bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
-- Logistic regression (stochastic gradient descent) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic.ipynb)]
+- Bernoulli and Multinomial Naive Bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
+- Logistic Regression (stochastic gradient descent) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic.ipynb)]
 - Chi-square feature selection. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/chisquare.ipynb)]
 
 
 #### networkx : 2016.06.13
 
-PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's api. Includes some basic graph plotting and algorithms.
+PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's API. Includes some basic graph plotting and algorithms.
 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)]
 
 
 #### regularization : 2016.05.25
 
-Regularization techniques: ridge and lasso regression. 
+Regularization techniques: Ridge and Lasso Regression. 
 
 - Building intuition using scikit-learn, it's best if the reader already understand linear regression and cross validation. 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
@@ -142,7 +142,7 @@ A collection of scattered old clustering documents in R.
 
 #### linear_regression : 2015.10.30
 
-Training linear regression with gradient descent in R. 
+Training Linear Regression with gradient descent in R. 
 
 - Briefly covers the interpretation and visualization of linear regression's summary output.
 - View [[R markdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
@@ -150,7 +150,7 @@ Training linear regression with gradient descent in R.
 
 ## General Programming
 
-#### python
+#### Python
 
 - 2016.12.26 | Walking through the free online tutorial, [Problem Solving with Algorithms and Data Structures](http://interactivepython.org/runestone/static/pythonds/index.html), that introduces basic data structure, algorithms from scratch.
 	- Basic Data Structures (Stacks, Queues, LinkedLists). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/algorithms/basic_data_structure.ipynb)]
