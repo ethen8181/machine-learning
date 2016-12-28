@@ -35,12 +35,12 @@ class GA:
 		self.pop_size = pop_size
 		self.chromo_size = chromo_size
 		self.generation  = generation
-		self.retain_len  = int( pop_size * retain_rate )
+		self.retain_len  = int(pop_size * retain_rate)
 		self.mutate_rate = mutate_rate
-		self.info = namedtuple( 'info', [ 'cost', 'chromo' ] )
+		self.info = namedtuple( 'info', ['cost', 'chromo'] )
 	
 	
-	def fit( self, target ):
+	def fit(self, target):
 		"""
 		target : int
         	the targeted solution
@@ -48,14 +48,14 @@ class GA:
 		
 		# randomly generate the initial population, and evaluate its cost
 		array_size = self.pop_size, self.chromo_size
-		pop = np.random.randint( self.low, self.high + 1, array_size )
+		pop = np.random.randint(self.low, self.high + 1, array_size)
 		graded_pop = self._compute_cost( pop, target )
 
 		# store the best chromosome and its cost for each generation,
     	# so we can get an idea of when the algorithm converged
 		self.generation_history = []
 		for _ in range(self.generation):
-			graded_pop, generation_best = self._evolve( graded_pop, target )
+			graded_pop, generation_best = self._evolve(graded_pop, target)
 			self.generation_history.append(generation_best)
 
 		self.best = self.generation_history[self.generation - 1]
@@ -63,18 +63,18 @@ class GA:
 		return self
 
 
-	def _compute_cost( self, pop, target ):
+	def _compute_cost(self, pop, target):
 		"""
 		combine the cost and chromosome into one list and sort them
 		in ascending order
 		"""
-		cost = np.abs( np.sum( pop, axis = 1 ) - target )
-		graded = [ self.info( c, list(p) ) for p, c in zip( pop, cost ) ]
+		cost = np.abs( np.sum(pop, axis = 1) - target )
+		graded = [ self.info( c, list(p) ) for p, c in zip(pop, cost) ]
 		graded = sorted(graded)
 		return graded
 
 	
-	def _evolve( self, graded_pop, target ):
+	def _evolve(self, graded_pop, target):
 		"""
 		core method that does the crossover, mutation to generate
 		the possibly best children for the next generation
@@ -94,7 +94,7 @@ class GA:
 		# evaluate the children chromosome and retain the overall best,
 		# overall simply means the best from the parent and the children, where
 		# the size retained is determined by the population size
-		graded_children = self._compute_cost( children, target )
+		graded_children = self._compute_cost(children, target)
 		graded_pop.extend(graded_children)
 		graded_pop = sorted(graded_pop)
 		graded_pop = graded_pop[:self.pop_size]
@@ -104,7 +104,7 @@ class GA:
 		return graded_pop, generation_best 
 
 	
-	def _crossover( self, parent ):
+	def _crossover(self, parent):
 		"""
 		mate the children by randomly choosing two parents and mix 
 		the first half element of one parent with the later half 
@@ -117,14 +117,14 @@ class GA:
 		return child
 
 
-	def _mutate( self, child ):
+	def _mutate(self, child):
 		"""
 		randomly change one element of the chromosome if it
 		exceeds the user-specified threshold (mutate_rate)
 		"""
 		if self.mutate_rate > random.random():
 			idx_to_mutate = random.randrange(self.chromo_size)
-			child[idx_to_mutate] = random.randint( self.low, self.high )
+			child[idx_to_mutate] = random.randint(self.low, self.high)
 
 		return child
 

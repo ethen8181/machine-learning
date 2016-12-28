@@ -9,3 +9,4 @@ requests
 watermark
 tensorflow
 python-dotenv
+jupyterthemes

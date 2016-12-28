@@ -95,9 +95,8 @@ PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's API
 
 #### regularization : 2016.05.25
 
-Regularization techniques: Ridge and Lasso Regression. 
-
-- Building intuition using scikit-learn, it's best if the reader already understand linear regression and cross validation. 
+Building intuition on Ridge and Lasso regularization using scikit-learn.
+ 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
 
 
@@ -111,15 +110,15 @@ Genetic Algorithm. Math-free explanation and code from scratch.
 
 #### h2o : 2016.01.24
 
-Walking through H2O 2015 World Training [GitBook](http://learn.h2o.ai/content/index.html). Since H2O provides progress bar when training the model, you’ll may see a lot of them in doc. The walkthrough does basically zero feature engineering with the example dataset as it is just browsing through its function calls and parameters.
+Walking through [H2O 2015 World Training GitBook](http://learn.h2o.ai/content/index.html).The walkthrough does basically zero feature engineering with the example dataset, as it is just browsing through its function calls and parameters. Apart from that, [H2o Resources](http://www.h2o.ai/resources/) also contains booklets on each of the models.
 
 - R's API:
 	- h2o’s deep learning. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
-	- h2o’s gradient boosting and random forest. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
-	- h2o’s generalized linear model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
+	- h2o’s Ensemble Tree. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
+	- h2o’s Generalized Linear Model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
 	- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
 - Python's API:
-	- h2o's deep learning, gradient boosting and random forest. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
+	- h2o's deep learning, Ensemble Tree. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
 
 
 #### unbalanced : 2015.11.25
