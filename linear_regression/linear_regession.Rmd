@@ -1,6 +1,6 @@
 ---
 title: 'Gradient Descent with Linear Regression'
-author: "Ming-Yu (Ethen) Liu"
+author: "Ethen Liu"
 date: "October 30, 2015"
 output:
   rmdformats::readthedown:
@@ -57,9 +57,9 @@ setwd("/Users/ethen/machine-learning/linear_regression")
 Formula <- function(x) 1.2 * (x-2)^2 + 3.2
 
 # visualize the function, and the optimal solution
-ggplot( data.frame( x = c( 0, 4 ) ), aes( x ) ) + 
-stat_function( fun = Formula ) + 
-geom_point( data = data.frame( x = 2, y = Formula(2) ), aes( x, y ), 
+ggplot( data.frame( x = c(0, 4) ), aes(x) ) + 
+stat_function(fun = Formula) + 
+geom_point( data = data.frame( x = 2, y = Formula(2) ), aes(x, y), 
 	        color = "blue", size = 3 ) + 
 ggtitle( expression( 1.2 * (x-2)^2 + 3.2 ) )
 
@@ -145,7 +145,7 @@ Elaboration on what i defined :
 
 ```{r}
 
-while( abs( x_new - x_old ) > epsilon & step <= iteration )
+while( abs(x_new - x_old) > epsilon & step <= iteration )
 {
 	# update iteration count 
 	step <- step + 1	
@@ -160,7 +160,7 @@ while( abs( x_new - x_old ) > epsilon & step <= iteration )
 }
 
 # create the data points' dataframe
-record <- data.frame( x = do.call( rbind, xtrace ), y = do.call( rbind, ytrace ) )
+record <- data.frame( x = do.call(rbind, xtrace), y = do.call(rbind, ytrace) )
 record
 
 ```
@@ -171,16 +171,17 @@ From the output above, we can see that the algorithm converges at iteration `r n
 
 # create the segment between each points (gradient steps)
 segment <- data.frame( x = double(), y = double(), xend = double(), yend = double() )
-for( i in 1:( nrow(record)-1 ) )
-	segment[ i, ] <- cbind( record[ i, ], record[ i+1, ] )	
+for( i in 1:( nrow(record)-1 ) ) {
+	segment[ i, ] <- cbind( record[i, ], record[i + 1, ] )
+}
 
 # visualize the gradient descent's value 
-ggplot( data.frame( x = c( 0, 4 ) ), aes( x ) ) + 
-stat_function( fun = Formula ) + 
+ggplot( data.frame( x = c(0, 4) ), aes(x) ) + 
+stat_function(fun = Formula) + 
 ggtitle( expression( 1.2 * (x-2)^2 + 3.2 ) ) + 
-geom_point( data = record, aes( x, y ), color = "red", size = 3, alpha = .8, shape = 2 ) +
-geom_segment( data = segment , aes( x = x, y = y, xend = xend, yend = yend ), 
-              color = "blue", alpha = .8, arrow = arrow( length = unit( 0.25, "cm" ) ) )
+geom_point( data = record, aes(x, y), color = "red", size = 3, alpha = .8, shape = 2 ) +
+geom_segment( data = segment , aes(x = x, y = y, xend = xend, yend = yend), 
+              color = "blue", alpha = .8, arrow = arrow( length = unit(0.25, "cm") ) )
 
 ```
 
@@ -197,7 +198,7 @@ Now all of that was just preamble, to get ourselves familiar with gradient desce
 
 ```{r}
 
-housing <- read.table( "housing.txt", header = TRUE, sep = "," )
+housing <- read.table("housing.txt", header = TRUE, sep = ",")
 list( head(housing), dim(housing) )
 
 ```
@@ -345,7 +346,7 @@ Some takeways about gradient descent :
 costs_df <- data.frame( iteration = 1:nrow(trace_b$cost), 
 	                    costs = trace_b$cost / 1e+8 )
 
-ggplot( costs_df, aes( iteration, costs ) ) + geom_line()
+ggplot( costs_df, aes(iteration, costs) ) + geom_line()
 
 ```
 
@@ -374,10 +375,10 @@ Linear regression is a model that assumes that the data is normally distributed 
 
 ```{r}
 
-summary( model$residuals )
+summary(model$residuals)
 
-# original price - predicted price by the model (stored in the fitted value )
-summary( normed_data$price - model$fitted.values )
+# original price - predicted price by the model (stored in the fitted value)
+summary(normed_data$price - model$fitted.values)
 
 ```
 
@@ -441,15 +442,15 @@ Where:
 
 # @y  : original output value
 # @py : predicted ouput value
-RSquared <- function( y , py )
+RSquared <- function(y , py)
 {
-	rss <- sum( ( y - py )^2 )
+	rss <- sum( (y - py)^2 )
 	tss <- sum( ( y - mean(y) )^2 )
 	return( 1 - rss / tss )
 }
 
 summary(model)$r.squared
-RSquared( normed_data$price, model$fitted.values )
+RSquared(normed_data$price, model$fitted.values)
 
 ```
 
@@ -473,11 +474,11 @@ k  <- nrow(coefficient) - 1
 # @y  : original output value
 # @py : predicted ouput value
 # @k  : number of the model's coefficient, excluding the intercept
-AdjustedRSquared <- function( y, py, k )
+AdjustedRSquared <- function(y, py, k)
 {	 
 	n  <- length(y)
-	r2 <- RSquared( y, py )	
-	return( 1 - ( 1 - r2 ) * ( n - 1 ) / ( n - k - 1 ) )
+	r2 <- RSquared(y, py)	
+	return( 1 - (1 - r2) * (n - 1) / (n - k - 1) )
 }
 
 summary(model)$adj.r.squared
@@ -500,8 +501,8 @@ Useful visualizations when working with linear regression.
 
 ```{r, fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
 
-source("/Users/ethen/machine-learning/linear_regression/linear_regession_code/LMPlot.R")
-lm_plot <- LMPlot( model = model, actual = normed_data$price )
+source("linear_regession_code/LMPlot.R")
+lm_plot <- LMPlot(model = model, actual = normed_data$price)
 grid.draw(lm_plot$plot)
 
 ```
@@ -538,31 +539,27 @@ library(car)
 car::vif(model)
 
 # example of calculating the vif score for area
-area_model <- lm( area ~ .-price, data = normed_data )
-area_r2 <- RSquared( y = normed_data$area, py = area_model$fitted.values )
-1 / ( 1 - area_r2 )
+area_model <- lm(area ~ .-price, data = normed_data)
+area_r2 <- RSquared(y = normed_data$area, py = area_model$fitted.values)
+1 / (1 - area_r2)
 
 ```
 
 The interpretation is quite straightforward, the higher the value, the higher the collinearity. The rule of thumb for this value is those with a score of 4 and above is a suspect; those with the scores larger than 10 indicates a strong likelihood of collinearity and that feature should be discarded.
 
 
-# References
-
-- [Gradient Descent Example](http://www.r-bloggers.com/gradient-descent-in-r/)
-- [Linear Regression with Gradient Descent](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
-- [Interpretation of linear regression's summary](http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output)
-
-
 # R Session Information  
 
 ```{r}
-
 sessionInfo()
-
 ```
 
 [GradientDescent]: https://github.com/ethen8181/machine-learning/blob/master/linear_regression/linear_regession_code/gradient_descent.R
 [LMPlot]: https://github.com/ethen8181/machine-learning/blob/master/linear_regression/linear_regession_code/LMPlot.R
 
+# References
+
+- [Gradient Descent Example](http://www.r-bloggers.com/gradient-descent-in-r/)
+- [Linear Regression with Gradient Descent](http://cs229.stanford.edu/notes/cs229-notes1.pdf)
+- [Interpretation of linear regression's summary](http://stats.stackexchange.com/questions/5135/interpretation-of-rs-lm-output)
 

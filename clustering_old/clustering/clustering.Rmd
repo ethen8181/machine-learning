@@ -1,6 +1,6 @@
 ---
 title: "Calinski-Harabasz Index and Boostrap Evaluation with Clustering Methods"
-author: "Ming-Yu Liu"
+author: "Ethen Liu"
 date: "2015.11.6"
 output:
   rmdformats::readthedown:
@@ -38,7 +38,7 @@ pre { /* Code block */
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 library(knitr)
-opts_chunk$set( message = FALSE, warning = FALSE )
+opts_chunk$set(message = FALSE, warning = FALSE)
 
 ```
 
@@ -73,7 +73,7 @@ We start off by using the hierarchical clustering method in R to cluster the sca
 
 test <- hclust( dist(mtcars_scaled), method = "ward.D" )
 plot(test)
-rect.hclust( test, k = 4 )
+rect.hclust(test, k = 4)
 
 ```
 
@@ -180,22 +180,17 @@ boot_clust$bootdissolved
 From the values of bootdissolved (denotes the number of time each cluster "dissolved") and the bootmean value, we can infer that having a low bootmean and high bootdissolved value, cluster `r which.max(boot_clust$bootdissolved)` has the characteristics of what we’ve been calling the “other” cluster. Therefore, it is quite likely that it is not an actual cluster, it simply don't belong to anywhere else.
 
 
-# Reference 
-
-- [Math formula of the two measures used to determine the suitable k](http://www.mathworks.com/help/stats/clustering.evaluation.calinskiharabaszevaluation-class.html)
-- [Practical Data Science with R Chapter 8 Unsupervised Method](https://manning-content.s3.amazonaws.com/download/e/dc31390-3cb7-49dd-ab02-937c1af1c2e1/PDSwR_CH08.pdf)
-
-
 # R Session Information  
 
 ```{r}
-
 sessionInfo()
-
 ```
 
 [ClusterBootstrap]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/clustering_functions.R
 [CHCriterion]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/clustering_functions.R
 [Kmeanspp]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/clustering/kmeanspp.R
 
+# Reference 
 
+- [Math formula of the two measures used to determine the suitable k](http://www.mathworks.com/help/stats/clustering.evaluation.calinskiharabaszevaluation-class.html)
+- [Practical Data Science with R Chapter 8 Unsupervised Method](https://manning-content.s3.amazonaws.com/download/e/dc31390-3cb7-49dd-ab02-937c1af1c2e1/PDSwR_CH08.pdf)

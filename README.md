@@ -151,10 +151,7 @@ Training Linear Regression with gradient descent in R.
 
 #### Python
 
-- 2016.12.26 | Walking through the free online tutorial, [Problem Solving with Algorithms and Data Structures](http://interactivepython.org/runestone/static/pythonds/index.html), that introduces basic data structure, algorithms from scratch.
-	- Basic Data Structures (Stacks, Queues, LinkedLists). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/algorithms/basic_data_structure.ipynb)]
-	- Recursion (Dynamic Programming). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/algorithms/recursion.ipynb)]
-	- Search and sorting (Binary Search, Hash Tables, Merge/Quick Sort). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/algorithms/search_sort.ipynb)]
+- 2016.12.26 | Walking through the free online tutorial, [Problem Solving with Algorithms and Data Structures](http://interactivepython.org/runestone/static/pythonds/index.html), that introduces basic data structure, algorithms from scratch. [[folder](https://github.com/ethen8181/machine-learning/tree/master/python/algorithms)]
 - 2016.12.22 | Cython and Numba quickstart for high performance python. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/cython/cython.ipynb)
 - 2016.06.22 | pandas's category type. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas_category.ipynb)]
 - 2016.06.10 | unittest. [[python code](https://github.com/ethen8181/machine-learning/blob/master/python/test.py)]

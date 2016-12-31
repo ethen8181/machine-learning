@@ -1,6 +1,6 @@
 ---
 title: "Latent Dirichlet Allocation Using Gibbs Sampling"
-author: "Ming-Yu Liu"
+author: "Ethen Liu"
 date: "2015.12.8"
 output:
   rmdformats::readthedown:
@@ -38,7 +38,7 @@ pre { /* Code block */
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 library(knitr)
-opts_chunk$set( message = FALSE, warning = FALSE )
+opts_chunk$set(message = FALSE, warning = FALSE)
 
 ```
 
@@ -73,7 +73,6 @@ There're different approaches to this algorithm, the one we'll be using is gibbs
 ```{r}
 
 rawdocs <- c(
-
 	"eat turkey on turkey day holiday",
 	"i like to eat cake on holiday",
 	"turkey trot race on thanksgiving holiday",
@@ -83,14 +82,15 @@ rawdocs <- c(
 	"movie at air and space museum is cool movie",
 	"aspiring movie star"
 )
-docs <- strsplit( rawdocs, split = " " )
+docs <- strsplit(rawdocs, split = " ")
 
 # unique words
 vocab <- unique( unlist(docs) )
 
 # replace words in documents with wordIDs
-for( i in 1:length(docs) )
+for( i in 1:length(docs) ) {
 	docs[[i]] <- match( docs[[i]], vocab )
+}
 docs
 
 ```
@@ -117,23 +117,22 @@ names(ta) <- paste0( "doc", 1:length(docs) )
 dt <- matrix( 0, length(docs), K )
 
 set.seed(1234)
-for( d in 1:length(docs) )
-{ 
+for( d in 1:length(docs) ) { 
 	# randomly assign topic to word w
-	for( w in 1:length( docs[[d]] ) )
-	{
-		ta[[d]][w] <- sample( 1:K, 1 ) 
+	for( w in 1:length( docs[[d]] ) ) {
+		ta[[d]][w] <- sample(1:K, 1) 
 
 		# extract the topic index, word id and update the corresponding cell 
 		# in the word-topic count matrix  
 		ti <- ta[[d]][w]
 		wi <- docs[[d]][w]
-		wt[ ti, wi ] <- wt[ ti, wi ] + 1    
+		wt[ti, wi] <- wt[ti, wi] + 1    
 	}
 
 	# count words in document d assigned to each topic t
-	for( t in 1:K )
-		dt[ d, t ] <- sum( ta[[d]] == t ) 
+	for( t in 1:K ) {
+		dt[d, t] <- sum( ta[[d]] == t )
+	}
 }
 
 # randomly assigned topic to each word
@@ -188,15 +187,15 @@ wid <- docs[[1]][1]
 # z_-i means that we do not include token w in our word-topic and document-topic 
 # count matrix when sampling for token w, 
 # only leave the topic assignments of all other tokens for document 1
-dt[ 1, t0 ]   <- dt[ 1, t0 ] - 1 
-wt[ t0, wid ] <- wt[ t0, wid ] - 1
+dt[1, t0] <- dt[1, t0] - 1 
+wt[t0, wid] <- wt[t0, wid] - 1
 
 # Calculate left side and right side of equal sign
-left  <- ( wt[ , wid ] + eta ) / ( rowSums(wt) + length(vocab) * eta )
-right <- ( dt[ 1, ] + alpha ) / ( sum( dt[ 1, ] ) + K * alpha )
+left  <- ( wt[, wid] + eta ) / ( rowSums(wt) + length(vocab) * eta )
+right <- ( dt[1, ] + alpha ) / ( sum( dt[1, ] ) + K * alpha )
 
 # draw new topic for the first word in the first document 
-t1 <- sample( 1:K, 1, prob = left * right )
+t1 <- sample(1:K, 1, prob = left * right)
 t1
 
 ```
@@ -259,19 +258,18 @@ Recall that LDA assumes that each document is a mixture of all topics, thus afte
 ```{r}
 
 # topic assigned to each document, the one with the highest probability 
-topic <- apply( theta, 1, which.max )
+topic <- apply(theta, 1, which.max)
 
 # possible words under each topic 
 # sort the probability and obtain the user-specified number n
-Terms <- function( phi, n )
-{
-	term <- matrix( 0, n, K )
-	for( p in 1:nrow(phi) )
-		term[ , p ] <- names( sort( phi[ p, ], decreasing = TRUE )[1:n] )
-
+Terms <- function(phi, n) {
+	term <- matrix(0, n, K)
+	for( p in 1:nrow(phi) ) {
+		term[, p] <- names( sort( phi[p, ], decreasing = TRUE )[1:n] )
+	}
 	return(term)
 }
-term <- Terms( phi = phi, n = 3 )
+term <- Terms(phi = phi, n = 3)
 
 ```
 
@@ -279,8 +277,8 @@ We specified that we wanted to see the top 3 terms associated with each topic. T
 
 ```{r}
 
-list( original_text = rawdocs[ topic == 1 ], words = term[ , 1 ] )
-list( original_text = rawdocs[ topic == 2 ], words = term[ , 2 ] )
+list( original_text = rawdocs[topic == 1], words = term[, 1] )
+list( original_text = rawdocs[topic == 2], words = term[, 2] )
 
 ```
 
@@ -303,14 +301,23 @@ library(topicmodels)
 docs1 <- Corpus( VectorSource(rawdocs) )
 dtm <- DocumentTermMatrix(docs1)
 lda <- LDA( dtm, k = 2, method = "Gibbs", 
-	   		control = list( seed = 1234, burnin = 500, thin = 100, iter = 4000 ) )
+	   		control = list(seed = 1234, burnin = 500, thin = 100, iter = 4000) )
 
-list( original_text = rawdocs[ topics(lda) == 1 ], words = terms( lda, 3 )[ , 1 ] )
-list( original_text = rawdocs[ topics(lda) == 2 ], words = terms( lda, 3 )[ , 2 ] )
+list( original_text = rawdocs[ topics(lda) == 1 ], words = terms(lda, 3)[, 1] )
+list( original_text = rawdocs[ topics(lda) == 2 ], words = terms(lda, 3)[, 2] )
 
 ```
 
 Notice that after training the model for 4000 iterations and using a different $\alpha$ and $\eta$ value, we obtained a different document clustering result and different words that are more likely to associate with each topic. Since the goal here is to peform a clustering (unsupervised) method to unveil unknown patterns, the solutions will most likely differ as there is no such thing as a correct answer. We should try a range of different values of K to find the optimal topic grouping of the set of documents and see which result matches our intuition more.
+
+
+# R Session Information 
+
+```{r}
+sessionInfo()
+```
+
+[LDA]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/topic_model/LDA_functions.R
 
 
 # Reference
@@ -320,15 +327,3 @@ Notice that after training the model for 4000 iterations and using a different $
 - [LDA mathematical notations](https://www.cl.cam.ac.uk/teaching/1213/L101/clark_lectures/lect7.pdf)
 - [Math free explanation of LDA](http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/)
 - [Explanation of LDA's hyperparameter](http://stats.stackexchange.com/questions/37405/natural-interpretation-for-lda-hyperparameters/37444#37444)
-
-
-# R Session Information 
-
-```{r}
-
-sessionInfo()
-
-```
-
-[LDA]: https://github.com/ethen8181/machine-learning/blob/master/clustering_old/topic_model/LDA_functions.R
-

@@ -1,6 +1,6 @@
 ---
 title: "TF-IDF, Term Frequency-Inverse Document Frequency"
-author: "Ming-Yu Liu"
+author: "Ethen Liu"
 date: "November 17, 2015"
 output:
   rmdformats::readthedown:
@@ -65,12 +65,12 @@ The first part of the formula $tf( t, d )$ is simply to calculate the number of 
 ```{r} 
 
 # create term frequency matrix using functions from tm library
-doc_corpus <- Corpus( VectorSource( doc ) )
-control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
-tdm <- TermDocumentMatrix( doc_corpus, control = control_list )
+doc_corpus <- Corpus( VectorSource(doc) )
+control_list <- list(removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE)
+tdm <- TermDocumentMatrix(doc_corpus, control = control_list)
 
 # print
-( tf <- as.matrix(tdm ) )
+( tf <- as.matrix(tdm) )
 
 ```
 
@@ -90,7 +90,7 @@ Using our term frequency matrix, the idf weight for can be calculated like below
 
 ```{r}
 # idf
-( idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) )
+( idf <- log( ncol(tf) / ( 1 + rowSums(tf != 0) ) ) )
 
 ```
 
@@ -101,7 +101,7 @@ Now that we have our matrix with the term frequency and the idf weight, we're re
 # diagonal matrix
 ( idf <- diag(idf) )
 
-tf_idf <- crossprod( tf, idf )
+tf_idf <- crossprod(tf, idf)
 colnames(tf_idf) <- rownames(tf)
 tf_idf
 
@@ -145,13 +145,13 @@ Where v and w are the two vectors that you wish to calculate the distance; $v_i$
 ```{r}
 
 # example 
-a <- c( 3, 4 )
-b <- c( 5, 6 )
+a <- c(3, 4)
+b <- c(5, 6)
 
 # cosine value and corresponding degree
-l <- list( numerator = sum( a * b ), denominator = sqrt( sum( a^2 ) ) * sqrt( sum( b^2 ) ) )
+l <- list( numerator = sum(a * b), denominator = sqrt( sum(a ^ 2) ) * sqrt( sum(b ^ 2) ) )
 list( cosine = l$numerator / l$denominator, 
-      degree = acos( l$numerator / l$denominator ) * 180 / pi )
+      degree = acos(l$numerator / l$denominator) * 180 / pi )
 
 ```
 
@@ -165,7 +165,7 @@ For this section, we'll move on to a slightly larger dataset, since there's real
 
 # a slightly larger dataset
 setwd("/Users/ethen/machine-learning/clustering_old/tf_idf")
-news <- read.csv( "news.csv", stringsAsFactors = FALSE )
+news <- read.csv("news.csv", stringsAsFactors = FALSE)
 list( head(news), dim(news) )
 
 ```
@@ -184,17 +184,15 @@ The following code :
 # 
 # 1. [TFIDF] :
 # @vector = pass in a vector of documents  
-TFIDF <- function( vector )
-{
+TFIDF <- function(vector) {
 	# tf 
 	news_corpus  <- Corpus( VectorSource(vector) )
-	control_list <- list( removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE )
-	tf <- TermDocumentMatrix( news_corpus, control = control_list ) %>% as.matrix()
+	control_list <- list(removePunctuation = TRUE, stopwords = TRUE, tolower = TRUE)
+	tf <- TermDocumentMatrix(news_corpus, control = control_list) %>% as.matrix()
 
 	# idf
-	idf <- log( ncol(tf) / ( 1 + rowSums( tf != 0 ) ) ) %>% diag()
-
-	return( crossprod( tf, idf ) )
+	idf <- log( ncol(tf) / ( 1 + rowSums(tf != 0) ) ) %>% diag()
+	return( crossprod(tf, idf) )
 }
 
 # tf-idf matrix using news' title 
@@ -202,9 +200,8 @@ news_tf_idf <- TFIDF(news$title)
 
 # 2. [Cosine] :
 # distance between two vectors
-Cosine <- function( x, y )
-{
-	similarity <- sum( x * y ) / ( sqrt( sum( y^2 ) ) * sqrt( sum( x^2 ) ) )
+Cosine <- function(x, y) {
+	similarity <- sum(x * y) / ( sqrt( sum(y ^ 2) ) * sqrt( sum(x ^ 2) ) )
 
 	# given the cosine value, use acos to convert back to degrees
 	# acos returns the radian, multiply it by 180 and divide by pi to obtain degrees
@@ -213,13 +210,13 @@ Cosine <- function( x, y )
 
 # 3. calculate pair-wise distance matrix 
 pr_DB$set_entry( FUN = Cosine, names = c("Cosine") )
-d1 <- dist( news_tf_idf, method = "Cosine" )
-pr_DB$delete_entry( "Cosine" )
+d1 <- dist(news_tf_idf, method = "Cosine")
+pr_DB$delete_entry("Cosine")
 
 # 4. heirachical clustering 
-cluster1 <- hclust( d1, method = "ward.D" )
+cluster1 <- hclust(d1, method = "ward.D")
 plot(cluster1)
-rect.hclust( cluster1, 17 )
+rect.hclust(cluster1, 17)
 
 ```
 
@@ -230,31 +227,29 @@ We'll examine three potential cluster that the algorithm provided and print out 
 ```{r}
 
 # split into 17 clusters
-groups1 <- cutree( cluster1, 17 )
+groups1 <- cutree(cluster1, 17)
 
 # you can look at the distribution size of each cluster 
 # table(groups1)
 
-news$title[ groups1 == 2 ]
-news$title[ groups1 == 7 ]
-news$title[ groups1 == 17 ]
+news$title[groups1 == 2 ]
+news$title[groups1 == 7 ]
+news$title[groups1 == 17]
 
 ```
 
 Overall, news' in the first cluster is mostly referring to something about Taiwan. The second cluster seems to be talking about China and UK, and the third cluster's news are all related Uighurs. Not bad, huh? Given the fact that we're only using news' title instead of the entire news' article to represent the news. Since clustering is an unsupervised algorithm (meaning there're probably no such thing as a one hundred percent correct answer), I'll leave it to you to decide whether the clustering results are actually acceptable. 
 
-One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use k-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom).
+One last thing before we wrap up this discussion, if you are to perform text clustering on you're own, try not to use K-means. You can read why in this [StackOverflow](http://stackoverflow.com/questions/12497252/how-can-i-cluster-document-using-k-means-flann-with-python) (slide to the bottom).
+
+# R Session Information
+
+```{r}
+sessionInfo()
+```
 
 
 # Reference
 
 - [Machine Learning :: Text feature extraction](http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/)
 
-
-# R Session Information
-
-```{r}
-
-sessionInfo()
-
-```

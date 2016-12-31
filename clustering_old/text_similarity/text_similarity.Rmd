@@ -1,6 +1,6 @@
 ---
 title: "Text Similarity"
-author: "Ming-Yu Liu"
+author: "Ethen Liu"
 date: "November 19, 2015"
 output:
   rmdformats::readthedown:
@@ -34,7 +34,7 @@ pre { /* Code block */
 }
 </style>
 
-> All the code text_similarity.R and data used in the documentation the data folder can be found in [this](https://github.com/ethen8181/machine-learning/blob/master/clustering_old/text_similarity) folder.  
+> All the code text_similarity.R and data used in the documentation the data folder can be found in [this folder](https://github.com/ethen8181/machine-learning/blob/master/clustering_old/text_similarity).  
 
 
 # Text Similarity
@@ -63,11 +63,10 @@ setwd("/Users/ethen/machine-learning/clustering_old/text_similarity/data")
 ( doc <- lapply( list.files(), readLines ) )
 
 # preprocess text
-doc1 <- lapply( doc, function(x)
-{
-	text <- gsub( "[[:punct:]]", "", x ) %>% tolower()
-	text <- gsub( "\\s+", " ", text ) %>% str_trim()	
-	word <- strsplit( text, " " ) %>% unlist()
+doc1 <- lapply(doc, function(x) {
+	text <- gsub("[[:punct:]]", "", x) %>% tolower()
+	text <- gsub("\\s+", " ", text) %>% str_trim()	
+	word <- strsplit(text, " ") %>% unlist()
 	return(word)
 })
 # print only the first text to conserve space
@@ -81,21 +80,19 @@ The first notion we'll introduce is **Shingling**, a common technique of represe
 
 ```{r}
 
-# Function for shingling the document 
-Shingling <- function( document, k )
-{
+Shingling <- function(document, k) {
 	shingles <- character( length = length(document) - k + 1 )
 
-	for( i in 1:( length(document) - k + 1 ) )
-		shingles[i] <- paste( document[ i:( i + k - 1 ) ], collapse = " " )
+	for( i in 1:( length(document) - k + 1 ) ) {
+		shingles[i] <- paste( document[ i:(i + k - 1) ], collapse = " " )
+	}
 
 	return( unique(shingles) )	
 }
 
 # "shingle" our example document, with k = 3
-doc1 <- lapply( doc1, function(x)
-{
-	Shingling( x, k = 3 )
+doc1 <- lapply(doc1, function(x) {
+	Shingling(x, k = 3)
 })
 list( Original = doc[[1]], Shingled = doc1[[1]] )
 
@@ -119,10 +116,9 @@ Thus the matrix will have 1 in row i and column j if and only if document j cont
 doc_dict <- unlist(doc1) %>% unique()
 
 # "characteristic" matrix
-M <- lapply( doc1, function( set, dict )
-{
-	as.integer( dict %in% set )
-}, dict = doc_dict ) %>% data.frame() 
+M <- lapply(doc1, function(set, dict) {
+	as.integer(dict %in% set)
+}, dict = doc_dict) %>% data.frame() 
 
 # set the names for both rows and columns
 setnames( M, paste( "doc", 1:length(doc1), sep = "_" ) )
@@ -156,12 +152,11 @@ The following section will calculate the pairwise jaccard similarities for all t
 ```{r}
 
 # how similar is two given document, jaccard similarity 
-JaccardSimilarity <- function( x, y )
-{
-	non_zero <- which( x | y )
+JaccardSimilarity <- function(x, y) {
+	non_zero <- which(x | y)
 	set_intersect <- sum( x[non_zero] & y[non_zero] )
 	set_union <- length(non_zero)
-	return( set_intersect / set_union ) 
+	return(set_intersect / set_union)
 }
 
 # create a new entry in the registry
@@ -171,7 +166,7 @@ pr_DB$set_entry( FUN = JaccardSimilarity, names = c("JaccardSimilarity") )
 d1 <- dist( t(M), method = "JaccardSimilarity" )
 
 # delete the new entry
-pr_DB$delete_entry( "JaccardSimilarity" )
+pr_DB$delete_entry("JaccardSimilarity")
 d1
 doc
 
@@ -231,12 +226,11 @@ To be clear, we'll print out our `r signature_num` randomly generated hash funct
 ```{r}
 
 # see if the hash function does generate permutations
-permute <- lapply( 1:signature_num, function(s)
-{
+permute <- lapply(1:signature_num, function(s) {
 	hash <- numeric( length = length(nrow(M)) )
-	for( i in 1:nrow(M) )
+	for( i in 1:nrow(M) ) {
 		hash[i] <- ( coeff_a[s] * i + coeff_b[s] ) %% prime
-	
+	}
 	return(hash)
 })
 # # convert to data frame 
@@ -277,20 +271,19 @@ As for these calculated signature values, we will store them into a signature ma
 ```{r}
 
 # obtain the non zero rows' index for all columns
-non_zero_rows <- lapply( 1:ncol(M), function(j)
-{
-	return( which( M[ , j ] != 0 ) )
+non_zero_rows <- lapply(1:ncol(M), function(j) {
+	return( which( M[, j] != 0 ) )
 })
 
 # initialize signature matrix
 SM <- matrix( data = NA, nrow = signature_num, ncol = ncol(M) )
 
 # for each column (document)
-for( i in 1:ncol(M) )
-{
+for( i in 1:ncol(M) ) {
 	# for each hash function (signature)'s value 
-	for( s in 1:signature_num )
-		SM[ s, i ] <- min( permute_df[ , s ][ non_zero_rows[[i]] ] )
+	for( s in 1:signature_num ) {
+		SM[ s, i ] <- min( permute_df[, s][ non_zero_rows[[i]] ] )
+	}
 }
 
 # set names for clarity
@@ -305,14 +298,14 @@ As for calculating the pair-wise similarity using this condensed signature matri
 
 ```{r}
 # signature similarity
-SigSimilarity <- function( x, y ) mean( x == y )
+SigSimilarity <- function(x, y) mean( x == y )
 
 # same trick to calculate the pairwise similarity 
 pr_DB$set_entry( FUN = SigSimilarity, names = c("SigSimilarity") )
 d2 <- dist( t(SM), method = "SigSimilarity" )
-pr_DB$delete_entry( "SigSimilarity" )
+pr_DB$delete_entry("SigSimilarity")
 
-list( SigSimilarity = d2, JaccardSimilarity = d1 )
+list(SigSimilarity = d2, JaccardSimilarity = d1)
 
 ```
 
@@ -345,16 +338,14 @@ What locality sensitive hashing tells us is: If the signature values of two docu
 1. MinHash, or the formal name, min-wise independent permutations locality sensitive hashing scheme computes an accurate estimate of the jaccard similarity coefficient between two large sets. This is because the number of signatures tend to be much shorter than the number of unique shingles across all documents, making the comparison operation simpler and quicker.  
 2. To note, there's also a R library `textreuse` that implements the techniques that we've walked through in this documentation. You should be able understand its vignette with no problem.
 
+# R Session Information
+
+```{r}
+sessionInfo()
+```
 
 # Reference
 
 - [Mining Massive Datasets Chapter 3](http://infolab.stanford.edu/~ullman/mmds/ch3.pdf) 
 - [Blog on the same topic written from a Java coder's perspective](http://matthewcasperson.blogspot.tw/2013/11/minhash-for-dummies.html)
 
-# R Session Information
-
-```{r}
-
-sessionInfo()
-
-```
