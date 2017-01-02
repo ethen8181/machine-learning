@@ -3,7 +3,7 @@
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/ethen8181/machine-learning)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
 
-This is one of the continuously updated repositories that documents my own personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
+This is one of the continuously updated repositories that documents personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
 | Repository | Documentation Focus |
 | ---------- | ------------------- |
@@ -14,6 +14,13 @@ Within each section, documentations are listed in reverse chronological order of
 
 
 ## Documentation Listings
+
+#### dim_reduct : 2017.01.02
+
+Dimensionality reduction methods.
+
+- Principal Component Analysis (PCA) from sractch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA.ipynb)]
+- PCA with Spark's MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA_spark.ipynb)]
 
 #### recsys : 2016.12.17
 

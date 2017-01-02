@@ -3,6 +3,7 @@ tqdm
 keras
 numba
 gensim
+pyspark
 seaborn
 networkx
 requests
