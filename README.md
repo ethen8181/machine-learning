@@ -20,7 +20,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 Dimensionality reduction methods.
 
-- Principal Component Analysis (PCA) from sractch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA.ipynb)]
+- Principal Component Analysis (PCA) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA.ipynb)]
 - PCA with Spark's MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA_spark.ipynb)]
 
 #### recsys : 2016.12.17
