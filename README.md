@@ -1,7 +1,8 @@
 # machine-learning
 
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/ethen8181/machine-learning)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
+![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/ethen8181/machine-learning)
 
 This is one of the continuously updated repositories that documents personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
