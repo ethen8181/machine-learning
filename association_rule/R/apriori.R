@@ -1,12 +1,12 @@
 library(DT) # for interactive data frame
 library(arules)
 library(data.table)
-wdpath <- file.path( 'programming', 'association' )
+wdpath <- normalizePath('/Users/ethen/machine-learning/association_rule/R')
 setwd(wdpath)
 
 load('titanic.raw.rdata')
 dt <- data.table(titanic.raw)
-titanic <- as( dt, 'transactions' )
+titanic <- as(dt, 'transactions')
 summary( itemFrequency(titanic) )
 
 # train apriori
@@ -14,16 +14,16 @@ rules <- apriori(
     titanic,
 
 	# the min/max len denotes the min/max number of items in a itemset
-	parameter = list( support = 0.05, confidence = 0.7, minlen = 2, maxlen = 5 ),
+	parameter = list(support = 0.05, confidence = 0.7, minlen = 2, maxlen = 5),
     
     # for appearance we can specify we only want rules with rhs 
     # containing "Survived" only (we then specfiy the default parameter
     # to 'lhs' to tell the algorithm that every other variables that
     # has not been specified can go in the left hand side
-    appearance = list( rhs = c( 'Survived=No', 'Survived=Yes' ), default = 'lhs' ),
+    appearance = list( rhs = c('Survived=No', 'Survived=Yes'), default = 'lhs' ),
 
 	# don't print the algorthm's training message
-	control = list( verbose = FALSE )
+	control = list(verbose = FALSE)
 )
 
 
@@ -42,17 +42,17 @@ rules_dt <- data.table( lhs = labels( lhs(rules) ),
 library(cowplot)
 library(ggplot2)
 
-ggplot( rules_dt, aes( support, confidence, color = lift ) ) + 
+ggplot( rules_dt, aes(support, confidence, color = lift) ) +
 geom_point() + 
 labs( title = sprintf( 'scatter plot for %d rules', nrow(rules_dt) ) )
 
 
 # confirm that the toy python code's result matches R's apriori
-X = matrix(c( 1, 1, 0, 0, 0, 0,
-              1, 0, 1, 1, 1, 0,
-              0, 1, 1, 1, 0, 1,
-              1, 1, 1, 1, 0, 0,
-              1, 1, 1, 0, 0, 1), ncol = 6, byrow = TRUE)
+X = matrix(c(1, 1, 0, 0, 0, 0,
+             1, 0, 1, 1, 1, 0,
+             0, 1, 1, 1, 0, 1,
+             1, 1, 1, 1, 0, 0,
+             1, 1, 1, 0, 0, 1), ncol = 6, byrow = TRUE)
 
 rules <- apriori( 
     X,
