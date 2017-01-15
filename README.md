@@ -43,7 +43,7 @@ Tree-based models for both regression and classification tasks.
 Also known as market-basket analysis.
 
 - Apriori from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/association_rule/apriori.ipynb)]
-- Using R's arules package (aprori) on tabular data. [[R markdown](http://ethen8181.github.io/machine-learning/association_rule/R/apriori.html)]
+- Using R's arules package (aprori) on tabular data. [[Rmarkdown](http://ethen8181.github.io/machine-learning/association_rule/R/apriori.html)]
 
 #### clustering : 2016.08.16
 
@@ -111,9 +111,9 @@ Genetic Algorithm. Math-free explanation and code from scratch.
 Walking through [H2O 2015 World Training GitBook](http://learn.h2o.ai/content/index.html).The walkthrough does basically zero feature engineering with the example dataset, as it is just browsing through its function calls and parameters. Apart from that, [H2o Resources](http://www.h2o.ai/resources/) also contains booklets on each of the models.
 
 - R's API:
-	- h2o’s deep learning. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
-	- h2o’s Ensemble Tree. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
-	- h2o’s Generalized Linear Model. [[R markdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
+	- h2o’s deep learning. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
+	- h2o’s Ensemble Tree. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
+	- h2o’s Generalized Linear Model. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
 	- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
 - Python's API:
 	- h2o's deep learning, Ensemble Tree. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
@@ -123,23 +123,23 @@ Walking through [H2O 2015 World Training GitBook](http://learn.h2o.ai/content/in
 Choosing the optimal cutoff value for logistic regression using cost-sensitive mistakes (meaning when the cost of misclassification might differ between the two classes) when your dataset consists of unbalanced binary classes. e.g. Majority of the data points in the dataset have a positive outcome, while few have negative, or vice versa. The notion can be extended to any other classification algorithm that can predict class’s probability, this documentation just uses logistic regression for illustration purpose.
 
 - Visualize two by two standard confusion matrix and ROC curve with costs using ggplot2.
-- View [[R markdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
+- View [[Rmarkdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
 
 #### clustering_old
 
 A collection of scattered old clustering documents in R.
 
-- 2015.12.08 | Toy sample code of the LDA algorithm (gibbs sampling) and the topicmodels library. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/topic_model/LDA.html)]
-- 2015.11.19 | k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/text_similarity/text_similarity.html)]
-- 2015.11.17 | Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/tf_idf/tf_idf.html)]
-- 2015.11.06 | Some useful evaluations when working with hierarchical clustering and K-means clustering (K-means++ is used here). Including Calinski-Harabasz index for determine the right K (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[R markdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
+- 2015.12.08 | Toy sample code of the LDA algorithm (gibbs sampling) and the topicmodels library. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/topic_model/LDA.html)]
+- 2015.11.19 | k-shingle, Minhash and Locality Sensitive Hashing for solving the problem of finding textually similar documents. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/text_similarity/text_similarity.html)]
+- 2015.11.17 | Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/tf_idf/tf_idf.html)]
+- 2015.11.06 | Some useful evaluations when working with hierarchical clustering and K-means clustering (K-means++ is used here). Including Calinski-Harabasz index for determine the right K (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
 
 #### linear_regression : 2015.10.30
 
 Training Linear Regression with gradient descent in R. 
 
 - Briefly covers the interpretation and visualization of linear regression's summary output.
-- View [[R markdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
+- View [[Rmarkdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
 
 
 ## Python Programming
