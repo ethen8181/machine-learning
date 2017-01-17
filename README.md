@@ -1,8 +1,7 @@
 # machine-learning
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
-![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/ethen8181/machine-learning)
+![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
 
 This is one of the continuously updated repositories that documents personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
 
@@ -27,7 +26,7 @@ Dimensionality reduction methods.
 
 Recommendation System.
 
-- Alternating Least Squares. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)]
+- Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)]
 
 #### trees : 2016.12.10
 
