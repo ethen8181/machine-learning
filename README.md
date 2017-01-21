@@ -26,7 +26,8 @@ Dimensionality reduction methods.
 
 Recommendation System.
 
-- Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ALS.ipynb)]
+- Alternating Least Squares with Weighted Regularization (ALSWR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
+- ALSWR with implicit feedback data from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
 
 #### trees : 2016.12.10
 
