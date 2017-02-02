@@ -1,8 +1,8 @@
 # code snippets that goes along with the 1_implicit.ipynb notebook
 import os
-import subprocess
 import numpy as np
 import pandas as pd
+from subprocess import call
 
 
 def create_rating_mat(file_dir):
@@ -11,8 +11,8 @@ def create_rating_mat(file_dir):
     # download the dataset if it isn't in the same folder
     file_path = os.path.join(file_dir, 'u.data')
     if not os.path.isdir(file_dir):
-        subprocess.call(['curl', '-O', 'http://files.grouplens.org/datasets/movielens/' + file_dir + '.zip'])
-        subprocess.call(['unzip', file_dir + '.zip'])
+        call(['curl', '-O', 'http://files.grouplens.org/datasets/movielens/' + file_dir + '.zip'])
+        call(['unzip', file_dir + '.zip'])
 
     names = ['user_id', 'item_id', 'rating', 'timestamp']
     df = pd.read_csv(file_path, sep = '\t', names = names)
