@@ -28,6 +28,7 @@ Recommendation System.
 
 - Alternating Least Squares with Weighted Regularization (ALSWR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
 - ALSWR with implicit feedback data from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
+- Mean average precision at k for evaluating recommendations. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_evaluation.ipynb)]
 
 #### trees : 2016.12.10
 
