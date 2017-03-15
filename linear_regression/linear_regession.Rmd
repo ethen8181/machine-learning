@@ -145,8 +145,7 @@ Elaboration on what i defined :
 
 ```{r}
 
-while( abs(x_new - x_old) > epsilon & step <= iteration )
-{
+while( abs(x_new - x_old) > epsilon & step <= iteration ) {
 	# update iteration count 
 	step <- step + 1	
 	
@@ -172,7 +171,7 @@ From the output above, we can see that the algorithm converges at iteration `r n
 # create the segment between each points (gradient steps)
 segment <- data.frame( x = double(), y = double(), xend = double(), yend = double() )
 for( i in 1:( nrow(record)-1 ) ) {
-	segment[ i, ] <- cbind( record[i, ], record[i + 1, ] )
+	segment[i, ] <- cbind( record[i, ], record[i + 1, ] )
 }
 
 # visualize the gradient descent's value 
@@ -240,13 +239,13 @@ Now all that formula may look a might formidable. The notion is, after you have 
 # suppose you've already calculated that the difference of 
 # the two rows are 100 and 200 respectively, then 
 # using the first two rows of the input variables
-housing[ c( 1, 2 ), -3 ]
+housing[ c(1, 2), -3 ]
 
 # multiply 100 with row 1 
-( row1 <- 100 * housing[ 1, -3 ] )
+( row1 <- 100 * housing[1, -3] )
 
 # multuply 200 with row 2
-( row2 <- 200 * housing[ 1, -3 ] )
+( row2 <- 200 * housing[1, -3] )
 
 # sum each row up
 list( area = sum( row1[1] + row2[1] ), bedrooms = sum( row1[2] + row2[2] ) )
@@ -311,9 +310,9 @@ We've now obtain the parameters of the linear model calculated by the gradient d
 ```{r}
 
 # linear regression 
-normed <- apply( housing[ , -3 ], 2, scale )
-normed_data <- data.frame( cbind( normed, price = housing$price ) )
-model <- lm( price ~ ., data = normed_data )
+normed <- apply(housing[, -3], 2, scale)
+normed_data <- data.frame( cbind(normed, price = housing$price) )
+model <- lm(price ~ ., data = normed_data)
 model
 
 ```
@@ -425,7 +424,7 @@ The general rule of thumb is that we should include coefficients that have p-val
 
 ## R Squared
 
-When evaluating the fit of the linear model, another indicator that's worth your attention is the $R^2$ value. In short, we hope that the model we've trained to capture the output's variance as much as possible. The $R^2$ measures the proportion of the output variance that is explained by the model. It can be calculated by:
+When evaluating the fit of the linear model, another indicator that's worth your attention is the $R^2$ value. In short, we want the model we've trained to capture the output's variance as much as possible. The $R^2$ measures the proportion of the output variance that is explained by the model. It can be calculated by:
 
 $$R^2 = 1 - \frac{RSS}{TSS} = 1- \frac{ \sum^n_{i=1} e_i^2 }{ \sum^n_{i=1} ( y_i - \bar{y} )^2 }$$
 
@@ -442,11 +441,10 @@ Where:
 
 # @y  : original output value
 # @py : predicted ouput value
-RSquared <- function(y , py)
-{
+RSquared <- function(y , py) {
 	rss <- sum( (y - py)^2 )
 	tss <- sum( ( y - mean(y) )^2 )
-	return( 1 - rss / tss )
+	return(1 - rss / tss)
 }
 
 summary(model)$r.squared
@@ -474,8 +472,7 @@ k  <- nrow(coefficient) - 1
 # @y  : original output value
 # @py : predicted ouput value
 # @k  : number of the model's coefficient, excluding the intercept
-AdjustedRSquared <- function(y, py, k)
-{	 
+AdjustedRSquared <- function(y, py, k) {	 
 	n  <- length(y)
 	r2 <- RSquared(y, py)	
 	return( 1 - (1 - r2) * (n - 1) / (n - k - 1) )
