@@ -10,7 +10,7 @@ This is one of the continuously updated repositories that documents personal jou
 | [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming (mainly in Python) |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, visualizations (R, Python) |
 
-Within each section, documentations are listed in reverse chronological order of the start date and each of them are independent of one another unless specified.
+Within each section, documentations are listed in reverse chronological order of the start date (the date when the first notebook in that folder was created, if the notebook happened to be updated, then the actual date will be at the top of each notebook). Each of them are independent of one another unless specified.
 
 
 ## Documentation Listings
@@ -145,6 +145,7 @@ Training Linear Regression with gradient descent in R.
 
 ## Python Programming
 
+- 2017.03.16 | Logging module. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/logging.ipynb)
 - 2016.12.26 | Walking through the free online tutorial, [Problem Solving with Algorithms and Data Structures](http://interactivepython.org/runestone/static/pythonds/index.html), that introduces basic data structure, algorithms from scratch. [[folder](https://github.com/ethen8181/machine-learning/tree/master/python/algorithms)]
 - 2016.12.22 | Cython and Numba quickstart for high performance python. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/cython/cython.ipynb)
 - 2016.06.22 | pandas's category type. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas_category.ipynb)]

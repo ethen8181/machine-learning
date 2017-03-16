@@ -3,7 +3,7 @@
 # https://www.youtube.com/watch?v=hKuw-8Gjwjo
 import unittest
 
-def my_contains( elem, lst ):
+def my_contains(elem, lst):
 	"""Returns True if and only if the element is in the list"""
 	return elem in lst
 
@@ -32,17 +32,17 @@ class Test(unittest.TestCase):
 		if you find yourself using the same objects in multiple tests,
 		then you can define them in the setUp method and call them
 		"""
-		self.lst1 = [ 1, 2, 3 ]
-		self.lst2 = [ -3, 4, 10 ]
+		self.lst1 = [1, 2, 3]
+		self.lst2 = [-3, 4, 10]
 
 	def test_contains_simple_true(self):
 		"""assertTrue: pass test if it is true"""
-		self.assertTrue( my_contains( elem = 3, lst = [ 1, 2, 3 ] ) )
+		self.assertTrue(my_contains(elem = 3, lst = [1, 2, 3]))
 
 
 	def test_first_number(self):
 		"""assertEqual: pass test if the result matches"""
-		self.assertEqual( my_first([ 1, 2, 3 ]), 1 )
+		self.assertEqual(my_first([1, 2, 3]), 1)
 
 	def test_first_empty(self):
 		"""
@@ -50,10 +50,10 @@ class Test(unittest.TestCase):
 		indicated error, you pass in the expected error type, the 
 		function call and all the other arguments to that function call
 		"""
-		self.assertRaises( IndexError, my_first, [] )
+		self.assertRaises(IndexError, my_first, [])
 
 	def test_bigger_typical_true(self):
-		self.assertFalse( bigger( self.lst1, self.lst2 ) )
+		self.assertFalse(bigger(self.lst1, self.lst2))
 
 
 if __name__ == '__main__':
