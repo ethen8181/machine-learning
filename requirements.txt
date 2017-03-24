@@ -9,4 +9,5 @@ watermark
 python-dotenv
 jupyterthemes
 keras>=2.0.1
+sklearn>=0.18
 tensorflow>=1.0.1
