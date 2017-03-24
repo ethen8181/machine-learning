@@ -1,12 +1,12 @@
 h2o
 tqdm
-keras
 numba
 gensim
 seaborn
 networkx
 requests
 watermark
-tensorflow
 python-dotenv
 jupyterthemes
+keras>=2.0.1
+tensorflow>=1.0.1
