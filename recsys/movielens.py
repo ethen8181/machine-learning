@@ -1,4 +1,4 @@
-# code snippets that goes along with the 1_implicit.ipynb notebook
+# code snippets that goes along with the 2_implicit.ipynb notebook
 import os
 import numpy as np
 import pandas as pd

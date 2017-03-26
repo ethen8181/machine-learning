@@ -24,11 +24,11 @@ Dimensionality reduction methods.
 
 #### recsys : 2016.12.17
 
-Recommendation System.
+Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook ALS-WR for implicit feedback data and Bayesian Personalized Ranking are independent of one another as they are simply different algorithms.
 
-- Alternating Least Squares with Weighted Regularization (ALSWR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
-- ALSWR with implicit feedback data from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
-- Mean average precision at k for evaluating recommendations. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_evaluation.ipynb)]
+- Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
+- ALS-WR for implicit feedback data from scratch & mean average precision at k evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
+- Bayesian Personalized Ranking (BPR) from scratch & AUC evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_bpr.ipynb)]
 
 #### trees : 2016.12.10
 
