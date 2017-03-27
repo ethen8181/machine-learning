@@ -24,7 +24,7 @@ Dimensionality reduction methods.
 
 #### recsys : 2016.12.17
 
-Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook ALS-WR for implicit feedback data and Bayesian Personalized Ranking are independent of one another as they are simply different algorithms.
+Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook - "ALS-WR for implicit feedback data" and third notebook - "Bayesian Personalized Ranking" are independent of one another as they are simply different algorithms.
 
 - Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
 - ALS-WR for implicit feedback data from scratch & mean average precision at k evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
@@ -72,7 +72,7 @@ Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is use
 
 #### keras : 2016.06.29
 
-Walking through [keras](https://github.com/fchollet/keras), a deep learning library. Note that this is only a API walkthrough, NOT a tutorial on the details of deep learning.
+Walking through [keras](https://github.com/fchollet/keras), a high-level deep learning library. Note that this is only a API walkthrough, not a tutorial on the details of deep learning.
 
 - Multi-layers Neural Network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
 - Multi-layers Neural Network hyperparameter tuning via scikit-learn like API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
