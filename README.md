@@ -1,6 +1,6 @@
 # machine-learning
 
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/ethen8181/machine-learning)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
 ![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
 
 This is one of the continuously updated repositories that documents personal journey on learning data science related topics. Currently, contents are organized into two separate repositories based on the following table's description.
@@ -15,12 +15,19 @@ Within each section, documentations are listed in reverse chronological order of
 
 ## Documentation Listings
 
+#### spark : 2017.06.07
+
+Note that the following notebook is not a tutorial on the basics of spark, it assumes you're already somewhat familar with it or can pick it up quickly by checking documentations along the way. For those interested there's also a [pyspark cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) that may come in handy.
+
+- Pyspark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/spark/installation.md)]
+- Spark exercise on crimes data, examples of manipulating data and building a RandomForest model with Spark. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/crime.ipynb)]
+- PCA with Spark's ML. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/pca_spark.ipynb)]
+
 #### dim_reduct : 2017.01.02
 
 Dimensionality reduction methods.
 
 - Principal Component Analysis (PCA) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA.ipynb)]
-- PCA with Spark's MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA_spark.ipynb)]
 
 #### recsys : 2016.12.17
 
@@ -72,7 +79,7 @@ Curated notes on deep learning. [Tensorflow](https://www.tensorflow.org/) is use
 
 #### keras : 2016.06.29
 
-Walking through [keras](https://github.com/fchollet/keras), a high-level deep learning library. Note that this is only a API walkthrough, not a tutorial on the details of deep learning. For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Keras_Cheat_Sheet_Python.pdf).
+Walking through [keras](https://github.com/fchollet/keras), a high-level deep learning library. Note that this is only a API walkthrough, not a tutorial on the details of deep learning. For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Keras_Cheat_Sheet_Python.pdf) that may come in handy.
 
 - Multi-layers Neural Network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)]
 - Multi-layers Neural Network hyperparameter tuning via scikit-learn like API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)]
