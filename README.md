@@ -20,7 +20,7 @@ Within each section, documentations are listed in reverse chronological order of
 Note that the following notebook is not a tutorial on the basics of spark, it assumes you're already somewhat familar with it or can pick it up quickly by checking documentations along the way. For those interested there's also a [pyspark cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) that may come in handy.
 
 - Pyspark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/spark/installation.md)]
-- Spark exercise on crimes data, examples of manipulating data and building a RandomForest model with Spark. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/crime.ipynb)]
+- Examples of manipulating with data (crimes data) and building a RandomForest model with Spark. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/crime.ipynb)]
 - PCA with Spark's ML. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/pca_spark.ipynb)]
 
 #### dim_reduct : 2017.01.02
