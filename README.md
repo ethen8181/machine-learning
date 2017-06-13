@@ -19,7 +19,7 @@ Within each section, documentations are listed in reverse chronological order of
 
 Methods for selecting, evaluating models/algorithms.
 
-- K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb.ipynb)]
+- K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb)]
 
 #### spark : 2017.06.07
 
