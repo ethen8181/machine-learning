@@ -5,9 +5,9 @@ python-dotenv
 jupyterthemes
 tqdm>=4.11.2
 keras>=2.0.2
-numba>=0.31.0
+numba>=0.33.0
 gensim>=1.0.1
-numpy>=1.12.0
+numpy>=1.12.1
 pandas>=0.19.2
 watermark>=1.3.4
 requests>=2.13.0
