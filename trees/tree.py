@@ -102,19 +102,14 @@ def _create_decision_tree(X, y, max_depth,
         # still get assign a probability of 0
         counts = np.bincount(y, minlength = n_class)
         prob = counts / y.shape[0]
-        leaf = {
-            'is_leaf': True,
-            'prob': prob
-        }
+        leaf = {'is_leaf': True, 'prob': prob}
         return leaf
 
-    node = {
-        'is_leaf': False,
-        'left': left_child,
-        'right': right_child,
-        'split_col': column,
-        'threshold': value
-    }
+    node = {'is_leaf': False,
+            'left': left_child,
+            'right': right_child,
+            'split_col': column,
+            'threshold': value}
     return node
 
 
