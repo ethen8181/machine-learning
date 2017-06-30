@@ -10,7 +10,8 @@ This is one of the continuously updated repositories that documents personal jou
 | [machine-learning](https://github.com/ethen8181/machine-learning) | Machine learning, algorithm and programming (mainly in Python) |
 | [Business-Analytics](https://github.com/ethen8181/Business-Analytics) | All other data analytic related stuffs, e.g. concepts, statistics, visualizations (R, Python) |
 
-Within each section, documentations are listed in reverse chronological order of the start date (the date when the first notebook in that folder was created, if the notebook happened to be updated, then the actual date will be at the top of each notebook). Each of them are independent of one another unless specified.
+- **Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch (using Python's scientific stack including numpy, scipy, pandas, matplotlib etc) and open-source library usage (scikit-learn, pyspark, gensim, keras, tensorflow).
+- **Short Note:** Within each section, documentations are listed in reverse chronological order of the start date (the date when the first notebook in that folder was created, if the notebook happened to be updated, then the actual date will be at the top of each notebook). Each of them are independent of one another unless specified.
 
 
 ## Documentation Listings
