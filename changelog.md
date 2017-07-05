@@ -6,6 +6,8 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Changed
 
+- Gradient Boosting Machine (GBM) from scratch. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)
+	- Add a made up number example on how GBM works
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
 	- Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier
 	- Mention semantic versioning (what each number in the package version usually represents)
