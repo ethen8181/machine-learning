@@ -12,6 +12,7 @@ gensim>=1.0.1
 scipy>=0.19.0
 numpy>=1.12.1
 pandas>=0.19.2
+logzero>=1.2.0
 watermark>=1.4.0
 requests>=2.13.0
 matplotlib>=2.0.0
