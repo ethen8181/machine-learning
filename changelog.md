@@ -6,8 +6,12 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Changed
 
+- Cython and Numba quickstart for high performance python. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/cython/cython.ipynb)
+	- Added Numba parallel prange.
+- ALS-WR for implicit feedback data from scratch & mean average precision at k (mapk) and normalized cumulative discounted gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
+	- Included normalized cumulative discounted gain (ndcg) evaluation
 - Gradient Boosting Machine (GBM) from scratch. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)
-	- Add a made up number example on how GBM works
+	- Added a made up number example on how GBM works
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
 	- Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier
 	- Mention semantic versioning (what each number in the package version usually represents)

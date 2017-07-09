@@ -64,10 +64,10 @@ def define_extensions(use_cython, use_openmp):
             compile_args.append('-march=native')
 
     src_ext = '.pyx' if use_cython else '.c'
-    modules = [ Extension( 'pairwise3',
-                           [ os.path.join('pairwise3' + src_ext) ],
-                           extra_compile_args = compile_args, 
-                           extra_link_args = link_args ) ]
+    modules = [ Extension('pairwise3',
+                          [os.path.join('pairwise3' + src_ext)],
+                          extra_compile_args = compile_args, 
+                          extra_link_args = link_args)]
 
     if use_cython:
         return cythonize(modules)
