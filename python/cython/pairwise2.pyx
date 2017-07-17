@@ -16,6 +16,7 @@ cdef inline double euclidean_distance(double[:, :] X, int i1, int i2):
 
     return sqrt(d)
 
+
 def pairwise2(double[:, :] X, metric = 'euclidean'):
     if metric == 'euclidean':
         dist_func = euclidean_distance

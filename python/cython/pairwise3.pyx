@@ -27,6 +27,7 @@ cdef inline double euclidean_distance(double[:, :] X, int i, int j, int N) nogil
     
     return sqrt(d)
 
+
 def pairwise3(double[:, :] X):
     
     cdef:
