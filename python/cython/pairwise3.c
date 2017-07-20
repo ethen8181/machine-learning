@@ -1440,8 +1440,6 @@ static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_id;
 static PyObject *__pyx_builtin_IndexError;
 static const char __pyx_k_D[] = "D";
-static const char __pyx_k_M[] = "M";
-static const char __pyx_k_N[] = "N";
 static const char __pyx_k_O[] = "O";
 static const char __pyx_k_X[] = "X";
 static const char __pyx_k_c[] = "c";
@@ -1466,6 +1464,7 @@ static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_dtype[] = "dtype";
 static const char __pyx_k_error[] = "error";
 static const char __pyx_k_flags[] = "flags";
+static const char __pyx_k_n_dim[] = "n_dim";
 static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_shape[] = "shape";
@@ -1484,6 +1483,7 @@ static const char __pyx_k_Ellipsis[] = "Ellipsis";
 static const char __pyx_k_itemsize[] = "itemsize";
 static const char __pyx_k_TypeError[] = "TypeError";
 static const char __pyx_k_enumerate[] = "enumerate";
+static const char __pyx_k_n_samples[] = "n_samples";
 static const char __pyx_k_pairwise3[] = "pairwise3";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
@@ -1524,11 +1524,9 @@ static PyObject *__pyx_n_s_IndexError;
 static PyObject *__pyx_kp_s_Indirect_dimensions_not_supporte;
 static PyObject *__pyx_kp_s_Invalid_mode_expected_c_or_fortr;
 static PyObject *__pyx_kp_s_Invalid_shape_in_axis_d_d;
-static PyObject *__pyx_n_s_M;
 static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
 static PyObject *__pyx_kp_s_MemoryView_of_r_object;
-static PyObject *__pyx_n_s_N;
 static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_s_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_TypeError;
@@ -1564,6 +1562,8 @@ static PyObject *__pyx_n_s_j;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_mode;
+static PyObject *__pyx_n_s_n_dim;
+static PyObject *__pyx_n_s_n_samples;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_name_2;
 static PyObject *__pyx_n_s_ndim;
@@ -1718,7 +1718,7 @@ static CYTHON_INLINE double __pyx_f_9pairwise3_euclidean_distance(__Pyx_memviews
  * 
  *     return sqrt(d)             # <<<<<<<<<<<<<<
  * 
- * def pairwise3(double[:, :] X):
+ * 
  */
   __pyx_r = sqrt(__pyx_v_d);
   goto __pyx_L0;
@@ -1736,8 +1736,8 @@ static CYTHON_INLINE double __pyx_f_9pairwise3_euclidean_distance(__Pyx_memviews
   return __pyx_r;
 }
 
-/* "pairwise3.pyx":30
- *     return sqrt(d)
+/* "pairwise3.pyx":31
+ * 
  * 
  * def pairwise3(double[:, :] X):             # <<<<<<<<<<<<<<
  * 
@@ -1753,7 +1753,7 @@ static PyObject *__pyx_pw_9pairwise3_1pairwise3(PyObject *__pyx_self, PyObject *
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("pairwise3 (wrapper)", 0);
   assert(__pyx_arg_X); {
-    __pyx_v_X = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_arg_X); if (unlikely(!__pyx_v_X.memview)) __PYX_ERR(0, 30, __pyx_L3_error)
+    __pyx_v_X = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_arg_X); if (unlikely(!__pyx_v_X.memview)) __PYX_ERR(0, 31, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1772,8 +1772,8 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
   int __pyx_v_i;
   int __pyx_v_j;
   double __pyx_v_dist;
-  int __pyx_v_M;
-  int __pyx_v_N;
+  int __pyx_v_n_samples;
+  int __pyx_v_n_dim;
   __Pyx_memviewslice __pyx_v_D = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -1794,33 +1794,33 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
   Py_ssize_t __pyx_t_15;
   __Pyx_RefNannySetupContext("pairwise3", 0);
 
-  /* "pairwise3.pyx":35
+  /* "pairwise3.pyx":36
  *         int i, j
  *         double dist
- *         int M = X.shape[0], N = X.shape[1]             # <<<<<<<<<<<<<<
- *         double[:, :] D = np.zeros((M, M), dtype = np.float64)
+ *         int n_samples = X.shape[0], n_dim = X.shape[1]             # <<<<<<<<<<<<<<
+ *         double[:, :] D = np.zeros((n_samples, n_samples), dtype = np.float64)
  * 
  */
-  __pyx_v_M = (__pyx_v_X.shape[0]);
-  __pyx_v_N = (__pyx_v_X.shape[1]);
+  __pyx_v_n_samples = (__pyx_v_X.shape[0]);
+  __pyx_v_n_dim = (__pyx_v_X.shape[1]);
 
-  /* "pairwise3.pyx":36
+  /* "pairwise3.pyx":37
  *         double dist
- *         int M = X.shape[0], N = X.shape[1]
- *         double[:, :] D = np.zeros((M, M), dtype = np.float64)             # <<<<<<<<<<<<<<
+ *         int n_samples = X.shape[0], n_dim = X.shape[1]
+ *         double[:, :] D = np.zeros((n_samples, n_samples), dtype = np.float64)             # <<<<<<<<<<<<<<
  * 
  *     # parallelize this over the outermost loop, using the prange function
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_n_samples); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_n_samples); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
@@ -1828,38 +1828,38 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
   PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_3);
   __pyx_t_1 = 0;
   __pyx_t_3 = 0;
-  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 36, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_t_5);
-  if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 36, __pyx_L1_error)
+  if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_D = __pyx_t_6;
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "pairwise3.pyx":39
+  /* "pairwise3.pyx":40
  * 
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():             # <<<<<<<<<<<<<<
- *         for i in prange(M):
- *             for j in range(M):
+ *         for i in prange(n_samples):
+ *             for j in range(n_samples):
  */
   {
       #ifdef WITH_THREAD
@@ -1879,14 +1879,14 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
             #endif /* _OPENMP */
             {
 
-                /* "pairwise3.pyx":40
+                /* "pairwise3.pyx":41
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():
- *         for i in prange(M):             # <<<<<<<<<<<<<<
- *             for j in range(M):
- *                 dist = euclidean_distance(X, i, j, N)
+ *         for i in prange(n_samples):             # <<<<<<<<<<<<<<
+ *             for j in range(n_samples):
+ *                 dist = euclidean_distance(X, i, j, n_dim)
  */
-                __pyx_t_7 = __pyx_v_M;
+                __pyx_t_7 = __pyx_v_n_samples;
                 if (1 == 0) abort();
                 {
                     __pyx_t_9 = (__pyx_t_7 - 0 + 1 - 1/abs(1)) / 1;
@@ -1902,43 +1902,43 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
                                 __pyx_v_dist = ((double)__PYX_NAN());
                                 __pyx_v_j = ((int)0xbad0bad0);
 
-                                /* "pairwise3.pyx":41
+                                /* "pairwise3.pyx":42
  *     with nogil, parallel():
- *         for i in prange(M):
- *             for j in range(M):             # <<<<<<<<<<<<<<
- *                 dist = euclidean_distance(X, i, j, N)
+ *         for i in prange(n_samples):
+ *             for j in range(n_samples):             # <<<<<<<<<<<<<<
+ *                 dist = euclidean_distance(X, i, j, n_dim)
  *                 D[i, j] = dist
  */
-                                __pyx_t_10 = __pyx_v_M;
+                                __pyx_t_10 = __pyx_v_n_samples;
                                 for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
                                   __pyx_v_j = __pyx_t_11;
 
-                                  /* "pairwise3.pyx":42
- *         for i in prange(M):
- *             for j in range(M):
- *                 dist = euclidean_distance(X, i, j, N)             # <<<<<<<<<<<<<<
+                                  /* "pairwise3.pyx":43
+ *         for i in prange(n_samples):
+ *             for j in range(n_samples):
+ *                 dist = euclidean_distance(X, i, j, n_dim)             # <<<<<<<<<<<<<<
  *                 D[i, j] = dist
  *                 D[j, i] = dist
  */
-                                  __pyx_v_dist = __pyx_f_9pairwise3_euclidean_distance(__pyx_v_X, __pyx_v_i, __pyx_v_j, __pyx_v_N);
+                                  __pyx_v_dist = __pyx_f_9pairwise3_euclidean_distance(__pyx_v_X, __pyx_v_i, __pyx_v_j, __pyx_v_n_dim);
 
-                                  /* "pairwise3.pyx":43
- *             for j in range(M):
- *                 dist = euclidean_distance(X, i, j, N)
+                                  /* "pairwise3.pyx":44
+ *             for j in range(n_samples):
+ *                 dist = euclidean_distance(X, i, j, n_dim)
  *                 D[i, j] = dist             # <<<<<<<<<<<<<<
  *                 D[j, i] = dist
- * 
+ *     return D
  */
                                   __pyx_t_12 = __pyx_v_i;
                                   __pyx_t_13 = __pyx_v_j;
                                   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_D.data + __pyx_t_12 * __pyx_v_D.strides[0]) ) + __pyx_t_13 * __pyx_v_D.strides[1]) )) = __pyx_v_dist;
 
-                                  /* "pairwise3.pyx":44
- *                 dist = euclidean_distance(X, i, j, N)
+                                  /* "pairwise3.pyx":45
+ *                 dist = euclidean_distance(X, i, j, n_dim)
  *                 D[i, j] = dist
  *                 D[j, i] = dist             # <<<<<<<<<<<<<<
- * 
  *     return D
+ * 
  */
                                   __pyx_t_14 = __pyx_v_j;
                                   __pyx_t_15 = __pyx_v_i;
@@ -1958,12 +1958,12 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
         #endif
       }
 
-      /* "pairwise3.pyx":39
+      /* "pairwise3.pyx":40
  * 
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():             # <<<<<<<<<<<<<<
- *         for i in prange(M):
- *             for j in range(M):
+ *         for i in prange(n_samples):
+ *             for j in range(n_samples):
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -1977,8 +1977,8 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
   }
 
   /* "pairwise3.pyx":46
+ *                 D[i, j] = dist
  *                 D[j, i] = dist
- * 
  *     return D             # <<<<<<<<<<<<<<
  * 
  */
@@ -1989,8 +1989,8 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "pairwise3.pyx":30
- *     return sqrt(d)
+  /* "pairwise3.pyx":31
+ * 
  * 
  * def pairwise3(double[:, :] X):             # <<<<<<<<<<<<<<
  * 
@@ -14368,11 +14368,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Indirect_dimensions_not_supporte, __pyx_k_Indirect_dimensions_not_supporte, sizeof(__pyx_k_Indirect_dimensions_not_supporte), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_mode_expected_c_or_fortr, __pyx_k_Invalid_mode_expected_c_or_fortr, sizeof(__pyx_k_Invalid_mode_expected_c_or_fortr), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_shape_in_axis_d_d, __pyx_k_Invalid_shape_in_axis_d_d, sizeof(__pyx_k_Invalid_shape_in_axis_d_d), 0, 0, 1, 0},
-  {&__pyx_n_s_M, __pyx_k_M, sizeof(__pyx_k_M), 0, 0, 1, 1},
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {&__pyx_kp_s_MemoryView_of_r_at_0x_x, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {&__pyx_n_s_N, __pyx_k_N, sizeof(__pyx_k_N), 0, 0, 1, 1},
   {&__pyx_n_b_O, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {&__pyx_kp_s_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 0, 1, 0},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
@@ -14408,6 +14406,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
+  {&__pyx_n_s_n_dim, __pyx_k_n_dim, sizeof(__pyx_k_n_dim), 0, 0, 1, 1},
+  {&__pyx_n_s_n_samples, __pyx_k_n_samples, sizeof(__pyx_k_n_samples), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_name_2, __pyx_k_name_2, sizeof(__pyx_k_name_2), 0, 0, 1, 1},
   {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
@@ -14599,17 +14599,17 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "pairwise3.pyx":30
- *     return sqrt(d)
+  /* "pairwise3.pyx":31
+ * 
  * 
  * def pairwise3(double[:, :] X):             # <<<<<<<<<<<<<<
  * 
  *     cdef:
  */
-  __pyx_tuple__14 = PyTuple_Pack(8, __pyx_n_s_X, __pyx_n_s_X, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_dist, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_D); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(8, __pyx_n_s_X, __pyx_n_s_X, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_dist, __pyx_n_s_n_samples, __pyx_n_s_n_dim, __pyx_n_s_D); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Users_ethen_machine_learning_py, __pyx_n_s_pairwise3, 30, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Users_ethen_machine_learning_py, __pyx_n_s_pairwise3, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 31, __pyx_L1_error)
 
   /* "View.MemoryView":282
  *         return self.name
@@ -14829,16 +14829,16 @@ PyMODINIT_FUNC PyInit_pairwise3(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "pairwise3.pyx":30
- *     return sqrt(d)
+  /* "pairwise3.pyx":31
+ * 
  * 
  * def pairwise3(double[:, :] X):             # <<<<<<<<<<<<<<
  * 
  *     cdef:
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9pairwise3_1pairwise3, NULL, __pyx_n_s_pairwise3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9pairwise3_1pairwise3, NULL, __pyx_n_s_pairwise3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pairwise3, __pyx_t_1) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pairwise3, __pyx_t_1) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "pairwise3.pyx":1

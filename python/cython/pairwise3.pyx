@@ -20,29 +20,28 @@ cdef inline double euclidean_distance(double[:, :] X, int i, int j, int N) nogil
     cdef:
         int k
         double tmp, d = 0.0
-    
+
     for k in range(N):
         tmp = X[i, k] - X[j, k]
         d += tmp * tmp
-    
+
     return sqrt(d)
 
 
 def pairwise3(double[:, :] X):
-    
+
     cdef:
         int i, j
         double dist
-        int M = X.shape[0], N = X.shape[1]
-        double[:, :] D = np.zeros((M, M), dtype = np.float64)
-    
+        int n_samples = X.shape[0], n_dim = X.shape[1]
+        double[:, :] D = np.zeros((n_samples, n_samples), dtype = np.float64)
+
     # parallelize this over the outermost loop, using the prange function
     with nogil, parallel():
-        for i in prange(M):
-            for j in range(M):
-                dist = euclidean_distance(X, i, j, N)
+        for i in prange(n_samples):
+            for j in range(n_samples):
+                dist = euclidean_distance(X, i, j, n_dim)
                 D[i, j] = dist
                 D[j, i] = dist
-
     return D
 
