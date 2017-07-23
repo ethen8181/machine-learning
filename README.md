@@ -33,7 +33,7 @@ Dimensionality reduction methods.
 
 #### recsys : 2016.12.17
 
-Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook - "ALS-WR for implicit feedback data" and third notebook - "Bayesian Personalized Ranking" can be independent of one another as they are simply different algorithms.
+Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook - "ALS-WR for implicit feedback data" and third notebook - "Bayesian Personalized Ranking" can be independent of one another as they are simply different algorithms. Although it's still ideal to go through them in the listed sequence.
 
 - Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
 - ALS-WR for implicit feedback data from scratch & mean average precision at k (mapk) and normalized cumulative discounted gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
