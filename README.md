@@ -16,6 +16,7 @@ This is a continuously updated repository that documents personal journey on lea
 Methods for selecting, evaluating models/algorithms.
 
 - K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb)]
+- AUC (Area under the ROC, precision/recall curve) from scratch (includes building a custom scikit-learn transformer). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/auc/auc.ipynb)]
 
 #### spark : 2017.06.07
 

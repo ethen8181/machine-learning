@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook) **fixed** (e.g. grammar mistakes, typos, redundant spaces)
 
+## [2017-08]
+
+### Added
+
+- AUC (Area under the ROC, precision/recall curve) from scratch (includes building a custom scikit-learn transformer). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/auc/auc.ipynb)]
+
 ## [2017-07]
 
 ### Added
@@ -25,6 +31,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 - K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb)]
 	- Minor change in Kfolds educational implementation (original was passing redundant arguments to a method)
 	- Minor change in random search educational implementation (did not realize scipy's .rvs method for generating random numbers returns a single element array instead of a number when you pass in size = 1)
+
 
 ## [2017-06]
 
