@@ -1,7 +1,7 @@
 # machine-learning
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
-![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
+![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg?style=flat-square)
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
@@ -10,6 +10,12 @@ This is a continuously updated repository that documents personal journey on lea
 
 
 ## Documentation Listings
+
+#### ab_tests : 2017.08.09
+
+A/B testing, a.k.a experimental design. Includes 1) quick review of necessary statistic concepts 2) methods and workflow/thought-process for conducting the test 3) caveats to look out for.
+
+- Frequentist A/B testing (includes a quick review of concepts such as p-value, confidence interval). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/frequentist_ab_test.ipynb)]
 
 #### model_selection : 2017.06.12
 
