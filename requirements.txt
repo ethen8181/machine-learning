@@ -1,13 +1,15 @@
 h2o
+logzero
 networkx
 python-dotenv
 jupyterthemes
+spacy>=1.9.0
 joblib>=0.11
 tqdm>=4.14.0
 keras>=2.0.2
 nbdime>=0.3.0
 numba>=0.34.0
-gensim>=2.2.0
+gensim>=2.3.0
 scipy>=0.19.0
 numpy>=1.13.1
 pandas>=0.19.2

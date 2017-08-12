@@ -1,0 +1,6 @@
+[I 170811 18:04:19 word2vec_workflow:49] job started
+[I 170811 18:04:19 word2vec_workflow:54] preprocessing text
+[I 170811 18:08:13 word2vec_workflow:60] training phrase model
+[I 170811 18:08:17 word2vec_workflow:67] converting words to phrases
+[I 170811 18:08:27 word2vec_workflow:73] training word2vec
+[I 170811 18:08:34 word2vec_workflow:78] job completed
