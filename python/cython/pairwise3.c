@@ -1335,6 +1335,9 @@ static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dsds_d
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
 /* MemviewDtypeToObject.proto */
 static CYTHON_INLINE PyObject *__pyx_memview_get_double(const char *itemp);
 static CYTHON_INLINE int __pyx_memview_set_double(const char *itemp, PyObject *obj);
@@ -1348,9 +1351,6 @@ __pyx_memoryview_copy_new_contig(const __Pyx_memviewslice *from_mvs,
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *);
@@ -1502,8 +1502,8 @@ static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
+static const char __pyx_k_Users_r631854_machine_learning[] = "/Users/r631854/machine-learning/python/cython/pairwise3.pyx";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
-static const char __pyx_k_Users_ethen_machine_learning_py[] = "/Users/ethen/machine-learning/python/cython/pairwise3.pyx";
 static const char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
 static const char __pyx_k_Can_only_create_a_buffer_that_is[] = "Can only create a buffer that is contiguous in memory.";
 static const char __pyx_k_Empty_shape_tuple_for_cython_arr[] = "Empty shape tuple for cython.array";
@@ -1531,7 +1531,7 @@ static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_s_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
-static PyObject *__pyx_kp_s_Users_ethen_machine_learning_py;
+static PyObject *__pyx_kp_s_Users_r631854_machine_learning;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_n_s_X;
 static PyObject *__pyx_n_s_allocate_buffer;
@@ -1859,7 +1859,7 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():             # <<<<<<<<<<<<<<
  *         for i in prange(n_samples):
- *             for j in range(n_samples):
+ *             for j in range(i + 1, n_samples):
  */
   {
       #ifdef WITH_THREAD
@@ -1883,7 +1883,7 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():
  *         for i in prange(n_samples):             # <<<<<<<<<<<<<<
- *             for j in range(n_samples):
+ *             for j in range(i + 1, n_samples):
  *                 dist = euclidean_distance(X, i, j, n_dim)
  */
                 __pyx_t_7 = __pyx_v_n_samples;
@@ -1905,17 +1905,17 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
                                 /* "pairwise3.pyx":42
  *     with nogil, parallel():
  *         for i in prange(n_samples):
- *             for j in range(n_samples):             # <<<<<<<<<<<<<<
+ *             for j in range(i + 1, n_samples):             # <<<<<<<<<<<<<<
  *                 dist = euclidean_distance(X, i, j, n_dim)
  *                 D[i, j] = dist
  */
                                 __pyx_t_10 = __pyx_v_n_samples;
-                                for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
+                                for (__pyx_t_11 = (__pyx_v_i + 1); __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
                                   __pyx_v_j = __pyx_t_11;
 
                                   /* "pairwise3.pyx":43
  *         for i in prange(n_samples):
- *             for j in range(n_samples):
+ *             for j in range(i + 1, n_samples):
  *                 dist = euclidean_distance(X, i, j, n_dim)             # <<<<<<<<<<<<<<
  *                 D[i, j] = dist
  *                 D[j, i] = dist
@@ -1923,7 +1923,7 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
                                   __pyx_v_dist = __pyx_f_9pairwise3_euclidean_distance(__pyx_v_X, __pyx_v_i, __pyx_v_j, __pyx_v_n_dim);
 
                                   /* "pairwise3.pyx":44
- *             for j in range(n_samples):
+ *             for j in range(i + 1, n_samples):
  *                 dist = euclidean_distance(X, i, j, n_dim)
  *                 D[i, j] = dist             # <<<<<<<<<<<<<<
  *                 D[j, i] = dist
@@ -1938,7 +1938,6 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
  *                 D[i, j] = dist
  *                 D[j, i] = dist             # <<<<<<<<<<<<<<
  *     return D
- * 
  */
                                   __pyx_t_14 = __pyx_v_j;
                                   __pyx_t_15 = __pyx_v_i;
@@ -1963,7 +1962,7 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
  *     # parallelize this over the outermost loop, using the prange function
  *     with nogil, parallel():             # <<<<<<<<<<<<<<
  *         for i in prange(n_samples):
- *             for j in range(n_samples):
+ *             for j in range(i + 1, n_samples):
  */
       /*finally:*/ {
         /*normal exit:*/{
@@ -1980,7 +1979,6 @@ static PyObject *__pyx_pf_9pairwise3_pairwise3(CYTHON_UNUSED PyObject *__pyx_sel
  *                 D[i, j] = dist
  *                 D[j, i] = dist
  *     return D             # <<<<<<<<<<<<<<
- * 
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_D, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 46, __pyx_L1_error)
@@ -14375,7 +14373,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 0, 1, 0},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
-  {&__pyx_kp_s_Users_ethen_machine_learning_py, __pyx_k_Users_ethen_machine_learning_py, sizeof(__pyx_k_Users_ethen_machine_learning_py), 0, 0, 1, 0},
+  {&__pyx_kp_s_Users_r631854_machine_learning, __pyx_k_Users_r631854_machine_learning, sizeof(__pyx_k_Users_r631854_machine_learning), 0, 0, 1, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_n_s_X, __pyx_k_X, sizeof(__pyx_k_X), 0, 0, 1, 1},
   {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
@@ -14609,7 +14607,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__14 = PyTuple_Pack(8, __pyx_n_s_X, __pyx_n_s_X, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_dist, __pyx_n_s_n_samples, __pyx_n_s_n_dim, __pyx_n_s_D); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Users_ethen_machine_learning_py, __pyx_n_s_pairwise3, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Users_r631854_machine_learning, __pyx_n_s_pairwise3, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 31, __pyx_L1_error)
 
   /* "View.MemoryView":282
  *         return self.name
@@ -17553,6 +17551,37 @@ __pyx_fail:
         return (target_type) value;\
     }
 
+/* CIntToPy */
+          static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
 /* MemviewDtypeToObject */
           static CYTHON_INLINE PyObject *__pyx_memview_get_double(const char *itemp) {
     return (PyObject *) PyFloat_FromDouble(*(double *) itemp);
@@ -17819,37 +17848,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-/* CIntToPy */
-          static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
 }
 
 /* CIntFromPy */

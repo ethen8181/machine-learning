@@ -39,9 +39,8 @@ def pairwise3(double[:, :] X):
     # parallelize this over the outermost loop, using the prange function
     with nogil, parallel():
         for i in prange(n_samples):
-            for j in range(n_samples):
+            for j in range(i + 1, n_samples):
                 dist = euclidean_distance(X, i, j, n_dim)
                 D[i, j] = dist
                 D[j, i] = dist
     return D
-
