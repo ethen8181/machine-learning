@@ -1,6 +1,6 @@
 # Changelog
 
-The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook) **fixed** (e.g. grammar mistakes, typos, redundant spaces)
+The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
 ## [2017-08]
 
