@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2017-09]
+
+### Changed
+
+- Using built-in data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
+	- Merged the content from the two notebooks `namedtuple and defaultdict` and `sorting with itemgetter and attrgetter` into this one and improved the section on priority queue.
+
 ## [2017-08]
 
 ### Added
