@@ -1,6 +1,6 @@
 # Data Challenge
 
-Predict if a car purchased at auction is a unforunate purchase.
+Predict if a car purchased at auction is a unfortunate purchase.
 
 ## Installation
 

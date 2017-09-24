@@ -1,5 +1,5 @@
 """
-Task : Predict if a car purchased at auction is a unforunate purchase.
+Task : Predict if a car purchased at auction is a unfortunate purchase.
 Output : .csv file containing the prediction
 """
 import os
@@ -30,7 +30,9 @@ def main():
     # preprocessing step:
     # filepath
     DATA_DIR = 'data'
+    OUTPUT_DIR = 'output'
     INPUT_PATH = os.path.join(DATA_DIR, args.inputfile)
+    OUTPUT_PATH = os.path.join(OUTPUT_DIR, args.outputfile)
 
     # columns used
     CAT_COLS = ['Auction', 'Transmission', 'WheelType', 'Nationality',
@@ -61,9 +63,6 @@ def main():
     MODEL_DIR = 'model'
     CHECKPOINT_PREPROCESS = os.path.join(MODEL_DIR, 'preprocess.pkl')
     CHECKPOINT_XGB = os.path.join(MODEL_DIR, 'xgb.pkl')
-
-    OUTPUT_DIR = 'output'
-    OUTPUT_PATH = os.path.join(OUTPUT_DIR, args.outputfile)
 
     # -----------------------------------------------------------------------------------
     logger.info('preprocessing')
