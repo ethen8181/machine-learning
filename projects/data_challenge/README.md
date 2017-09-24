@@ -62,6 +62,6 @@ python src/main.py --inputfile test.csv --outputfile prediction_future.csv
 
 ## Documentation
 
-- `src/data_challenge.ipynb` Jupyter Notebook that contains a walkthrough of the overall process. This is the best place to start. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/projects/data_challenge/data_challenge.ipynb)]
+- `src/data_challenge.ipynb` Jupyter Notebook that contains a walkthrough of the overall process. This is the best place to start. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/projects/data_challenge/src/data_challenge.ipynb)]
 - `src/main.py` Once you're acquainted with the process, you can just run this Python script to run the end to end pipeline. [[Python script](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/src/main.py)]
 - `src/utils.py` Utility function for the project used throughout the Jupyter notebook and Python script. [[Python script](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/src/utils.py)]
