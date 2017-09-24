@@ -11,6 +11,12 @@ This is a continuously updated repository that documents personal journey on lea
 
 ## Documentation Listings
 
+#### projects : 2017.09.23
+
+End to end project including data preprocessing, model building.
+
+- [Kaggle challenge](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unforunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/)]
+
 #### ab_tests : 2017.08.09
 
 A/B testing, a.k.a experimental design. Includes 1) quick review of necessary statistic concepts. 2) methods and workflow/thought-process for conducting the test. 3) caveats to look out for.

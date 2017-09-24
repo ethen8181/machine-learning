@@ -4,6 +4,10 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2017-09]
 
+### Added
+
+- [Kaggle challenge](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unforunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/)]
+
 ### Changed
 
 - Using built-in data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
@@ -21,7 +25,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Changed
 
 - Optimizing Pandas (e.g. reduce memory usage using category type). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas/pandas.ipynb)]
-	- This is a revamp of the old content Pandas's category type
+	- This is a revamp of the old content Pandas's category type.
 
 
 ## [2017-07]
@@ -33,20 +37,20 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Changed
 
 - Bayesian Personalized Ranking (BPR) from scratch & AUC evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_bpr.ipynb)]
-	- A more efficient matrix operation using Hadamard product
+	- A more efficient matrix operation using Hadamard product.
 - Cython and Numba quickstart for high performance python. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/cython/cython.ipynb)
-	- Added Numba parallel prange
+	- Added Numba parallel prange.
 - ALS-WR for implicit feedback data from scratch & mean average precision at k (mapk) and normalized cumulative discounted gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
-	- Included normalized cumulative discounted gain (ndcg) evaluation
+	- Included normalized cumulative discounted gain (ndcg) evaluation.
 - Gradient Boosting Machine (GBM) from scratch. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)
-	- Added a made up number example on how GBM works
+	- Added a made up number example on how GBM works.
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
-	- Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier
-	- Mention semantic versioning (what each number in the package version usually represents)
-	- Mention `configparser`, a handy library for storing and loading configuration files
+	- Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier.
+	- Mention semantic versioning (what each number in the package version usually represents).
+	- Mention `configparser`, a handy library for storing and loading configuration files.
 - K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb)]
-	- Minor change in Kfolds educational implementation (original was passing redundant arguments to a method)
-	- Minor change in random search educational implementation (did not realize scipy's .rvs method for generating random numbers returns a single element array instead of a number when you pass in size = 1)
+	- Minor change in Kfolds educational implementation (original was passing redundant arguments to a method).
+	- Minor change in random search educational implementation (did not realize scipy's .rvs method for generating random numbers returns a single element array instead of a number when you pass in size = 1).
 
 
 ## [2017-06]
