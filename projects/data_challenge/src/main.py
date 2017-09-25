@@ -50,19 +50,21 @@ def main():
     NOW = '2010-12-31'
 
     # modeling step:
-    # number of cross validation and hyperparameters to try
-    CV = 10
-    N_ITER = 5
-
-    # train/validation stratified split
-    VAL_SIZE = 0.1
-    TEST_SIZE = 0.1
-    SPLIT_RANDOM_STATE = 1234
-
     # model checkpoint for future scoring
     MODEL_DIR = 'model'
     CHECKPOINT_PREPROCESS = os.path.join(MODEL_DIR, 'preprocess.pkl')
     CHECKPOINT_XGB = os.path.join(MODEL_DIR, 'xgb.pkl')
+
+    # parameter that only relevant for training stage and not scoring
+    if args.train:
+        # number of cross validation and hyperparameter settings to try
+        CV = 10
+        N_ITER = 5
+
+        # train/validation stratified split
+        VAL_SIZE = 0.1
+        TEST_SIZE = 0.1
+        SPLIT_RANDOM_STATE = 1234
 
     # -----------------------------------------------------------------------------------
     logger.info('preprocessing')
@@ -105,7 +107,7 @@ def main():
         for name, X, y in zipped:
             xgb_pred = xgb_best.predict_proba(
                 X, ntree_limit = xgb_best.best_ntree_limit)[:, 1]
-            score = round(roc_auc_score(y, xgb_pred), 2)
+            score = round(roc_auc_score(y, xgb_pred), 3)
             logger.info('{} AUC: {}'.format(name, score))
             y_pred.append(xgb_pred)
 
@@ -123,7 +125,8 @@ def main():
         data = data.drop(IDS_COL, axis = 1)
         X = preprocess.transform(data)
         xgb_best = xgb_tuned.best_estimator_
-        y_pred = xgb_best.predict_proba(X, ntree_limit = xgb_best.best_ntree_limit)[:, 1]
+        y_pred = xgb_best.predict_proba(
+            X, ntree_limit = xgb_best.best_ntree_limit)[:, 1]
 
     write_output(ids, IDS_COL, y_pred, LABEL_COL, OUTPUT_PATH)
 
