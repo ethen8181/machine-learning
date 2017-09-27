@@ -64,7 +64,6 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
             dropna(axis = 0, how = 'any').
             rename(columns = rename_col))
 
-    # transform columns into ratio (should be more indicative than the raw form)
     # ensure prices are greater than 0
     price_cols = ['AuctionAveragePrice', 'AuctionCleanPrice',
                   'RetailAveragePrice', 'RetailCleanPrice']
@@ -80,9 +79,10 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
     data['RatioVehBCost'] = (data[veh_cost_col] /
                              data['MMRAcquisitionAuctionAveragePrice'])
     data = data.drop(veh_cost_col, axis = 1)
-
-    # compute the ratio (MRRCurrent - MRRAcquistion) / MRRAcquistion for four different
-    # price columns
+    
+    # transform columns into ratio (should be more indicative than the raw form)
+    # compute the ratio (MRRCurrent - MRRAcquistion) / MRRAcquistion for the
+    # four different price columns
     for price_col in price_cols:
         new = 'Diff' + price_col
         current = 'MMRCurrent' + price_col
