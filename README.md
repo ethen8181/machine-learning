@@ -1,7 +1,7 @@
 # machine-learning
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
-![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg?style=flat-square)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
+![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
