@@ -25,6 +25,7 @@ class SoftmaxRegression:
         l2 regularization parameter
         if 0: no regularization
     """
+
     def __init__(self, eta, epochs, minibatches, l2 = 0):
         self.eta = eta
         self.epochs = epochs
