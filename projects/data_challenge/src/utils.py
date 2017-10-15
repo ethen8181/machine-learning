@@ -79,7 +79,7 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
     data['RatioVehBCost'] = (data[veh_cost_col] /
                              data['MMRAcquisitionAuctionAveragePrice'])
     data = data.drop(veh_cost_col, axis = 1)
-    
+
     # transform columns into ratio (should be more indicative than the raw form)
     # compute the ratio (MRRCurrent - MRRAcquistion) / MRRAcquistion for the
     # four different price columns
@@ -249,11 +249,16 @@ class Preprocess(BaseEstimator, TransformerMixin):
 
     def fit(self, data):
         """
-        Fit the Preprocess Transformer
+        Fit the Preprocess Transformer on the input data.
 
         Parameters
         ----------
-        data : DataFrame
+        data : DataFrame, shape [n_samples, n_features]
+            Input data
+
+        Returns
+        -------
+        self
         """
         if self.num_cols is None and self.cat_cols is None:
             raise ValueError("There must be a least one input feature column")
@@ -314,11 +319,17 @@ class Preprocess(BaseEstimator, TransformerMixin):
 
     def transform(self, data):
         """
-        Trasform the data using the fitted Preprocess Transformer
+        Transform X using Preprocess Transformer.
 
         Parameters
         ----------
-        data : DataFrame
+        X : DataFrame, shape [n_samples, n_features]
+            Input data
+
+        Returns
+        -------
+        X_transformed : 2d ndarray, shape [n_samples, n_features]
+            Transformed input data
         """
         if self.cat_cols is not None:
             label_encoded = (data[self.cat_cols].
