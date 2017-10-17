@@ -11,7 +11,7 @@ from logzero import setup_logger
 from sortedcontainers import SortedSet
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
-from utils import clean, build_xgb, write_output, Preprocess
+from utils import clean, build_xgb, write_output, Preprocesser
 logger = setup_logger(name = __name__, logfile = 'data_challenge.log', level = logging.INFO)
 
 
@@ -83,7 +83,7 @@ def main():
             random_state = SPLIT_RANDOM_STATE, stratify = y_train)
 
         num_cols_cleaned = list(SortedSet(df_train.columns) - SortedSet(CAT_COLS))
-        preprocess = Preprocess(num_cols_cleaned, CAT_COLS)
+        preprocess = Preprocesser(num_cols_cleaned, CAT_COLS)
         X_train = preprocess.fit_transform(df_train)
         X_val = preprocess.transform(df_val)
         X_test = preprocess.transform(df_test)

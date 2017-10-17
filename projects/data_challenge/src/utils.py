@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
-__all__ = ['clean', 'build_xgb', 'write_output', 'Preprocess']
+__all__ = ['clean', 'build_xgb', 'write_output', 'Preprocesser']
 
 
 def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = None):
@@ -197,7 +197,7 @@ def write_output(ids, ids_col, y_pred, label_col, output_path):
     output.to_csv(output_path, index = False)
 
 
-class Preprocess(BaseEstimator, TransformerMixin):
+class Preprocesser(BaseEstimator, TransformerMixin):
     """
     Generic data preprocessing including:
     - standardize numeric columns and remove potential
@@ -221,10 +221,10 @@ class Preprocess(BaseEstimator, TransformerMixin):
 
     Attributes
     ----------
-    colnames_ : list[str]
+    colnames_ : str 1d ndarray
         Column name of the transformed numpy array
 
-    num_cols_ : list[str] or None
+    num_cols_ : str 1d ndarray or None
         Final numeric column after removing potential multi-collinearity,
         if there're no numeric input features then the value will be None
 
@@ -247,7 +247,7 @@ class Preprocess(BaseEstimator, TransformerMixin):
         self.cat_cols = cat_cols
         self.threshold = threshold
 
-    def fit(self, data):
+    def fit(self, data, y = None):
         """
         Fit the Preprocess Transformer on the input data.
 
@@ -256,14 +256,15 @@ class Preprocess(BaseEstimator, TransformerMixin):
         data : DataFrame, shape [n_samples, n_features]
             Input data
 
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline
+
         Returns
         -------
         self
         """
         if self.num_cols is None and self.cat_cols is None:
             raise ValueError("There must be a least one input feature column")
-
-        data = data.copy()
 
         # Label encoding across multiple columns in scikit-learn
         # https://stackoverflow.com/questions/24458645/label-encoding-across-multiple-columns-in-scikit-learn
@@ -279,7 +280,7 @@ class Preprocess(BaseEstimator, TransformerMixin):
             self.scaler_ = StandardScaler()
             scaled = self.scaler_.fit_transform(data[self.num_cols])
             colnames = self._remove_collinearity(scaled)
-            self.num_cols_ = colnames.copy()
+            self.num_cols_ = np.array(colnames)
         else:
             colnames = []
             self.num_cols_ = None
@@ -292,7 +293,7 @@ class Preprocess(BaseEstimator, TransformerMixin):
                                 for classes in self.label_encode_dict_[col].classes_]
                 colnames += cat_colnames
 
-        self.colnames_ = colnames
+        self.colnames_ = np.asarray(colnames)
         return self
 
     def _remove_collinearity(self, scaled):
@@ -319,16 +320,16 @@ class Preprocess(BaseEstimator, TransformerMixin):
 
     def transform(self, data):
         """
-        Transform X using Preprocess Transformer.
+        Transform the input data using Preprocess Transformer.
 
         Parameters
         ----------
-        X : DataFrame, shape [n_samples, n_features]
+        data : DataFrame, shape [n_samples, n_features]
             Input data
 
         Returns
         -------
-        X_transformed : 2d ndarray, shape [n_samples, n_features]
+        X : 2d ndarray, shape [n_samples, n_features]
             Transformed input data
         """
         if self.cat_cols is not None:
