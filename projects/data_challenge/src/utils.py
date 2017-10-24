@@ -137,26 +137,24 @@ def build_xgb(n_iter, cv, eval_set):
         'max_delta_step': 1,
         'learning_rate': 0.1,
         'n_estimators': 500,
-        'n_jobs': -1
-    }
-
-    # set up early stopping
-    xgb_fit_params = {
-        'eval_metric': 'auc',
-        'eval_set': eval_set,
-        'early_stopping_rounds': 5,
-        'verbose': False
-    }
-
+        'n_jobs': -1}
+    xgb = XGBClassifier(**xgb_params_fixed)
+    
     # set up randomsearch hyperparameters:
     # subsample, colsample_bytree and max_depth are presumably the most
     # common way to control under/overfitting for tree-based models
     xgb_tuned_params = {
         'max_depth': randint(low = 3, high = 12),
         'colsample_bytree': uniform(loc = 0.8, scale = 0.2),
-        'subsample': uniform(loc = 0.8, scale = 0.2)
-    }
-    xgb = XGBClassifier(**xgb_params_fixed)
+        'subsample': uniform(loc = 0.8, scale = 0.2)}
+
+    # set up early stopping
+    xgb_fit_params = {
+        'eval_metric': 'auc',
+        'eval_set': eval_set,
+        'early_stopping_rounds': 5,
+        'verbose': False}
+    
     xgb_tuned = RandomizedSearchCV(
         estimator = xgb,
         param_distributions = xgb_tuned_params,
@@ -164,8 +162,7 @@ def build_xgb(n_iter, cv, eval_set):
         cv = cv,
         n_iter = n_iter,
         n_jobs = -1,
-        verbose = 1
-    )
+        verbose = 1)
     return xgb_tuned
 
 

@@ -74,6 +74,7 @@ def main():
         label = data[LABEL_COL].values
         data = data.drop([IDS_COL, LABEL_COL], axis = 1)
 
+        # train/test split twice to achieve train/validaion/test three way split
         df_train, df_test, y_train, y_test, ids_train, ids_test = train_test_split(
             data, label, ids, test_size = TEST_SIZE,
             random_state = SPLIT_RANDOM_STATE, stratify = label)
