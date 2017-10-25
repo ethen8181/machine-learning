@@ -349,7 +349,7 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         linear = LinearRegression()
         linear.fit(X_not_target, X_target)
         rsquared = linear.score(X_not_target, X_target)
-        vif = 1. / (1. - rsquared - 1e-5)
+        vif = 1. / (1. - rsquared + 1e-5)
         return vif
 
     def transform(self, data):
