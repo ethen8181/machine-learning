@@ -1,15 +1,27 @@
+import warnings
 import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
 from collections import defaultdict
 from scipy.stats import randint, uniform
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
-from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
 __all__ = ['clean', 'build_xgb', 'write_output', 'Preprocesser']
+
+# sklearn's LinearRegression may give harmless errors
+# https://github.com/scipy/scipy/issues/5998
+warnings.filterwarnings(
+    action = 'ignore', module = 'scipy', message = '^internal gelsd')
+
+# fit_params as a constructor argument was deprecated in version 0.19
+# and will be removed in version 0.21, will worry about converting in the future
+warnings.filterwarnings(
+    action = 'ignore', module = 'sklearn',
+    message = '.*fit_params.*', category = DeprecationWarning)
 
 
 def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = None):
@@ -139,7 +151,7 @@ def build_xgb(n_iter, cv, eval_set):
         'n_estimators': 500,
         'n_jobs': -1}
     xgb = XGBClassifier(**xgb_params_fixed)
-    
+
     # set up randomsearch hyperparameters:
     # subsample, colsample_bytree and max_depth are presumably the most
     # common way to control under/overfitting for tree-based models
@@ -148,13 +160,15 @@ def build_xgb(n_iter, cv, eval_set):
         'colsample_bytree': uniform(loc = 0.8, scale = 0.2),
         'subsample': uniform(loc = 0.8, scale = 0.2)}
 
-    # set up early stopping
     xgb_fit_params = {
         'eval_metric': 'auc',
         'eval_set': eval_set,
         'early_stopping_rounds': 5,
         'verbose': False}
-    
+
+    # computing the scores on the training set can be computationally
+    # expensive and is not strictly required to select the parameters
+    # that yield the best generalization performance.
     xgb_tuned = RandomizedSearchCV(
         estimator = xgb,
         param_distributions = xgb_tuned_params,
@@ -162,7 +176,8 @@ def build_xgb(n_iter, cv, eval_set):
         cv = cv,
         n_iter = n_iter,
         n_jobs = -1,
-        verbose = 1)
+        verbose = 1,
+        return_train_score = False)
     return xgb_tuned
 
 
@@ -205,41 +220,41 @@ class Preprocesser(BaseEstimator, TransformerMixin):
     ----------
     num_cols : list[str], default None
         Numeric columns' name. default None means
-        the input column has no numeric features
+        the input column has no numeric features.
 
     cat_cols : list[str], default None
-        Categorical columns' name
+        Categorical columns' name.
 
-    threshold : int, default 5
+    threshold : float, default 5.0
         Threshold for variance inflation factor (vif).
         If there are numerical columns, identify potential multi-collinearity
-        between them using (vif). Conventionally, a vif score larger than 5
-        should be removed
+        between them using vif. Conventionally, a vif score larger than 5
+        should be removed.
 
     Attributes
     ----------
     colnames_ : str 1d ndarray
-        Column name of the transformed numpy array
+        Column name of the transformed numpy array.
 
     num_cols_ : str 1d ndarray or None
         Final numeric column after removing potential multi-collinearity,
-        if there're no numeric input features then the value will be None
+        if there're no numeric input features then the value will be None.
 
     label_encode_dict_ : defauldict of sklearn's LabelEncoder object
         LabelEncoder that was used to encode the value
         of the categorical columns into with value between
         0 and n_classes-1. Categorical columns will go through
-        this encoding process before being one-hot encoded
+        this encoding process before being one-hot encoded.
 
     cat_encode_ : sklearn's OneHotEncoder object
         OneHotEncoder that was used to one-hot encode the
-        categorical columns
+        categorical columns.
 
     scaler_ : sklearn's StandardScaler object
-        StandardScaler that was used to standardize the numeric columns
+        StandardScaler that was used to standardize the numeric columns.
     """
 
-    def __init__(self, num_cols = None, cat_cols = None, threshold = 5):
+    def __init__(self, num_cols = None, cat_cols = None, threshold = 5.0):
         self.num_cols = num_cols
         self.cat_cols = cat_cols
         self.threshold = threshold
@@ -300,7 +315,7 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         """
         colnames = self.num_cols.copy()
         while True:
-            vif = [variance_inflation_factor(scaled, index)
+            vif = [self._compute_vif(scaled, index)
                    for index in range(scaled.shape[1])]
             max_index = np.argmax(vif)
 
@@ -314,6 +329,28 @@ class Preprocesser(BaseEstimator, TransformerMixin):
                 break
 
         return colnames
+
+    def _compute_vif(self, X, target_index):
+        """
+        Similar implementation as statsmodel's variance_inflation_factor
+        with some enhancemants:
+        1. includes the intercept by default
+        2. prevents float division errors (dividing by 0)
+
+        References
+        ----------
+        http://www.statsmodels.org/dev/generated/statsmodels.stats.outliers_influence.variance_inflation_factor.html
+        """
+        n_features = X.shape[1]
+        X_target = X[:, target_index]
+        mask = np.arange(n_features) != target_index
+        X_not_target = X[:, mask]
+
+        linear = LinearRegression()
+        linear.fit(X_not_target, X_target)
+        rsquared = linear.score(X_not_target, X_target)
+        vif = 1. / (1. - rsquared - 1e-5)
+        return vif
 
     def transform(self, data):
         """
