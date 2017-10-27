@@ -183,24 +183,24 @@ def build_xgb(n_iter, cv, eval_set):
 
 def write_output(ids, ids_col, y_pred, label_col, output_path):
     """
-    Output a DataFrame with the id columns and its predicted probability
+    Output a DataFrame with the id columns and its predicted probability.
 
     Parameters
     ----------
     ids : 1d ndarray
-        ID for each oberservation
+        ID for each oberservation.
 
     ids_col : str
-        ID column's name
+        ID column's name.
 
     y_pred : 1d ndarray
-        Predicted probability for each oberservation
+        Predicted probability for each oberservation.
 
     label_col : str
-        Label column's name
+        Label column's name.
 
     output_path : str
-        Relative path of the output file
+        Relative path of the output file.
     """
     output = pd.DataFrame({
         ids_col: ids,

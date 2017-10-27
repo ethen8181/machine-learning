@@ -20,21 +20,18 @@ def main():
     # Adjustable Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--train", action = "store_true", help = "training or scoring")
+        '--train', action = 'store_true', help = 'training or scoring')
     parser.add_argument(
-        "--inputfile", type = str, help = "input data file name")
+        '--inputfile', type = str, help = 'input data file name')
     parser.add_argument(
-        "--outputfile", type = str, help = "output prediction file name")
+        '--outputfile', type = str, help = 'output prediction file name')
     args = parser.parse_args()
 
-    # preprocessing step:
-    # filepath
+    # directory for the input data and output prediction:
     DATA_DIR = 'data'
     OUTPUT_DIR = 'output'
-    INPUT_PATH = os.path.join(DATA_DIR, args.inputfile)
-    OUTPUT_PATH = os.path.join(OUTPUT_DIR, args.outputfile)
 
-    # columns used
+    # columns used:
     CAT_COLS = ['Auction', 'Transmission', 'WheelType', 'Nationality',
                 'Size', 'TopThreeAmericanName', 'IsOnlineSale']
     NUM_COLS = ['VehicleAge', 'VehOdo', 'VehBCost', 'WarrantyCost',
@@ -68,8 +65,9 @@ def main():
 
     # -----------------------------------------------------------------------------------
     logger.info('preprocessing')
+    input_path = os.path.join(DATA_DIR, args.inputfile)
     if args.train:
-        data = clean(INPUT_PATH, NOW, CAT_COLS, NUM_COLS, DATE_COLS, IDS_COL, LABEL_COL)
+        data = clean(input_path, NOW, CAT_COLS, NUM_COLS, DATE_COLS, IDS_COL, LABEL_COL)
         ids = data[IDS_COL].values
         label = data[LABEL_COL].values
         data = data.drop([IDS_COL, LABEL_COL], axis = 1)
@@ -83,8 +81,9 @@ def main():
             df_train, y_train, ids_train, test_size = VAL_SIZE,
             random_state = SPLIT_RANDOM_STATE, stratify = y_train)
 
+        # obtain finalized columns
         num_cols_cleaned = list(SortedSet(df_train.columns) - SortedSet(CAT_COLS))
-        preprocess = Preprocesser(num_cols_cleaned, CAT_COLS)
+        preprocess = Preprocesser(num_cols = num_cols_cleaned, cat_cols = CAT_COLS)
         X_train = preprocess.fit_transform(df_train)
         X_val = preprocess.transform(df_val)
         X_test = preprocess.transform(df_test)
@@ -99,6 +98,7 @@ def main():
         dump(preprocess, CHECKPOINT_PREPROCESS)
         dump(xgb_tuned, CHECKPOINT_XGB)
 
+        # model evaluation metric reporting
         y_pred = []
         xgb_best = xgb_tuned.best_estimator_
         zipped = zip(
@@ -112,24 +112,26 @@ def main():
             logger.info('{} AUC: {}'.format(name, score))
             y_pred.append(xgb_pred)
 
-        if not os.path.isdir(OUTPUT_DIR):
-            os.mkdir(OUTPUT_DIR)
-
         ids = np.hstack((ids_train, ids_val, ids_test))
         y_pred = np.hstack(y_pred)
     else:
-        data = clean(INPUT_PATH, NOW, CAT_COLS, NUM_COLS, DATE_COLS, IDS_COL)
-        preprocess = load(CHECKPOINT_PREPROCESS)
-        xgb_tuned = load(CHECKPOINT_XGB)
-
+        data = clean(input_path, NOW, CAT_COLS, NUM_COLS, DATE_COLS, IDS_COL)
         ids = data[IDS_COL].values
         data = data.drop(IDS_COL, axis = 1)
+
+        logger.info('scoring')
+        preprocess = load(CHECKPOINT_PREPROCESS)
+        xgb_tuned = load(CHECKPOINT_XGB)
         X = preprocess.transform(data)
         xgb_best = xgb_tuned.best_estimator_
         y_pred = xgb_best.predict_proba(
             X, ntree_limit = xgb_best.best_ntree_limit)[:, 1]
 
-    write_output(ids, IDS_COL, y_pred, LABEL_COL, OUTPUT_PATH)
+    if not os.path.isdir(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    output_path = os.path.join(OUTPUT_DIR, args.outputfile)
+    write_output(ids, IDS_COL, y_pred, LABEL_COL, output_path)
 
 
 if __name__ == '__main__':
