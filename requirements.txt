@@ -18,5 +18,5 @@ watermark>=1.4.0
 requests>=2.13.0
 matplotlib>=2.1.0
 tensorflow>=1.0.1
-scikit-learn>=0.18
+scikit-learn>=0.19.1
 jupyter_contrib_nbextensions>=0.2.8
