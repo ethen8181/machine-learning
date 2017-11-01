@@ -4,6 +4,10 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2017-10]
 
+### Added
+
+- ml_utils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/ml_utils/)]
+
 ### Changed
 
 - Bernoulli and Multinomial Naive Bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
