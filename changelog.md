@@ -12,6 +12,9 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 - Bernoulli and Multinomial Naive Bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
 	- Fixed various typos and added a more efficient implementation of Multinomial Naive Bayes.
+- TF-IDF (text frequency - inverse document frequency) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/tfidf/tfidf.ipynb)]
+	- Moved to its own tfidf folder.
+	- Included the full tfidf implementation from scratch.
 
 ## [2017-09]
 
