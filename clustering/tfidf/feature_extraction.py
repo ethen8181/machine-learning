@@ -7,6 +7,12 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 
 
+__all__ = [
+    'CountVectorizer',
+    'TfidfTransformer',
+    'TfidfVectorizer']
+
+
 class CountVectorizer(BaseEstimator):
     """
     Convert a collection of text documents to a matrix of token counts,
