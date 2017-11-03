@@ -73,6 +73,9 @@ class CountVectorizer(BaseEstimator):
         raw_documents : iterable
             An iterable which yields str
 
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
         Returns
         -------
         self
@@ -90,6 +93,9 @@ class CountVectorizer(BaseEstimator):
         ----------
         raw_documents : iterable
             An iterable which yields either str.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
 
         Returns
         -------
@@ -272,6 +278,13 @@ class TfidfTransformer(BaseEstimator, TransformerMixin):
         ----------
         X : scipy sparse matrix, shape [n_samples, n_features]
             Count document-term matrix.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
+        Returns
+        -------
+        self
         """
         n_samples, n_features = X.shape
         doc_freq = np.bincount(X.indices, minlength = X.shape[1])
@@ -382,10 +395,14 @@ class TfidfVectorizer(CountVectorizer):
     def fit(self, raw_documents, y = None):
         """
         Learn vocabulary and idf from training set.
+
         Parameters
         ----------
         raw_documents : iterable
             An iterable which yields str.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
 
         Returns
         -------
@@ -406,6 +423,9 @@ class TfidfVectorizer(CountVectorizer):
         raw_documents : iterable
             An iterable which yields str.
 
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
         Returns
         -------
         X : scipy sparse matrix, shape [n_samples, n_features]
@@ -414,7 +434,7 @@ class TfidfVectorizer(CountVectorizer):
         X = super().fit_transform(raw_documents)
         return self._tfidf.fit_transform(X)
 
-    def transform(self, raw_documents, copy=True):
+    def transform(self, raw_documents):
         """
         Transform documents to document-term matrix.
 
@@ -425,10 +445,6 @@ class TfidfVectorizer(CountVectorizer):
         ----------
         raw_documents : iterable
             An iterable which yields str.
-
-        copy : boolean, default True
-            Whether to copy X and operate on the copy or perform in-place
-            operations.
 
         Returns
         -------
