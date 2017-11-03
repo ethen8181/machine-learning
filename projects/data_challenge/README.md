@@ -10,7 +10,17 @@ This assumes the user already has Anaconda installed and is targeted for Python3
 pip install -r requirements.txt
 ```
 
-Note that for the modelling part, the [XGBoost](https://github.com/dmlc/xgboost) library is used and based on experience it's best to install it from source. The following section contains the installation instruction for Mac.
+And install the `ml_utils` package which contains customized utility function.
+
+```bash
+# navigate to the directory
+cd ml_utils
+
+# install the package
+python setup.py install
+```
+
+For the modelling part, the [XGBoost](https://github.com/dmlc/xgboost) library is used and based on experience it's best to install it from source. The following section contains the installation instruction for Mac.
 
 ```bash
 # install gcc from brew, 
