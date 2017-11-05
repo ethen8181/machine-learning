@@ -41,14 +41,20 @@ class CountVectorizer(BaseEstimator):
         or more alphanumeric characters (punctuation is completely ignored
         and always treated as a token separator).
 
-    stop_words : string {'english'}, collection, or None, default None
+    stop_words : str {'english'}, collection, or None, default None
         - If 'english', a built-in stop word list for English is used.
-        - If a collection, that list  or setis assumed to contain stop words, all of which
-        will be removed from the resulting tokens. Only applies if ``analyzer == 'word'``.
+        - If a collection, that list or set is assumed to contain stop words,
+        all of which will be removed from the resulting tokens. Only applies
+        if ``analyzer == 'word'``.
         - If None, no stop words will be used.
 
     lowercase : bool, default True
         Convert all characters to lowercase before tokenizing.
+
+    binary : bool, default False
+        If True, all non zero counts are set to 1. This is useful for discrete
+        probabilistic models such as binomial naive bayes that model binary
+        events rather than integer counts.
 
     Attributes
     ----------
@@ -57,7 +63,9 @@ class CountVectorizer(BaseEstimator):
     """
 
     def __init__(self, analyzer = 'word', ngram_range = (1, 1),
-                 token_pattern = r'\b\w\w+\b', stop_words = None, lowercase = True):
+                 token_pattern = r'\b\w\w+\b', stop_words = None,
+                 lowercase = True, binary = False):
+        self.binary = binary
         self.analyzer = analyzer
         self.lowercase = lowercase
         self.stop_words = stop_words
@@ -108,9 +116,11 @@ class CountVectorizer(BaseEstimator):
                 'string objected received')
 
         X, vocabulary = self._count_vocab(raw_documents, fixed_vocab = False)
+        if self.binary:
+            X.data.fill(1)
 
         # we can add additional filtering after we construct
-        # matrix, but this is omitted for now
+        # the document-term matrix, but this is omitted for now
         self.vocabulary_ = vocabulary
         return X
 
@@ -234,12 +244,15 @@ class CountVectorizer(BaseEstimator):
 
         Returns
         -------
-        X : scipy sparse matrix, [n_samples, n_features]
+        X : scipy sparse matrix, shape [n_samples, n_features]
             Document-term matrix.
         """
 
         # use the same matrix-building strategy as fit_transform
         X, _ = self._count_vocab(raw_documents, fixed_vocab = True)
+        if self.binary:
+            X.data.fill(1)
+
         return X
 
 
@@ -305,12 +318,12 @@ class TfidfTransformer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : scipy sparse matrix, [n_samples, n_features]
+        X : scipy sparse matrix, shape [n_samples, n_features]
             Count document-term matrix.
 
         Returns
         -------
-        X : scipy sparse matrix, [n_samples, n_features]
+        X : scipy sparse matrix, shape [n_samples, n_features]
             Tf-idf weighted document-term matrix.
         """
         if self.copy:
@@ -353,14 +366,20 @@ class TfidfVectorizer(CountVectorizer):
         or more alphanumeric characters (punctuation is completely ignored
         and always treated as a token separator).
 
-    stop_words : string {'english'}, collection, or None, default None
+    stop_words : str {'english'}, collection, or None, default None
         - If 'english', a built-in stop word list for English is used.
-        - If a collection, that list  or setis assumed to contain stop words, all of which
-        will be removed from the resulting tokens. Only applies if ``analyzer == 'word'``.
+        - If a collection, that list or set is assumed to contain stop words,
+        all of which will be removed from the resulting tokens. Only applies
+        if ``analyzer == 'word'``.
         - If None, no stop words will be used.
 
     lowercase : bool, default True
         Convert all characters to lowercase before tokenizing.
+
+    binary : boolean, default False
+        If True, all non-zero term counts are set to 1. This does not mean
+        outputs will have only 0/1 values, only the tf term in tf-idf will
+        become binary.
 
     norm : 'l1', 'l2' or None, default 'l2'
         Norm used to normalize term vectors. None for no normalization.
@@ -382,9 +401,9 @@ class TfidfVectorizer(CountVectorizer):
         A mapping of terms to feature indices.
     """
 
-    def __init__(self, analyzer = 'word', ngram_range = (1, 1),
-                 token_pattern = r'\b\w\w+\b', stop_words = None, lowercase = True,
-                 norm = 'l2', smooth_idf = True, sublinear_tf = False, copy = True):
+    def __init__(self, analyzer = 'word', ngram_range = (1, 1), token_pattern = r'\b\w\w+\b',
+                 stop_words = None, lowercase = True, binary = False, norm = 'l2',
+                 smooth_idf = True, sublinear_tf = False, copy = True):
         super().__init__(
             analyzer = analyzer, ngram_range = ngram_range,
             token_pattern = token_pattern, stop_words = stop_words, lowercase = lowercase)

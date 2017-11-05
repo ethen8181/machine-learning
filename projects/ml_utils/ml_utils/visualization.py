@@ -30,12 +30,12 @@ def vis_importance(model, feature_names, threshold = 0.05):
 
     # apart from the mean feature importance, for scikit-learn we can access
     # each individual tree's feature importance and compute the standard deviation
-    imp = model.feature_importances_
     has_std = False
     if hasattr(model, 'estimators_'):
         has_std = True
         tree_importances = np.asarray([tree.feature_importances_
                                        for tree in model.estimators_])
+    imp = model.feature_importances_
     mask = imp > threshold
     importances = imp[mask]
     names = feature_names[mask]
