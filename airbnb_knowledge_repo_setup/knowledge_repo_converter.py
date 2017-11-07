@@ -4,8 +4,8 @@ import codecs
 import io
 import os
 import re
+import json
 import subprocess
-from abc import abstractmethod
 from dateutil import parser as date_parser
 
 
@@ -62,6 +62,10 @@ class KnowledgeRepoConverter:
         return title
 
     @property
+    def authors(self):
+        return '- author'
+
+    @property
     def subdir(self):
         _, path_within_repo = self.path.split(self.REPO_NAME)
         subdir, _ = os.path.split(path_within_repo)
@@ -80,8 +84,12 @@ class KnowledgeRepoConverter:
         # for now, let's just use the directory names as tags
         # for the future, we can fill these in manually or use fuzzy matching on a list of common data science topics
         subdirs = self.subdir.split('/')
-        tags = map(lambda x: '- ' + x, subdirs)
+        tags = list(map(lambda x: '- ' + x, subdirs))
         return '\n'.join(tags)
+
+    @property
+    def tldr(self):
+        return "Fill in tldr. Here's the github link for now: {link}".format(link=self.github_link)
 
     def construct_header(self):
         with open(self.TEMPLATE_PATH, 'r') as f:
@@ -89,7 +97,7 @@ class KnowledgeRepoConverter:
 
         header = header.format(
             title=self.title,
-            authors='Author',
+            authors=self.authors,
             tags=self.tags,
             created_at=self.date_created,
             updated_at=self.date_updated
@@ -97,8 +105,10 @@ class KnowledgeRepoConverter:
 
         return header
 
-    @abstractmethod
     def convert(self):
+        raise NotImplementedError
+
+    def write(self, inplace=False):
         raise NotImplementedError
 
 
@@ -109,8 +119,8 @@ class RmdConverter(KnowledgeRepoConverter):
     def __init__(self, path, new_dir=None):
         super().__init__(path=path)
         self.new_dir = new_dir
-        with io.open(self.path, 'r', encoding=self.ENCODING) as file:
-            self.notebook = file.read()
+        with io.open(self.path, 'r', encoding=self.ENCODING) as fp:
+            self.notebook = fp.read()
 
     @property
     def title(self):
@@ -121,6 +131,10 @@ class RmdConverter(KnowledgeRepoConverter):
         else:
             title = matches.group(0).replace('title: ', '').replace("'", '')
         return title
+
+    def fix_setwd_calls(self):
+        """Remove setwd() calls and insert cell in .Rmd."""
+        pass
 
     def convert(self, inplace=False):
         """Convert .Rmd to Airbnb Knowledge Repo format.
@@ -135,19 +149,120 @@ class RmdConverter(KnowledgeRepoConverter):
         converted_notebook = '\n'.join([header, github_link, self.notebook])
         converted_notebook.encode('utf-8')
 
-        with codecs.open('BLAHBLAH.txt', 'w', self.ENCODING) as file:
-            file.write(converted_notebook)
+        with codecs.open('BLAHBLAH.txt', 'w', self.ENCODING) as fp:
+            fp.write(converted_notebook)
 
 
 class IpynbConverter(KnowledgeRepoConverter):
-    pass
+
+    def __init__(self, path, inplace=False):
+        super().__init__(path=path)
+        with io.open(path, 'r', encoding='utf-8') as fp:
+            self.notebook = json.load(fp)
+        self.inplace = inplace
+
+    @property
+    def tags(self):
+        subdirs = self.subdir.split('/')
+        tags = list(map(lambda x: '- ' + x, subdirs))
+        return tags
+
+    @property
+    def write_path(self):
+        if self.inplace:
+            path = self.path
+        else:
+            head, ext = os.path.splitext(self.path)
+            head += '-converted'
+            path = head + ext
+        return path
+
+    def construct_header(self):
+        """Create a knowledge repo style header as a dictionary."""
+        def flatten_list(l):
+            flat = []
+            for item in l:
+                if isinstance(item, list):
+                    flat += item
+                else:
+                    flat.append(item)
+            return flat
+
+        header = {
+            'cell_type': 'raw',
+            'metadata': {},
+            'source': []
+        }
+
+        header_text = [
+            '---',
+            'title: {}'.format(self.title),
+            'authors:',
+            self.authors,
+            'tags:',
+            self.tags,
+            'created_at: {}'.format(self.date_created),
+            'updated_at: {}'.format(self.date_updated),
+            'tldr: |',
+            self.tldr,
+            '---'
+        ]
+
+        header_text = flatten_list(header_text)
+        header_text = list(map(lambda x: x + '\n', header_text))
+        header['source'] = header_text
+        return header
+
+    def convert(self):
+        """Prepend the dictionary header to self.notebook['cells']."""
+        self.notebook['cells'] = [self.construct_header()] + self.notebook['cells']
+
+    def write(self):
+        with io.open(self.write_path, 'w', encoding='utf-8') as fp:
+            json.dump(self.notebook, fp)
 
 
-def convert_all_posts(self, dir_path):
-    pass
+def convert_all_posts(path):
+    """Recursively walk the root directory, converting and adding .ipynb to the knowledge repo."""
+    if os.path.isdir(path):
+        files = [os.path.join(path, f) for f in os.listdir(path)]
+        for f in files:
+            convert_all_posts(f)
+    else:
+        head, ext = os.path.splitext(path)
+        if ext == ".ipynb":
+            try:
+                converter = IpynbConverter(path, inplace=False)
+                converter.convert()
+                converter.write()
+                add_to_knowledge_repo(converter.write_path)
+            except Exception as e:
+                print('Skipping: {}'.format(path))
+                print(e)
 
 
-if __name__ == "__main__":
+def add_to_knowledge_repo(path):
+    REPO = '/Users/eric/Documents/machine-learning/knowledge'
+
+    # determine name of post
+    head, _ = os.path.splitext(path)
+    _, name = os.path.split(head)
+    name = name.replace('-converted', '')
+    destination = '{repo}/project/{name}'.format(repo=REPO, name=name)
+
+    # create a run knowledge repo command
+    cmd = 'knowledge_repo --repo {repo} add {file_path} -p {destination} --update'.format(repo=REPO,
+                                                                                          file_path=path,
+                                                                                          destination=destination)
+    p = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p.communicate(input=b'generated by airbnb knowledge repo setup')
+
+    print(cmd)
+    print('Added to knowledge repo: {path}'.format(path=os.path.split(path)[1]))
+
+
+def test_converters():
+    # .Rmd
     PATH = '/Users/eric/Documents/machine-learning/linear_regression/linear_regession.Rmd'
     converter = RmdConverter(PATH)
 
@@ -165,3 +280,17 @@ if __name__ == "__main__":
     print(converter.construct_header())
 
     converter.convert()
+
+    # .ipynb
+    PATH = '/Users/eric/Documents/machine-learning/data_science_is_software/notebooks/data_science_is_software.ipynb'
+    converter = IpynbConverter(PATH)
+    converter.convert()
+    converter.write(inplace=False)
+
+
+def main():
+    convert_all_posts('/Users/eric/Documents/machine-learning/')
+
+
+if __name__ == "__main__":
+    main()
