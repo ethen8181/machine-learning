@@ -123,7 +123,7 @@ Where k is the number of clusters, and N is the total number of observations (da
 
 You can calculate $SS_{B}$ by using the total sum of squares (tss) minus $SS_{W}$. For a given dataset, the total sum of squares (tss) is the squared distance of all the data points from the dataset’s centroid, this measure is independent with the number of cluster.
 
-For clarity, $SS_{B}$ measures the variance of all the cluster centroids from the dataset’s grand centroid (A big $SS_{B}$ value means that the centroid of each cluster will be spread out and they are not too close to each other), and given that we already know $SS_{W}$ will keep on decreasing as the cluster size goes up. Therefore, for the Calinski-Harabasz Index, the ratio of $\frac{ SS_{B} }{ SS_{W} }$ should be the biggest that at the optimal clustering size.
+For clarity, $SS_{B}$ measures the variance of all the cluster centroids from the dataset’s grand centroid (A big $SS_{B}$ value means that the centroid of each cluster will be spread out and they are not too close to each other), and given that we already know $SS_{W}$ will keep on decreasing as the number of clusters goes up. Therefore, for the Calinski-Harabasz Index, the ratio of $\frac{ SS_{B} }{ SS_{W} }$ should be the biggest that at the optimal clustering size.
 
 Looking back at the plot on the left, you can clearly see that this measure is the largest at the cluster size of 4. One important thing for using this measure is that sometimes you'll see that it reaches the optimal at cluster 2, however, grouping the data point into 2 cluster might not be ideal to you, when that happens the local maximum measure (the measure will drop and rise again) should be your ideal cluster number.
 
