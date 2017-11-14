@@ -14,7 +14,7 @@ And install the `ml_utils` package which contains customized utility function.
 
 ```bash
 # navigate to the directory
-cd ml_utils
+cd ../ml_utils
 
 # install the package
 python setup.py install
