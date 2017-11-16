@@ -217,11 +217,18 @@ class IpynbConverter(KnowledgeRepoConverter):
         return header
 
     def construct_github_link_cell(self):
-        pass
+        # for some reason, not including the 'Original notebook:' text block
+        # results in the link not being rendered in knowledge post
+        github_link_cell = {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['Original notebook: {link}'.format(link=self.github_link)]
+        }
+        return github_link_cell
 
     def convert(self):
         """Prepend the dictionary header to self.notebook['cells']."""
-        self.notebook['cells'] = [self.construct_header()] + self.notebook['cells']
+        self.notebook['cells'] = [self.construct_header()] + [self.construct_github_link_cell()] + self.notebook['cells']
 
     def write(self):
         with io.open(self.write_path, 'w', encoding='utf-8') as fp:
