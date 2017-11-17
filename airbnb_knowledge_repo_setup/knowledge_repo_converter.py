@@ -7,7 +7,6 @@ import re
 import json
 import subprocess
 from dateutil import parser as date_parser
-from random_words import LoremIpsum, RandomNicknames
 
 
 class KnowledgeRepoConverter:
@@ -25,9 +24,17 @@ class KnowledgeRepoConverter:
     TEMPLATE_PATH = 'header_template.yaml'
 
     def __init__(self, path):
+        self.path = path
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, path):
         if not os.path.exists(path):
             raise ValueError('Path does not exist: {path}'.format(path=path))
-        self.path = path
+        self._path = path
 
     def _git_date_cmd(self, cmd):
         """Run bash command to retrieve and format date string."""
@@ -64,8 +71,7 @@ class KnowledgeRepoConverter:
 
     @property
     def authors(self):
-        rn = RandomNicknames()
-        return '- {name}'.format(name=rn.random_nick(gender='u'))
+        return '- {name}'.format(name="Ethen")
 
     @property
     def subdir(self):
@@ -84,16 +90,15 @@ class KnowledgeRepoConverter:
     def tags(self):
         """Create tags for notebook."""
         # for now, let's just use the directory names as tags
-        # for the future, we can fill these in manually or use fuzzy matching on a list of common data science topics
+        # for the future, we can fill these in manually or use a dictionary lookup with common data science topics
         subdirs = self.subdir.split('/')
         tags = list(map(lambda x: '- ' + x, subdirs))
         return '\n'.join(tags)
 
     @property
     def tldr(self):
-        li = LoremIpsum()
-        return li.get_sentence()
-        # return "Fill in tldr. Here's the github link for now: {link}".format(link=self.github_link)
+        # the tldr needs to have some non-whitespace text for the knowledge post to get rendered
+        return "."
 
     def construct_header(self):
         with open(self.TEMPLATE_PATH, 'r') as f:
@@ -235,6 +240,12 @@ class IpynbConverter(KnowledgeRepoConverter):
             json.dump(self.notebook, fp)
 
 
+def init_knowledge_repo(path):
+    """Initialize an Airbnb Knowledge Repo throught the CLI."""
+    cmd = 'knowledge_repo --repo {repo} init'.format(repo=path)
+    subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+
 def convert_all_posts(path, knowledge_repo, inplace=False):
     """Recursively walk the root directory, converting and adding .ipynb to the knowledge repo."""
     if os.path.isdir(path):
@@ -273,16 +284,16 @@ def add_to_knowledge_repo(path, knowledge_repo):
     print('\n')
 
 
-def init_knowledge_repo(path):
-    cmd = 'knowledge_repo --repo {repo} init'.format(repo=path)
-    subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-
 def main(ml_repo, knowledge_repo, inplace):
-    knowledge_repo = os.path.abspath(knowledge_repo)
     ml_repo = os.path.abspath(ml_repo)
+    _, ml_repo_dirname = os.path.split(ml_repo)
+    if 'machine-learning' not in ml_repo_dirname:
+        raise ValueError('{path} is not the path to the machine-learning repo.'.format(ml_repo))
+
+    knowledge_repo = os.path.abspath(knowledge_repo)
     if not os.path.exists(knowledge_repo):
         init_knowledge_repo(knowledge_repo)
+
     convert_all_posts(ml_repo, knowledge_repo=knowledge_repo, inplace=inplace)
 
 
@@ -294,6 +305,5 @@ if __name__ == "__main__":
     parser.add_argument('knowledge_repo', type=str, help='Path to the knowledge repo.')
     parser.add_argument('--inplace', action='store_true', help='Modify the existing .ipynb in place.')
     args = vars(parser.parse_args())
-    print(args)
 
     main(**args)
