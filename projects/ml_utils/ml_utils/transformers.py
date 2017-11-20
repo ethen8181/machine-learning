@@ -11,6 +11,7 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 __all__ = [
     'BoxCoxTransformer',
     'MultipleImputer',
+    'ColumnExtractor',
     'Preprocesser']
 
 
@@ -280,6 +281,61 @@ class MultipleImputer(BaseEstimator, TransformerMixin):
 
         data = data.fillna(values)
         return data
+
+
+class ColumnExtractor(BaseEstimator, TransformerMixin):
+    """
+    Extracts a single column for a given DataFrame, this
+    is mainly used for integrating with scikit-learn pipeline
+
+    Parameters
+    ----------
+    col : str
+        A single column name in the given DataFrame.
+
+    References
+    ----------
+    .. [2] `Custom feature selection in sklearn pipeline
+            <https://stackoverflow.com/questions/25250654/how-can-i-use-a-custom-feature-selection-function-in-scikit-learns-pipeline>`_
+    """
+
+    def __init__(self, col):
+        self.col = col
+
+    def fit(self, data, y = None):
+        """
+        Performs no operations at fitting time.
+
+        Parameters
+        ----------
+        data : DataFrame, shape [n_samples, n_feature]
+            Input data.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
+        Returns
+        -------
+        self
+        """
+        return self
+
+    def transform(self, data):
+        """
+        Extract the specified single column.
+
+        Parameters
+        ----------
+        data : DataFrame, shape [n_samples, n_feature]
+            Input data.
+
+        Returns
+        -------
+        column : pd.Series
+            Extracted column.
+        """
+        column = data[self.col]
+        return column
 
 
 class Preprocesser(BaseEstimator, TransformerMixin):
