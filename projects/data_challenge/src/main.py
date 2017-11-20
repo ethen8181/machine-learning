@@ -58,6 +58,7 @@ def main():
         # number of cross validation and hyperparameter settings to try
         CV = 10
         N_ITER = 5
+        MODEL_RANDOM_STATE = 4321
 
         # train/validation stratified split
         VAL_SIZE = 0.1
@@ -91,7 +92,7 @@ def main():
 
         logger.info('modeling')
         eval_set = [(X_train, y_train), (X_val, y_val)]
-        xgb_tuned = build_xgb(N_ITER, CV, eval_set)
+        xgb_tuned = build_xgb(N_ITER, CV, MODEL_RANDOM_STATE, eval_set)
         xgb_tuned.fit(X_train, y_train)
         if not os.path.isdir(MODEL_DIR):
             os.mkdir(MODEL_DIR)

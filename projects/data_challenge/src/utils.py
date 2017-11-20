@@ -24,32 +24,32 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
     Parameters
     ----------
     filepath : str
-        Relative filepath of the data
+        Relative filepath of the data.
 
     now : str
         Date in the format of YYYY-MM-DD to compute the
-        recency feature
+        recency feature.
 
     cat_cols : list[str]
-        Categorical features' column names
+        Categorical features' column names.
 
     num_cols : list[str]
-        Numeric features' column names
+        Numeric features' column names.
 
     date_cols : list[str]
-        Datetime features' column names
+        Datetime features' column names.
 
     ids_col : str
-        ID column name
+        ID column name.
 
     label_col : str, default None
         Label column's name, None indicates that we're dealing with
-        new data that does not have the label column
+        new data that does not have the label column.
 
     Returns
     -------
     data : DataFrame
-        Cleaned data
+        Cleaned data.
     """
 
     # information used when reading in the .csv file
@@ -109,26 +109,30 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
     return data
 
 
-def build_xgb(n_iter, cv, eval_set):
+def build_xgb(n_iter, cv, random_state, eval_set):
     """
     Build a RandomSearchCV XGBoost model
 
     Parameters
     ----------
     n_iter : int
-        Number of hyperparameters to try for RandomSearchCV
+        Number of hyperparameters to try for RandomSearchCV.
 
     cv : int
-        Number of cross validation for RandomSearchCV
+        Number of cross validation for RandomSearchCV.
+
+    random_state : int
+        Seed used by the random number generator for random sampling
+        the hyperpameter.
 
     eval_set : list of tuple
         List of (X, y) pairs to use as a validation set for
-        XGBoost model's early-stopping
+        XGBoost model's early-stopping.
 
     Returns
     -------
     xgb_tuned : sklearn's RandomSearchCV object
-        Unfitted RandomSearchCV XGBoost model
+        Unfitted RandomSearchCV XGBoost model.
     """
 
     # for xgboost, set number of estimator to a large number
@@ -158,6 +162,7 @@ def build_xgb(n_iter, cv, eval_set):
         'early_stopping_rounds': 5,
         'verbose': False}
 
+    # return_train_score = False
     # computing the scores on the training set can be computationally
     # expensive and is not strictly required to select the parameters
     # that yield the best generalization performance.
@@ -169,6 +174,8 @@ def build_xgb(n_iter, cv, eval_set):
         n_iter = n_iter,
         n_jobs = -1,
         verbose = 1,
+        scoring = 'roc_auc',
+        random_state = random_state,
         return_train_score = False)
     return xgb_tuned
 

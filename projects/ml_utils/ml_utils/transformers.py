@@ -29,7 +29,7 @@ class BoxCoxTransformer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    transformed_cols : str 1d ndarray/list or "all"
+    transformed_cols : str 1d ndarray/list or 'all', default 'all'
         Specify what features are to be transformed:
             - "all" (default) : All features are to be transformed.
             - array of str : Array of feature names to be transformed.
@@ -56,12 +56,12 @@ class BoxCoxTransformer(BaseEstimator, TransformerMixin):
     Notes
     -----
     The Box-Cox transform is given by:
-        y = (x ** lambda - 1.) / lmbda,  for lambda > 0
-            log(x),                      for lambda = 0
+        - for lmbda > 0, y = (x ** lmbda - 1.) / lmbda
+        - for lmbda = 0, log(x)
     ``boxcox`` requires the input data to be positive.
     """
 
-    def __init__(self, transformed_cols, eps = 1e-8, copy = True):
+    def __init__(self, transformed_cols = 'all', eps = 1e-8, copy = True):
         self.eps = eps
         self.copy = copy
         self.transformed_cols = transformed_cols
@@ -286,7 +286,7 @@ class MultipleImputer(BaseEstimator, TransformerMixin):
 class ColumnExtractor(BaseEstimator, TransformerMixin):
     """
     Extracts a single column for a given DataFrame, this
-    is mainly used for integrating with scikit-learn pipeline
+    is mainly used for integrating with scikit-learn pipeline [2]_.
 
     Parameters
     ----------
