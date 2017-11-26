@@ -34,8 +34,6 @@ def convert_all_posts(path, knowledge_repo_path, inplace):
             try:
                 converter = IpynbConverter(knowledge_repo_path, inplace)
                 notebook = converter.convert(path)
-                print(path)
-                print(converter._path)
                 converter.add(notebook)
             except Exception as e:
                 print('Skipping: {}'.format(path))
@@ -154,7 +152,7 @@ class IpynbConverter:
         we would use 'decision_tree' as the tag
         """
         _, file_path = path.split(self.REPO_NAME)
-        file_name = os.path.split(file_path)[-1]
+        _, file_name = os.path.split(file_path)
         tags, _ = os.path.splitext(file_name)
 
         # /blob/master indicates github master branch
@@ -181,7 +179,7 @@ class IpynbConverter:
                     # newer version of notebooks includes a
                     # Table of Contents automatically in the first
                     # cell, skip that and find the next level 1 header
-                    if title != 'Table of Contents':
+                    if not title == 'Table of Contents':
                         break
         return title
 
@@ -206,9 +204,7 @@ class IpynbConverter:
         header = {'cell_type': 'raw', 'metadata': {}}
 
         # header text required by the knowledge repo
-        # 1. a '- ' in front is required for knowledge repo tag
-        # 2. tldr is a required field, fill it with notebook's
-        # original github link for now
+        # a '- ' in front is required for knowledge repo tag
         header_text = [
             '---',
             'title: {}'.format(self.title_),
