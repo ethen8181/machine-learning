@@ -10,7 +10,7 @@ This assumes the user already has Anaconda installed and is targeted for Python3
 pip install -r requirements.txt
 ```
 
-And install the [`mlutils`](https://github.com/ethen8181/machine-learning/tree/master/projects/ml_utils) package which contains customized utility function.
+And install the [`mlutils`](https://github.com/ethen8181/machine-learning/tree/master/projects/mlutils) package which contains customized utility function.
 
 ```bash
 # navigate to the directory
