@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Resamplers &mdash; ml_utils 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="ml_utils 0.0.1 documentation" href="index.html"/>
+        <link rel="up" title="API" href="api.html"/>
+        <link rel="next" title="Transformers" href="transformers.html"/>
+        <link rel="prev" title="Resamplers" href="explainers.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ml_utils
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"> API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="explainers.html">     Explainers</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"> Resamplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transformers.html"> Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html"> Visualization</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ml_utils</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API</a> &raquo;</li>
+        
+      <li>Resamplers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/resamplers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ml_utils.resamplers">
+<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-ml_utils.resamplers" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ml_utils.resamplers.RandomUnderSampler">
+<em class="property">class </em><code class="descclassname">ml_utils.resamplers.</code><code class="descname">RandomUnderSampler</code><span class="sig-paren">(</span><em>ratio</em>, <em>replacement=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to perform random under-sampling.
+Under-sample the majority class(es) by randomly picking samples
+with or without replacement.</p>
+<p>This is an “improvement” of imbalance learn’s RandomUnderSampler <a class="footnote-reference" href="#id2" id="id1">[1]</a>
+by only accepting a dictionary for the ratio argument and supports
+float value indicating the proportional sampling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ratio</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a><em>[</em><em>(</em><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>int/float</em><em>)</em><em>]</em>) – Ratio to use for resampling the data set.
+Keys correspond to the targeted classes and the values
+correspond to the desired number/proportion of samples.
+e.g. {0: 1.0, 1: 0.5} becauses the values are float, this
+is read as we’ll keep all samples from class label 0 and
+keep only 50 percent of class label 1, note that in this
+case {1: 0.5} will also work. We could also specify integer
+value for the values in the dictionary to indicate the
+actual number of samples to retain.</li>
+<li><strong>replacement</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>default False</em>) – Whether the sample is with or without replacement.</li>
+<li><strong>random_state</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>RandomState instance</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a><em>, </em><em>default None</em>) – If int, <code class="docutils literal"><span class="pre">random_state</span></code> is the seed used by the random number
+generator; If <code class="docutils literal"><span class="pre">RandomState</span></code> instance, random_state is the random
+number generator; If <code class="docutils literal"><span class="pre">None</span></code>, the random number generator is the
+<code class="docutils literal"><span class="pre">RandomState</span></code> instance used by <code class="docutils literal"><span class="pre">np.random</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="ml_utils.resamplers.RandomUnderSampler.ratio_">
+<code class="descname">ratio_</code><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.ratio_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict[(int, int)]</em> – The actual ratio that was used for resampling the data set,
+where the class label is the key and the number of samples is the value</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">X_hash_/y_hash_</code></dt>
+<dd><p><em>str</em> – Hash identifier of the input X and y. This is used for ensuring
+the X and y that was used for fitting is identical to sampling
+(resampling is only meant for the same “training” set)</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="http://contrib.scikit-learn.org/imbalanced-learn/stable/generated/imblearn.under_sampling.RandomUnderSampler.html">imbalanced-learn RandomUnderSampler</a></td></tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="ml_utils.resamplers.RandomUnderSampler.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the classes statistics to perform sampling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>2d ndarray</em><em> or </em><em>scipy sparse matrix</em><em>, </em><em>shape</em><em> [</em><em>n_samples</em><em>, </em><em>n_features</em><em>]</em>) – Matrix containing the data which have to be sampled.</li>
+<li><strong>y</strong> (<em>1d ndarray</em><em>, </em><em>shape</em><em> [</em><em>n_samples</em><em>]</em>) – Corresponding label for each sample in X.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ml_utils.resamplers.RandomUnderSampler.fit_sample">
+<code class="descname">fit_sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.fit_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the statistics and resample the data directly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Matrix containing the data which have to be sampled.</li>
+<li><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Corresponding label for each sample in X.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>X_resampled</strong> (<em>{array-like, sparse matrix}, shape (n_samples_new, n_features)</em>) – The array containing the resampled data.</li>
+<li><strong>y_resampled</strong> (<em>array-like, shape (n_samples_new,)</em>) – The corresponding label of <cite>X_resampled</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ml_utils.resamplers.RandomUnderSampler.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep</strong> (<em>boolean</em><em>, </em><em>optional</em>) – If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>params</strong> – Parameter names mapped to their values.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">mapping of string to any</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ml_utils.resamplers.RandomUnderSampler.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample the dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix}</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Matrix containing the data which have to be sampled.</li>
+<li><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em>) – Corresponding label for each sample in X.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>X_resampled</strong> (<em>{ndarray, sparse matrix}, shape (n_samples_new, n_features)</em>) – The array containing the resampled data.</li>
+<li><strong>y_resampled</strong> (<em>ndarray, shape (n_samples_new)</em>) – The corresponding label of <cite>X_resampled</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ml_utils.resamplers.RandomUnderSampler.set_params">
+<code class="descname">set_params</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The latter have parameters of the form
+<code class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">self</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transformers.html" class="btn btn-neutral float-right" title="Transformers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="explainers.html" class="btn btn-neutral" title="Resamplers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Ethen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

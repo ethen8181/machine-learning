@@ -11,7 +11,7 @@ from logzero import setup_logger
 from sortedcontainers import SortedSet
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
-from ml_utils.transformers import Preprocesser
+from mlutils.transformers import Preprocesser
 from utils import clean, build_xgb, write_output
 logger = setup_logger(name = __name__, logfile = 'data_challenge.log', level = logging.INFO)
 
@@ -50,8 +50,8 @@ def main():
     # modeling step:
     # model checkpoint for future scoring
     MODEL_DIR = 'model'
-    CHECKPOINT_PREPROCESS = os.path.join(MODEL_DIR, 'preprocess.pkl')
-    CHECKPOINT_XGB = os.path.join(MODEL_DIR, 'xgb.pkl')
+    CHECKPOINT_XGB = 'xgb.pkl'
+    CHECKPOINT_PREPROCESS = 'preprocess.pkl'
 
     # parameter that only relevant for training stage and not scoring
     if args.train:
@@ -67,7 +67,10 @@ def main():
 
     # -----------------------------------------------------------------------------------
     logger.info('preprocessing')
+    checkpoint_preprocess = os.path.join(MODEL_DIR, CHECKPOINT_PREPROCESS)
+    checkpoint_xgb = os.path.join(MODEL_DIR, CHECKPOINT_XGB)
     input_path = os.path.join(DATA_DIR, args.inputfile)
+
     if args.train:
         data = clean(input_path, NOW, CAT_COLS, NUM_COLS, DATE_COLS, IDS_COL, LABEL_COL)
         ids = data[IDS_COL].values
@@ -94,11 +97,12 @@ def main():
         eval_set = [(X_train, y_train), (X_val, y_val)]
         xgb_tuned = build_xgb(N_ITER, CV, MODEL_RANDOM_STATE, eval_set)
         xgb_tuned.fit(X_train, y_train)
+
         if not os.path.isdir(MODEL_DIR):
             os.mkdir(MODEL_DIR)
 
-        dump(preprocess, CHECKPOINT_PREPROCESS)
-        dump(xgb_tuned, CHECKPOINT_XGB)
+        dump(preprocess, checkpoint_preprocess)
+        dump(xgb_tuned, checkpoint_xgb)
 
         # model evaluation metric reporting
         y_pred = []
@@ -122,8 +126,8 @@ def main():
         data = data.drop(IDS_COL, axis = 1)
 
         logger.info('scoring')
-        preprocess = load(CHECKPOINT_PREPROCESS)
-        xgb_tuned = load(CHECKPOINT_XGB)
+        preprocess = load(checkpoint_preprocess)
+        xgb_tuned = load(checkpoint_xgb)
         X = preprocess.transform(data)
         xgb_best = xgb_tuned.best_estimator_
         y_pred = xgb_best.predict_proba(

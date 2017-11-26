@@ -1,0 +1,15 @@
+Metadata-Version: 1.1
+Name: mlutils
+Version: 0.0.1
+Summary: machine learning helper/utility functions
+Home-page: UNKNOWN
+Author: Ethen Liu
+Author-email: ethen8181@gmail.com
+License: MIT
+Description-Content-Type: UNKNOWN
+Description: UNKNOWN
+Keywords: Machine Learning,Python3
+Platform: UNKNOWN
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3.5
+Classifier: License :: OSI Approved :: MIT License
