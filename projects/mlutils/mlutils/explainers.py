@@ -96,7 +96,6 @@ class PartialDependenceExplainer:
 
             feature_cols = feature_grid
         else:
-            feature_type = 'cat'
             feature_grid = unique_target
             feature_cols = np.asarray(['{}_{}'.format(feature_name, category)
                                        for category in unique_target])

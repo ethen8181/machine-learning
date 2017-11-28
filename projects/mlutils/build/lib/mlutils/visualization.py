@@ -15,7 +15,7 @@ def vis_importance(estimator, feature_names, threshold = 0.05):
         A ensemble tree estimator that contains the attribute
         ``feature_importances_``.
 
-    feature_names : str 1d array or list
+    feature_names : str 1d array
         Description feature names that corresponds to the
         feature importance.
 

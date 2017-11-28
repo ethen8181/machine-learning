@@ -130,18 +130,6 @@ Genetic Algorithm. Math-free explanation and code from scratch.
 - Start from a simple optimization problem and extending it to traveling salesman problem (tsp).
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ga/ga.ipynb)]
 
-#### h2o : 2016.01.24
-
-Walking through [H2O 2015 World Training GitBook](http://learn.h2o.ai/content/index.html).The walkthrough does basically zero feature engineering with the example dataset, as it is just browsing through its function calls and parameters. Apart from that, [H2o Resources](http://www.h2o.ai/resources/) also contains booklets on each of the models.
-
-- R's API:
-	- h2o’s deep learning. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_deep_learning/h2o_deep_learning.html)]
-	- h2o’s Ensemble Tree. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_ensemble_tree/h2o_ensemble_tree.html)]
-	- h2o’s Generalized Linear Model. [[Rmarkdown](http://ethen8181.github.io/machine-learning/h2o/h2o_glm/h2o_glm.html)]
-	- h2o’s super learner. [[R code](https://github.com/ethen8181/machine-learning/blob/master/h2o/h2o_super_learner/h2o_super_learner.R)]
-- Python's API:
-	- h2o's deep learning, Ensemble Tree. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/h2o/h2o_python.ipynb)]
-
 #### unbalanced : 2015.11.25
 
 Choosing the optimal cutoff value for logistic regression using cost-sensitive mistakes (meaning when the cost of misclassification might differ between the two classes) when your dataset consists of unbalanced binary classes. e.g. Majority of the data points in the dataset have a positive outcome, while few have negative, or vice versa. The notion can be extended to any other classification algorithm that can predict class’s probability, this documentation just uses logistic regression for illustration purpose.

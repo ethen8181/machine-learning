@@ -15,7 +15,7 @@ def vis_importance(estimator, feature_names, threshold = 0.05):
         A ensemble tree estimator that contains the attribute
         ``feature_importances_``.
 
-    feature_names : str 1d array or list
+    feature_names : str 1d array
         Description feature names that corresponds to the
         feature importance.
 
@@ -26,7 +26,7 @@ def vis_importance(estimator, feature_names, threshold = 0.05):
     """
     if not hasattr(estimator, 'feature_importances_'):
         msg = '{} does not have the feature_importances_ attribute'
-        ValueError(msg.format(estimator.__class__.__name__))
+        raise ValueError(msg.format(estimator.__class__.__name__))
 
     # apart from the mean feature importance, for scikit-learn we can access
     # each individual tree's feature importance and compute the standard deviation

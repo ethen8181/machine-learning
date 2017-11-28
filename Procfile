@@ -1,0 +1,1 @@
+web: knowledge_repo --repo knowledge-repo deploy
