@@ -1,1 +1,0 @@
-web: knowledge_repo --repo knowledge-repo runserver
