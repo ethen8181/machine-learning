@@ -1,1 +1,1 @@
-web: knowledge_repo --repo knowledge-repo deploy
+web: knowledge_repo --repo knowledge-repo runserver
