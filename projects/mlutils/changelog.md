@@ -4,7 +4,7 @@
 
 ### Added
 
-- visualization: `vis_importance`.
 - resamplers: `RandomUndersampler`.
 - explainers: `PartialDependenceExplainer`.
+- visualization: `vis_importance`, `vis_coef`.
 - transformers: `BoxTransformer`, `MultipleImputer`, `Preprocesser`, `ColumnExtractor`.
