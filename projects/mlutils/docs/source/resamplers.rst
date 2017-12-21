@@ -1,7 +1,7 @@
 Resamplers
 ==========
 
-.. automodule:: ml_utils.resamplers
+.. automodule:: mlutils.resamplers
     :members:
     :undoc-members:
     :inherited-members:

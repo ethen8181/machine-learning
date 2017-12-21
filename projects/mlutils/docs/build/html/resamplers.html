@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Resamplers &mdash; ml_utils 0.0.1 documentation</title>
+  <title>Resamplers &mdash; mlutils 0.1.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ml_utils 0.0.1 documentation" href="index.html"/>
+    <link rel="top" title="mlutils 0.1.1 documentation" href="index.html"/>
         <link rel="up" title="API" href="api.html"/>
         <link rel="next" title="Transformers" href="transformers.html"/>
         <link rel="prev" title="Resamplers" href="explainers.html"/> 
@@ -57,7 +57,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> ml_utils
+            <a href="index.html" class="icon icon-home"> mlutils
           
 
           
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.0.1
+                0.1.1
               </div>
             
           
@@ -113,7 +113,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">ml_utils</a>
+          <a href="index.html">mlutils</a>
         
       </nav>
 
@@ -164,11 +164,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-ml_utils.resamplers">
-<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-ml_utils.resamplers" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-mlutils.resamplers">
+<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-mlutils.resamplers" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="ml_utils.resamplers.RandomUnderSampler">
-<em class="property">class </em><code class="descclassname">ml_utils.resamplers.</code><code class="descname">RandomUnderSampler</code><span class="sig-paren">(</span><em>ratio</em>, <em>replacement=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler">
+<em class="property">class </em><code class="descclassname">mlutils.resamplers.</code><code class="descname">RandomUnderSampler</code><span class="sig-paren">(</span><em>ratio</em>, <em>replacement=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to perform random under-sampling.
 Under-sample the majority class(es) by randomly picking samples
 with or without replacement.</p>
@@ -200,8 +200,8 @@ number generator; If <code class="docutils literal"><span class="pre">None</span
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="ml_utils.resamplers.RandomUnderSampler.ratio_">
-<code class="descname">ratio_</code><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.ratio_" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.ratio_">
+<code class="descname">ratio_</code><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.ratio_" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>dict[(int, int)]</em> – The actual ratio that was used for resampling the data set,
 where the class label is the key and the number of samples is the value</p>
 </dd></dl>
@@ -222,8 +222,8 @@ the X and y that was used for fitting is identical to sampling
 </tbody>
 </table>
 <dl class="method">
-<dt id="ml_utils.resamplers.RandomUnderSampler.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the classes statistics to perform sampling.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -246,8 +246,8 @@ the X and y that was used for fitting is identical to sampling
 </dd></dl>
 
 <dl class="method">
-<dt id="ml_utils.resamplers.RandomUnderSampler.fit_sample">
-<code class="descname">fit_sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.fit_sample" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.fit_sample">
+<code class="descname">fit_sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.fit_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the statistics and resample the data directly.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -271,8 +271,8 @@ the X and y that was used for fitting is identical to sampling
 </dd></dl>
 
 <dl class="method">
-<dt id="ml_utils.resamplers.RandomUnderSampler.get_params">
-<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.get_params" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get parameters for this estimator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -290,8 +290,8 @@ contained subobjects that are estimators.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="ml_utils.resamplers.RandomUnderSampler.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resample the dataset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -315,8 +315,8 @@ contained subobjects that are estimators.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="ml_utils.resamplers.RandomUnderSampler.set_params">
-<code class="descname">set_params</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.resamplers.RandomUnderSampler.set_params" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.resamplers.RandomUnderSampler.set_params">
+<code class="descname">set_params</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.resamplers.RandomUnderSampler.set_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the parameters of this estimator.</p>
 <p>The method works on simple estimators as well as on nested objects
 (such as pipelines). The latter have parameters of the form
@@ -382,7 +382,7 @@ component of a nested object.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.0.1',
+            VERSION:'0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

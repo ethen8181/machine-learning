@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Resamplers &mdash; ml_utils 0.0.1 documentation</title>
+  <title>Resamplers &mdash; mlutils 0.1.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="ml_utils 0.0.1 documentation" href="index.html"/>
+    <link rel="top" title="mlutils 0.1.1 documentation" href="index.html"/>
         <link rel="up" title="API" href="api.html"/>
         <link rel="next" title="Resamplers" href="resamplers.html"/>
         <link rel="prev" title="API" href="api.html"/> 
@@ -57,7 +57,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> ml_utils
+            <a href="index.html" class="icon icon-home"> mlutils
           
 
           
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.0.1
+                0.1.1
               </div>
             
           
@@ -113,7 +113,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">ml_utils</a>
+          <a href="index.html">mlutils</a>
         
       </nav>
 
@@ -164,11 +164,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-ml_utils.explainers">
-<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-ml_utils.explainers" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-mlutils.explainers">
+<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-mlutils.explainers" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="ml_utils.explainers.PartialDependenceExplainer">
-<em class="property">class </em><code class="descclassname">ml_utils.explainers.</code><code class="descname">PartialDependenceExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_grid_points=50</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer">
+<em class="property">class </em><code class="descclassname">mlutils.explainers.</code><code class="descname">PartialDependenceExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_grid_points=50</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Partial Dependence explanation <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
 <ul class="simple">
 <li>Currently only supports binary classification and regression classifiers.</li>
@@ -189,22 +189,22 @@ if the targeted column is numeric.</li>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="ml_utils.explainers.PartialDependenceExplainer.feature_name_">
-<code class="descname">feature_name_</code><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer.feature_name_" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_name_">
+<code class="descname">feature_name_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_name_" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>str</em> – The input feature_name to the .fit unmodified, will
 be used in subsequent method.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ml_utils.explainers.PartialDependenceExplainer.feature_type_">
-<code class="descname">feature_type_</code><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer.feature_type_" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_type_">
+<code class="descname">feature_type_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_type_" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>str</em> – The input feature_type to the .fit unmodified, will
 be used in subsequent method.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="ml_utils.explainers.PartialDependenceExplainer.feature_grid_">
-<code class="descname">feature_grid_</code><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer.feature_grid_" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_grid_">
+<code class="descname">feature_grid_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_grid_" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>1d ndarray</em> – Unique grid points that were used to generate the
 partial dependence result.</p>
 </dd></dl>
@@ -217,8 +217,8 @@ partial dependence result.</p>
 </tbody>
 </table>
 <dl class="method">
-<dt id="ml_utils.explainers.PartialDependenceExplainer.explain_plot">
-<code class="descname">explain_plot</code><span class="sig-paren">(</span><em>results</em>, <em>center=True</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer.explain_plot" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer.explain_plot">
+<code class="descname">explain_plot</code><span class="sig-paren">(</span><em>results</em>, <em>center=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.explain_plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use the partial dependence result to generate
 a partial dependence plot (using matplotlib).</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -245,8 +245,8 @@ column, i.e. first column’s value will serve as the baseline
 </dd></dl>
 
 <dl class="method">
-<dt id="ml_utils.explainers.PartialDependenceExplainer.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>data</em>, <em>feature_name</em>, <em>feature_type</em><span class="sig-paren">)</span><a class="headerlink" href="#ml_utils.explainers.PartialDependenceExplainer.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="mlutils.explainers.PartialDependenceExplainer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>data</em>, <em>feature_name</em>, <em>feature_type</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Obtain the partial dependence result.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -318,7 +318,7 @@ categorical column.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.0.1',
+            VERSION:'0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

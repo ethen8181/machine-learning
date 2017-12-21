@@ -100,7 +100,9 @@ def clean(filepath, now, cat_cols, num_cols, date_cols, ids_col, label_col = Non
 
     # Transmission has three distinct types, but there's only 1 observation
     # for type "Manual", that record is simply dropped
-    data = data[data['Transmission'] != 'Manual']
+    transmission_col = 'Transmission'
+    data = data[data[transmission_col] != 'Manual']
+    data[transmission_col] = data[transmission_col].cat.remove_unused_categories()
 
     # there's only 1 date column in the date_cols list,
     # use it to compute the recency

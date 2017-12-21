@@ -4,8 +4,15 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2017-12]
 
+- Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)]
+	- Refactored code for visualizating tree's feature importance.
+- Building intuition on Ridge and Lasso regularization using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
+	- Include section when there are collinear features in the dataset.
+- mlutils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/mlutils/)]
+	- Refer to its changelog for details.
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
-	- 
+	- Mention notebook extension, a project that contains various functionalities that makes jupyter notebook even more pleasant to work with.
+
 
 ## [2017-11]
 

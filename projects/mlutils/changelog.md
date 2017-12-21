@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.1][2017-12]
+
+### Added
+
+- transformers: `OneHotEncoder`
+
+### Changed
+
+- transformers: `Preprocesser`
+	- Functionality for detecting collinearity amongst categorical features using Cramer's V statistics.
+	- Reimplement `OneHotEncoder` allowing user to drop the first level of a categorical feature.
+
 ## [0.0.1][2017-11]
 
 ### Added

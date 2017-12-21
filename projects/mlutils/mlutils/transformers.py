@@ -1,17 +1,21 @@
 import warnings
 import numpy as np
+import pandas as pd
 import numpy.ma as ma
+from itertools import combinations
 from collections import defaultdict
-from scipy.stats import mode, boxcox
+from scipy.sparse import csr_matrix
+from scipy.stats import mode, boxcox, chi2_contingency
 from sklearn.linear_model import LinearRegression
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 __all__ = [
     'BoxCoxTransformer',
     'MultipleImputer',
     'ColumnExtractor',
+    'OneHotEncoder',
     'Preprocesser']
 
 
@@ -98,8 +102,8 @@ class BoxCoxTransformer(BaseEstimator, TransformerMixin):
         # an embarrassingly parallelized problem, i.e.
         # each features' boxcox lambda can be estimated in parallel
         # needs to investigate if it's a bottleneck
-        self.lmbdas_ = np.asarray([self._boxcox(data[i].values)
-                                   for i in transformed_cols])
+        lmbdas = [self._boxcox(data[i].values) for i in transformed_cols]
+        self.lmbdas_ = np.asarray(lmbdas)
         self.transformed_cols_ = transformed_cols
         return self
 
@@ -134,8 +138,8 @@ class BoxCoxTransformer(BaseEstimator, TransformerMixin):
         if self.copy:
             data = data.copy()
 
-        for i, feature in enumerate(self.transformed_cols_):
-            data[feature] = self._boxcox(data[feature].values, self.lmbdas_[i])
+        for feature, lmbdas in zip(self.transformed_cols_, self.lmbdas_):
+            data[feature] = self._boxcox(data[feature].values, lmbdas)
 
         return data
 
@@ -174,7 +178,7 @@ class MultipleImputer(BaseEstimator, TransformerMixin):
             <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.Imputer.html>`_
     """
 
-    def __init__(self, strategies, missing_values = "NaN", copy = True):
+    def __init__(self, strategies, missing_values = 'NaN', copy = True):
         self.copy = copy
         self.strategies = strategies
         self.missing_values = missing_values
@@ -308,7 +312,7 @@ class ColumnExtractor(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        data : DataFrame, shape [n_samples, n_feature]
+        data : DataFrame, shape [n_samples, n_features]
             Input data.
 
         y : default None
@@ -326,7 +330,7 @@ class ColumnExtractor(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        data : DataFrame, shape [n_samples, n_feature]
+        data : DataFrame, shape [n_samples, n_features]
             Input data.
 
         Returns
@@ -336,6 +340,174 @@ class ColumnExtractor(BaseEstimator, TransformerMixin):
         """
         column = data[self.col]
         return column
+
+
+class OneHotEncoder(BaseEstimator, TransformerMixin):
+    """
+    Encode categorical integer features using a one-hot aka one-of-K scheme.
+    The input to this transformer should only be a matrix of integers, denoting
+    the values taken on by categorical (discrete) features.
+    The output will be a sparse/dense matrix where each column corresponds to
+    one possible value of one feature. It is assumed that input features take on
+    values in the range [0, n_values).
+
+    This class extends the sklearn OneHotEncoder Transformer [3]_ by allowing users
+    to specify drop the first level of a categorical feature and treat it as the
+    reference level, also removes the functionality of ignoring unseen categories
+    during testing, i.e. it will always through an error if a category unseen during
+    training is seen during testing.
+
+    Parameters
+    ----------
+    drop_first : bool, default True
+        Whether to get k-1 dummies out of k categorical levels by removing the
+        first level, this will not result in an information loss while being
+        more memory efficient since we're not generating an extra column for
+        every categorical columns.
+
+    sparse : bool, default = True
+        Will return sparse matrix if set True else will return an numpy array.
+
+    dtype : numpy data type, default = np.float
+        Desired dtype of output.
+
+    Attributes
+    ----------
+    feature_indices_ : 1d ndarray, shape [n_features]
+        Indices to feature ranges. Feature ``i`` in the original data
+        is mapped to features from
+        ``feature_indices_[i]`` to ``feature_indices_[i+1]``.
+
+    n_values_ : 1d ndarray, shape [n_features]
+        Maximum number of values/categories per feature.
+
+    References
+    ----------
+    .. [3] `Scikit-learn OneHotEncoder
+            <http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html>`_
+    """
+
+    def __init__(self, drop_first = True, sparse = True, dtype = np.float):
+        self.dtype = dtype
+        self.sparse = sparse
+        self.drop_first = drop_first
+
+    def fit(self, X, y = None):
+        """
+        Fit OneHotEncoder to X.
+
+        Parameters
+        ----------
+        X : 2d ndarray, shape [n_samples, n_features]
+            Input array of type int.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
+        Returns
+        -------
+        self
+        """
+        self.fit_transform(X)
+        return self
+
+    def fit_transform(self, X, y = None):
+        """
+        Fit OneHotEncoder to X, then transform X. Equivalent to
+        self.fit(X).transform(X), but more convenient and more efficient.
+
+        Parameters
+        ----------
+        X : 2d ndarray, shape [n_samples, n_features]
+            Input array of type int.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
+        Returns
+        -------
+        X_out : sparse matrix if sparse = True else a 2d ndarray
+            Transformed input.
+        """
+        X_out, n_values, indices = self._fit_transform(X)
+        self.n_values_ = n_values
+        self.feature_indices_ = indices
+        return X_out
+
+    def _fit_transform(self, X, n_values = None, indices = None):
+        if np.any(X < 0):
+            raise ValueError('X needs to contain only non-negative integers.')
+
+        n_samples, n_features = X.shape
+        if self.drop_first:
+            if n_values is None:
+                n_values = np.max(X, axis = 0)
+                indices = np.cumsum(np.hstack([[0], n_values]))
+                n_values += 1
+
+            # counter keeps track of the column indices' starting point
+            counter = -1
+            counter_values = np.hstack([[0], (n_values[:-1]) - 1])
+            row_indices = []
+            col_indices = []
+            for col in range(n_features):
+                counter += counter_values[col]
+
+                # the first level should be values with a numerical
+                # representation of 0 and they will be dropped
+                mask = np.logical_not(X[:, col] == 0)
+                row_indice = np.where(mask)[0]
+                col_indice = X[mask, col] + counter
+                row_indices.append(row_indice)
+                col_indices.append(col_indice)
+
+            row_indices = np.hstack(row_indices)
+            col_indices = np.hstack(col_indices)
+        else:
+            if n_values is None:
+                n_values = np.max(X, axis = 0) + 1
+                indices = np.cumsum(np.hstack([[0], n_values]))
+
+            col_indices = (X + indices[:-1]).ravel()
+            row_indices = np.repeat(np.arange(n_samples, dtype = np.intc), n_features)
+
+        data = np.ones_like(row_indices)
+        X_out = csr_matrix((data, (row_indices, col_indices)),
+                           shape = (n_samples, indices[-1]),
+                           dtype = self.dtype)
+        X_out = X_out if self.sparse else X_out.toarray()
+        return X_out, n_values, indices
+
+    def transform(self, X):
+        """
+        Transform X using one-hot encoding.
+
+        Parameters
+        ----------
+        X : 2d ndarray, shape [n_samples, n_features]
+            Input array of type int.
+
+        Returns
+        -------
+        X_out : sparse matrix if sparse = True else a 2-d array
+            Transformed input.
+        """
+        n_features = X.shape[1]
+        n_values = self.n_values_
+        indices = self.feature_indices_
+        if n_features != indices.size - 1:
+            raise ValueError(
+                'X has different shape than during fitting. '
+                'Expected {}, got {}.'.format(indices.shape[0] - 1, n_features))
+
+        mask = (X >= n_values).ravel()
+        if np.any(mask):
+            raise ValueError(
+                'Unknown categorical feature present {} '
+                'during transform.'.format(X.ravel()[mask]))
+
+        X_out, _, _ = self._fit_transform(X, n_values, indices)
+        return X_out
 
 
 class Preprocesser(BaseEstimator, TransformerMixin):
@@ -354,11 +526,27 @@ class Preprocesser(BaseEstimator, TransformerMixin):
     cat_cols : list[str], default None
         Categorical columns' name.
 
-    threshold : float, default 5.0
+    vif_threshold : float, default 5.0
         Threshold for variance inflation factor (vif).
-        If there are numerical columns, identify potential multi-collinearity
-        between them using vif. Conventionally, a vif score larger than 5
-        should be removed.
+        If there are numerical columns, identify potential collinearity
+        amongst them using vif. Conventionally, a vif score larger than 5
+        should be removed. This is a positive value that has no upper bound.
+
+    cramersv_threshold : float, default 0.8
+        Threshold for Cramers' V statistics.
+        If there are categorical columns, identify potential collinearity
+        amongst them using Cramers' V statistics. This is a value that ranges
+        between 0 and 1.
+
+    correction : bool, default False
+        Additional argument for the Cramer's V statistics.
+        If True, and the degrees of freedom is 1, apply Yates’ correction for continuity.
+        The effect of the correction is to adjust each observed value by 0.5 towards the
+        corresponding expected value. This is set to False by defualt as the effect of
+        Yates' correction is to prevent overestimation of statistical significance for small
+        data. i.e. It is chiefly used when at least one cell of the table has an expected
+        count smaller than 5. And most people probably aren't working with a data size that's
+        that small.
 
     Attributes
     ----------
@@ -366,8 +554,12 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         Column name of the transformed numpy array.
 
     num_cols_ : str 1d ndarray or None
-        Final numeric column after removing potential multi-collinearity,
-        if there're no numeric input features then the value will be None.
+        Final numerical columns after removing potential collinearity,
+        if there're no numerical input features then the value will be None.
+
+    cat_cols_ : str 1d ndarray or None
+        Final categorical column safter removing potential collinearity,
+        if there're no categorical input features then the value will be None.
 
     label_encode_dict_ : defauldict of sklearn's LabelEncoder object
         LabelEncoder that was used to encode the value
@@ -380,13 +572,16 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         categorical columns.
 
     scaler_ : sklearn's StandardScaler object
-        StandardScaler that was used to standardize the numeric columns.
+        StandardScaler that was used to standardize the numerical columns.
     """
 
-    def __init__(self, num_cols = None, cat_cols = None, threshold = 5.0):
+    def __init__(self, num_cols = None, cat_cols = None,
+                 vif_threshold = 5.0, cramersv_threshold = 0.8, correction = False):
         self.num_cols = num_cols
         self.cat_cols = cat_cols
-        self.threshold = threshold
+        self.correction = correction
+        self.vif_threshold = vif_threshold
+        self.cramersv_threshold = cramersv_threshold
 
     def fit(self, data, y = None):
         """
@@ -405,65 +600,76 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         self
         """
         if self.num_cols is None and self.cat_cols is None:
-            raise ValueError("There must be a least one input feature column")
+            raise ValueError('There must be a least one input feature column')
+
+        # store the column names so we can refer to them later;
+        # all numerical columns comes before categorical columns
+        colnames = []
+        self.num_cols_ = None
+        self.cat_cols_ = None
+
+        if self.num_cols is not None:
+            self.scaler_ = StandardScaler()
+            scaled = self.scaler_.fit_transform(data[self.num_cols].values)
+            colnames = self._remove_num_collinearity(scaled)
+            self.num_cols_ = np.array(colnames)
 
         # Label encoding across multiple columns in scikit-learn
         # https://stackoverflow.com/questions/24458645/label-encoding-across-multiple-columns-in-scikit-learn
         if self.cat_cols is not None:
-            self.label_encode_dict_ = defaultdict(LabelEncoder)
-            label_encoded = (data[self.cat_cols].
-                             apply(lambda x: self.label_encode_dict_[x.name].fit_transform(x)))
+            cat_cols = self._remove_cat_collinearity(data[self.cat_cols])
+            label_encode_dict = defaultdict(LabelEncoder)
+            label_encoded = (data[cat_cols].
+                             apply(lambda x: label_encode_dict[x.name].fit_transform(x)))
 
             self.cat_encode_ = OneHotEncoder(sparse = False)
-            self.cat_encode_.fit(label_encoded)
+            self.cat_encode_.fit(label_encoded.values)
 
-        if self.num_cols is not None:
-            self.scaler_ = StandardScaler()
-            scaled = self.scaler_.fit_transform(data[self.num_cols])
-            colnames = self._remove_collinearity(scaled)
-            self.num_cols_ = np.array(colnames)
-        else:
-            colnames = []
-            self.num_cols_ = None
+            for col in cat_cols:
+                classes = label_encode_dict[col].classes_
+                if self.cat_encode_.drop_first:
+                    classes = label_encode_dict[col].classes_[1:]
 
-        # store the column names (numeric columns comes before the
-        # categorical columns) so we can refer to them later
-        if self.cat_cols is not None:
-            for col in self.cat_cols:
-                cat_colnames = [col + '_' + str(classes)
-                                for classes in self.label_encode_dict_[col].classes_]
+                cat_colnames = [col + '_' + str(classes) for classes in classes]
                 colnames += cat_colnames
+
+            self.cat_cols_ = cat_cols
+            self.label_encode_dict_ = label_encode_dict
 
         self.colnames_ = np.asarray(colnames)
         return self
 
-    def _remove_collinearity(self, scaled):
+    def _remove_num_collinearity(self, X):
         """
-        Identify multi-collinearity between the numeric variables
+        Identify collinearity between the numeric variables
         using variance inflation factor (vif)
         """
+        scaler = self.scaler_
         colnames = self.num_cols.copy()
         while True:
-            vif = [self._compute_vif(scaled, index)
-                   for index in range(scaled.shape[1])]
-            max_index = np.argmax(vif)
+            n_features = X.shape[1]
+            if n_features == 1:
+                break
 
-            if vif[max_index] >= self.threshold:
+            vif = [self._compute_vif(X, index) for index in range(n_features)]
+            max_index = np.argmax(vif)
+            if vif[max_index] >= self.vif_threshold:
                 removed = colnames[max_index]
                 colnames.remove(removed)
-                scaled = np.delete(scaled, max_index, axis = 1)
-                self.scaler_.mean_ = np.delete(self.scaler_.mean_, max_index)
-                self.scaler_.scale_ = np.delete(self.scaler_.scale_, max_index)
+                X = np.delete(X, max_index, axis = 1)
+                scaler.mean_ = np.delete(scaler.mean_, max_index)
+                scaler.scale_ = np.delete(scaler.scale_, max_index)
             else:
                 break
 
+        self.scaler_ = scaler
         return colnames
 
     def _compute_vif(self, X, target_index):
         """
         Similar implementation as statsmodel's variance_inflation_factor
         with some enhancemants:
-        1. includes the intercept by default
+        1. includes the intercept term
         2. prevents float division errors (dividing by 0)
 
         References
@@ -481,6 +687,36 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         vif = 1. / (1. - rsquared + 1e-5)
         return vif
 
+    def _remove_cat_collinearity(self, data):
+        """
+        Identify collinearity between the numeric variables
+        using Cramer's V statistics.
+        """
+        n_features = data.shape[1]
+        colnames = self.cat_cols.copy()
+        if n_features > 1:
+            removed = set()
+            for col1, col2 in combinations(self.cat_cols, 2):
+                if col1 not in removed:
+                    observed = pd.crosstab(data[col1], data[col2]).values
+                    cramersv = self._compute_cramersv(observed)
+                    if cramersv >= self.cramersv_threshold:
+                        removed.add(col1)
+                        colnames.remove(col1)
+
+        return colnames
+
+    def _compute_cramersv(self, observed):
+        """
+        Expects a 2d ndarray contingency table that contains the observed
+        frequencies (i.e. number of occurrences) for each category.
+        """
+        n_obs = observed.sum()
+        n_row, n_col = observed.shape
+        chi2 = chi2_contingency(observed, correction = self.correction)[0]
+        cramersv = np.sqrt(chi2 / (n_obs * min(n_row - 1, n_col - 1)))
+        return cramersv
+
     def transform(self, data):
         """
         Transform the input data using Preprocess Transformer.
@@ -495,19 +731,21 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         X : 2d ndarray, shape [n_samples, n_features]
             Transformed input data.
         """
-        if self.cat_cols is not None:
-            label_encoded = (data[self.cat_cols].
+        cat_cols = self.cat_cols_
+        num_cols = self.num_cols_
+        if cat_cols is not None:
+            label_encoded = (data[cat_cols].
                              apply(lambda x: self.label_encode_dict_[x.name].transform(x)))
-            cat_encoded = self.cat_encode_.transform(label_encoded)
+            cat_encoded = self.cat_encode_.transform(label_encoded.values)
 
-        if self.num_cols is not None:
-            scaled = self.scaler_.transform(data[self.num_cols_])
+        if num_cols is not None:
+            scaled = self.scaler_.transform(data[num_cols].values)
 
         # combine encoded categorical columns and scaled numerical
         # columns, it's the same as concatenate it along axis 1
-        if self.cat_cols is not None and self.num_cols is not None:
+        if cat_cols is not None and num_cols is not None:
             X = np.hstack((scaled, cat_encoded))
-        elif self.num_cols is None:
+        elif num_cols is None:
             X = cat_encoded
         else:
             X = scaled

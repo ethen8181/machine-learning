@@ -1,7 +1,7 @@
 Visualization
 =============
 
-.. automodule:: ml_utils.visualization
+.. automodule:: mlutils.visualization
     :members:
     :undoc-members:
     :inherited-members:

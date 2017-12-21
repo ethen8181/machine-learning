@@ -1,7 +1,7 @@
 Transformers
 ============
 
-.. automodule:: ml_utils.transformers
+.. automodule:: mlutils.transformers
     :members:
     :undoc-members:
     :inherited-members:
