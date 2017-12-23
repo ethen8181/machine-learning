@@ -6,6 +6,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
+- Curated tips and tricks for technical and soft skills. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/tips_and_tricks/tips_and_tricks.ipynb)]
 - Detecting collinearity amongst features (Variance Inflation Factor for numeric features and Cramer's V statistics for categorical features), also introduces Linear Regression from a Maximum Likelihood perspective and the R-squared evaluation metric. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/collinearity.ipynb)]
 
 ### Changed
@@ -18,7 +19,6 @@ The changelog will record what content was **changed** (e.g. changed an existing
 	- Refer to its changelog for details.
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
 	- Mention notebook extension, a project that contains various functionalities that makes jupyter notebook even more pleasant to work with.
-
 
 ## [2017-11]
 
