@@ -3,12 +3,13 @@ import numpy as np
 import pandas as pd
 import numpy.ma as ma
 from itertools import combinations
-from collections import defaultdict
 from scipy.sparse import csr_matrix
-from scipy.stats import mode, boxcox, chi2_contingency
+from scipy.stats import mode, boxcox
+from scipy.stats import chi2_contingency
+from pandas.api.types import CategoricalDtype
+from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 __all__ = [
@@ -16,7 +17,7 @@ __all__ = [
     'MultipleImputer',
     'ColumnExtractor',
     'OneHotEncoder',
-    'Preprocesser']
+    'Preprocessor']
 
 
 # sklearn's LinearRegression may give harmless errors
@@ -510,7 +511,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         return X_out
 
 
-class Preprocesser(BaseEstimator, TransformerMixin):
+class Preprocessor(BaseEstimator, TransformerMixin):
     """
     Generic data preprocessing including:
     - standardize numeric columns and remove potential
@@ -520,11 +521,19 @@ class Preprocesser(BaseEstimator, TransformerMixin):
     Parameters
     ----------
     num_cols : list[str], default None
-        Numeric columns' name. default None means
+        Numerical columns' name. default None means
         the input column has no numeric features.
 
     cat_cols : list[str], default None
         Categorical columns' name.
+
+    output_pandas : bool, default False
+        Whether to output a pandas DataFrame or a numpy ndarray.
+
+    use_onehot : bool, default True
+        Whether to use one hot encoding for the categorical features.
+        (the first-level will always be dropped when converting to
+        one hot encoding scheme)
 
     vif_threshold : float, default 5.0
         Threshold for variance inflation factor (vif).
@@ -551,21 +560,19 @@ class Preprocesser(BaseEstimator, TransformerMixin):
     Attributes
     ----------
     colnames_ : str 1d ndarray
-        Column name of the transformed numpy array.
+        Column name of the transformed data.
 
-    num_cols_ : str 1d ndarray or None
-        Final numerical columns after removing potential collinearity,
-        if there're no numerical input features then the value will be None.
+    num_cols_ : str 1d ndarray
+        Final numerical columns after removing potential collinearity.
 
-    cat_cols_ : str 1d ndarray or None
-        Final categorical column safter removing potential collinearity,
-        if there're no categorical input features then the value will be None.
+    cat_cols_ : str 1d ndarray
+        Final categorical column safter removing potential collinearity.
 
-    label_encode_dict_ : defauldict of sklearn's LabelEncoder object
-        LabelEncoder that was used to encode the value
-        of the categorical columns into with value between
-        0 and n_classes-1. Categorical columns will go through
-        this encoding process before being one-hot encoded.
+    label_encode_ : dict[list]
+        Categorical features will always be encoded into numerical
+        representation with value between 0 and number of distinct categories - 1.
+        Keys are the categorical features' name and values
+        are the list of values that were seen during training time.
 
     cat_encode_ : sklearn's OneHotEncoder object
         OneHotEncoder that was used to one-hot encode the
@@ -576,10 +583,13 @@ class Preprocesser(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, num_cols = None, cat_cols = None,
+                 output_pandas = False, use_onehot = True,
                  vif_threshold = 5.0, cramersv_threshold = 0.8, correction = False):
         self.num_cols = num_cols
         self.cat_cols = cat_cols
         self.correction = correction
+        self.use_onehot = use_onehot
+        self.output_pandas = output_pandas
         self.vif_threshold = vif_threshold
         self.cramersv_threshold = cramersv_threshold
 
@@ -599,45 +609,81 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         -------
         self
         """
+        self.fit_transform(data)
+        return self
+
+    def fit_transform(self, data, y = None):
+        """
+        Fit Preprocessor to X, then transform X. Equivalent to
+        self.fit(X).transform(X), but more convenient and more efficient.
+
+        Parameters
+        ----------
+        data : DataFrame, shape [n_samples, n_features]
+            Input array of type int.
+
+        y : default None
+            Ignore, argument required for constructing sklearn Pipeline.
+
+        Returns
+        -------
+        X : DataFrame if output_pandas = True else a 2d ndarray
+            Transformed input.
+        """
         if self.num_cols is None and self.cat_cols is None:
             raise ValueError('There must be a least one input feature column')
 
         # store the column names so we can refer to them later;
         # all numerical columns comes before categorical columns
         colnames = []
-        self.num_cols_ = None
-        self.cat_cols_ = None
-
+        scaled = None
+        encoded = None
+        data = data.copy()
         if self.num_cols is not None:
+            # data will be converted to float64 type in StandardScaler
+            # anyway, so do the conversion here to prevent raising
+            # conversion warning later
+            data_subset = data[self.num_cols].values.astype(np.float64)
             self.scaler_ = StandardScaler()
-            scaled = self.scaler_.fit_transform(data[self.num_cols].values)
+            scaled = self.scaler_.fit_transform(data_subset)
             colnames = self._remove_num_collinearity(scaled)
-            self.num_cols_ = np.array(colnames)
+            self.num_cols_ = np.asarray(colnames)
 
-        # Label encoding across multiple columns in scikit-learn
-        # https://stackoverflow.com/questions/24458645/label-encoding-across-multiple-columns-in-scikit-learn
         if self.cat_cols is not None:
             cat_cols = self._remove_cat_collinearity(data[self.cat_cols])
-            label_encode_dict = defaultdict(LabelEncoder)
-            label_encoded = (data[cat_cols].
-                             apply(lambda x: label_encode_dict[x.name].fit_transform(x)))
 
-            self.cat_encode_ = OneHotEncoder(sparse = False)
-            self.cat_encode_.fit(label_encoded.values)
+            # convert categorical type to numeric representation
+            # using pandas category conversion is a lot faster than
+            # label encoding across multiple columns in scikit-learn
+            # https://stackoverflow.com/questions/24458645/label-encoding-across-multiple-columns-in-scikit-learn
+            label_encode = {}
+            encoded = np.empty((data.shape[0], len(cat_cols)))
+            for col, cat_col in enumerate(cat_cols):
+                data[cat_col] = data[cat_col].astype('category')
+                label_encode[cat_col] = list(data[cat_col].cat.categories)
+                encoded[:, col] = data[cat_col].cat.codes
 
-            for col in cat_cols:
-                classes = label_encode_dict[col].classes_
-                if self.cat_encode_.drop_first:
-                    classes = label_encode_dict[col].classes_[1:]
+            if self.use_onehot:
+                cat_encode = OneHotEncoder(sparse = False)
+                encoded = cat_encode.fit_transform(encoded)
+                for cat_col in cat_cols:
+                    classes = data[cat_col].cat.categories
+                    if cat_encode.drop_first:
+                        classes = data[cat_col].cat.categories[1:]
 
-                cat_colnames = [col + '_' + str(classes) for classes in classes]
-                colnames += cat_colnames
+                    cat_colnames = [cat_col + '_' + str(c) for c in classes]
+                    colnames += cat_colnames
 
-            self.cat_cols_ = cat_cols
-            self.label_encode_dict_ = label_encode_dict
+                self.cat_encode_ = cat_encode
+            else:
+                colnames += cat_cols
+
+            self.label_encode_ = label_encode
+            self.cat_cols_ = np.asarray(cat_cols)
 
         self.colnames_ = np.asarray(colnames)
-        return self
+        X = self._combine_output(scaled, encoded, data[cat_cols])
+        return X
 
     def _remove_num_collinearity(self, X):
         """
@@ -717,6 +763,39 @@ class Preprocesser(BaseEstimator, TransformerMixin):
         cramersv = np.sqrt(chi2 / (n_obs * min(n_row - 1, n_col - 1)))
         return cramersv
 
+    def _combine_output(self, scaled, encoded = None, data_cat = None):
+        """
+        Combine encoded categorical columns and scaled numerical
+        columns, it's the same as concatenate it along axis 1
+        """
+        if self.cat_cols_ is not None and self.num_cols_ is not None:
+            if self.output_pandas:
+                data_num = pd.DataFrame(scaled, columns = self.num_cols_)
+                if self.use_onehot:
+                    cat_cols = self.colnames_[len(self.num_cols_):]
+                    data_cat = pd.DataFrame(encoded, columns = cat_cols)
+
+                data_cat = data_cat.reset_index(drop = True)
+                X = pd.concat([data_num, data_cat], axis = 1)
+            else:
+                X = np.hstack((scaled, encoded))
+        elif self.num_cols_ is None:
+            if self.output_pandas:
+                if self.use_onehot:
+                    cat_cols = self.colnames_[len(self.num_cols_):]
+                    data_cat = pd.DataFrame(encoded, columns = cat_cols)
+
+                X = data_cat
+            else:
+                X = encoded
+        else:
+            if self.output_pandas:
+                X = pd.DataFrame(scaled, columns = self.num_cols_)
+            else:
+                X = scaled
+
+        return X
+
     def transform(self, data):
         """
         Transform the input data using Preprocess Transformer.
@@ -728,26 +807,32 @@ class Preprocesser(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X : 2d ndarray, shape [n_samples, n_features]
-            Transformed input data.
+        X : DataFrame if output_pandas = True else a 2d ndarray
+            Transformed input.
         """
+        data = data.copy()
         cat_cols = self.cat_cols_
         num_cols = self.num_cols_
         if cat_cols is not None:
-            label_encoded = (data[cat_cols].
-                             apply(lambda x: self.label_encode_dict_[x.name].transform(x)))
-            cat_encoded = self.cat_encode_.transform(label_encoded.values)
+            encoded = np.empty((data.shape[0], len(cat_cols)))
+            for col, cat_col in enumerate(cat_cols):
+                categories = self.label_encode_[cat_col]
+                cat_type = CategoricalDtype(categories = categories)
+                data[cat_col] = data[cat_col].astype(cat_type)
+                mask = data[cat_col].isnull()
+                if mask.sum():
+                    raise ValueError(
+                        'Unknown categorical feature present: {} during transform, '
+                        'for column: {}.'.format(data.loc[mask, cat_col], cat_col))
+
+                encoded[:, col] = data[cat_col].cat.codes
+
+            if self.use_onehot:
+                encoded = self.cat_encode_.transform(encoded)
 
         if num_cols is not None:
-            scaled = self.scaler_.transform(data[num_cols].values)
+            data_subset = data[num_cols].values.astype(np.float64)
+            scaled = self.scaler_.transform(data_subset)
 
-        # combine encoded categorical columns and scaled numerical
-        # columns, it's the same as concatenate it along axis 1
-        if cat_cols is not None and num_cols is not None:
-            X = np.hstack((scaled, cat_encoded))
-        elif num_cols is None:
-            X = cat_encoded
-        else:
-            X = scaled
-
+        X = self._combine_output(scaled, encoded, data[cat_cols])
         return X

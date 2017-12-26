@@ -11,6 +11,7 @@
 - transformers: `Preprocesser`
 	- Functionality for detecting collinearity amongst categorical features using Cramer's V statistics.
 	- Reimplement `OneHotEncoder` allowing user to drop the first level of a categorical feature.
+	- Added arguments to specify whether to output pandas DataFrame or numpy ndarray and whether to use one hot encoding for the categorical columns.
 
 ## [0.0.1][2017-11]
 

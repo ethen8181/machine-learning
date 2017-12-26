@@ -5,12 +5,12 @@ spacy>=1.9.0
 joblib>=0.11
 tqdm>=4.14.0
 keras>=2.0.2
-nbdime>=0.3.0
+nbdime>=0.4.1
 numba>=0.34.0
 gensim>=3.0.0
-scipy>=0.19.0
+scipy>=1.0.0
 numpy>=1.13.3
-pandas==0.20.3
+pandas>=0.21.1
 seaborn>=0.8.0
 logzero>=1.2.0
 requests>=2.13.0
