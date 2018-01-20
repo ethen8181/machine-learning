@@ -254,6 +254,8 @@ class IpynbConverter:
         cmd = 'knowledge_repo --repo {} add {} -p {}'.format(
             self.knowledge_repo_path, self._path, destination)
 
+        # communicate with the shell output to enable
+        # continuation of the script execution
         p = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
             stderr=subprocess.STDOUT, shell=True)

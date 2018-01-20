@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+
+## [2018-01]
+
+### Added
+
+- Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)
+
 ## [2017-12]
 
 ### Added
