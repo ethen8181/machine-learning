@@ -7,6 +7,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
+- Partial Dependece Plot (PDP), model-agnostic approach for directional feature influence. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/partial_dependence/partial_dependence.ipynb)]
 - Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)
 
 ## [2017-12]

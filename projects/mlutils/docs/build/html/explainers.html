@@ -168,10 +168,10 @@
 <span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-mlutils.explainers" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="mlutils.explainers.PartialDependenceExplainer">
-<em class="property">class </em><code class="descclassname">mlutils.explainers.</code><code class="descname">PartialDependenceExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_grid_points=50</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mlutils.explainers.</code><code class="descname">PartialDependenceExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_grid_points=50</em>, <em>batch_size=’auto’</em>, <em>n_jobs=1</em>, <em>verbose=1</em>, <em>pre_dispatch=‘2*n_jobs’</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Partial Dependence explanation <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
 <ul class="simple">
-<li>Currently only supports binary classification and regression classifiers.</li>
+<li>Supports scikit-learn like classification and regression classifiers.</li>
 <li>Works for both numerical and categorical columns.</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
@@ -182,7 +182,38 @@
 <li><strong>estimator</strong> (<em>sklearn-like classifier</em>) – Model that was fitted on the data.</li>
 <li><strong>n_grid_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 50</em>) – Number of grid points used in replacement
 for the original numeric data. Only used
-if the targeted column is numeric.</li>
+if the targeted column is numeric. For categorical
+column, the number of grid points will always be
+the distinct number of categories in that column.
+Smaller number of grid points serves as an
+approximation for the total number of unique
+points and will result in faster computation</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default = 'auto'</em>) – Compute partial depedence prediction batch by batch to save
+memory usage, the default batch size will be
+ceil(number of rows in the data / the number of grid points used)</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 1</em>) – Number of jobs to run in parallel, if the model already fits
+extremely fast on the data, then specify 1 so that there’s no
+overhead of spawning different processes to do the computation</li>
+<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 1</em>) – The verbosity level: if non zero, progress messages are printed.
+Above 50, the output is sent to stdout. The frequency of the messages increases
+with the verbosity level. If it more than 10, all iterations are reported.</li>
+<li><strong>pre_dispatch</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>default '2*n_jobs'</em>) – <p>Controls the number of jobs that get dispatched during parallel
+execution. Reducing this number can be useful to avoid an
+explosion of memory consumption when more jobs get dispatched
+than CPUs can process. Possible inputs:</p>
+<blockquote>
+<div><ul>
+<li>None, in which case all the jobs are immediately
+created and spawned. Use this for lightweight and
+fast-running jobs, to avoid delays due to on-demand
+spawning of the jobs</li>
+<li>An int, giving the exact number of total jobs that are
+spawned</li>
+<li>A string, giving an expression as a function of n_jobs,
+as in ‘2*n_jobs’</li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </td>
 </tr>
@@ -209,6 +240,15 @@ be used in subsequent method.</p>
 partial dependence result.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="mlutils.explainers.PartialDependenceExplainer.results">
+<code class="descname">results</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.results" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of DataFrame</em> – Partial dependence result. If it’s a classification
+estimator then each index of the list is the result
+for each class. On the other hand, if it’s a regression
+estimator, it will be a list with 1 element.</p>
+</dd></dl>
+
 <p class="rubric">References</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -216,34 +256,6 @@ partial dependence result.</p>
 <tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://github.com/SauceCat/PDPbox">Python partial dependence plot toolbox</a></td></tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="mlutils.explainers.PartialDependenceExplainer.explain_plot">
-<code class="descname">explain_plot</code><span class="sig-paren">(</span><em>results</em>, <em>center=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.explain_plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use the partial dependence result to generate
-a partial dependence plot (using matplotlib).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>results</strong> (<em>DataFrame</em>) – Partial dependence result.</li>
-<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>default True</em>) – Center the partial dependence plot by subtacting every partial
-dependence result table’s column value with the value of the first
-column, i.e. first column’s value will serve as the baseline
-(centered at 0) for all other values.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="mlutils.explainers.PartialDependenceExplainer.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>data</em>, <em>feature_name</em>, <em>feature_type</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.fit" title="Permalink to this definition">¶</a></dt>
@@ -260,10 +272,41 @@ categorical column.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> – Partial dependence result.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mlutils.explainers.PartialDependenceExplainer.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>center=True</em>, <em>target_class=0</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the partial dependence result to generate
+a partial dependence plot (using matplotlib).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>default True</em>) – Center the partial dependence plot by subtacting every partial
+dependence result table’s column value with the value of the first
+column, i.e. first column’s value will serve as the baseline
+(centered at 0) for all other values.</li>
+<li><strong>target_class</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 0</em>) – The target class to show for the partial dependence result,
+for regression task, we can leave the default number unmodified,
+but for classification task, we should specify the target class
+parameter to meet our needs</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
 </td>
 </tr>
 </tbody>
