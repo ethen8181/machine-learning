@@ -1,6 +1,6 @@
 # Data Challenge
 
-Predict if a car purchased at auction is a unfortunate purchase.
+Predict if a car purchased at auction is a unfortunate purchase. Problem description is available at https://www.kaggle.com/c/DontGetKicked
 
 ## Installation
 
