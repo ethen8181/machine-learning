@@ -1,7 +1,7 @@
 # machine-learning
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
-![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
+![Python 3.5](https://img.shields.io/badge/python-3.6-blue.svg)
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
@@ -15,7 +15,7 @@ This is a continuously updated repository that documents personal journey on lea
 
 End to end project including data preprocessing, model building.
 
-- [Kaggle: Don't Get Kicked](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unfortunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/)]
+- [Kaggle: Don't Get Kicked](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unfortunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_dont_get_kicked/)]
 - mlutils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/mlutils/)]
 
 #### ab_tests : 2017.08.09
