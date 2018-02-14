@@ -2,6 +2,16 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-02]
+
+### Added
+
+- H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o_api_walkthrough.ipynb)]
+
+### Changed
+
+- The `spark` folder has been renamed to `big_data` to encorporate other big data tools.
+
 
 ## [2018-01]
 

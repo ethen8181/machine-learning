@@ -5,7 +5,7 @@
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
-- **Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch (using Python's scientific stack including numpy, scipy, pandas, matplotlib etc) and open-source library usage (scikit-learn, pyspark, gensim, keras, tensorflow).
+- **Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch (using Python's scientific stack including numpy, scipy, pandas, matplotlib etc.) and open-source library usage (scikit-learn, pyspark, gensim, keras, tensorflow).
 - **Short Note:** Within each section, documentations are listed in reverse chronological order of the start date (the date when the first notebook in that folder was created, if the notebook happened to be updated, then the actual date will be at the top of each notebook). Each of them are independent of one another unless specified.
 
 
@@ -34,13 +34,14 @@ Methods for selecting, improving, evaluating models/algorithms.
 - Curated tips and tricks for technical and soft skills. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/tips_and_tricks/tips_and_tricks.ipynb)]
 - Partial Dependece Plot (PDP), model-agnostic approach for directional feature influence. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/partial_dependence/partial_dependence.ipynb)]
 
-#### spark : 2017.06.07
+#### big_data : 2017.06.07
 
-Note that the following notebook is not a tutorial on the basics of spark, it assumes you're already somewhat familar with it or can pick it up quickly by checking documentations along the way. For those interested there's also a [pyspark rdd cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) and [pyspark dataframe cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_SQL_Cheat_Sheet_Python.pdf) that may come in handy.
+Exploring big data tools, such as Spark and H2O.ai. For those interested there's also a [pyspark rdd cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) and [pyspark dataframe cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_SQL_Cheat_Sheet_Python.pdf) that may come in handy.
 
-- Pyspark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/spark/installation.md)]
-- Examples of manipulating with data (crimes data) and building a RandomForest model with Spark. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/crime.ipynb)]
-- PCA with Spark's ML. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/spark/pca_spark.ipynb)]
+- PySpark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/spark_installation.md)]
+- Examples of manipulating with data (crimes data) and building a RandomForest model with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_crime.ipynb)]
+- PCA with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_pca.ipynb)]
+- H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o_api_walkthrough.ipynb)]
 
 #### dim_reduct : 2017.01.02
 
