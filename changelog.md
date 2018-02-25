@@ -7,6 +7,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o_api_walkthrough.ipynb)]
+- Factorization Machine from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/factorization_machine/factorization_machine.ipynb)]
 
 ### Changed
 

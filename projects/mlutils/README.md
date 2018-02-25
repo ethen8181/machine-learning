@@ -1,7 +1,7 @@
 # mlutils
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg)
-![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
 
 Machine learning utility functions.
 

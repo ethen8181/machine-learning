@@ -1,7 +1,7 @@
 # machine-learning
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
-![Python 3.5](https://img.shields.io/badge/python-3.6-blue.svg)
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
@@ -52,11 +52,12 @@ Dimensionality reduction methods.
 
 #### recsys : 2016.12.17
 
-Recommendation System. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods. Then the second notebook - "ALS-WR for implicit feedback data" and third notebook - "Bayesian Personalized Ranking" can be independent of one another as they are simply different algorithms. Although it's still ideal to go through them in the listed sequence.
+Recommendation system with a focus on matrix factorization methods. Starters into the field should go through the first notebook to understand the basics of matrix factorization methods.
 
 - Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
-- ALS-WR for implicit feedback data from scratch & mean average precision at k (mapk) and normalized cumulative discounted gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
+- ALS-WR for implicit feedback data from scratch & Mean Average Precision at k (mapk) and Normalized Cumulative Discounted Gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
 - Bayesian Personalized Ranking (BPR) from scratch & AUC evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_bpr.ipynb)]
+- Factorization Machine from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/factorization_machine/factorization_machine.ipynb)]
 
 #### trees : 2016.12.10
 
