@@ -43,6 +43,7 @@ Exploring big data tools, such as Spark and H2O.ai. For those interested there's
 - Examples of manipulating with data (crimes data) and building a RandomForest model with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_crime.ipynb)]
 - PCA with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_pca.ipynb)]
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o_api_walkthrough.ipynb)]
+- Spark MLlib Binary Classification (using GBM as an example). [[zeppelin viewer]](https://www.zepl.com/viewer/github/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)
 
 #### dim_reduct : 2017.01.02
 

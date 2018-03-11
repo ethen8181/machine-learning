@@ -7,6 +7,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - Local Hadoop cluster installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/local_hadoop.md)]
+- Spark MLlib Binary Classification (using GBM as an example). [[zeppelin viewer]](https://www.zepl.com/viewer/github/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)
 
 ## [2018-02]
 
