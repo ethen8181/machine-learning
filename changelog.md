@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-03]
+
+### Added
+
+- Local Hadoop cluster installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/local_hadoop.md)]
+
 ## [2018-02]
 
 ### Added

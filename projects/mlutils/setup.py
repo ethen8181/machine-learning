@@ -34,43 +34,6 @@ def get_version(src_root):
     return version
 
 
-def set_gcc(use_openmp):
-    """
-    Try to find and use GCC on OSX for OpenMP support.
-
-    References
-    ----------
-    https://github.com/maciejkula/glove-python/blob/master/setup.py
-
-    Example of Cython + openMP working on OS X?
-    - https://groups.google.com/forum/#!topic/cython-users/dGxpilCY0p8
-    """
-
-    # For macports and homebrew
-    patterns = [
-        '/opt/local/bin/gcc-mp-[0-9].[0-9]',
-        '/opt/local/bin/gcc-mp-[0-9]',
-        '/usr/local/bin/gcc-[0-9].[0-9]',
-        '/usr/local/bin/gcc-[0-9]']
-
-    if 'darwin' in sys.platform.lower():
-        gcc_binaries = []
-        for pattern in patterns:
-            gcc_binaries += glob.glob(pattern)
-
-        if gcc_binaries:
-            use_openmp = True
-            gcc_binaries.sort()
-            _, gcc = os.path.split(gcc_binaries[-1])
-            os.environ['CC'] = gcc
-            os.environ["CXX"] = gcc
-        else:
-            use_openmp = False
-            logging.warning('No GCC available. Install gcc from Homebrew: '
-                            'brew install gcc --without-multilib')
-    return use_openmp
-
-
 def define_extensions(extensions, use_cython, use_openmp, src_root):
     """
     Compile the extensions, the only thing that we need to
@@ -91,6 +54,14 @@ def define_extensions(extensions, use_cython, use_openmp, src_root):
             '-Wno-unused-function',
             '-Wno-maybe-uninitialized',
             '-O3', '-ffast-math']
+
+        use_openmp, gcc = set_gcc(use_openmp)
+        if gcc is not None:
+            # ensure the path to gcc is linked properly
+            # https://github.com/gprMax/gprMax/issues/134#issuecomment-340467832
+            rpath = '/usr/local/opt/gcc/lib/gcc/' + gcc[-1] + '/'
+            link_args.append('-Wl,-rpath,' + rpath)
+
         if use_openmp:
             link_args.append('-fopenmp')
             compile_args.append('-fopenmp')
@@ -123,7 +94,44 @@ def define_extensions(extensions, use_cython, use_openmp, src_root):
         return modules
 
 
-USE_OPENMP = set_gcc(USE_OPENMP)
+def set_gcc(use_openmp):
+    """
+    Try to find and use GCC on OSX for OpenMP support.
+
+    References
+    ----------
+    https://github.com/maciejkula/glove-python/blob/master/setup.py
+
+    Example of Cython + openMP working on OS X?
+    - https://groups.google.com/forum/#!topic/cython-users/dGxpilCY0p8
+    """
+
+    # For macports and homebrew
+    patterns = [
+        '/opt/local/bin/gcc-mp-[0-9].[0-9]',
+        '/opt/local/bin/gcc-mp-[0-9]',
+        '/usr/local/bin/gcc-[0-9].[0-9]',
+        '/usr/local/bin/gcc-[0-9]']
+
+    gcc = None
+    if 'darwin' in sys.platform.lower():
+        gcc_binaries = []
+        for pattern in patterns:
+            gcc_binaries += glob.glob(pattern)
+
+        if gcc_binaries:
+            use_openmp = True
+            gcc_binaries.sort()
+            _, gcc = os.path.split(gcc_binaries[-1])
+            os.environ['CC'] = gcc
+            os.environ["CXX"] = gcc
+        else:
+            use_openmp = False
+            logging.warning('No GCC available. Install gcc from Homebrew: '
+                            'brew install gcc --without-multilib')
+    return use_openmp, gcc
+
+
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 

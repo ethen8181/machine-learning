@@ -38,6 +38,7 @@ Methods for selecting, improving, evaluating models/algorithms.
 
 Exploring big data tools, such as Spark and H2O.ai. For those interested there's also a [pyspark rdd cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) and [pyspark dataframe cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_SQL_Cheat_Sheet_Python.pdf) that may come in handy.
 
+- Local Hadoop cluster installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/local_hadoop.md)]
 - PySpark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/spark_installation.md)]
 - Examples of manipulating with data (crimes data) and building a RandomForest model with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_crime.ipynb)]
 - PCA with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_pca.ipynb)]

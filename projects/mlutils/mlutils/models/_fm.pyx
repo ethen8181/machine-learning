@@ -6,8 +6,8 @@ import numpy as np
 from libc.math cimport exp, log
 
 
-cpdef _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v, int n_factors,
-                  double learning_rate, double reg_w, double reg_v):
+cpdef double _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v,
+                         int n_factors, double learning_rate, double reg_w, double reg_v):
     cdef:
         int i, index, feature, factor
         double loss = 0.0, pred, loss_gradient, v_gradient, term
