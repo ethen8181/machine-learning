@@ -7,7 +7,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - Local Hadoop cluster installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/local_hadoop.md)]
-- Spark MLlib Binary Classification (using GBM as an example). [[zeppelin viewer]](https://www.zepl.com/viewer/github/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)
+- Spark MLlib Binary Classification (using GBM as an example). [[zeppelin viewer](https://www.zepl.com/viewer/github/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)]
 
 ## [2018-02]
 
@@ -18,7 +18,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Changed
 
-- The `spark` folder has been renamed to `big_data` to encorporate other big data tools.
+- The `spark` folder has been renamed to `big_data` to incorporate other big data tools.
 
 
 ## [2018-01]
@@ -26,7 +26,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - Partial Dependece Plot (PDP), model-agnostic approach for directional feature influence. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/partial_dependence/partial_dependence.ipynb)]
-- Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)
+- Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)]
 
 ## [2017-12]
 
@@ -82,7 +82,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- Understanding iterables, iterator and generators. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/iterator/iterator.ipynb)
+- Understanding iterables, iterator and generators. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/iterator/iterator.ipynb)]
 - Word2vec (skipgram + negative sampling) using Gensim (includes text preprocessing with spaCy). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/word2vec/word2vec_detailed.ipynb)]
 - Frequentist A/B testing (includes a quick review of concepts such as p-value, confidence interval). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/frequentist_ab_test.ipynb)]
 - AUC (Area under the ROC, precision/recall curve) from scratch (includes building a custom scikit-learn transformer). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/auc/auc.ipynb)]
