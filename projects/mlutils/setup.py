@@ -100,18 +100,16 @@ def set_gcc(use_openmp):
 
     References
     ----------
-    https://github.com/maciejkula/glove-python/blob/master/setup.py
-
-    Example of Cython + openMP working on OS X?
+    - https://github.com/maciejkula/glove-python/blob/master/setup.py
     - https://groups.google.com/forum/#!topic/cython-users/dGxpilCY0p8
     """
 
     # For macports and homebrew
     patterns = [
-        '/opt/local/bin/gcc-mp-[0-9].[0-9]',
-        '/opt/local/bin/gcc-mp-[0-9]',
-        '/usr/local/bin/gcc-[0-9].[0-9]',
-        '/usr/local/bin/gcc-[0-9]']
+        '/opt/local/bin/g++-mp-[0-9].[0-9]',
+        '/opt/local/bin/g++-mp-[0-9]',
+        '/usr/local/bin/g++-[0-9].[0-9]',
+        '/usr/local/bin/g++-[0-9]']
 
     gcc = None
     if 'darwin' in sys.platform.lower():
