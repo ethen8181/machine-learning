@@ -29,17 +29,17 @@ class PartialDependenceExplainer:
         the distinct number of categories in that column.
         Smaller number of grid points serves as an
         approximation for the total number of unique
-        points and will result in faster computation
+        points and will result in faster computation.
 
     batch_size : int, default = 'auto'
         Compute partial depedence prediction batch by batch to save
-        memory usage, the default batch size will be
-        ceil(number of rows in the data / the number of grid points used)
+        memory usage, the default batch size will be:
+        ceil(number of rows in the data / the number of grid points used).
 
     n_jobs : int, default 1
         Number of jobs to run in parallel, if the model already fits
         extremely fast on the data, then specify 1 so that there's no
-        overhead of spawning different processes to do the computation
+        overhead of spawning different processes to do the computation.
 
     verbose : int, default 1
         The verbosity level: if non zero, progress messages are printed.
@@ -51,14 +51,14 @@ class PartialDependenceExplainer:
         execution. Reducing this number can be useful to avoid an
         explosion of memory consumption when more jobs get dispatched
         than CPUs can process. Possible inputs:
-            - None, in which case all the jobs are immediately
-              created and spawned. Use this for lightweight and
-              fast-running jobs, to avoid delays due to on-demand
-              spawning of the jobs
-            - An int, giving the exact number of total jobs that are
-              spawned
-            - A string, giving an expression as a function of n_jobs,
-              as in '2*n_jobs'
+        - None, in which case all the jobs are immediately
+          created and spawned. Use this for lightweight and
+          fast-running jobs, to avoid delays due to on-demand
+          spawning of the jobs
+        - An int, giving the exact number of total jobs that are
+          spawned
+        - A string, giving an expression as a function of n_jobs,
+          as in '2*n_jobs'
 
     Attributes
     ----------
@@ -272,12 +272,11 @@ class PartialDependenceExplainer:
         ax.set_facecolor('white')
         ax.get_yaxis().tick_left()
         ax.get_xaxis().tick_bottom()
-        ax.spines['top'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.grid(True, 'major', 'x', ls = '--', lw = .5, c = 'k', alpha = .3)
-        ax.grid(True, 'major', 'y', ls = '--', lw = .5, c = 'k', alpha = .3)
+        for direction in ('top', 'left', 'right', 'bottom'):
+            ax.spines[direction].set_visible(False)
+
+        for axis in ('x', 'y'):
+            ax.grid(True, 'major', axis, ls = '--', lw = .5, c = 'k', alpha = .3)
 
 
 def _data_iter(data, batch_size):
