@@ -60,6 +60,7 @@ Recommendation system with a focus on matrix factorization methods. Starters int
 - Alternating Least Squares with Weighted Regularization (ALS-WR) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/1_ALSWR.ipynb)]
 - ALS-WR for implicit feedback data from scratch & Mean Average Precision at k (mapk) and Normalized Cumulative Discounted Gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
 - Bayesian Personalized Ranking (BPR) from scratch & AUC evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_bpr.ipynb)]
+- WARP (Weighted Approximate-Rank Pairwise) Loss using lightfm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/5_warp.ipynb)]
 - Factorization Machine from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/factorization_machine/factorization_machine.ipynb)]
 
 #### trees : 2016.12.10

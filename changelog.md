@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-04]
+
+### Added
+
+- WARP (Weighted Approximate-Rank Pairwise) Loss using lightfm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/5_warp.ipynb)]
+
+
 ## [2018-03]
 
 ### Added
