@@ -272,12 +272,11 @@ class PartialDependenceExplainer:
         ax.set_facecolor('white')
         ax.get_yaxis().tick_left()
         ax.get_xaxis().tick_bottom()
-        ax.spines['top'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.grid(True, 'major', 'x', ls = '--', lw = .5, c = 'k', alpha = .3)
-        ax.grid(True, 'major', 'y', ls = '--', lw = .5, c = 'k', alpha = .3)
+        for direction in ('top', 'left', 'right', 'bottom'):
+            ax.spines[direction].set_visible(False)
+
+        for axis in ('x', 'y'):
+            ax.grid(True, 'major', axis, ls = '--', lw = .5, c = 'k', alpha = .3)
 
 
 def _data_iter(data, batch_size):
