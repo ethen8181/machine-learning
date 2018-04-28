@@ -8,6 +8,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 - WARP (Weighted Approximate-Rank Pairwise) Loss using lightfm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/5_warp.ipynb)]
 - Recurrent Neural Network (Tensorflow). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/1_tensorflow_rnn.ipynb)]
+- Long Short Term Memory (LSTM). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/2_tensorflow_lstm.ipynb)]
 
 ## [2018-03]
 
