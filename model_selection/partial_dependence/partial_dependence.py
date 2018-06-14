@@ -280,7 +280,7 @@ class PartialDependenceExplainer:
 
 
 def _data_iter(data, batch_size):
-    """Used by PartialDependenceExplainer to loop through the by batch"""
+    """Used by PartialDependenceExplainer to loop through the data by batch"""
     n_rows = data.shape[0]
     for i in range(0, n_rows, batch_size):
         yield data[i:i + batch_size].reset_index(drop = True)

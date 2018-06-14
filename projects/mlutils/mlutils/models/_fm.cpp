@@ -14,6 +14,7 @@
         ],
         "extra_link_args": [
             "-std=c++11",
+            "-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/7/",
             "-fopenmp"
         ],
         "include_dirs": [
@@ -1182,21 +1183,6 @@ static CYTHON_INLINE int __pyx_sub_acquisition_count_locked(
 static CYTHON_INLINE void __Pyx_INC_MEMVIEW(__Pyx_memviewslice *, int, int);
 static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *, int, int);
 
-/* RaiseArgTupleInvalid.proto */
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
-
-/* RaiseDoubleKeywords.proto */
-static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
-
-/* ParseKeywords.proto */
-static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
-    PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
-    const char* function_name);
-
-/* None.proto */
-static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
-
 /* PyThreadStateGet.proto */
 #if CYTHON_FAST_THREAD_STATE
 #define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
@@ -1237,6 +1223,21 @@ static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject 
 static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback, int nogil);
+
+/* RaiseArgTupleInvalid.proto */
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
+/* RaiseDoubleKeywords.proto */
+static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
+
+/* ParseKeywords.proto */
+static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
+    PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
+    const char* function_name);
+
+/* None.proto */
+static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname);
 
 /* ArgTypeTest.proto */
 #define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
@@ -1570,7 +1571,7 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static PyObject *__pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *, __Pyx_memviewslice, double, __Pyx_memviewslice, __Pyx_memviewslice, int, double, double, double, int __pyx_skip_dispatch); /*proto*/
+static double __pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *, __Pyx_memviewslice, double, __Pyx_memviewslice, __Pyx_memviewslice, int, double, double, double, int __pyx_skip_dispatch); /*proto*/
 static double __pyx_f_7mlutils_6models_3_fm__predict_instance(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, double, __Pyx_memviewslice, __Pyx_memviewslice, int, int, int __pyx_skip_dispatch); /*proto*/
 static double __pyx_f_7mlutils_6models_3_fm__log_loss(double, double); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
@@ -1901,13 +1902,13 @@ static PyObject *__pyx_codeobj__26;
 /* "mlutils/models/_fm.pyx":9
  * 
  * 
- * cpdef _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v, int n_factors,             # <<<<<<<<<<<<<<
- *                   double learning_rate, double reg_w, double reg_v):
+ * cpdef double _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v,             # <<<<<<<<<<<<<<
+ *                          int n_factors, double learning_rate, double reg_w, double reg_v):
  *     cdef:
  */
 
 static PyObject *__pyx_pw_7mlutils_6models_3_fm_1_sgd_update(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *__pyx_v_X, __Pyx_memviewslice __pyx_v_y, double __pyx_v_w0, __Pyx_memviewslice __pyx_v_w, __Pyx_memviewslice __pyx_v_v, int __pyx_v_n_factors, double __pyx_v_learning_rate, double __pyx_v_reg_w, double __pyx_v_reg_v, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static double __pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *__pyx_v_X, __Pyx_memviewslice __pyx_v_y, double __pyx_v_w0, __Pyx_memviewslice __pyx_v_w, __Pyx_memviewslice __pyx_v_v, int __pyx_v_n_factors, double __pyx_v_learning_rate, double __pyx_v_reg_w, double __pyx_v_reg_v, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_index;
   int __pyx_v_feature;
@@ -1923,7 +1924,7 @@ static PyObject *__pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *__pyx_v_X, 
   __Pyx_memviewslice __pyx_v_indptr = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_summed = { 0, 0, { 0 }, { 0 }, { 0 } };
-  PyObject *__pyx_r = NULL;
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -2332,18 +2333,14 @@ static PyObject *__pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *__pyx_v_X, 
  * 
  * 
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_loss); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = __pyx_v_loss;
   goto __pyx_L0;
 
   /* "mlutils/models/_fm.pyx":9
  * 
  * 
- * cpdef _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v, int n_factors,             # <<<<<<<<<<<<<<
- *                   double learning_rate, double reg_w, double reg_v):
+ * cpdef double _sgd_update(X, int[:] y, double w0, double[:] w, double[:, :] v,             # <<<<<<<<<<<<<<
+ *                          int n_factors, double learning_rate, double reg_w, double reg_v):
  *     cdef:
  */
 
@@ -2356,14 +2353,13 @@ static PyObject *__pyx_f_7mlutils_6models_3_fm__sgd_update(PyObject *__pyx_v_X, 
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("mlutils.models._fm._sgd_update", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("mlutils.models._fm._sgd_update", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_data, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_indptr, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_summed, 1);
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -2486,7 +2482,7 @@ static PyObject *__pyx_pw_7mlutils_6models_3_fm_1_sgd_update(PyObject *__pyx_sel
     __pyx_v_w0 = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_w0 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 9, __pyx_L3_error)
     __pyx_v_w = __Pyx_PyObject_to_MemoryviewSlice_ds_double(values[3]); if (unlikely(!__pyx_v_w.memview)) __PYX_ERR(0, 9, __pyx_L3_error)
     __pyx_v_v = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(values[4]); if (unlikely(!__pyx_v_v.memview)) __PYX_ERR(0, 9, __pyx_L3_error)
-    __pyx_v_n_factors = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_n_factors == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 9, __pyx_L3_error)
+    __pyx_v_n_factors = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_n_factors == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
     __pyx_v_learning_rate = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_learning_rate == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
     __pyx_v_reg_w = __pyx_PyFloat_AsDouble(values[7]); if (unlikely((__pyx_v_reg_w == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
     __pyx_v_reg_v = __pyx_PyFloat_AsDouble(values[8]); if (unlikely((__pyx_v_reg_v == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
@@ -2515,7 +2511,7 @@ static PyObject *__pyx_pf_7mlutils_6models_3_fm__sgd_update(CYTHON_UNUSED PyObje
   if (unlikely(!__pyx_v_y.memview)) { __Pyx_RaiseUnboundLocalError("y"); __PYX_ERR(0, 9, __pyx_L1_error) }
   if (unlikely(!__pyx_v_w.memview)) { __Pyx_RaiseUnboundLocalError("w"); __PYX_ERR(0, 9, __pyx_L1_error) }
   if (unlikely(!__pyx_v_v.memview)) { __Pyx_RaiseUnboundLocalError("v"); __PYX_ERR(0, 9, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_7mlutils_6models_3_fm__sgd_update(__pyx_v_X, __pyx_v_y, __pyx_v_w0, __pyx_v_w, __pyx_v_v, __pyx_v_n_factors, __pyx_v_learning_rate, __pyx_v_reg_w, __pyx_v_reg_v, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7mlutils_6models_3_fm__sgd_update(__pyx_v_X, __pyx_v_y, __pyx_v_w0, __pyx_v_w, __pyx_v_v, __pyx_v_n_factors, __pyx_v_learning_rate, __pyx_v_reg_w, __pyx_v_reg_v, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -17877,6 +17873,72 @@ static CYTHON_INLINE void __Pyx_XDEC_MEMVIEW(__Pyx_memviewslice *memslice,
     }
 }
 
+/* PyErrFetchRestore */
+  #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
+}
+static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+}
+#endif
+
+/* WriteUnraisableException */
+  static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
+                                  int full_traceback, CYTHON_UNUSED int nogil) {
+    PyObject *old_exc, *old_val, *old_tb;
+    PyObject *ctx;
+    __Pyx_PyThreadState_declare
+#ifdef WITH_THREAD
+    PyGILState_STATE state;
+    if (nogil)
+        state = PyGILState_Ensure();
+#ifdef _MSC_VER
+    else state = (PyGILState_STATE)-1;
+#endif
+#endif
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
+    if (full_traceback) {
+        Py_XINCREF(old_exc);
+        Py_XINCREF(old_val);
+        Py_XINCREF(old_tb);
+        __Pyx_ErrRestore(old_exc, old_val, old_tb);
+        PyErr_PrintEx(1);
+    }
+    #if PY_MAJOR_VERSION < 3
+    ctx = PyString_FromString(name);
+    #else
+    ctx = PyUnicode_FromString(name);
+    #endif
+    __Pyx_ErrRestore(old_exc, old_val, old_tb);
+    if (!ctx) {
+        PyErr_WriteUnraisable(Py_None);
+    } else {
+        PyErr_WriteUnraisable(ctx);
+        Py_DECREF(ctx);
+    }
+#ifdef WITH_THREAD
+    if (nogil)
+        PyGILState_Release(state);
+#endif
+}
+
 /* RaiseArgTupleInvalid */
   static void __Pyx_RaiseArgtupleInvalid(
     const char* func_name,
@@ -18022,72 +18084,6 @@ bad:
 /* None */
   static CYTHON_INLINE void __Pyx_RaiseUnboundLocalError(const char *varname) {
     PyErr_Format(PyExc_UnboundLocalError, "local variable '%s' referenced before assignment", varname);
-}
-
-/* PyErrFetchRestore */
-  #if CYTHON_FAST_THREAD_STATE
-static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
-    PyObject *tmp_type, *tmp_value, *tmp_tb;
-    tmp_type = tstate->curexc_type;
-    tmp_value = tstate->curexc_value;
-    tmp_tb = tstate->curexc_traceback;
-    tstate->curexc_type = type;
-    tstate->curexc_value = value;
-    tstate->curexc_traceback = tb;
-    Py_XDECREF(tmp_type);
-    Py_XDECREF(tmp_value);
-    Py_XDECREF(tmp_tb);
-}
-static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
-    *type = tstate->curexc_type;
-    *value = tstate->curexc_value;
-    *tb = tstate->curexc_traceback;
-    tstate->curexc_type = 0;
-    tstate->curexc_value = 0;
-    tstate->curexc_traceback = 0;
-}
-#endif
-
-/* WriteUnraisableException */
-  static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
-                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
-                                  int full_traceback, CYTHON_UNUSED int nogil) {
-    PyObject *old_exc, *old_val, *old_tb;
-    PyObject *ctx;
-    __Pyx_PyThreadState_declare
-#ifdef WITH_THREAD
-    PyGILState_STATE state;
-    if (nogil)
-        state = PyGILState_Ensure();
-#ifdef _MSC_VER
-    else state = (PyGILState_STATE)-1;
-#endif
-#endif
-    __Pyx_PyThreadState_assign
-    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
-    if (full_traceback) {
-        Py_XINCREF(old_exc);
-        Py_XINCREF(old_val);
-        Py_XINCREF(old_tb);
-        __Pyx_ErrRestore(old_exc, old_val, old_tb);
-        PyErr_PrintEx(1);
-    }
-    #if PY_MAJOR_VERSION < 3
-    ctx = PyString_FromString(name);
-    #else
-    ctx = PyUnicode_FromString(name);
-    #endif
-    __Pyx_ErrRestore(old_exc, old_val, old_tb);
-    if (!ctx) {
-        PyErr_WriteUnraisable(Py_None);
-    } else {
-        PyErr_WriteUnraisable(ctx);
-        Py_DECREF(ctx);
-    }
-#ifdef WITH_THREAD
-    if (nogil)
-        PyGILState_Release(state);
-#endif
 }
 
 /* ArgTypeTest */

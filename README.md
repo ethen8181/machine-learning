@@ -21,7 +21,7 @@ End to end project including data preprocessing, model building.
 
 #### ab_tests : 2017.08.09
 
-A/B testing, a.k.a experimental design. Includes 1) quick review of necessary statistic concepts. 2) methods and workflow/thought-process for conducting the test. 3) caveats to look out for.
+A/B testing, a.k.a experimental design. Includes: Quick review of necessary statistic concepts. Methods and workflow/thought-process for conducting the test and caveats to look out for.
 
 - Frequentist A/B testing (includes a quick review of concepts such as p-value, confidence interval). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/frequentist_ab_test.ipynb)]
 
@@ -43,7 +43,7 @@ Exploring big data tools, such as Spark and H2O.ai. For those interested there's
 - PySpark installation on Mac. [[markdown](https://github.com/ethen8181/machine-learning/tree/master/big_data/spark_installation.md)]
 - Examples of manipulating with data (crimes data) and building a RandomForest model with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_crime.ipynb)]
 - PCA with PySpark MLlib. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/spark_pca.ipynb)]
-- H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o_api_walkthrough.ipynb)]
+- H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)]
 - Spark MLlib Binary Classification (using GBM as an example). [[raw zeppelin notebook](https://github.com/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)][[Zepl](https://www.zepl.com/explore)]
 
 
