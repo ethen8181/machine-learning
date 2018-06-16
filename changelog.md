@@ -4,6 +4,10 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2018-06]
 
+### Added
+
+- - Evaluation metrics for imbalanced dataset. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/imbalanced/imbalanced_metrics.ipynb)]
+
 ### Changed
 
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)]
