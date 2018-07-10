@@ -2,17 +2,24 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-07]
+
+### Added
+
+- Getting started with time series analysis with Exponential Smoothing (Holt-Winters). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/1_exponential_smoothing.ipynb)
+- Framing time series problem as supervised-learning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/3_supervised_time_series.ipynb)
+
 ## [2018-06]
 
 ### Added
 
-- - Evaluation metrics for imbalanced dataset. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/imbalanced/imbalanced_metrics.ipynb)]
+- Evaluation metrics for imbalanced dataset. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/imbalanced/imbalanced_metrics.ipynb)]
 
 ### Changed
 
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)]
 	+ Moved H2O notebook to its own sub-folder.
-	+ Added model interpretation section.
+	+ Added model interpretation using partial dependence plot.
 
 ## [2018-05]
 

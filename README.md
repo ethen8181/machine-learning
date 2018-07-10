@@ -12,6 +12,13 @@ This is a continuously updated repository that documents personal journey on lea
 
 ## Documentation Listings
 
+#### time_series : 2018.07.09
+
+Forecasting methods for timeseries-based data.
+
+- Getting started with time series analysis with Exponential Smoothing (Holt-Winters). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/1_exponential_smoothing.ipynb)
+- Framing time series problem as supervised-learning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/3_supervised_time_series.ipynb)
+
 #### projects : 2017.09.23
 
 End to end project including data preprocessing, model building.

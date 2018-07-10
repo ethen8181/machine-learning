@@ -117,7 +117,7 @@ We can add `HADOOP_HOME` environment variable to `.bashrc` or `.bash_profile` fo
 
 ```bash
 export HADOOP_HOME=~/hadoop-2.8.1
-export HADOOP_CONF_DIR=$HADOOP_HOME/libexec/etc/hadoop
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 ```
 
