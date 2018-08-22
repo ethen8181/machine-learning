@@ -55,7 +55,6 @@ Exploring big data tools, such as Spark and H2O.ai. For those interested there's
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)]
 - Spark MLlib Binary Classification (using GBM as an example). [[raw zeppelin notebook](https://github.com/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)][[Zepl](https://www.zepl.com/explore)]
 
-
 #### dim_reduct : 2017.01.02
 
 Dimensionality reduction methods.
@@ -73,7 +72,9 @@ Recommendation system with a focus on matrix factorization methods. Starters int
 - WARP (Weighted Approximate-Rank Pairwise) Loss using lightfm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/5_warp.ipynb)]
 - Factorization Machine from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/factorization_machine/factorization_machine.ipynb)]
 - Content-Based Recommenders:
-    + (Text) Content-Based Recommenders. Introducing Locality Sensitive Hashing (LSH) for cosine distance from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/content_based/lsh_text.ipynb)]
+    - (Text) Content-Based Recommenders. Introducing Approximate Nearest Neighborhood (ANN) - Locality Sensitive Hashing (LSH) for cosine distance from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/content_based/lsh_text.ipynb)]
+- Approximate Nearest Neighborhood (ANN):
+    -  Benchmarking ANN implementations (nmslib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ann_benchmarks/ann_benchmarks.ipynb)]
 
 #### trees : 2016.12.10
 

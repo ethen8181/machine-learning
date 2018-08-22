@@ -6,7 +6,8 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- (Text) Content-Based Recommenders. Introducing Locality Sensitive Hashing (LSH) for cosine distance from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/content_based/lsh_text.ipynb)]
+- (Text) Content-Based Recommenders. Introducing Approximate Nearest Neighborhood (ANN) - Locality Sensitive Hashing (LSH) for cosine distance from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/content_based/lsh_text.ipynb)]
+- Benchmarking ANN implementations (nmslib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ann_benchmarks/ann_benchmarks.ipynb)]
 
 ## [2018-07]
 
