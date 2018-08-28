@@ -80,7 +80,7 @@ Recommendation system with a focus on matrix factorization methods. Starters int
 
 Tree-based models for both regression and classification tasks.
 
-- Decision Tree from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/decision_tree.ipynb.html)]
+- Decision Tree from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/decision_tree.html)]
 - Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/random_forest.html)]
 - Gradient Boosting Machine (GBM) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/gbm/gbm.html)]
 - Xgboost API walkthrough (includes hyperparmeter tuning via scikit-learn like API). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/xgboost.html)]
