@@ -28,6 +28,7 @@ cdef inline double euclidean_distance(double[:] x1, double[:] x2):
 
     return sqrt(d)
 
+
 @cython.wraparound(False)
 @cython.boundscheck(False)
 def pairwise1(double[:, :] X , metric = 'euclidean'):

@@ -1,0 +1,9 @@
+2017-07-07 08:50:19,532:DEBUG:Add: 20 + 10 = 30
+2017-07-07 08:50:19,532:DEBUG:Sub: 20 - 10 = 10
+2017-07-07 08:50:19,533:DEBUG:Mul: 20 * 10 = 200
+2017-07-07 08:50:19,533:DEBUG:Div: 20 / 10 = 2.0
+2017-07-07 08:50:19,570:ERROR:Tried to divide by 0
+Traceback (most recent call last):
+  File "<ipython-input-4-573995498bac>", line 37, in divide
+    result = x / y
+ZeroDivisionError: division by zero

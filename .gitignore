@@ -1,0 +1,6 @@
+# search in this directory and all subdirectories
+# and prevent mac's .DS_Store from uploading
+**/.DS_Store
+
+# jupyter notebook's checkpoint
+**/.ipynb_checkpoints

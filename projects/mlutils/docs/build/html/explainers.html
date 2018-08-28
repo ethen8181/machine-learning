@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Resamplers &mdash; mlutils 0.1.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="mlutils 0.1.1 documentation" href="index.html"/>
+        <link rel="up" title="API" href="api.html"/>
+        <link rel="next" title="Resamplers" href="resamplers.html"/>
+        <link rel="prev" title="API" href="api.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mlutils
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html"> API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">     Explainers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resamplers.html"> Resamplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transformers.html"> Transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualization.html"> Visualization</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mlutils</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API</a> &raquo;</li>
+        
+      <li>Resamplers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/explainers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-mlutils.explainers">
+<span id="resamplers"></span><h1>Resamplers<a class="headerlink" href="#module-mlutils.explainers" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="mlutils.explainers.PartialDependenceExplainer">
+<em class="property">class </em><code class="descclassname">mlutils.explainers.</code><code class="descname">PartialDependenceExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>n_grid_points=50</em>, <em>batch_size=’auto’</em>, <em>n_jobs=1</em>, <em>verbose=1</em>, <em>pre_dispatch=‘2*n_jobs’</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partial Dependence explanation <a class="footnote-reference" href="#id2" id="id1">[1]</a>.</p>
+<ul class="simple">
+<li>Supports scikit-learn like classification and regression classifiers.</li>
+<li>Works for both numerical and categorical columns.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>estimator</strong> (<em>sklearn-like classifier</em>) – Model that was fitted on the data.</li>
+<li><strong>n_grid_points</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 50</em>) – Number of grid points used in replacement
+for the original numeric data. Only used
+if the targeted column is numeric. For categorical
+column, the number of grid points will always be
+the distinct number of categories in that column.
+Smaller number of grid points serves as an
+approximation for the total number of unique
+points and will result in faster computation</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default = 'auto'</em>) – Compute partial depedence prediction batch by batch to save
+memory usage, the default batch size will be
+ceil(number of rows in the data / the number of grid points used)</li>
+<li><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 1</em>) – Number of jobs to run in parallel, if the model already fits
+extremely fast on the data, then specify 1 so that there’s no
+overhead of spawning different processes to do the computation</li>
+<li><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 1</em>) – The verbosity level: if non zero, progress messages are printed.
+Above 50, the output is sent to stdout. The frequency of the messages increases
+with the verbosity level. If it more than 10, all iterations are reported.</li>
+<li><strong>pre_dispatch</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>default '2*n_jobs'</em>) – <p>Controls the number of jobs that get dispatched during parallel
+execution. Reducing this number can be useful to avoid an
+explosion of memory consumption when more jobs get dispatched
+than CPUs can process. Possible inputs:</p>
+<blockquote>
+<div><ul>
+<li>None, in which case all the jobs are immediately
+created and spawned. Use this for lightweight and
+fast-running jobs, to avoid delays due to on-demand
+spawning of the jobs</li>
+<li>An int, giving the exact number of total jobs that are
+spawned</li>
+<li>A string, giving an expression as a function of n_jobs,
+as in ‘2*n_jobs’</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_name_">
+<code class="descname">feature_name_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_name_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The input feature_name to the .fit unmodified, will
+be used in subsequent method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_type_">
+<code class="descname">feature_type_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_type_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> – The input feature_type to the .fit unmodified, will
+be used in subsequent method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mlutils.explainers.PartialDependenceExplainer.feature_grid_">
+<code class="descname">feature_grid_</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.feature_grid_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>1d ndarray</em> – Unique grid points that were used to generate the
+partial dependence result.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mlutils.explainers.PartialDependenceExplainer.results">
+<code class="descname">results</code><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.results" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of DataFrame</em> – Partial dependence result. If it’s a classification
+estimator then each index of the list is the result
+for each class. On the other hand, if it’s a regression
+estimator, it will be a list with 1 element.</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><a class="reference external" href="https://github.com/SauceCat/PDPbox">Python partial dependence plot toolbox</a></td></tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="mlutils.explainers.PartialDependenceExplainer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>data</em>, <em>feature_name</em>, <em>feature_type</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the partial dependence result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>DataFrame</em><em>, </em><em>shape</em><em> [</em><em>n_samples</em><em>, </em><em>n_features</em><em>]</em>) – Input data to the estimator/model.</li>
+<li><strong>feature_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Feature’s name in the data what we wish to explain.</li>
+<li><strong>feature_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>{'num'</em><em>, </em><em>'cat'}</em>) – Specify whether feature_name is a numerical or
+categorical column.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mlutils.explainers.PartialDependenceExplainer.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>center=True</em>, <em>target_class=0</em><span class="sig-paren">)</span><a class="headerlink" href="#mlutils.explainers.PartialDependenceExplainer.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the partial dependence result to generate
+a partial dependence plot (using matplotlib).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>default True</em>) – Center the partial dependence plot by subtacting every partial
+dependence result table’s column value with the value of the first
+column, i.e. first column’s value will serve as the baseline
+(centered at 0) for all other values.</li>
+<li><strong>target_class</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>default 0</em>) – The target class to show for the partial dependence result,
+for regression task, we can leave the default number unmodified,
+but for classification task, we should specify the target class
+parameter to meet our needs</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="resamplers.html" class="btn btn-neutral float-right" title="Resamplers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api.html" class="btn btn-neutral" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Ethen.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: "Association Rules"
-author: "Ming-Yu Liu"
+author: "Ethen Liu"
 date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -73,7 +73,7 @@ library(data.table)
 # a transactions class (so apriori can use it)
 load('titanic.raw.rdata')
 dt <- data.table(titanic.raw)
-titanic <- as( dt, 'transactions' )
+titanic <- as(dt, 'transactions')
 
 # we can do a summary on the item frequency to 
 # get a sense of the threshold we should set for
@@ -91,16 +91,16 @@ rules <- apriori(
     titanic,
 
 	# the min/max len denotes the min/max number of items in a itemset
-	parameter = list( support = 0.05, confidence = 0.7, minlen = 2, maxlen = 5 ),
+	parameter = list(support = 0.05, confidence = 0.7, minlen = 2, maxlen = 5),
     
     # for appearance we can specify we only want rules with rhs 
     # containing "Survived" only (we then specfiy the default parameter
     # to 'lhs' to tell the algorithm that every other variables that
     # has not been specified can go in the left hand side
-    appearance = list( rhs = c( 'Survived=No', 'Survived=Yes' ), default = 'lhs' ),
+    appearance = list( rhs = c('Survived=No', 'Survived=Yes'), default = 'lhs' ),
 
 	# don't print the algorthm's training message
-	control = list( verbose = FALSE )
+	control = list(verbose = FALSE)
 )
 
 ```
@@ -124,9 +124,7 @@ Looking at the first row of the rules' data.table, we can immediately infer that
 # R Session Info
 
 ```{r}
-
 sessionInfo()
-
 ```
 
 

@@ -1,0 +1,6 @@
+src/.ipynb_checkpoints
+src/__pycache__
+output/
+model/
+data/*.csv
+**/data_challenge.log
