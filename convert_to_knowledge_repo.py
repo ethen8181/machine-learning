@@ -1,8 +1,9 @@
 """
-Example usage
+Examples
+--------
 
 Convert existing jupyter notebook to an airbnb knowledge repo format
-- python converter.py --ml_repo . --knowledge_repo knowledge-repo
+- python convert_to_knowledge_repo.py --ml_repo . --knowledge_repo knowledge-repo
 
 Deploying the webapp
 - knowledge_repo --repo knowledge-repo deploy
