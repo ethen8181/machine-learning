@@ -124,11 +124,13 @@ Curated notes on deep learning.
 
 #### keras : 2016.06.29
 
-Note that this is mostly a API walkthrough, not a tutorial on the details of deep learning. For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Keras_Cheat_Sheet_Python.pdf) that may come in handy.
+For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Keras_Cheat_Sheet_Python.pdf) that may come in handy.
 
 - Multi-layers Neural Network (keras basics). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_basics.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/nn_keras_basics.html)]
 - Multi-layers Neural Network hyperparameter tuning via scikit-learn like API. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/nn_keras_hyperparameter_tuning.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/nn_keras_hyperparameter_tuning.html)]
-- Convolutional Neural Network (CNN) - image classification basics. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_image_keras.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/cnn_image_keras.html)]
+- Convolutional Neural Network (CNN)
+    - Image classification basics. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/cnn_image_keras.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/cnn_image_keras.html)]
+    - Introduction to Residual Networks (ResNets) and Class Activation Maps (CAM). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/resnet_cam/resnet_cam.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/resnet_cam/resnet_cam.html)]
 - Recurrent Neural Network (RNN) - language modeling basics. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/rnn_language_model_basic_keras.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/rnn_language_model_basic_keras.html)]
 
 #### text_classification : 2016.06.15
