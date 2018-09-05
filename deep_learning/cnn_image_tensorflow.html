@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Convolutional-Networks" data-toc-modified-id="Convolutional-Networks-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Convolutional Networks</a></span><ul class="toc-item"><li><span><a href="#Motivation" data-toc-modified-id="Motivation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Motivation</a></span></li><li><span><a href="#Convolutional-Layer" data-toc-modified-id="Convolutional-Layer-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Convolutional Layer</a></span><ul class="toc-item"><li><span><a href="#Convolutional-Layer-1-Basics" data-toc-modified-id="Convolutional-Layer-1-Basics-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Convolutional Layer-1 Basics</a></span></li><li><span><a href="#Convolutional-Layer-2-Spatial-Dimensions" data-toc-modified-id="Convolutional-Layer-2-Spatial-Dimensions-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Convolutional Layer-2 Spatial Dimensions</a></span></li><li><span><a href="#Convolutional-Layer-3-Paddings" data-toc-modified-id="Convolutional-Layer-3-Paddings-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Convolutional Layer-3 Paddings</a></span></li></ul></li><li><span><a href="#Pooling-Layer" data-toc-modified-id="Pooling-Layer-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Pooling Layer</a></span></li><li><span><a href="#Fully-Connected-Layer" data-toc-modified-id="Fully-Connected-Layer-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Fully Connected Layer</a></span></li><li><span><a href="#Example-ConvNet-Architecture" data-toc-modified-id="Example-ConvNet-Architecture-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Example ConvNet Architecture</a></span></li><li><span><a href="#Layer-Sizing" data-toc-modified-id="Layer-Sizing-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Layer Sizing</a></span></li></ul></li><li><span><a href="#Tensorflow-Implementation" data-toc-modified-id="Tensorflow-Implementation-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Tensorflow Implementation</a></span></li><li><span><a href="#Reference" data-toc-modified-id="Reference-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Convolutional-Networks" data-toc-modified-id="Convolutional-Networks-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Convolutional Networks</a></span><ul class="toc-item"><li><span><a href="#Motivation" data-toc-modified-id="Motivation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Motivation</a></span></li><li><span><a href="#Convolutional-Layer" data-toc-modified-id="Convolutional-Layer-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Convolutional Layer</a></span><ul class="toc-item"><li><span><a href="#Convolutional-Layer-1-Basics" data-toc-modified-id="Convolutional-Layer-1-Basics-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Convolutional Layer-1 Basics</a></span></li><li><span><a href="#Convolutional-Layer-2-Spatial-Dimensions" data-toc-modified-id="Convolutional-Layer-2-Spatial-Dimensions-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Convolutional Layer-2 Spatial Dimensions</a></span></li><li><span><a href="#Convolutional-Layer-3-Paddings" data-toc-modified-id="Convolutional-Layer-3-Paddings-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Convolutional Layer-3 Paddings</a></span></li></ul></li><li><span><a href="#Pooling-Layer" data-toc-modified-id="Pooling-Layer-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Pooling Layer</a></span></li><li><span><a href="#Fully-Connected-Layer" data-toc-modified-id="Fully-Connected-Layer-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Fully Connected Layer</a></span></li><li><span><a href="#Example-ConvNet-Architecture" data-toc-modified-id="Example-ConvNet-Architecture-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Example ConvNet Architecture</a></span></li><li><span><a href="#Common-Layer-Sizing" data-toc-modified-id="Common-Layer-Sizing-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Common Layer Sizing</a></span></li></ul></li><li><span><a href="#Tensorflow-Implementation" data-toc-modified-id="Tensorflow-Implementation-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Tensorflow Implementation</a></span></li><li><span><a href="#Reference" data-toc-modified-id="Reference-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -11791,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span> <span class="o">=</span> <span class="s1">&#39;custom2.css&#39;</span><span class="p">)</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span> <span class="o">=</span> <span class="s1">&#39;custom2.css&#39;</span><span class="p">,</span> <span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12218,8 +12219,24 @@ tensorflow 1.0.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>When we hear about Convolutional Neural Network (CNN or ConvNet), we typically think of Computer Vision. CNNs were responsible for major breakthroughs in Image Classification and are the core of most Computer Vision systems today, from Facebook’s automated photo tagging to self-driving cars.</p>
-<h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2><p><strong>Convolutional Neural Networks (ConvNet)</strong> are very similar to ordinary neural networks. They are made up of neurons that have learnable weights and biases. Each neuron receives some inputs, performs a dot product with the weights and biases then follows it with a non-linearity. The whole network still expresses a single differentiable score function: from the raw image pixels on one end to class scores at the other. And they still have a loss function (e.g. SVM/Softmax) on the last (fully-connected) layer hence most of the tips/tricks we developed for learning regular Neural Networks still apply.</p>
-<p>The thing is: Regular Neural Nets don’t scale well to full images. For the CIFAR-10 image dataset, images are only of size 32, 32, 3 (32 wide, 32 high, 3 color channels), so a single fully-connected neuron in a first hidden layer of a regular Neural Network would have 32x32x3 = 3072 weights. This amount still seems manageable, but clearly this fully-connected structure does not scale to larger images. For example, an image of more respectible size, e.g. 200x200x3, would lead to neurons that have 200x200x3 = 120,000 weights. Moreover, we would almost certainly want to have several such neurons, so the parameters would add up quickly! Clearly, this full connectivity is wasteful and the huge number of parameters would quickly lead to overfitting.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Convolutional Neural Networks (ConvNet)</strong> are very similar to ordinary neural networks. They are made up of neurons that have learnable weights and biases. Each neuron receives some inputs, performs a dot product with the weights and biases then follows it with a non-linearity. The whole network still expresses a single differentiable score function: from the raw image pixels on one end to class scores at the other. And they still have a loss function (e.g. SVM/Softmax) on the last (fully-connected) layer hence most of the tips/tricks we developed for learning regular Neural Networks still apply.</p>
+<p>The thing is: Regular Neural Nets don't scale well to full images. For the CIFAR-10 image dataset, images are only of size 32, 32, 3 (32 wide, 32 high, 3 color channels), so a single fully-connected neuron in a first hidden layer of a regular Neural Network would have 32x32x3 = 3072 weights. This amount still seems manageable, but clearly this fully-connected structure does not scale to larger images. For example, an image of more respectible size, e.g. 200x200x3, would lead to neurons that have 200x200x3 = 120,000 weights. Moreover, we would almost certainly want to have several such neurons, so the parameters would add up quickly! Clearly, this full connectivity is wasteful and the huge number of parameters would quickly lead to overfitting.</p>
 <p>Thus unlike a regular Neural Network, ConvNet architectures make the explicit assumption that the inputs are images, which allows us to encode certain properties into the architecture. These then make the forward function more efficient to implement and vastly reduce the amount of parameters in the network. More explicitly, the layers of a ConvNet have neurons arranged in 3 dimensions: <strong>width, height, depth</strong>. (Note that the word depth here refers to the third dimension of an activation volume, not the depth of a full Neural Network, which can refer to the total number of layers in a network.) For example, the input images in CIFAR-10 are input volumes of 32x32x3 (width, height, depth respectively).</p>
 <p>We use three main types of layers to build ConvNet architectures: <strong>Convolutional Layer</strong>, <strong>Pooling Layer</strong>, and <strong>Fully-Connected Layer</strong> (exactly as seen in regular Neural Networks). We will stack these layers to form a full ConvNet architecture.</p>
 
@@ -12231,7 +12248,23 @@ tensorflow 1.0.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Convolutional-Layer">Convolutional Layer<a class="anchor-link" href="#Convolutional-Layer">&#182;</a></h2><p>The Conv layer is the core building block of a Convolutional Network that does most of the computational heavy lifting.</p>
-<h3 id="Convolutional-Layer-1-Basics">Convolutional Layer-1 Basics<a class="anchor-link" href="#Convolutional-Layer-1-Basics">&#182;</a></h3><p>Each layer can be visualized in the form of a block. For instance in the case of CIFAR-10 data, the input layer would have the following form:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Convolutional-Layer-1-Basics">Convolutional Layer-1 Basics<a class="anchor-link" href="#Convolutional-Layer-1-Basics">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Each layer can be visualized in the form of a block. For instance in the case of CIFAR-10 data, the input layer would have the following form:</p>
 <p><img src="images/conv1.png" width="40%" height="40%"></p>
 <p>Here you can see, this is the original image which is 32×32 in height and width. The depth here is 3 which corresponds to the Red, Green and Blue (RGB) colors. A convolution layer is formed by convolving a <strong>filter or so called the kernel over it. A filter is another block that has a smaller height and width usually 3x3, 5x5 or somthing that like, but must has SAME depth size</strong>, which is swept over its input block. Let’s consider a filter of size 5x5x3 and see how it is done:</p>
 <p><img src="images/conv2.png" width="80%" height="80%"></p>
@@ -12251,16 +12284,24 @@ tensorflow 1.0.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Convolutional-Layer-2-Spatial-Dimensions">Convolutional Layer-2 Spatial Dimensions<a class="anchor-link" href="#Convolutional-Layer-2-Spatial-Dimensions">&#182;</a></h3><p>You might have noticed that we got a block of size 28×28 as the output when the input was 32×32. Why so? Let’s look at a simpler case. Suppose the initial image has a of size 6x6xd and the filter takes a size of 3x3xd. Since depth size of the input and the filter is always same, we can only look at it from a top-down view (leaving out the depth) perspective.</p>
+<h3 id="Convolutional-Layer-2-Spatial-Dimensions">Convolutional Layer-2 Spatial Dimensions<a class="anchor-link" href="#Convolutional-Layer-2-Spatial-Dimensions">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You might have noticed that we got a block of size 28×28 as the output when the input was 32×32. Why so? Let’s look at a simpler case. Suppose the initial image has a of size 6x6xd and the filter takes a size of 3x3xd. Since depth size of the input and the filter is always same, we can only look at it from a top-down view (leaving out the depth) perspective.</p>
 <p><img src="images/conv4.png" width="90%" height="90%"></p>
 <p>Here we can see that the output will be 4x4xd volume block (4 distinct positions in one row and there're 4 rows in total).</p>
-<p>Let’s define a generic case where image has dimension $NxNxd$ and filter has $FxFxd$. Also, lets define another term <strong>stride (S) another hyperparameter</strong>, which is the number of cells (in the matrix above) to move in each step. We had a stride of 1 but it can be a higher value as well. Given these information the size of the output can be computed by the following formula:</p>
+<p>Let's define a generic case where image has dimension $N \times N \times d$ and filter has $F \times F \times d$. Also, lets define another term <strong>stride (S) another hyperparameter</strong>, which is the number of cells (in the matrix above) to move in each step. We had a stride of 1 but it can be a higher value as well. Given these information the size of the output can be computed by the following formula:</p>
 <p>$$(N – F)/S + 1$$</p>
 <p>You can validate the formula with the example above or with the CIFAR-10 image dataset where $N=32$, $F=5$, $S=1$ where the output is 28.</p>
 <p><p></p>
 <div class="alert alert-warning">
-Note that some $S$ values might lead to non-integer result and we generally don’t use such values, different libraries might deal with it different (e.g. throw an error).
-</div><p>Let’s consider another example to consolidate our understanding. Starting with the same image as before of size 32×32, we apply 2 filters consecutively, first 10 filters of size 7, stride 1, next 6 filters of size 5, stride 2. Before looking at the solution below, just think about 2 things:</p>
+Note that some $S$ values might lead to non-integer result and we generally don't use such values, different libraries might deal with it different (e.g. throw an error).
+</div><p>Let's consider another example to consolidate our understanding. Starting with the same image as before of size 32×32, we apply 2 filters consecutively, first 10 filters of size 7, stride 1, next 6 filters of size 5, stride 2. Before looking at the solution below, just think about 2 things:</p>
 <ul>
 <li>What should be the depth of each filter?</li>
 <li>What will the resulting size of the images in each step?</li>
@@ -12279,7 +12320,15 @@ Notice in the second layer, the filters are now 5x5x**10** because **10** is the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Convolutional-Layer-3-Paddings">Convolutional Layer-3 Paddings<a class="anchor-link" href="#Convolutional-Layer-3-Paddings">&#182;</a></h3><p>Notice from the picture above, that the size of the input is shrinking consecutively (from 32 to 26 to 11). This will be undesirable in case of deep networks where the size will become very small too early and we'll loose a lot of representations of the original input. Also, it would restrict the use of large size filters as they would result in faster size reduction.</p>
+<h3 id="Convolutional-Layer-3-Paddings">Convolutional Layer-3 Paddings<a class="anchor-link" href="#Convolutional-Layer-3-Paddings">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Notice from the picture above, that the size of the input is shrinking consecutively (from 32 to 26 to 11). This will be undesirable in case of deep networks where the size will become very small too early and we'll loose a lot of representations of the original input. Also, it would restrict the use of large size filters as they would result in faster size reduction.</p>
 <p>To prevent this, we generally use a stride of 1 along with <strong>zero-padding</strong> of size $(F-1)/2$. <strong>Zero-padding</strong> is nothing but adding additional zero-value pixels along every border of the image.</p>
 <p>Consider the example we saw above with 6×6 image and 3×3 filter. The required padding is (3-1)/2=1. We can visualize the padding as:</p>
 <p><img src="images/conv6.png" width="40%" height="40%"></p>
@@ -12302,7 +12351,15 @@ Notice in the second layer, the filters are now 5x5x**10** because **10** is the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Pooling-Layer">Pooling Layer<a class="anchor-link" href="#Pooling-Layer">&#182;</a></h2><p>Recall that we use padding in convolution layer to preserve input size. The <strong>pooling layers</strong> are used to REDUCE the size of input. They're in charge of downsampling the the network to make it more manageable. The most common form of performing the downsampling is by <strong>max-pooling</strong>.</p>
+<h2 id="Pooling-Layer">Pooling Layer<a class="anchor-link" href="#Pooling-Layer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that we use padding in convolution layer to preserve input size. The <strong>pooling layers</strong> are used to REDUCE the size of input. They're in charge of downsampling the the network to make it more manageable. The most common form of performing the downsampling is by <strong>max-pooling</strong>.</p>
 <p>Consider the following 4×4 layer. So if we use a 2×2 filter with stride 2 and max-pooling, we get the following response:</p>
 <p><img src="images/pool1.jpeg" width="70%" height="70%"></p>
 <p>Here we can see that each 2×2 matrix are combined into 1 single number by taking their maximum value. Generally, max-pooling is used and works best but there're other options like average pooling.</p>
@@ -12362,7 +12419,15 @@ Notice in the second layer, the filters are now 5x5x**10** because **10** is the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Fully-Connected-Layer">Fully Connected Layer<a class="anchor-link" href="#Fully-Connected-Layer">&#182;</a></h2><p>At the end of convolution and pooling layers, networks generally use fully-connected layers in which each pixel is considered as a separate neuron just like a regular neural network. The last fully-connected layer will contain as many neurons as the number of classes to be predicted. For instance, in CIFAR-10 case, the last fully-connected layer will have 10 neurons.</p>
+<h2 id="Fully-Connected-Layer">Fully Connected Layer<a class="anchor-link" href="#Fully-Connected-Layer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>At the end of convolution and pooling layers, networks generally use fully-connected layers in which each pixel is considered as a separate neuron just like a regular neural network. The last fully-connected layer will contain as many neurons as the number of classes to be predicted. For instance, in CIFAR-10 case, the last fully-connected layer will have 10 neurons since we're aiming to predict 10 different classes.</p>
 
 </div>
 </div>
@@ -12371,7 +12436,15 @@ Notice in the second layer, the filters are now 5x5x**10** because **10** is the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Example-ConvNet-Architecture">Example ConvNet Architecture<a class="anchor-link" href="#Example-ConvNet-Architecture">&#182;</a></h2><p>Convolutional Networks are commonly made up of only three layer types: CONV, POOL (we assume Max pool unless stated otherwise) and FC (short for fully-connected). We will also explicitly write the RELU activation function as a layer, which applies elementwise non-linearity. In this section we discuss how these are commonly stacked together to form entire ConvNets.</p>
+<h2 id="Example-ConvNet-Architecture">Example ConvNet Architecture<a class="anchor-link" href="#Example-ConvNet-Architecture">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Convolutional Networks are commonly made up of only three layer types: CONV, POOL (we assume Max pool unless stated otherwise) and FC (short for fully-connected). We will also explicitly write the RELU activation function as a layer, which applies element-wise non-linearity. In this section we discuss how these are commonly stacked together to form entire ConvNets.</p>
 <p>The most common form of a ConvNet architecture stacks a few CONV-RELU layers, follows them with POOL layers, and repeats this pattern. At some point, it is common to transition to FC layers and the last fully-connected layer holds the output, such as the class scores (by applying softmax to it). In other words, the most common ConvNet architecture follows the pattern:</p>
 <p><p></p>
 <div class="alert alert-info">
@@ -12386,14 +12459,30 @@ INPUT -> [ [CONV -> RELU] x N -> POOL?] x M -> [FC -> RELU] x K -> FC
 <li><strong>FC (i.e. fully-connected) layer</strong> will compute the class scores, resulting in volume of size [1x1x10], where each of the 10 numbers correspond to a class score, such as among the 10 categories of CIFAR-10. As with ordinary Neural Networks and as the name implies, each neuron in this layer will be connected to all the numbers in the previous volume.</li>
 </ul>
 <p><a href="http://cs231n.github.io/convolutional-networks/">Course Note: Standford cs231n convolutional-networks</a> contains a case study section at the bottom that introduces of different architectures.</p>
-<h2 id="Layer-Sizing">Layer Sizing<a class="anchor-link" href="#Layer-Sizing">&#182;</a></h2><p>The <strong>input layer</strong> (that contains the image) should be divisible by 2 many times. Common numbers include 32 (e.g. CIFAR-10), 64, 96 (e.g. STL-10), or 224 (e.g. common ImageNet ConvNets), 384, and 512. And images are squished to be rectangular shaped if they weren't already.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Common-Layer-Sizing">Common Layer Sizing<a class="anchor-link" href="#Common-Layer-Sizing">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <strong>input layer</strong> (that contains the image) should be divisible by 2 many times. Common numbers include 32 (e.g. CIFAR-10), 64, 96 (e.g. STL-10), or 224 (e.g. common ImageNet ConvNets), 384, and 512. And images are squished to be rectangular shaped if they weren't already.</p>
 <p>The <strong>conv layers</strong> should be using small filters (e.g. 3x3 or at most 5x5), using a stride of $S = 1$, and crucially, padding the input volume with zeros in such way that the conv layer does not alter the spatial dimensions of the input. That is, when $F = 3$, then using $P = 1$ will retain the original size of the input. When $F = 5$, $P = 2$. For a general $F$, it can be seen that $P = (F - 1) / 2$ preserves the input size. If you must use bigger filter sizes (such as 7x7 or so), it is only common to see this on the very first conv layer that is looking at the input image.</p>
 <p>The <strong>pool layers</strong> are in charge of downsampling the spatial dimensions of the input. The most common setting is to use max-pooling with 2x2 receptive fields (i.e. filter size $(F) = 2$), and with a stride of 2 (i.e. $S = 2$). Note that this discards exactly 75% of the activations in an input volume (due to downsampling by 2 in both width and height). Another slightly less common setting is to use 3x3 receptive fields with a stride of 2. It is very uncommon to see receptive field sizes for max pooling that are larger than 3 because the pooling is then too lossy and aggressive. This usually leads to worse performance.</p>
-<p><em>Getting rid of pooling.</em> Many people dislike the pooling operation, since it loses information and think that we can get away without it (in favor of architecture that only consists of repeated CONV layers). To reduce the size of the representation it is suggested to use larger stride in CONV layer once in a while. Discarding pooling layers has also been found to be important in training good generative models and it seems likely that future architectures will feature very few to no pooling layers.</p>
-<p><em>Reducing sizing headaches.</em> The scheme presented above is pleasing because all the CONV layers preserve the spatial size of their input, while the POOL layers alone are in charge of down-sampling the volumes spatially. In an alternative scheme where we use strides greater than 1 or don't zero-pad the input in CONV layers, we would have to very carefully keep track of the input volumes throughout the CNN architecture and make sure that all strides and filters "work out", and that the ConvNet architecture is nicely and symmetrically wired.</p>
-<p><em>Why use stride of 1 in CONV?</em> Smaller strides work better in practice. Additionally, as already mentioned stride 1 allows us to leave all spatial down-sampling to the POOL layers, with the CONV layers only transforming the input volume depth-wise.</p>
-<p><em>Why use padding?</em> In addition to the aforementioned benefit of keeping the spatial sizes constant after CONV, doing this actually improves performance. If the CONV layers were to not zero-pad the inputs and only perform valid convolutions, then the size of the volumes would reduce by a small amount after each CONV, and the information at the borders would be "washed away" too quickly.</p>
-<p><em>Compromising based on memory constraints.</em> In some cases (especially early in the ConvNet architectures), the amount of memory can build up very quickly with the rules of thumb presented above. For example, filtering a 224x224x3 image with three 3x3 CONV layers with 64 filters each and padding 1 would create three activation volumes of size [224x224x64]. This amounts to a total of about 10 million activations, or 72MB of memory (per image, for both activations and gradients). Since GPUs are often bottlenecked by memory, it may be necessary to compromise. In practice, people prefer to make the compromise at only the first CONV layer of the network. For example, one compromise might be to use a first CONV layer with filter sizes of 7x7 and stride of 2 (as seen in a ZF net). As another example, an AlexNet uses filer sizes of 11x11 and stride of 4.</p>
+<p><strong>Getting rid of pooling.</strong> Many people dislike the pooling operation, since it loses information and think that we can get away without it (in favor of architecture that only consists of repeated CONV layers). To reduce the size of the representation it is suggested to use larger stride in CONV layer once in a while. Discarding pooling layers has also been found to be important in training good generative models and it seems likely that future architectures will feature very few to no pooling layers.</p>
+<p><strong>Reducing sizing headaches.</strong> The scheme presented above is pleasing because all the CONV layers preserve the spatial size of their input, while the POOL layers alone are in charge of down-sampling the volumes spatially. In an alternative scheme where we use strides greater than 1 or don't zero-pad the input in CONV layers, we would have to very carefully keep track of the input volumes throughout the CNN architecture and make sure that all strides and filters "work out", and that the ConvNet architecture is nicely and symmetrically wired.</p>
+<p><strong>Why use stride of 1 in CONV?</strong> Smaller strides work better in practice. Additionally, as already mentioned stride 1 allows us to leave all spatial down-sampling to the POOL layers, with the CONV layers only transforming the input volume depth-wise.</p>
+<p><strong>Why use padding?</strong> In addition to the aforementioned benefit of keeping the spatial sizes constant after CONV, doing this actually improves performance. If the CONV layers were to not zero-pad the inputs and only perform valid convolutions, then the size of the volumes would reduce by a small amount after each CONV, and the information at the borders would be "washed away" too quickly.</p>
+<p><strong>Compromising based on memory constraints.</strong> In some cases (especially early in the ConvNet architectures), the amount of memory can build up very quickly with the rules of thumb presented above. For example, filtering a 224x224x3 image with three 3x3 CONV layers with 64 filters each and padding 1 would create three activation volumes of size [224x224x64]. This amounts to a total of about 10 million activations, or 72MB of memory (per image, for both activations and gradients). Since GPUs are often bottlenecked by memory, it may be necessary to compromise. In practice, people prefer to make the compromise at only the first CONV layer of the network. For example, one compromise might be to use a first CONV layer with filter sizes of 7x7 and stride of 2 (as seen in a ZF net). As another example, an AlexNet uses filer sizes of 11x11 and stride of 4.</p>
 
 </div>
 </div>
@@ -12725,7 +12814,15 @@ step 4000, training accuracy 1.00 0.98
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://cs231n.github.io/convolutional-networks/">Notes: Standford cs231n Convolutional Networks</a></li>
 <li><a href="https://www.youtube.com/watch?v=V8JDMkARdfU&amp;list=PLlJy-eBtNFt6EuMxFYRiNRS07MCWN5UIA&amp;index=7">Youtube: Standford cs231n Convolutional Neural Networks</a></li>
 <li><a href="http://nbviewer.jupyter.org/github/aymericdamien/TensorFlow-Examples/blob/master/notebooks/3_NeuralNetworks/convolutional_network.ipynb">Github: Tensorflow Example - Convolutional Network</a></li>

@@ -11791,6 +11791,7 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span> <span class="o">=</span> <span class="s1">&#39;custom2.css&#39;</span><span class="p">,</span> <span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -12224,7 +12225,7 @@ sklearn 0.19.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>During the talk, <a href="https://www.youtube.com/watch?v=E7VLE-U07x0&amp;index=51&amp;list=PLGVZCDnMOq0oqs6RTJk4zZde86DZrgnzm">Youtube: PyData - Random Forests Best Practices for the Business World</a>, one of the best practices that the speaker mentioned when using tree-based models is to check for directional relationships. When using non-linear machine learning algorithms, such as popular tree-based models random forest and gradient boosted trees, it can be hard to understand the relations between predictors and model outcome as they do not give us handy coefficients like linear-based models. For example, in terms of random forest, all we get is the feature importance. Although based on that information, we can tell which feature is significantly influencing the outcome based on the importance calculation, it does not inform us in which direction is the predictor influencing outcome. In this blog post, we'll be exploring <strong>Partial dependence plot (PDP)</strong>, a model agnostic technique that gives us an approximate directional influence for a given feature that was used in the model. Note much of the explanation is "borrowed" from the blog post at the following link, <a href="https://towardsdatascience.com/introducing-pdpbox-2aa820afd312">Blog: Introducing PDPbox</a>, this documentation aims to improve upon it by giving a cleaner implementation.</p>
+<p>During the talk, <a href="https://www.youtube.com/watch?v=E7VLE-U07x0&amp;index=51&amp;list=PLGVZCDnMOq0oqs6RTJk4zZde86DZrgnzm">Youtube: PyData - Random Forests Best Practices for the Business World</a>, one of the best practices that the speaker mentioned when using tree-based models is to check for directional relationships. When using non-linear machine learning algorithms, such as popular tree-based models random forest and gradient boosted trees, it can be hard to understand the relations between predictors and model outcome as they do not give us handy coefficients like linear-based models. For example, in terms of random forest, all we get is the feature importance. Although based on that information, we can tell which feature is significantly influencing the outcome based on the importance calculation, it does not inform us in which direction is the predictor influencing outcome. In this notebook, we'll be exploring <strong>Partial dependence plot (PDP)</strong>, a model agnostic technique that gives us an approximate directional influence for a given feature that was used in the model. Note much of the explanation is "borrowed" from the blog post at the following link, <a href="https://towardsdatascience.com/introducing-pdpbox-2aa820afd312">Blog: Introducing PDPbox</a>, this documentation aims to improve upon it by giving a cleaner implementation.</p>
 <p><strong>Partial dependence plot (PDP)</strong> aims to visualize the marginal effect of a given predictor towards the model outcome by plotting out the average model outcome in terms of different values of the predictor. Let's first gain some intuition of how it works with a made up example. Assume we have a data set that only contains three data points and three features (A, B, C) as shown below.</p>
 <p><img src="img/pd1.png" width="30%" height="30%"></p>
 <p>If we wish to see how feature A is influencing the prediction Y, what PDP does is to generate a new data set as follow. (here we assume that feature A only has three unique values: A1, A2, A3)</p>
@@ -12245,7 +12246,7 @@ $$</p>
 \hat{f}_{x_S}(x_S) = \frac{1}{n} \sum_{i=1}^n f(x_S, x_{Ci})
 \end{align}
 $$</p>
-<p>Where $\left\{x_{C1}, x_{C2}, \ldots, x_{CN}\right\}$ are the values of $X_C$ ocurring over all observations in the training data. In other words, in order to calculate the partial dependence of a given variable (or variables), the entire training set must be utilized for every set of joint values. For classification, where the machine model outputs probabilities, the partial dependence function displays the probability for a certain class given different values for features $x_s$, a straightforward way to handle multi-class problems is to plot one line per class.</p>
+<p>Where $\left\{x_{C1}, x_{C2}, \ldots, x_{CN}\right\}$ are the values of $X_C$ occurring over all observations in the training data. In other words, in order to calculate the partial dependence of a given variable (or variables), the entire training set must be utilized for every set of joint values. For classification, where the machine learning model outputs probabilities, the partial dependence function displays the probability for a certain class given different values for features $x_s$, a straightforward way to handle multi-class problems is to plot one line per class.</p>
 
 </div>
 </div>
@@ -12674,7 +12675,15 @@ height=535
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://towardsdatascience.com/introducing-pdpbox-2aa820afd312">Blog: Introducing PDPbox</a></li>
 <li><a href="https://christophm.github.io/interpretable-ml-book/pdp.html">Online Book: Partial Dependence Plot (PDP)</a></li>
 <li><a href="https://www.mathworks.com/help/stats/regressiontree.plotpartialdependence.html?requestedDomain=true#mw_79dadf51-f451-45a9-a801-2e9ccec37aae">Mathworks Documentation: plotPartialDependence</a></li>

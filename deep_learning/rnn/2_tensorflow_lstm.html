@@ -12289,7 +12289,8 @@ C_t &amp;= f_t * C_{t-1} + i_t * \tilde{C_t}
 \end{align}</p>
 <p>Looking at this formula more carefully, we can see that the information carried by the previous cell state, $C_{t-1}$ will not be lost if its weight, i.e. the forget gate $f_t$ is on (close to 1), making LSTM better at learning long-term dependencies compared to vanilla RNN.</p>
 <p>In the case of the language model, this is where we'd actually drop the information about the old subject's gender and add the new information, as we decided in the previous steps.</p>
-<p>Finally, we need to decide what we're going to output. This output will be a filtered version of our cell state. First, we run it through a sigmoid layer which decides what parts of the cell state we're going to output. Then, we put the cell state through tanh (to push the values to be between −1 and 1) and multiply it by the output of the sigmoid gate, so that we only output the parts we decided to.</p>
+<p>Finally, we need to decide what we're going to output. This output will be a filtered version of our cell state. First, we run it through a sigmoid layer which decides what parts of the cell state we're going to output. This is essentially our output gate. Then, we put the cell state through tanh (to push the values to be between −1 and 1) and multiply it by the output of the sigmoid gate, so that we only output the parts we decided to.</p>
+<p><img src="img/output_gate.png" width="40%" height="40%"></p>
 <p>\begin{align}
 o_t &amp;= \sigma(W_o \cdot [ h_{t - 1}, x_t ] + b_o) \\
 h_t &amp;= o_t * tanh(C_t)
