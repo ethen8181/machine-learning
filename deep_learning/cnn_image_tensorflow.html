@@ -12236,7 +12236,7 @@ tensorflow 1.0.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Convolutional Neural Networks (ConvNet)</strong> are very similar to ordinary neural networks. They are made up of neurons that have learnable weights and biases. Each neuron receives some inputs, performs a dot product with the weights and biases then follows it with a non-linearity. The whole network still expresses a single differentiable score function: from the raw image pixels on one end to class scores at the other. And they still have a loss function (e.g. SVM/Softmax) on the last (fully-connected) layer hence most of the tips/tricks we developed for learning regular Neural Networks still apply.</p>
-<p>The thing is: Regular Neural Nets don't scale well to full images. For the CIFAR-10 image dataset, images are only of size 32, 32, 3 (32 wide, 32 high, 3 color channels), so a single fully-connected neuron in a first hidden layer of a regular Neural Network would have 32x32x3 = 3072 weights. This amount still seems manageable, but clearly this fully-connected structure does not scale to larger images. For example, an image of more respectible size, e.g. 200x200x3, would lead to neurons that have 200x200x3 = 120,000 weights. Moreover, we would almost certainly want to have several such neurons, so the parameters would add up quickly! Clearly, this full connectivity is wasteful and the huge number of parameters would quickly lead to overfitting.</p>
+<p>The thing is: Regular Neural Nets don't scale well to full images. For the CIFAR-10 image dataset, images are only of size 32, 32, 3 (32 wide, 32 high, 3 color channels), so a single fully-connected neuron in a first hidden layer of a regular Neural Network would have 32x32x3 = 3072 weights. This amount still seems manageable, but clearly this fully-connected structure does not scale to larger images. For example, an image of more respectable size, e.g. 200x200x3, would lead to neurons that have 200x200x3 = 120,000 weights. Moreover, we would almost certainly want to have several such neurons, so the parameters would add up quickly! Clearly, this full connectivity is wasteful and the huge number of parameters would quickly lead to overfitting.</p>
 <p>Thus unlike a regular Neural Network, ConvNet architectures make the explicit assumption that the inputs are images, which allows us to encode certain properties into the architecture. These then make the forward function more efficient to implement and vastly reduce the amount of parameters in the network. More explicitly, the layers of a ConvNet have neurons arranged in 3 dimensions: <strong>width, height, depth</strong>. (Note that the word depth here refers to the third dimension of an activation volume, not the depth of a full Neural Network, which can refer to the total number of layers in a network.) For example, the input images in CIFAR-10 are input volumes of 32x32x3 (width, height, depth respectively).</p>
 <p>We use three main types of layers to build ConvNet architectures: <strong>Convolutional Layer</strong>, <strong>Pooling Layer</strong>, and <strong>Fully-Connected Layer</strong> (exactly as seen in regular Neural Networks). We will stack these layers to form a full ConvNet architecture.</p>
 
@@ -12247,7 +12247,15 @@ tensorflow 1.0.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Convolutional-Layer">Convolutional Layer<a class="anchor-link" href="#Convolutional-Layer">&#182;</a></h2><p>The Conv layer is the core building block of a Convolutional Network that does most of the computational heavy lifting.</p>
+<h2 id="Convolutional-Layer">Convolutional Layer<a class="anchor-link" href="#Convolutional-Layer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The Conv layer is the core building block of a Convolutional Network that does most of the computational heavy lifting.</p>
 
 </div>
 </div>

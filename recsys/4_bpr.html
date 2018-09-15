@@ -12254,7 +12254,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Formulation">Formulation<a class="anchor-link" href="#Formulation">&#182;</a></h2><p>Suppose $U$ is the set of all users and $I$ is the set of all items, our goal is to provide user $u$ with a personalized ranking, deonted by $&gt;_u$. As mentioned in the last section, the usual approach for item recommenders is to predict a personalized score $\hat r_{ui}$ for an item that reflects the user's preference for that item. Then the items are ranked by sorting them according to that score and the top-N is recommended to the user.</p>
+<h2 id="Formulation">Formulation<a class="anchor-link" href="#Formulation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose $U$ is the set of all users and $I$ is the set of all items, our goal is to provide user $u$ with a personalized ranking, denoted by $&gt;_u$. As mentioned in the last section, the usual approach for item recommendation algorithm is to predict a personalized score $\hat r_{ui}$ for an item that reflects the user's preference for that item. Then the items are ranked by sorting them according to that score and the top-N is recommended to the user.</p>
 <p>Here we'll use a different approach by using item pairs as training data and optimize for correctly ranking item pairs. From $S$, the whole dataset we try to reconstruct for each user parts of $&gt;_u$. If the user has interacted with item $i$, i.e. $(u,i) \in S$, then we assume that the user prefers this item over all other non-observed items. E.g. in the figure below user $u_1$ has interacted with item $i_2$ but not item $i_1$, so we assume that this user prefers item $i_2$ over $i_1$: $i_2 &gt;_u i_1$. We will denote this generally as $i &gt;_u j$, where the $i$ stands for the positive item and $j$ is for the negative item. For items that the user have both interacted with, we cannot infer any preference. The same is true for two items that a user has not interacted yet (e.g. item $i_1$ and $i_4$ for user $u_1$).</p>
 <p><img src="img/interactions.png" alt=""></p>
 <p>Given these information, we can now get to the Bayesian part of this method. Let $\Theta$ be the parameter of the model that determines the personalized ranking. BPR's goal is to maximize the posterior probability:</p>
@@ -12281,7 +12289,7 @@ $$</p>
 \hat r_{uij} = \hat r_{ui} - \hat r_{uj}
 \end{align}
 $$</p>
-<p>For convenience we skiped the argument $\Theta$ from $\hat r_{uij}$. The formula above is basically saying what is the difference between the predicted interaction between the positive item $i$ and the negative item $j$. Now because of this generic framework, we can apply any standard collaborative filtering (such as the matrix factorization) techniques that can predict the interaction between user and item. Keep in mind that although it may seem like we're using the same models as in other work, here we're optimizing against another criterion as we do not try to predict a single predictor $\hat r_{ui}$ but instead tries to classify the difference of two predictions $\hat r_{ui} - \hat r_{uj}$. For those that interested in diving deeper, there's a section in the original paper that showed that the BPR optimization criteria is actually optimizing AUC (Area Under the ROC curve).</p>
+<p>For convenience we skipped the argument $\Theta$ from $\hat r_{uij}$. The formula above is basically saying what is the difference between the predicted interaction between the positive item $i$ and the negative item $j$. Now because of this generic framework, we can apply any standard collaborative filtering (such as the matrix factorization) techniques that can predict the interaction between user and item. Keep in mind that although it may seem like we're using the same models as in other work, here we're optimizing against another criterion as we do not try to predict a single predictor $\hat r_{ui}$ but instead tries to classify the difference of two predictions $\hat r_{ui} - \hat r_{uj}$. For those that interested in diving deeper, there's a section in the original paper that showed that the BPR optimization criteria is actually optimizing AUC (Area Under the ROC curve).</p>
 
 </div>
 </div>
@@ -12330,7 +12338,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Optimization">Optimization<a class="anchor-link" href="#Optimization">&#182;</a></h2><p>In the last section we have derived an optimization criterion for personalized ranking. As the criterion is differentiable, gradient descent based algorithms are an obvious choice for maximization. But standard gradient descent is probably not the right choice for our problem given the size of all the possible combinations of the triplet $(u, i, j)$. To solve for this issue we use a stochastic gradient descent algorithm that chooses the triplets randomly (uniformly distributed).</p>
+<h2 id="Optimization">Optimization<a class="anchor-link" href="#Optimization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the last section, we have derived an optimization criterion for personalized ranking. As the criterion is differentiable, gradient descent based algorithms are an obvious choice for maximization. But standard gradient descent is probably not the right choice for our problem given the size of all the possible combinations of the triplet $(u, i, j)$. To solve for this issue we use a stochastic gradient descent algorithm that chooses the triplets randomly (uniformly distributed).</p>
 <p>To solve for the function using gradient descent, we derive the gradient for the three parameters $x_u$, $y_i$, $y_j$ separately. Just a minor hint when deriving the gradient, remember that the first part of the formula requires the chain rule:</p>
 <p>$$
 \begin{align}
@@ -13063,7 +13079,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h2><p>In recommender systems, we are often interested in how well the method can rank a given set of items. And to do that we'll use AUC (Area Under ROC Curve as our evaluation metric. The best possible value that the AUC evaluation metric can take is 1, and any non-random ranking that makes sense would have an AUC &gt; 0.5. An intuitive explanation of AUC is it specifies the probability that when we draw two examples at random, their predicted pairwise ranking is correct. The following <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/auc/auc.ipynb">documentation</a> has a more detailed dicussion on AUC in case you're not familiar with it.</p>
+<h2 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In recommender systems, we are often interested in how well the method can rank a given set of items. And to do that we'll use AUC (Area Under ROC Curve as our evaluation metric. The best possible value that the AUC evaluation metric can take is 1, and any non-random ranking that makes sense would have an AUC &gt; 0.5. An intuitive explanation of AUC is it specifies the probability that when we draw two examples at random, their predicted pairwise ranking is correct. The following <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/auc/auc.ipynb">documentation</a> has a more detailed discussion on AUC in case you're not familiar with it.</p>
 
 </div>
 </div>
@@ -13148,7 +13172,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Item-Recommendations">Item Recommendations<a class="anchor-link" href="#Item-Recommendations">&#182;</a></h2><p>Now that we have trained the model, we can get the most similar items by using the <code>get_similar_items</code> method, we can specify the number of most simliar items by specifying the <code>N</code> argument. And this can be seen as the people who like/buy this also like/buy this functionality, since it's recommending similar items for a given item.</p>
+<h2 id="Item-Recommendations">Item Recommendations<a class="anchor-link" href="#Item-Recommendations">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Given the trained model, we can get the most similar items by using the <code>get_similar_items</code> method, we can specify the number of most similar items by specifying the <code>N</code> argument. And this can be seen as the people who like/buy this also like/buy this functionality, since it's recommending similar items for a given item.</p>
 
 </div>
 </div>
@@ -13253,7 +13285,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://www.recsyswiki.com/wiki/Area_Under_the_ROC_Curve">Wiki: Area Under the ROC Curve</a></li>
 <li><a href="http://math.stackexchange.com/questions/78575/derivative-of-sigmoid-function-sigma-x-frac11e-x">StackExchange: Derivative of sigmoid function</a></li>
 <li><a href="http://fastml.com/what-you-wanted-to-know-about-auc/">Blog: What you wanted to know about AUC</a></li>

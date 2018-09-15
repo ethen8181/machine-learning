@@ -11791,6 +11791,7 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span> <span class="o">=</span> <span class="s1">&#39;custom2.css&#39;</span><span class="p">,</span> <span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -12986,7 +12987,7 @@ height=250
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><a href="https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf">Paper: P. Domingos A few useful things to know about machine learning (2012)</a>: Like any discipline, machine learning has a lot of "folk wisdom" that can be hard to come by, but is crucial for success. This article summarized some of the most salient items.</p>
-<p>e.g. It's generalization that counts: The most common mistake among machine learning beginners is to test on the training data and have the illusion of success. Remember, if we are hired to build a predictive model, be sure to set some data aside from the beginning, and only use it to test the model at the very end, followed by learning the model on the full dataset.</p>
+<p>e.g. It's generalization that counts: The most common mistake among machine learning beginners is to test on the training data and have the illusion of success. Remember, if we are hired to build a predictive model, be sure to set some data aside from the beginning, and only use it to test the model at the very end, followed by learning the model on the full dataset. The following links also talks about this topic. [<a href="http://www.fast.ai/2017/11/13/validation-sets/">Blog: How (and why) to create a good validation set</a>][<a href="http://www.chioka.in/do-you-re-train-on-the-whole-dataset-after-validating-the-model/">Blog: Do You Re-train on the Whole Dataset After Validating the Model?</a>]</p>
 <p><a href="https://www.slideshare.net/HJvanVeen/feature-engineering-72376750">Slideshare: Feature Engineering</a>: Contains lots of feature engineering ideas that are worth knowing/trying. Applied machine learning is basically feature engineering, as we all probably heard of the saying "more data beats clever algorithms, but better data beats more data".</p>
 <p><a href="https://towardsdatascience.com/the-ten-fallacies-of-data-science-9b2af78a1862">Blog: The Ten Fallacies of Data Science</a>: includes some gotchas to look out for when starting a data science project in the real world. e.g. double check to make sure relevant data is accessible, relatively consistent before agreeing to specific deadlines for the completion of the analysis.</p>
 <p><a href="http://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf">Notes: Rules of Machine Learning: Best Practices for ML Engineering</a>: Extracted from the notes' overview section.</p>
@@ -13008,7 +13009,15 @@ height=250
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://shapescience.xyz/blog/10-pieces-of-advice-to-beginner-data-scientists/">Blog: 10 pieces of advice to beginner data scientists</a></li>
 <li><a href="http://blog.davidkaleko.com/feature-engineering-cyclical-features.html">Blog: Feature Engineering - Handling Cyclical Features</a></li>
 <li><a href="https://www.datascienceweekly.org/articles/get-up-to-speed-fast-as-a-junior-data-scientist">Blog: Get Up To Speed Fast As A Junior Data Scientist</a></li>

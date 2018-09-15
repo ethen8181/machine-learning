@@ -14608,7 +14608,23 @@ height=397
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We can clearly see from the plot that there's linear relationship between the two variables, thus we probably don't need to include both of them as $x_1$ can be easily explained by $x_2$ and vice versa.</p>
-<h2 id="PCA">PCA<a class="anchor-link" href="#PCA">&#182;</a></h2><p>If it is the case that one of the features is considered redundant, we should be able to summarize the data with less characteristics (features). So, the way PCA tackles this problem is: Instead of simply picking out the useful features and discarding the others, it uses a linear combination of the existing features and constructs some new features that are good alternative representation of the original data. In our 2D toy dataset, PCA will try to pick the best single direction, or often referred to as <strong>first principal components</strong> in 2D, and project our points onto that single direction. So the next question becomes, out of the many possible lines in 2D, what line should we pick?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="PCA">PCA<a class="anchor-link" href="#PCA">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If it is the case that one of the features is considered redundant, we should be able to summarize the data with less characteristics (features). So, the way PCA tackles this problem is: Instead of simply picking out the useful features and discarding the others, it uses a linear combination of the existing features and constructs some new features that are good alternative representation of the original data. In our 2D toy dataset, PCA will try to pick the best single direction, or often referred to as <strong>first principal components</strong> in 2D, and project our points onto that single direction. So the next question becomes, out of the many possible lines in 2D, what line should we pick?</p>
 <p>It turns out, there are two different answers to this question. First answer is that we are looking for some features that strongly differ across data points, thus, PCA looks for features that captures as much variation across data points as possible. The second answer is that we are looking for the features that would allow us to "reconstruct" the original features. Imagine that we come up with a feature that has no relation to the original ones; If we were to use this new feature, there is no way we can relate this to the original ones. So PCA looks for features that minimizes the reconstruction error. These two notions can be depicted in the graph below, where the black dots represents the original data point, the black line represents the projected line, the red dot on the left shows the points on the projected line and the red line on the right shows the reconstruction error.</p>
 <p><img src='img/objective1.png' width='80%'></p>
 <p>Surprisingly, it turns out that these two aims are equivalent and PCA can kill two birds with one stone. To see why minimizing squared residuals is equivalent to maximizing variance consider the 2 dimensions visualization below.</p>
@@ -16327,7 +16343,15 @@ height=379
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="PCA-From-Scratch">PCA From Scratch<a class="anchor-link" href="#PCA-From-Scratch">&#182;</a></h2><p>Now that we have a high level understanding of what PCA is accomplishing, let's now formalize this with some notations. Recall that PCA is trying the find the direction such that the projection of the data on it has the highest variance. So given $X$, the centered data matrix, the projection, $Xw$ (dot product between the data point, $X$ and the projection weight, $w$), its variance can be computed as follows:</p>
+<h2 id="PCA-From-Scratch">PCA From Scratch<a class="anchor-link" href="#PCA-From-Scratch">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we have a high level understanding of what PCA is accomplishing, let's now formalize this with some notations. Recall that PCA is trying the find the direction such that the projection of the data on it has the highest variance. So given $X$, the centered data matrix, the projection, $Xw$ (dot product between the data point, $X$ and the projection weight, $w$), its variance can be computed as follows:</p>
 <p>$$
 \begin{align}
 \frac{1}{n-1}(\mathbf{Xw})^\top \mathbf{Xw} = \mathbf w^\top (\frac{1}{n-1}\mathbf X^\top\mathbf X) \mathbf w = \mathbf w^\top \mathbf{Cw}
@@ -17479,7 +17503,15 @@ height=419
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Standardize">Standardize<a class="anchor-link" href="#Standardize">&#182;</a></h3><p>In general, it's important to standardize the data prior to a PCA on the covariance matrix depends on the measurement scales of the original features. Since PCA yields a feature subspace that maximizes the variance along the axes, it makes sense to standardize the data, especially if it was measured on different scales so different features will have equal contribution in terms of their scales.</p>
+<h3 id="Standardize">Standardize<a class="anchor-link" href="#Standardize">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In general, it's important to standardize the data prior to a PCA on the covariance matrix depends on the measurement scales of the original features. Since PCA yields a feature subspace that maximizes the variance along the axes, it makes sense to standardize the data, especially if it was measured on different scales so different features will have equal contribution in terms of their scales.</p>
 
 </div>
 </div>
@@ -17505,7 +17537,15 @@ height=419
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Eigendecomposition---Computing-Eigenvectors-and-Eigenvalues">Eigendecomposition - Computing Eigenvectors and Eigenvalues<a class="anchor-link" href="#Eigendecomposition---Computing-Eigenvectors-and-Eigenvalues">&#182;</a></h3><p>The eigenvectors and eigenvalues of a covariance matrix is the core of PCA: The eigenvectors (principal components) determine the directions of the new feature space, and the eigenvalues determine their magnitude (variance explained along the principal components).</p>
+<h3 id="Eigendecomposition---Computing-Eigenvectors-and-Eigenvalues">Eigendecomposition - Computing Eigenvectors and Eigenvalues<a class="anchor-link" href="#Eigendecomposition---Computing-Eigenvectors-and-Eigenvalues">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The eigenvectors and eigenvalues of a covariance matrix is the core of PCA: The eigenvectors (principal components) determine the directions of the new feature space, and the eigenvalues determine their magnitude (variance explained along the principal components).</p>
 
 </div>
 </div>
@@ -17627,8 +17667,16 @@ Eigenvalues
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Choosing-Top-K-Eigenvectors">Choosing Top K Eigenvectors<a class="anchor-link" href="#Choosing-Top-K-Eigenvectors">&#182;</a></h3><p>Recall that the typical goal of a PCA is to reduce the dimensionality of the original feature space by projecting it onto a smaller subspace. In order to decide which eigenvector(s) can dropped without losing too much information for the construction of lower-dimensional subspace, we need to inspect the corresponding eigenvalues. The idea is: eigenvectors with the lowest eigenvalues bear the least information about the distribution of the data and those are the ones can be dropped. In order to do so, the common approach is to rank the eigenvalues from highest to lowest in order choose the top $k$ eigenvectors.</p>
-<p>After sorting the eigenpairs, the next question is "how many principal components are we going to choose for our new feature subspace?" A useful measure is the so-called “explained variance,” which can be calculated from the eigenvalues. The explained variance tells us how much extra information (variance) does each of the principal components contribute.</p>
+<h3 id="Choosing-Top-K-Eigenvectors">Choosing Top K Eigenvectors<a class="anchor-link" href="#Choosing-Top-K-Eigenvectors">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that the typical goal of a PCA is to reduce the dimensionality of the original feature space by projecting it onto a smaller subspace. In order to decide which eigenvector(s) can dropped without losing too much information for the construction of lower-dimensional subspace, we need to inspect the corresponding eigenvalues. The idea is: eigenvectors with the lowest eigenvalues bear the least information about the distribution of the data and those are the ones can be dropped. In order to do so, the common approach is to rank the eigenvalues from highest to lowest in order choose the top $k$ eigenvectors.</p>
+<p>After sorting the eigenpairs, the next question is "how many principal components are we going to choose for our new feature subspace?" A useful measure is the so-called explained variance", which can be calculated from the eigenvalues. The explained variance tells us how much extra information (variance) does each of the principal components contribute.</p>
 
 </div>
 </div>
@@ -18485,8 +18533,24 @@ height=419
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The plot above clearly shows that most of the variance (72.77% of the variance to be precise) can be explained by the first principal component alone. The second principal component still bears some information (23.03%) while the third and fourth principal components can be safely dropped without losing to much information. Together, the first two principal components explains 95.8% of the variance. In other words, it contain 95.8% of the information (95% or 99% are comon threshold that people use).</p>
-<h3 id="Projection-Onto-the-New-Feature-Space">Projection Onto the New Feature Space<a class="anchor-link" href="#Projection-Onto-the-New-Feature-Space">&#182;</a></h3><p>In the last step, we will use the 4×2-dimensional eigenvectors to transform our data onto the new subspace via the equation $Y=XW$, where Y will be our 150×2 transformed data (we reduce the dimension from the original 4 down to 2).</p>
+<p>The plot above clearly shows that most of the variance (72.77% of the variance to be precise) can be explained by the first principal component alone. The second principal component still bears some information (23.03%) while the third and fourth principal components can be safely dropped without losing to much information. Together, the first two principal components explains 95.8% of the variance. In other words, it contain 95.8% of the information (95% or 99% are common threshold that people use).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Projection-Onto-the-New-Feature-Space">Projection Onto the New Feature Space<a class="anchor-link" href="#Projection-Onto-the-New-Feature-Space">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the last step, we will use the $4 \times 2$-dimensional eigenvectors to transform our data onto the new subspace via the equation $Y=XW$, where Y will be our $150 \times 2$ transformed data (we reduce the dimension from the original 4 down to 2).</p>
 
 </div>
 </div>
@@ -19428,7 +19492,15 @@ from scratch:  [ 0.72770452  0.23030523]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Takeaway">Takeaway<a class="anchor-link" href="#Takeaway">&#182;</a></h2><p>Let's wrap this up with a summary of PCA and some of its applications. In order to identify patterns in our data, we often look for variation across observations to distinguish them from one another. Hence it seems reasonable to be able to find a succinct representation that best captures the variation in our initial data. PCA, in particular, look to explain our data via its maximum directions of variance. By compressing a higher dimensional dataset into lower one, while still retaining most of the variance this allows us to:</p>
+<h2 id="Takeaway">Takeaway<a class="anchor-link" href="#Takeaway">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's wrap this up with a summary of PCA and some of its applications. In order to identify patterns in our data, we often look for variation across observations to distinguish them from one another. Hence it seems reasonable to be able to find a succinct representation that best captures the variation in our initial data. PCA, in particular, look to explain our data via its maximum directions of variance. By compressing a higher dimensional dataset into lower one, while still retaining most of the variance this allows us to:</p>
 <ul>
 <li>Perform Visualization: PCA summarizes our data along the principal components (or eigenvectors), which explains most the variance. Thus we can reduce the dataset to 2 or 3 dimensions and visualize our data's distribution. This can be helpful when we're performing clustering algorithm that needs to choose the cluster number beforehand.</li>
 <li>Speed up machine learning algorithms: When dealing with Big Data, we might want to decompose the features into a lower dimension, without a significant loss in variance. By performing dimensionality reduction methods, we can reduce the amount of features we have to speed up the training algorithm and save memory. For this part, we'll use the Iris dataset again and show that by keeping the data's top 3 principal components we can obtain the same level of accuracy as keeping all 4 features.</li>
@@ -19498,7 +19570,15 @@ Accuracy 0.822
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://www.youtube.com/playlist?list=PLnnr1O8OWc6aVexn2BY0qjklobY6TUEIy">Youtube: Dimensionality Reduction</a></li>
 <li><a href="http://www.visiondummy.com/2014/03/eigenvalues-eigenvectors/">Blog: What are eigenvectors and eigenvalues?</a></li>
 <li><a href="https://georgemdallas.wordpress.com/2013/10/30/principal-component-analysis-4-dummies-eigenvectors-eigenvalues-and-dimension-reduction/">Blog: Principal Component Analysis 4 Dummies</a></li>

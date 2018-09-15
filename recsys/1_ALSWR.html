@@ -12540,13 +12540,21 @@ height=361
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Matrix-Factorization">Matrix Factorization<a class="anchor-link" href="#Matrix-Factorization">&#182;</a></h2><p>Now that the data preprocessing part has been taken care of, let's get to the more exciting part, the algorithm. The algorithm that we'll introduce today is Matrix Factorization.</p>
+<h2 id="Matrix-Factorization">Matrix Factorization<a class="anchor-link" href="#Matrix-Factorization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that the data preprocessing part has been taken care of, let's get to the more exciting part, the algorithm. The algorithm that we'll introduce today is Matrix Factorization.</p>
 <p>Recall that we had a user-item matrix, $R$ where nonzero elements of the matrix are ratings that a user has given an item. What Matrix Factorization does is it decomposes a large matrix into products of matrices, namely, $R = U \times V$. See the picture below taken from a quick <a href="https://www.google.com/search?q=matrix+factorization&amp;source=lnms&amp;tbm=isch&amp;sa=X&amp;ved=0ahUKEwiD8Ku02_vQAhXGsVQKHdpSAW4Q_AUICCgB&amp;biw=1433&amp;bih=732#imgrc=aFtUeC0wtJCkgM%3A">google search</a> for a better understanding:</p>
 <p><img src="img/matrix_factorization.png" alt=""></p>
 <p>Matrix factorization assumes that:</p>
 <ul>
 <li>Each user can be described by $d$ features. For example, feature 1 might be a referring to how much each user likes disney movies.</li>
-<li>Each item, movie in this case, can be described by an analagous set of $d$ features. To correspond to the above example, feature 1 for the movie might be a number that says how close the movie is to a disney movie.</li>
+<li>Each item, movie in this case, can be described by an analogous set of $d$ features. To correspond to the above example, feature 1 for the movie might be a number that says how close the movie is to a disney movie.</li>
 </ul>
 <p>After learning the two smaller matrices, all we have to do is to perform a matrix multiplication of the two matrices and the end result will be a our approximation for the rating the user would give that item (movie).</p>
 <p>The cool thing about this is that, we do not know what these features are nor do we have to determine them beforehand, which is why these features are often refer to as latent features. Next, we also don't know how many latent features are optimal for the task at hand. Thus, we can use random search or grid search or other fancy techniques to perform hyperparameter tuning and determine the best number for $d$.</p>
@@ -12754,7 +12762,7 @@ height=377
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the result, we can see ALS converges after a few sweeps, which is one of the main reason for its popularity. Fast, thus scalable to bigger dataset.</p>
+<p>Notice that ALS converges after a few sweeps, which is one of the main reason for its popularity. Fast, thus scalable to bigger dataset.</p>
 
 </div>
 </div>
@@ -12763,7 +12771,15 @@ height=377
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/">Blog: Intro to Recommender Systems: Collaborative Filtering</a></li>
 <li><a href="http://blog.ethanrosenthal.com/2016/01/09/explicit-matrix-factorization-sgd-als/">Blog: Explicit Matrix Factorization: ALS, SGD, and All That Jazz</a></li>
 <li><a href="https://www.quora.com/What-is-the-Alternating-Least-Squares-method-in-recommendation-systems">Quora: What is the Alternating Least Squares method in recommendation systems?</a></li>

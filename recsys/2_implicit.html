@@ -12230,7 +12230,15 @@ scipy 1.0.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Formulation">Formulation<a class="anchor-link" href="#Formulation">&#182;</a></h2><p>Recall from the previous notebook that the loss function for training the recommendation model on explicit feedback data was:</p>
+<h2 id="Formulation">Formulation<a class="anchor-link" href="#Formulation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall from the previous notebook that the loss function for training the recommendation model on explicit feedback data was:</p>
 <p>$$
 \begin{align}
 L_{explicit} &amp;= \sum\limits_{u,i \in S}( r_{ui} - x_{u} y_{i}^{T} )^{2} + \lambda \big( \sum\limits_{u} \left\Vert x_{u} \right\Vert^{2} + \sum\limits_{i} \left\Vert y_{i} \right\Vert^{2} \big)
@@ -12277,7 +12285,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Alternating-Least-Squares">Alternating Least Squares<a class="anchor-link" href="#Alternating-Least-Squares">&#182;</a></h2><p>Let's assume that we have $m$ useres and $n$ items. Now, to solve for the loss function above, we start by treating $y_i$ as constant and solve the loss function with respect to $x_u$. To do this, we rewrite and expand the first term in the loss function (excluding the regularization terms), $\sum\limits_{u,i} c_{ui}( p_{ui} - x_{u} y_{i}^{T} )^2$ part as:</p>
+<h2 id="Alternating-Least-Squares">Alternating Least Squares<a class="anchor-link" href="#Alternating-Least-Squares">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's assume we have $m$ users and $n$ items. Now, to solve for the loss function above, we start by treating $y_i$ as constant and solve the loss function with respect to $x_u$. To do this, we rewrite and expand the first term in the loss function (excluding the regularization terms), $\sum\limits_{u,i} c_{ui}( p_{ui} - x_{u} y_{i}^{T} )^2$ part as:</p>
 <p>$$
 \begin{align}
 \sum\limits_{u,i} c_{ui}( p_{ui} - x_{u} y_{i}^{T} )^2
@@ -12334,7 +12350,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><p>We'll use the same movielens dataset like the previous notebook. The movielens data is not an implicit feedback dataset as the user did provide explicit ratings, but we will use it for now to test out our implementation. The overall preprocessing procedure of loading the data and doing the train/test split is the same as the previous notebook. But here we'll do it in a sparse matrix fashion.</p>
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll use the same movielens dataset like the previous notebook. The movielens data is not an implicit feedback dataset as the user did provide explicit ratings, but we will use it for now to test out our implementation. The overall preprocessing procedure of loading the data and doing the train/test split is the same as the previous notebook. But here we'll do it in a sparse matrix fashion.</p>
 
 </div>
 </div>
@@ -13002,21 +13026,36 @@ outer product of row:
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now that we've built our recommendation engine, the next important thing to do is to evaluate our model's offline performance.</p>
-<p>Let’s say that there are some users and some items, like movies, songs or jobs. Each user might be interested in some items. The client asks us to recommend a few items (the number is x) for each user. In other words, what we're after is the top-N recommendation for each user and after recommending these items to the user, we need a way to measure whether the recommendation is useful or not. One key thing to note is that metrics such as RMSE might not be the best at assessing the quality of recommendations because the training focused on items with the most ratings, achieving a good fit for those. The items with few ratings don't mean much in terms of their impact on the loss. As a result, predictions for them will be off.</p>
+<p>Let's say that there are some users and some items, like movies, songs or jobs. Each user might be interested in some items. The client asks us to recommend a few items (the number is x) for each user. In other words, what we're after is the top-N recommendation for each user and after recommending these items to the user, we need a way to measure whether the recommendation is useful or not. One key thing to note is that metrics such as RMSE might not be the best at assessing the quality of recommendations because the training focused on items with the most ratings, achieving a good fit for those. The items with few ratings don't mean much in terms of their impact on the loss. As a result, predictions for them will be off.</p>
 <p>Long story short, we need metrics specifically crafted for ranking evaluation and the two most popular ranking metrics are <strong>MAP (Mean Average Precision)</strong> and <strong>NDCG (Normalized Discounted Cumulative Gain)</strong>. The main difference between the two is that MAP assumes binary relevance (an item is either of interest or not, e.g. a user clicked a link, watched a video, purchased a product), while NDCG can be used in any case where we can assign relevance score to a recommended item (binary, integer or real). The relationship is just like classification and regression.</p>
-<h2 id="Mean-Average-Precision">Mean Average Precision<a class="anchor-link" href="#Mean-Average-Precision">&#182;</a></h2><p>For this section of the content, a large portion is based on the excellent blog post at the following link. <a href="http://fastml.com/what-you-wanted-to-know-about-mean-average-precision/">Blog: What you wanted to know about Mean Average Precision</a>. This documentation simply lists out the educational implementation.</p>
-<hr>
-<p>Let’s say that there are some users and some items, like movies, songs or jobs. Each user might be interested in some items. The client asks us to recommend a few items (the number is x) for each user. After recommending the items to the user, we need a way to measure whether the recommendation is useful or not. One way to do this is using <strong>MAP@k (Mean Average Precision at k)</strong> .</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Mean-Average-Precision">Mean Average Precision<a class="anchor-link" href="#Mean-Average-Precision">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For this section of the content, a large portion is based on the excellent blog post at the following link. <a href="http://fastml.com/what-you-wanted-to-know-about-mean-average-precision/">Blog: What you wanted to know about Mean Average Precision</a>. This documentation builds on top of it by carrying out the educational implementation.</p>
+<p>Let's say that there are some users and some items, like movies, songs or jobs. Each user might be interested in some items. The client asks us to recommend a few items (the number is x) for each user. After recommending the items to the user, we need a way to measure whether the recommendation is useful or not. One way to do this is using <strong>MAP@k (Mean Average Precision at k)</strong> .</p>
 <p>The intuition behind this evaluation metric is that:</p>
 <ul>
 <li>We can recommend at most k items for each user (this is essentially the <code>@k</code> part), but we will be penalized for bad recommendations</li>
-<li>Order matters, so it’s better to submit more certain recommendations first, followed by recommendations we are less sure about</li>
+<li>Order matters, so it's better to submit more certain recommendations first, followed by recommendations we are less sure about</li>
 </ul>
 <p>Diving a bit deeper, we will first ignore <code>@k</code> and get M out of the way. MAP is just the mean of APs, or average precision, for all users. If we have 1000 users, we sum APs for each user and divide the sum by 1000. This is MAP. So now, what is AP, or average precision?</p>
-<p>One way to understand average precision is this way: we type something in Google and it shows us 10 results. It’s probably best if all of them were relevant. If only some are relevant, say five of them, then it’s much better if the relevant ones are shown first. It would be bad if first five were irrelevant and good ones only started from sixth, wouldn’t it? The formula for computing AP is:</p>
+<p>One way to understand average precision is this way: we type something in Google and it shows us 10 results. It's probably best if all of them were relevant. If only some are relevant, say five of them, then it's much better if the relevant ones are shown first. It would be bad if first five were irrelevant and good ones only started from sixth, wouldn't it? The formula for computing AP is:</p>
 <p>sum i=1:k of (precision at i * change in recall at i)</p>
 <p>Where precision at i is a percentage of correct items among first i recommendations. Change in recall is 1/k if item at i is correct (for every correct item), otherwise zero. Note that this is base on the assumption that the number of relevant items is bigger or equal to k: r &gt;= k. If not, change in recall is 1/r for each correct i instead of 1/k.</p>
-<p>For example, If the actual items were [1 2 3 4 5] and we recommend [6 4 7 1 2]. In this case we get 4, 1 and 2 right, but with some incorrect guesses in between. Now let's say we were to compute AP@2, so only two first predictions matter: 6 and 4. First is wrong, so precision@1 is 0. Second is right, so precision@2 is 0.5. Change in recall is 0 and 0.5 (that’s 1/k) respectively, so AP@2 = 0 <em> 0 + 0.5 </em> 0.5 = 0.25</p>
+<p>For example, If the actual items were [1 2 3 4 5] and we recommend [6 4 7 1 2]. In this case we get 4, 1 and 2 right, but with some incorrect guesses in between. Now let's say we were to compute AP@2, so only two first predictions matter: 6 and 4. First is wrong, so precision@1 is 0. Second is right, so precision@2 is 0.5. Change in recall is 0 and 0.5 (that's 1/k) respectively, so AP@2 = 0 <em> 0 + 0.5 </em> 0.5 = 0.25</p>
 
 </div>
 </div>
@@ -13237,8 +13276,16 @@ mapk testing: 0.05916489925768833
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="NDCG">NDCG<a class="anchor-link" href="#NDCG">&#182;</a></h2><p>Suppose that on a four-point scale, we give a 0 score for an irrelevant result, 1 for a partially relevant, 2 for relevant, and 3 for perfect. Suppose also that a query is judged by one of our judges, and the first four results that the search engine returns are assessed as relevant (2), irrelevant (0), perfect (3), and relevant (2) by a judge.</p>
-<p>The idea behind NDCG is: A recommender returns some items and we'd like to compute how good the list is. Each item has a relevance score, usually a non-negative number. That's <strong>gain (G)</strong>. For items we don’t have user feedback for we usually set the gain to zero. Now we add up those scores, that’s <strong>cumulative gain (CG)</strong>. So, the cumulative gain for the four results is the sum of the scores for each result: 2 + 0 + 3 + 2 = 7. In mathematical notations, the CG at a particular rank ${\displaystyle k}$ is defined as:</p>
+<h2 id="NDCG">NDCG<a class="anchor-link" href="#NDCG">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose that on a four-point scale, we give a 0 score for an irrelevant result, 1 for a partially relevant, 2 for relevant, and 3 for perfect. Suppose also that a query is judged by one of our judges, and the first four results that the search engine returns are assessed as relevant (2), irrelevant (0), perfect (3), and relevant (2) by a judge.</p>
+<p>The idea behind <strong>NDCG</strong> is: A recommender returns some items and we'd like to compute how good the list is. Each item has a relevance score, usually a non-negative number. That's <strong>gain (G)</strong>. For items we don't have user feedback for we usually set the gain to zero. Now we add up those scores, that's <strong>cumulative gain (CG)</strong>. So, the cumulative gain for the four results is the sum of the scores for each result: 2 + 0 + 3 + 2 = 7. In mathematical notations, the CG at a particular rank ${\displaystyle k}$ is defined as:</p>
 <p>\begin{align}
 CG_k = \sum_{i=1}^k rel_i
 \end{align}</p>
@@ -13598,7 +13645,15 @@ ndcg testing: 0.11226091289209723
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://www.johndcook.com/blog/2010/01/19/dont-invert-that-matrix/">Blog: Don’t invert that matrix</a></li>
 <li><a href="http://mike.place/2015/sparse/">Blog: Empty rows in sparse arrays</a></li>
 <li><a href="http://datamusing.info/blog/2015/01/07/implicit-feedback-and-collaborative-filtering/">Blog: Implicit Feedback and Collaborative Filtering</a></li>

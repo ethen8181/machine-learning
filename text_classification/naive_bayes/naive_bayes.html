@@ -11792,7 +11792,7 @@ div#notebook {
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12102,7 +12102,23 @@ sklearn 0.19.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Naive Bayes</strong> classifiers is based on Bayes’ theorem, and the adjective naive comes from the assumption that the features in a dataset are mutually independent. In practice, the independence assumption is often violated, but <strong>Naive Bayes</strong> still tend to perform very well in the fields of text/document classification. Common applications includes spam filtering (categorized a text message as spam or not-spam) and sentiment analysis (categorized a text message as positive or negative review). More importantly, the simplicity of the method means that it takes order of magnitude less time to train when compared to more complexed models like support vector machines.</p>
-<h2 id="Text/Document-Representations">Text/Document Representations<a class="anchor-link" href="#Text/Document-Representations">&#182;</a></h2><p>Text classifiers often don’t use any kind of deep representation about language: often times a document is represented as a bag of words. (A bag is like a set that allows repeating elements.) This is an extremely simple representation as it throws away the word order and only keeps which words are included in the document and how many times each word occurs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Text/Document-Representations">Text/Document Representations<a class="anchor-link" href="#Text/Document-Representations">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Text classifiers often don't use any kind of deep representation about language: often times a document is represented as a bag of words. (A bag is like a set that allows repeating elements.) This is an extremely simple representation as it throws away the word order and only keeps which words are included in the document and how many times each word occurs.</p>
 <p>We shall look at two probabilistic models of documents, both of which represent documents as a bag of words, using the <strong>Naive Bayes</strong> assumption. Both models represent documents using feature vectors
 whose components correspond to word types. If we have a document containing $|V|$ distinct vocabularies,
 then the feature vector dimension $d=|V|$.</p>
@@ -12158,7 +12174,15 @@ multinomial [2, 0, 1, 0, 1, 0]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Bernoulli-Model">Bernoulli Model<a class="anchor-link" href="#Bernoulli-Model">&#182;</a></h2><p>Consider a corpus of documents (training data) whose class is given by $C = 1, 2, ..., K$. Using <strong>Naive Bayes</strong> (no matter if it's the bernoulli model or the multinomial model which we'll later see), we classify a document $D$ as the class which has the highest posterior probability $argmax_{ k = 1, 2, ..., K} \, p(C = k|D)$, which can be re-expressed using Bayes’ Theorem:</p>
+<h2 id="Bernoulli-Model">Bernoulli Model<a class="anchor-link" href="#Bernoulli-Model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Consider a corpus of documents (training data) whose class is given by $C = 1, 2, ..., K$. Using <strong>Naive Bayes</strong> (no matter if it's the bernoulli model or the multinomial model which we'll later see), we classify a document $D$ as the class which has the highest posterior probability $argmax_{ k = 1, 2, ..., K} \, p(C = k|D)$, which can be re-expressed using Bayes’ Theorem:</p>
 <p>$$p(C = k|D) = \frac{ p(C = k) \, p(D|C = k) }{p(D)} \ \propto p(C = k) \, p(D|C = k)$$</p>
 <p>Where:</p>
 <ul>
@@ -12166,11 +12190,6 @@ multinomial [2, 0, 1, 0, 1, 0]
 <li>$p(C = k)$ represents the class k's <strong>prior</strong> probabilities.</li>
 <li>$p(D|C = k)$ is the <strong>likelihoods</strong> of the document given the class k.</li>
 <li>$p(D)$ is the <strong>normalizing factor</strong> which we don't have to compute since it does not depend on the class $C$. i.e. this factor will be the same across all class $C$, thus the numerator will be enough to determine which $p(C = k|D)$ is the largest.</li>
-</ul>
-<p>Two sidenote:</p>
-<ul>
-<li>Try this <a href="http://nbviewer.jupyter.org/github/ethen8181/Business-Analytics/blob/master/bayesian_statistics/bayes_basics.ipynb">document</a> if you wish to have a slightly more thorough example with Bayes’ Theorem.</li>
-<li>Try this <a href="http://blog.aylien.com/post/120703930533/naive-bayes-for-dummies-a-simple-explanation">blog post: naive-bayes for dummies a simple explanation</a> with the notation above is a bit confusing and you wish to have a more simple explanation first and come back to the notation later.</li>
 </ul>
 
 </div>
@@ -12209,7 +12228,15 @@ multinomial [2, 0, 1, 0, 1, 0]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Bernoulli-Model-Implementation">Bernoulli Model Implementation<a class="anchor-link" href="#Bernoulli-Model-Implementation">&#182;</a></h2><p>Consider a set of documents, each of which is related either to Class 1 or to Class 0. Given
+<h2 id="Bernoulli-Model-Implementation">Bernoulli Model Implementation<a class="anchor-link" href="#Bernoulli-Model-Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Consider a set of documents, each of which is related either to Class 1 or to Class 0. Given
 a training set of 11 documents, we would like to train a Naive Bayes classifier, using the Bernoulli
 document model, to classify unlabelled documents as Class 1 or 0. We define a vocabulary of eight words.</p>
 <p>Thus the training data $X$ is presented below as a 11*8 matrix, in which each row represents an 8-dimensional document vector. And the $y$ represents the class of each document. Then we would like to classify the two testing data.</p>
@@ -12379,13 +12406,21 @@ testing data:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Multinomial-Distribution">Multinomial Distribution<a class="anchor-link" href="#Multinomial-Distribution">&#182;</a></h2><p>Before discussing the multinomial document model, it is important to be familiar with the multinomial
+<h2 id="Multinomial-Distribution">Multinomial Distribution<a class="anchor-link" href="#Multinomial-Distribution">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before discussing the multinomial document model, it is important to be familiar with the multinomial
 distribution. The multinomial distribution can be used to compute the probabilities in situations in which there are more than two possible outcomes. For example, suppose that two chess players had played numerous games and it was determined that the probability that Player A would win is 0.40, the probability that Player B would win is 0.35, and the probability that the game would end in a draw is 0.25. The multinomial distribution can be used to answer questions such as: "If these two chess players played 12 games, what is the probability that Player A would win 7 games, Player B would win 2 games, and the remaining 3 games would be drawn?" The following generalized formula gives the probability of obtaining a specific set of outcomes when there are $n$ possible outcomes for each event:</p>
 <p>$$P = \frac{n!}{n_1!n_2!...n_d!}p_1^{n_1}p_2^{n_2}...p_d^{n_d}$$</p>
 <ul>
 <li>n is the total number of events.</li>
-<li>$n_1, ..., n_d$ is the number of times outcome 1 to d occured.</li>
-<li>$p_1, ..., p_d$ is the probability of outcome 1 to d occured.</li>
+<li>$n_1, ..., n_d$ is the number of times outcome 1 to d occurred.</li>
+<li>$p_1, ..., p_d$ is the probability of outcome 1 to d occurred.</li>
 </ul>
 <p>Or more compactly written as:</p>
 <p>$$P = \frac{n!}{\prod_{t=1}^{d}n_t!}\prod_{t=1}^{d}p_t^{n_t}$$</p>
@@ -12398,18 +12433,42 @@ distribution. The multinomial distribution can be used to compute the probabilit
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Multinomial-Model">Multinomial Model<a class="anchor-link" href="#Multinomial-Model">&#182;</a></h2><p>Recall that for <strong>Naive Bayes</strong> $argmax_{k = 1, 2, ..., K} \, p(D|C = k)p(C)$ is the objective function that we're trying to solve for. In the multinomial case, calculating $p(D|C = k)$ for the $i_{th}$ document becomes:</p>
+<h2 id="Multinomial-Model">Multinomial Model<a class="anchor-link" href="#Multinomial-Model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that for <strong>Naive Bayes</strong> $argmax_{k = 1, 2, ..., K} \, p(D|C = k)p(C)$ is the objective function that we're trying to solve for. In the multinomial case, calculating $p(D|C = k)$ for the $i_{th}$ document becomes:</p>
 <p>$$p(D_i|C = k) = \frac{x_i!}{\prod_{t=1}^{d}x_{it}!}\prod_{t=1}^{d}p(w_t|C)^{x_{it}} \propto \prod_{t=1}^{d}p(w_t|C)^{x_{it}}$$</p>
 <p>Where:</p>
 <ul>
 <li>$x_{it}$, is the count of the number of times word $w_t$ occurs in document $D_i$.</li>
 <li>$x_i= \sum_t x_{it}$ is the total number of words in document $D_i$.</li>
-<li>Often times, we won’t need the normalization term $\frac{x_i!}{\prod_{t=1}^{d}x_{it}!}$, because it does not depend on the class, $C$.</li>
+<li>Often times, we don't need the normalization term $\frac{x_i!}{\prod_{t=1}^{d}x_{it}!}$, because it does not depend on the class, $C$.</li>
 <li>$p(w_t \mid C)$ is the probability of word $w_t$ occurring in a document of class $C$. This time estimated using the word frequency information from the document's feature vectors. More specifically, this is: $\text{Number of word } w_t \text{ in class } C \big/ \text{Total number of words in class } C$.</li>
 <li>$\prod_{t=1}^{d}p(w_t|C)^{x_{it}}$ can be interpreted as the product of word likelihoods for each word in the document.</li>
 </ul>
-<h3 id="Laplace-Smoothing">Laplace Smoothing<a class="anchor-link" href="#Laplace-Smoothing">&#182;</a></h3><p>A drawback of the equation for the multinomial model is that the likelihood $p(D_i|C = k)$ involves taking a product of probabilities $p(w_t \mid C)$. Hence if any one of the terms of the product is zero, then the whole product becomes zero. This means that the probability of the document belonging to the class in question is zero (impossible). Intuitively, just because a word does not occur in a document class in the training data does not mean that it cannot occur in any document of that class.</p>
-<p>Therefore, one way to alleviate the problem is <strong>Laplace Smoothing</strong> or <strong>add one smoothing</strong>, where we add a count of one to each word type and the denominator will be increased by $|V|$, the number of vocabularies (features), to ensure that the probabilities are still normalised. More formally, our $p(w_t \mid C)$ becomes:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Laplace-Smoothing">Laplace Smoothing<a class="anchor-link" href="#Laplace-Smoothing">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One drawback of the equation for the multinomial model is that the likelihood $p(D_i|C = k)$ involves taking a product of probabilities $p(w_t \mid C)$. Hence if any one of the terms of the product is zero, then the whole product becomes zero. This means that the probability of the document belonging to the class in question is zero (impossible). Intuitively, just because a word does not occur in a document class in the training data does not mean that it cannot occur in any document of that class.</p>
+<p>Therefore, one way to alleviate the problem is <strong>Laplace Smoothing</strong> or <strong>add one smoothing</strong>, where we add a count of one to each word type and the denominator will be increased by $|V|$, the number of vocabularies (features), to ensure that the probabilities are still normalized. More formally, our $p(w_t \mid C)$ becomes:</p>
 <p>$$p(w_t \mid C) = \frac{( \text{Number of word } w_t \text{ in class } C + 1 )}{( \text{Total number of words in class } C) + |V|} $$</p>
 <p>In sum, by performing <strong>Laplace Smoothing</strong>, we ensure that our $p(w_t \mid C)$ will never equal to 0.</p>
 
@@ -12420,12 +12479,28 @@ distribution. The multinomial distribution can be used to compute the probabilit
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Log-Transformation">Log-Transformation<a class="anchor-link" href="#Log-Transformation">&#182;</a></h3><p>Our original formula for classifying a document in to a class using Multinomial Naive Bayes was:</p>
+<h3 id="Log-Transformation">Log-Transformation<a class="anchor-link" href="#Log-Transformation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Our original formula for classifying a document in to a class using Multinomial Naive Bayes was:</p>
 <p>$$p(C|D) = p(C)\prod_{t=1}^{d}p(w_t|C)^{x_{it}}$$</p>
 <p>In practice, when we have a lot of unique words, we create very small values by computing the product of many $p(w_t \mid C)$ terms. On a computer, the values may become so small that they may "underflow" (run out of memory to represent the value and thus it will be rounded to zero). To prevent this, we can simply throw a logarithm around everything:</p>
 <p>$$p(C|D) = log \left( p(C)\prod_{t=1}^{d}p(w_t|C)^{x_{it}}\right)$$</p>
 <p>Using the property that $log(ab) = log(a) + log(b)$, the formula above then becomes:</p>
 <p>$$p(C|D) = log \, p(C) + \sum_{t=1}^d x_{it}log \, p(w_t|C)$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Multinomial-Model-Implementation">Multinomial Model Implementation<a class="anchor-link" href="#Multinomial-Model-Implementation">&#182;</a></h2>
 </div>
 </div>
@@ -12843,10 +12918,19 @@ library implementation [&#39;c&#39;]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Pros-and-Cons-of-Naive-Bayes">Pros and Cons of Naive Bayes<a class="anchor-link" href="#Pros-and-Cons-of-Naive-Bayes">&#182;</a></h2><p><strong>Pros:</strong></p>
+<h2 id="Pros-and-Cons-of-Naive-Bayes">Pros and Cons of Naive Bayes<a class="anchor-link" href="#Pros-and-Cons-of-Naive-Bayes">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll end this notebook with this algorithm's pros and cons.</p>
+<p><strong>Pros:</strong></p>
 <ul>
 <li>Extremely fast to train/apply and is reliably a high bias/low variance classifier (less likely to overfit).</li>
-<li>Handles extraneous featues well, meaning it's robust to irrelevant features.</li>
+<li>Handles extraneous features well, meaning it's robust to irrelevant features.</li>
 <li>Famously good at text classification. e.g. spam filtering. Or domains where you have many equally important features, which tends to be a problem for other kind of classifiers, in particular tree based algorithms.</li>
 <li>No parameter tuning is required</li>
 </ul>
@@ -12863,7 +12947,15 @@ library implementation [&#39;c&#39;]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://onlinestatbook.com/2/probability/multinomial.html">Tutorial: Multinomial Distribution</a></li>
 <li><a href="http://www.inf.ed.ac.uk/teaching/courses/inf2b/learnnotes/inf2b-learn-note07-2up.pdf">Notes: Text Classification using Naive Bayes</a></li>
 <li><a href="http://blog.aylien.com/post/120703930533/naive-bayes-for-dummies-a-simple-explanation">Blog: naive-bayes for dummies a simple explanation</a></li>

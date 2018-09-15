@@ -12127,7 +12127,15 @@ sklearn 0.19.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Ridge-and-Lasso-Regression">Ridge and Lasso Regression<a class="anchor-link" href="#Ridge-and-Lasso-Regression">&#182;</a></h2><p>Recall that for a normal linear regression model of:</p>
+<h2 id="Ridge-and-Lasso-Regression">Ridge and Lasso Regression<a class="anchor-link" href="#Ridge-and-Lasso-Regression">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recall that for a normal linear regression model of:</p>
 <p>$$Y = \beta_0 + \beta_1X_1 + ... + \beta_pX_p$$</p>
 <p>We would estimate its coefficients using the least squares criterion, which minimizes the residual sum of squares (RSS). Or graphically, we're fitting the blue line to our data (the black points) that minimizes the sum of the distances between the points and the blue line (sum of the red lines) as shown below.</p>
 <p><img src="images/estimating_coefficients.png" alt="Estimating coefficients"></p>
@@ -14827,7 +14835,15 @@ height=392
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Visualizing-Regularization">Visualizing Regularization<a class="anchor-link" href="#Visualizing-Regularization">&#182;</a></h2><p>From the result above, we can see that as the penalty value, $\alpha$ increases:</p>
+<h2 id="Visualizing-Regularization">Visualizing Regularization<a class="anchor-link" href="#Visualizing-Regularization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the result above, we can see that as the penalty value, $\alpha$ increases:</p>
 <ul>
 <li><strong>Lasso regression</strong> shrinks coefficients all the way to zero, thus removing them from the model.</li>
 <li><strong>Ridge regression</strong> shrinks coefficients toward zero, but they rarely reach zero.</li>
@@ -14857,9 +14873,17 @@ height=392
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Advice-For-Applying-Regularization">Advice For Applying Regularization<a class="anchor-link" href="#Advice-For-Applying-Regularization">&#182;</a></h2><p><strong>Signs and causes of overfitting in the original regression model</strong></p>
+<h2 id="Advice-For-Applying-Regularization">Advice For Applying Regularization<a class="anchor-link" href="#Advice-For-Applying-Regularization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Signs and causes of overfitting in the original regression model</strong></p>
 <ul>
-<li>Linear models can overfit if you include irrelevant features, meaning features that are unrelated to the response. Or if you include highly correlated features, meaing two or more predictor variables are closely related to one another. Because it will learn a coefficient for every feature you include in the model, regardless of whether that feature has the signal or the noise. This is especially a problem when $p$ (number of features) is close to $n$ (number of observations).</li>
+<li>Linear models can overfit if you include irrelevant features, meaning features that are unrelated to the response. Or if you include highly correlated features, meaning two or more predictor variables are closely related to one another. Because it will learn a coefficient for every feature you include in the model, regardless of whether that feature has the signal or the noise. This is especially a problem when $p$ (number of features) is close to $n$ (number of observations).</li>
 <li>Linear models that have large estimated coefficients is a sign that the model may be overfitting the data. The larger the absolute value of the coefficient, the more power it has to change the predicted response, resulting in a higher variance.</li>
 </ul>
 <p><strong>Should features be standardized?</strong></p>
@@ -15119,7 +15143,15 @@ RSS: 4313.02171284
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://nbviewer.jupyter.org/github/justmarkham/DAT8/blob/master/notebooks/20_regularization.ipynb">Notebook: Regularization</a></li>
 <li><a href="http://scott.fortmann-roe.com/docs/BiasVariance.html">Blog: Understanding the Bias-Variance Tradeoff</a></li>
 <li><a href="http://blog.datadive.net/selecting-good-features-part-ii-linear-models-and-regularization/">Blog: Selecting good features – Part II: linear models and regularization</a></li>

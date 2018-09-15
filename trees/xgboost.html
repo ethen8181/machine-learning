@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#XGBoost" data-toc-modified-id="XGBoost-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>XGBoost</a></span><ul class="toc-item"><li><span><a href="#Preparation-" data-toc-modified-id="Preparation--1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Preparation <a name="preparation"></a></a></span></li><li><span><a href="#XGBoost-Basics" data-toc-modified-id="XGBoost-Basics-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>XGBoost Basics</a></span></li><li><span><a href="#Hyperparamter-Tuning-(Random-Search)" data-toc-modified-id="Hyperparamter-Tuning-(Random-Search)-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Hyperparamter Tuning (Random Search)</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#XGBoost" data-toc-modified-id="XGBoost-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>XGBoost</a></span><ul class="toc-item"><li><span><a href="#Preparation" data-toc-modified-id="Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Preparation</a></span></li><li><span><a href="#XGBoost-Basics" data-toc-modified-id="XGBoost-Basics-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>XGBoost Basics</a></span></li><li><span><a href="#Hyperparamter-Tuning-(Random-Search)" data-toc-modified-id="Hyperparamter-Tuning-(Random-Search)-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Hyperparamter Tuning (Random Search)</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12232,7 +12232,23 @@ matplotlib 2.1.0
 <p>Quoted from <a href="https://www.quora.com/What-is-the-difference-between-the-R-gbm-gradient-boosting-machine-and-xgboost-extreme-gradient-boosting/answer/Tianqi-Chen-1">Quora: What is the difference between the R gbm (gradient boosting machine) and xgboost (extreme gradient boosting)?</a></p>
 <blockquote><p>Both xgboost (Extreme gradient boosting) and gbm follows the principle of gradient boosting. The name xgboost, though, actually refers to the engineering goal to push the limit of computations resources for boosted tree algorithms. Which is the reason why many people use xgboost. For model, it might be more suitable to be called as regularized gradient boosting, as it uses a more regularized model formalization to control overfitting.</p>
 </blockquote>
-<h2 id="Preparation-">Preparation <a name="preparation" /><a class="anchor-link" href="#Preparation-">&#182;</a></h2><p>For installing xgboost on mac:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preparation">Preparation<a class="anchor-link" href="#Preparation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For installing xgboost on mac:</p>
 <div class="highlight"><pre><span></span><span class="c1"># install gcc from brew, </span>
 <span class="c1"># note that the second command can </span>
 <span class="c1"># take up to 30 minutes, be patient</span>
@@ -12373,7 +12389,15 @@ Test label distribution:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="XGBoost-Basics">XGBoost Basics<a class="anchor-link" href="#XGBoost-Basics">&#182;</a></h2><p>We start by training a xgboost model using a fix set of parameters. For further details of the parameter (using scikit-learn like API) refer to the <a href="http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn">XGBoost Documentation: Python API documentation</a>.</p>
+<h2 id="XGBoost-Basics">XGBoost Basics<a class="anchor-link" href="#XGBoost-Basics">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We start by training a xgboost model using a fix set of parameters. For further details of the parameter (using scikit-learn like API) refer to the <a href="http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn">XGBoost Documentation: Python API documentation</a>.</p>
 
 </div>
 </div>
@@ -14649,10 +14673,26 @@ auc: 0.9626655961461261
     <span class="c1"># we take the negative sign of rsquared</span>
     <span class="k">return</span> <span class="s1">&#39;r2&#39;</span><span class="p">,</span> <span class="o">-</span><span class="n">rsquared</span>
 </pre></div>
-<h2 id="Hyperparamter-Tuning-(Random-Search)">Hyperparamter Tuning (Random Search)<a class="anchor-link" href="#Hyperparamter-Tuning-(Random-Search)">&#182;</a></h2><p>Next, since overfitting is a common problem with sophisticated algorithms like gradient boosting, we'll introduce ways to tune the model's hyperparameter and deal with them. If a xgboost model is too complex we can try:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hyperparamter-Tuning-(Random-Search)">Hyperparamter Tuning (Random Search)<a class="anchor-link" href="#Hyperparamter-Tuning-(Random-Search)">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, since overfitting is a common problem with sophisticated algorithms like gradient boosting, we'll introduce ways to tune the model's hyperparameter and deal with them. If a xgboost model is too complex we can try:</p>
 <ul>
 <li>Reduce <code>max_depth</code>, the depth of each tree.</li>
-<li>Increase <code>min_child_weight</code>, minimum sum of obervation's weight needed in a child (think of it as the number of observation's needed in a tree's node).</li>
+<li>Increase <code>min_child_weight</code>, minimum sum of observation's weight needed in a child (think of it as the number of observation's needed in a tree's node).</li>
 <li>Increase <code>gamma</code>, the minimum loss reduction required to make a further partition.</li>
 <li>Increase regularization parameters, <code>reg_lambda</code> (l2 regularization) and <code>reg_alpha</code> (l1 regularization).</li>
 <li>Add more randomness by using <code>subsample</code> (the fraction of observations to be randomly samples for fitting each tree), <code>colsample_bytree</code> (the fraction of columns to be randomly samples for fitting each tree) parameters.</li>
@@ -14798,7 +14838,15 @@ auc: 0.9559413890004015
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://education.parrotprediction.teachable.com/courses/practical-xgboost-in-python">Online Course: practical xgboost in python</a></li>
 <li><a href="https://github.com/dmlc/xgboost/blob/master/doc/build.md">XGBoost Documentation: Installing Guide</a></li>
 <li><a href="http://xgboost.readthedocs.io/en/latest/python/python_api.html#module-xgboost.sklearn">XGBoost Documentation: Python API documentation</a></li>

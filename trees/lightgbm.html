@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#LightGBM" data-toc-modified-id="LightGBM-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>LightGBM</a></span><ul class="toc-item"><li><span><a href="#Background" data-toc-modified-id="Background-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Background</a></span></li><li><span><a href="#Benchmarking" data-toc-modified-id="Benchmarking-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Benchmarking</a></span></li><li><span><a href="#Categorical-Variables-in-Tree-based-Models" data-toc-modified-id="Categorical-Variables-in-Tree-based-Models-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Categorical Variables in Tree-based Models</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#LightGBM" data-toc-modified-id="LightGBM-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>LightGBM</a></span><ul class="toc-item"><li><span><a href="#Benchmarking" data-toc-modified-id="Benchmarking-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Benchmarking</a></span></li><li><span><a href="#Categorical-Variables-in-Tree-based-Models" data-toc-modified-id="Categorical-Variables-in-Tree-based-Models-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Categorical Variables in Tree-based Models</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12235,7 +12235,7 @@ lightgbm 2.0.11
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Background">Background<a class="anchor-link" href="#Background">&#182;</a></h2><p><a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb">Gradient boosting</a> is a machine learning technique that produces a prediction model in the form of an ensemble of weak classifiers, optimizing for a differentiable loss function. One of the most popular types of gradient boosting is gradient boosted trees, that internally is made up of an ensemble of week <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb">decision trees</a>. There are two different ways to compute the trees: level-wise and leaf-wise as illustrated by the diagram below:</p>
+<p><a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb">Gradient boosting</a> is a machine learning technique that produces a prediction model in the form of an ensemble of weak classifiers, optimizing for a differentiable loss function. One of the most popular types of gradient boosting is gradient boosted trees, that internally is made up of an ensemble of week <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/decision_tree.ipynb">decision trees</a>. There are two different ways to compute the trees: level-wise and leaf-wise as illustrated by the diagram below:</p>
 <p><img src="img/levelwise.png" width="50%" height="50%"></p>
 <p><img src="img/leafwise.png" width="60%" height="60%"></p>
 <blockquote><p>The level-wise strategy adds complexity extending the depth of the tree level by level. As a contrary, the leaf-wise strategy generates branches by optimizing a loss.</p>
@@ -12260,7 +12260,15 @@ lightgbm 2.0.11
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Benchmarking">Benchmarking<a class="anchor-link" href="#Benchmarking">&#182;</a></h2><p>This notebook compares LightGBM with <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb">XGBoost</a>, another extremely popular gradient boosting framework by applying both the algorithms to a dataset and then comparing the model's performance and execution time. Here we will be using the <a href="http://archive.ics.uci.edu/ml/datasets/Adult">Adult dataset</a> that consists of 32561 observations and 14 features describing individuals from various countries. Our target is to predict whether a person makes &lt;=50k or &gt;50k annually on basis of the other information available. Dataset consists of 32561 observations and 14 features describing individuals.</p>
+<h2 id="Benchmarking">Benchmarking<a class="anchor-link" href="#Benchmarking">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This notebook compares LightGBM with <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb">XGBoost</a>, another extremely popular gradient boosting framework by applying both the algorithms to a dataset and then comparing the model's performance and execution time. Here we will be using the <a href="http://archive.ics.uci.edu/ml/datasets/Adult">Adult dataset</a> that consists of 32561 observations and 14 features describing individuals from various countries. Our target is to predict whether a person makes &lt;=50k or &gt;50k annually on basis of the other information available. Dataset consists of 32561 observations and 14 features describing individuals.</p>
 <p>For installing LightGBM on mac:</p>
 <div class="highlight"><pre><span></span><span class="c1"># install cmake and gcc first from brew</span>
 <span class="c1"># note that these installation can </span>
@@ -13031,11 +13039,19 @@ auc score:  0.935305121847
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Categorical-Variables-in-Tree-based-Models">Categorical Variables in Tree-based Models<a class="anchor-link" href="#Categorical-Variables-in-Tree-based-Models">&#182;</a></h2><p>LightGBM also has inbuilt support for categorical variables, unlike XGBoost, where one has to pre-process the data to convert all of the categorical features using one-hot encoding, this section is devoted to discussing why this is a highly desirable feature.</p>
+<h2 id="Categorical-Variables-in-Tree-based-Models">Categorical Variables in Tree-based Models<a class="anchor-link" href="#Categorical-Variables-in-Tree-based-Models">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>LightGBM also has inbuilt support for categorical variables, unlike XGBoost, where one has to pre-process the data to convert all of the categorical features using one-hot encoding, this section is devoted to discussing why this is a highly desirable feature.</p>
 <p>Many real-world datasets include a mix of continuous and categorical variables. The defining property of the latter is that they do not permit a total ordering. A major advantage of decision tree models and their ensemble counterparts, such as random forests, extra trees and gradient boosted trees, is that they are able to operate on both continuous and categorical variables directly (popular implementations of tree-based models differ as to whether they honor this fact). In contrast, most other popular models (e.g., generalized linear models, neural networks) must instead transform categorical variables into some numerical analog, usually by one-hot encoding them to create a new dummy variable for each level of the original variable. e.g.</p>
 <p><img src="img/onehot_encoding.png" width="80%" height="80%"></p>
-<p>One drawback of one hot encoding is that they can lead to a huge increase in the dimensionality of the feature representations. For example, one hot encoding U.S. states adds 49 dimensions to to our feature respresentation.</p>
-<p>To understand why we don't need to perform one hot encoding for tree-based models, we need to refer back to the logic of tree-based algorithms. At the heart of the tree-based algorithm is a sub-algorithm that splits the samples into two bins by selecting a feaeture and a value. This splitting algorithm considers each of the features in turn, and for each feature selects the value of that feature that minimizes the impurity of the bins.</p>
+<p>One drawback of one hot encoding is that they can lead to a huge increase in the dimensionality of the feature representations. For example, one hot encoding U.S. states adds 49 dimensions to to our feature representation.</p>
+<p>To understand why we don't need to perform one hot encoding for tree-based models, we need to refer back to the logic of tree-based algorithms. At the heart of the tree-based algorithm is a sub-algorithm that splits the samples into two bins by selecting a feature and a value. This splitting algorithm considers each of the features in turn, and for each feature selects the value of that feature that minimizes the impurity of the bins.</p>
 <p>This means tree-based models are essentially looking for places to split the data, they are not multiplying our inputs by weights. In contrast, most other popular models (e.g., generalized linear models, neural networks) would interpret categorical variables such as red=1, blue=2 as blue is twice the amount of red, which is obviously not what we want.</p>
 
 </div>
@@ -13265,7 +13281,15 @@ height=392
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://lightgbm.readthedocs.io/en/latest/Parameters-Tuning.html">LightGBM Documentation: Parameters Tuning</a></li>
 <li><a href="https://medium.com/data-design/xgboosts-new-fast-histogram-tree-method-hist-a3c08f36234c">Blog: xgboost’s New Fast Histogram (tree_method = hist)</a></li>
 <li><a href="https://www.analyticsvidhya.com/blog/2017/06/which-algorithm-takes-the-crown-light-gbm-vs-xgboost/">Blog: Which algorithm takes the crown: Light GBM vs XGBOOST?</a></li>

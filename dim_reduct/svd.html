@@ -13838,10 +13838,26 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Interpretation-of-SVD">Interpretation of SVD<a class="anchor-link" href="#Interpretation-of-SVD">&#182;</a></h2><h3 id="Geometric-Interpretation">Geometric Interpretation<a class="anchor-link" href="#Geometric-Interpretation">&#182;</a></h3><p>We'll use a 2d dimensional dataset for the geometric interpretation for ease of visualization. Transformation of a matrix by $U \Sigma V^T$ can be visualised as a rotation and reflection, scaling, rotation and reflection. We’ll see this as a step-by-step visualisation.</p>
+<h2 id="Interpretation-of-SVD">Interpretation of SVD<a class="anchor-link" href="#Interpretation-of-SVD">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Geometric-Interpretation">Geometric Interpretation<a class="anchor-link" href="#Geometric-Interpretation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll use a 2 dimensional dataset for the geometric interpretation for ease of visualization. Transformation of a matrix by $U \Sigma V^T$ can be visualized as a rotation and reflection, scaling, rotation and reflection. We'll see this as a step-by-step visualization.</p>
 <p>Given a matrix $x = \begin{bmatrix} -10 &amp; -10 &amp; 20 &amp; 20\\ -10 &amp; 20 &amp; 20 &amp; -10 \end{bmatrix}$ and a transformation matrix $A = \begin{bmatrix} 1 &amp; 0.3 \\ 0.45 &amp; 1.2 \end{bmatrix}$.</p>
 <ul>
-<li>$V^T x$ We can see that multiplying by $V^T$ rotates and reflects the input matrix $x$. Notice the swap of colours red-blue and green-yellow indicating a reflection along the x-axis.</li>
+<li>$V^T x$ We can see that multiplying by $V^T$ rotates and reflects the input matrix $x$. Notice the swap of colors red-blue and green-yellow indicating a reflection along the x-axis.</li>
 </ul>
 <p><img src="img/Vx_plot.png" width="30%" height="30%"></p>
 <ul>
@@ -14543,7 +14559,15 @@ height=271
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Factor-Interpretation">Factor Interpretation<a class="anchor-link" href="#Factor-Interpretation">&#182;</a></h3><p>Here we are given a rank 3 matrix $A$, representing ratings of movies by users.</p>
+<h3 id="Factor-Interpretation">Factor Interpretation<a class="anchor-link" href="#Factor-Interpretation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we are given a rank 3 matrix $A$, representing ratings of movies by users.</p>
 <table>
 <thead><tr>
 <th>Name</th>
@@ -14632,7 +14656,15 @@ height=271
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Worked-Example-Full-SVD">Worked Example Full SVD<a class="anchor-link" href="#Worked-Example-Full-SVD">&#182;</a></h2><p>Let's step through a worked example of "Full" SVD. In practice the full version is computationally expensive, since we must calculate the full matricies $U_{mr}$, $S_{rr}$, and $V_{nr}^{T}$. The "truncated" versions of SVD are usually preferred, where we can preselect the top $k &lt; r$ dimensions of interest and calculate $U_{mk}$, $S_{kk}$ and $V_{nk}^{T}$. But the truncated version is a topic for another day.</p>
+<h2 id="Worked-Example-Full-SVD">Worked Example Full SVD<a class="anchor-link" href="#Worked-Example-Full-SVD">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's step through a worked example of "Full" SVD. In practice the full version is computationally expensive, since we must calculate the full matrices $U_{mr}$, $S_{rr}$, and $V_{nr}^{T}$. The "truncated" versions of SVD are usually preferred, where we can preselect the top $k &lt; r$ dimensions of interest and calculate $U_{mk}$, $S_{kk}$ and $V_{nk}^{T}$. But the truncated version is a topic for another day.</p>
 
 </div>
 </div>
@@ -14915,7 +14947,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Relationships-with-PCA">Relationships with PCA<a class="anchor-link" href="#Relationships-with-PCA">&#182;</a></h2><p>This usage of SVD is very similar to Principal Components Analysis (PCA) and in fact several numerical software libraries actually use SVD under the hood for their PCA routines, for example <code>sklearn.decomposition.PCA</code> within scikit-learn. This is due to the fact that it is more numerically stable and it's also possible to perform a truncated SVD, which only needs us to calculate $U \Sigma V^T$ for the first $k&lt;n$ features; this makes it far quicker to compute than the full covariance matrix as computed within PCA.</p>
+<h2 id="Relationships-with-PCA">Relationships with PCA<a class="anchor-link" href="#Relationships-with-PCA">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This usage of SVD is very similar to Principal Components Analysis (PCA) and in fact several numerical software libraries actually use SVD under the hood for their PCA routines, for example <code>sklearn.decomposition.PCA</code> within scikit-learn. This is due to the fact that it is more numerically stable and it's also possible to perform a truncated SVD, which only needs us to calculate $U \Sigma V^T$ for the first $k&lt;n$ features; this makes it far quicker to compute than the full covariance matrix as computed within PCA.</p>
 <p>In the following section, we'll take a look at the relationship between these two methods, PCA and SVD. Recall from the documentation on <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/dim_reduct/PCA.ipynb">PCA</a>, given the input matrix $\mathbf X$ the math behind the algorithm is to solve the eigendecomposition for the correlation matrix (assuming we standardized all features) $\mathbf C = \mathbf X^T \mathbf X / (n - 1)$. It turns out, we can represent $\mathbf C$ by a product of its eigenvectors $\mathbf W$ and diagonalized eigenvalues $\mathbf L$.</p>
 <p>$$
 \begin{align}
@@ -15096,9 +15136,49 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2><p>This is by no means an exhaustive list of SVD's application.</p>
-<h3 id="Dimensionality-Reduction">Dimensionality Reduction<a class="anchor-link" href="#Dimensionality-Reduction">&#182;</a></h3><p>Due to its relationships with PCA, we can imagine a very frequent use of SVD is feature reduction. By only selecting the top $k$ singular values, we have in effect compressed the original information and represented it using fewer featuress. Note that because SVD is also a numerical algorithm, it is important to standardize the featues to ensure the magnitude of the entries are of similar range.</p>
-<h3 id="Information-Retrieval">Information Retrieval<a class="anchor-link" href="#Information-Retrieval">&#182;</a></h3><p>SVD has also been used extensively in information retrieval, in this particular application, it is also known as Latent Semantic Analysis (LSA) or Latent Semantic Indexing (LSI). As we'll soon see, the idea is very similar to <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb">topic modeling</a>. The fundamental problem in information retrieval is: given some search terms, retrieve all of the documents that contain those search terms or, perhaps more usefully, return documents whose content is semantically related to the search terms. For example, if one of the search terms was "automobile" it might be appropriate to return also documents that contain the search term "car".</p>
+<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is by no means an exhaustive list of SVD's application.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dimensionality-Reduction">Dimensionality Reduction<a class="anchor-link" href="#Dimensionality-Reduction">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Due to its relationships with PCA, we can imagine a very frequent use of SVD is feature reduction. By only selecting the top $k$ singular values, we have in effect compressed the original information and represented it using fewer features. Note that because SVD is also a numerical algorithm, it is important to standardize the features to ensure the magnitude of the entries are of similar range.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Information-Retrieval">Information Retrieval<a class="anchor-link" href="#Information-Retrieval">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>SVD has also been used extensively in information retrieval, in this particular application, it is also known as Latent Semantic Analysis (LSA) or Latent Semantic Indexing (LSI). As we'll soon see, the idea is very similar to <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb">topic modeling</a>. The fundamental problem in information retrieval is: given some search terms, retrieve all of the documents that contain those search terms or, perhaps more usefully, return documents whose content is semantically related to the search terms. For example, if one of the search terms was "automobile" it might be appropriate to return also documents that contain the search term "car".</p>
 <p>One approach to this problem is: Given an information repository, we might convert a raw text to document-term matrix with one row per document and one column per word. Then convert the search term as a vector in the same space, and retrieving document vectors that are close to the search vector. There are several problems with vector-based retrieval.</p>
 <ul>
 <li>First, the space is very high dimensional. For example, a typical collection of documents can easily mention more than 100,000 words even if stemming is used (i.e., "skip", "skipping", "skipped" are all treated as the same word). This creates problems for distance measurement due to the curse of dimensionality.</li>
@@ -15526,7 +15606,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Collaborative-Filtering">Collaborative Filtering<a class="anchor-link" href="#Collaborative-Filtering">&#182;</a></h3><p>This post is getting quite long, thus we'll just list it here that similar to the movie rating matrix in a couple of sections back, SVD can be applied to implementing recommendation system, namely collaborative filtering. I personally haven't checked it yet, but the following post seeems to contain a walkthrough of SVD applied to collaborative filtering for people who are interested in diving deeper. <a href="https://beckernick.github.io/matrix-factorization-recommender/">Blog: Matrix Factorization for Movie Recommendations in Python</a></p>
+<h3 id="Collaborative-Filtering">Collaborative Filtering<a class="anchor-link" href="#Collaborative-Filtering">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This post is getting quite long, thus we'll just list it here that similar to the movie rating matrix in a couple of sections back, SVD can be applied to implementing recommendation system, namely collaborative filtering. I personally haven't checked it yet, but the following post seems to contain a walkthrough of SVD applied to collaborative filtering for people who are interested in diving deeper. <a href="https://beckernick.github.io/matrix-factorization-recommender/">Blog: Matrix Factorization for Movie Recommendations in Python</a></p>
 
 </div>
 </div>
@@ -15535,7 +15623,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://www.datascienceassn.org/sites/default/files/users/user1/lsa_presentation_final.pdf">Notes: Latent Semantic Analysis</a></li>
 <li><a href="https://datajobs.com/data-science-repo/SVD-Tutorial-[Kirk-Baker].pdf">Notes: Singular Value Decomposition Tutorial</a></li>
 <li><a href="http://blog.applied.ai/feature-reduction-using-svd/">Blog: Feature Reduction using SVD</a></li>

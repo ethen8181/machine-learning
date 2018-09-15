@@ -12313,7 +12313,7 @@ P(X = x) = (1 - p)^{x - 1}p
 <li>For a given user, positive item pair, sample a negative item at random from all the remaining items. Compute predictions for both items; if the negative item's prediction exceeds that of the positive item plus a margin, perform a gradient update so we can rank the positive item higher and the negative item lower. If there is no rank violation, continue sampling negative items until a violation is found.</li>
 <li>If we found a violating negative example at the first try, make a large gradient update: this indicates that a lot of negative items are ranked higher than positives items in current state of the model, and the model should be updated by a large amount. If it took a lot of sampling to find a violating example, perform a small update since the model is likely close to the optimum and should be updated at a low rate.</li>
 </ul>
-<p>Given that intuition, we can formalize this idea with some notations in the next section.</p>
+<p>Given this intuition, we can formalize this idea with some notations in the next section.</p>
 
 </div>
 </div>
@@ -12322,7 +12322,15 @@ P(X = x) = (1 - p)^{x - 1}p
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Introducing-WARP">Introducing WARP<a class="anchor-link" href="#Introducing-WARP">&#182;</a></h2><p>In the context of making recommendation using implicit feedback data, we are interested in ranking items $i$ given a user $u$. And when a scoring function $f_u(i)$ give the score of item $i$ for user $u$, the item with the highest score is recommended.</p>
+<h2 id="Introducing-WARP">Introducing WARP<a class="anchor-link" href="#Introducing-WARP">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the context of making recommendation using implicit feedback data, we are interested in ranking items $i$ given a user $u$. And when a scoring function $f_u(i)$ give the score of item $i$ for user $u$, the item with the highest score is recommended.</p>
 <p>We let $f(u) \in \mathbb{R}^Y$ be a vector function providing a score for each of the items, where $f_i(u)$ is the value for item $i$. At the end of the day, after a scoring function $f_i(u)$ gives a score for all the items $i$, the item with the highest score is recommended.</p>
 <p>The class of ranking loss function we'll be looking at today is defined as:</p>
 <p>\begin{align}
@@ -12562,7 +12570,15 @@ AUC: train 0.95, test 0.91.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://www.youtube.com/watch?v=zq9Oz82iHf0">Youtube: An Introduction to the Geometric Distribution</a></li>
 <li><a href="http://building-babylon.net/2016/03/18/warp-loss-for-implicit-feedback-recommendation/">Blog: WARP loss for implicit-feedback recommendation</a></li>
 <li><a href="http://nbviewer.jupyter.org/github/lyst/lightfm/blob/master/examples/movielens/warp_loss.ipynb">Jupyter Notebook: Learning-to-rank using the WARP loss</a></li>
