@@ -11771,6 +11771,15 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Association-Rule" data-toc-modified-id="Association-Rule-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Association Rule</a></span><ul class="toc-item"><li><span><a href="#Terminology" data-toc-modified-id="Terminology-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Terminology</a></span></li><li><span><a href="#Apriori" data-toc-modified-id="Apriori-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Apriori</a></span><ul class="toc-item"><li><span><a href="#Frequent-Itemsets" data-toc-modified-id="Frequent-Itemsets-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Frequent Itemsets</a></span></li><li><span><a href="#Rules-Generation" data-toc-modified-id="Rules-Generation-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Rules Generation</a></span></li><li><span><a href="#Lift" data-toc-modified-id="Lift-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Lift</a></span></li></ul></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -11782,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>

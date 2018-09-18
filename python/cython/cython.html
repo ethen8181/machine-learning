@@ -11791,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12098,7 +12099,15 @@ numba 0.34.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Cython">Cython<a class="anchor-link" href="#Cython">&#182;</a></h2><p><a href="http://docs.cython.org/en/latest/">Cython</a> is a superset of the Python programming language, designed to give C-like performance with code which is mostly written in Python. In short it aims to give the simplicity of Python and efficiency of C. If you like some additional motivation to try it out consider listening to a 20 minute-ish talk from Pycon. <a href="https://www.youtube.com/watch?v=_1MSX7V28Po">Youtube: Cython as a Game Changer for Efficiency</a></p>
+<h2 id="Cython">Cython<a class="anchor-link" href="#Cython">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="http://docs.cython.org/en/latest/">Cython</a> is a superset of the Python programming language, designed to give C-like performance with code which is mostly written in Python. In short it aims to give the simplicity of Python and efficiency of C. If you like some additional motivation to try it out consider listening to a 20 minute-ish talk from Pycon. <a href="https://www.youtube.com/watch?v=_1MSX7V28Po">Youtube: Cython as a Game Changer for Efficiency</a></p>
 <p>We can write it in notebooks by loading the cython magic.</p>
 
 </div>
@@ -12225,7 +12234,15 @@ numba 0.34.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Static-Typing">Static Typing<a class="anchor-link" href="#Static-Typing">&#182;</a></h3><p>Cython extends the Python language with static type declarations. This increases speed by not needing to do type-checks when running the program. The way we do this in Cython is by adding the <code>cdef</code> keyword.</p>
+<h3 id="Static-Typing">Static Typing<a class="anchor-link" href="#Static-Typing">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Cython extends the Python language with static type declarations. This increases speed by not needing to do type-checks when running the program. The way we do this in Cython is by adding the <code>cdef</code> keyword.</p>
 <p>We'll write a simple program that increments j by 1 for 1000 times and compare the speed difference when adding the type declaration.</p>
 
 </div>
@@ -12339,7 +12356,23 @@ numba 0.34.0
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Notice the runtime difference (look at the units)</p>
-<h3 id="Functions">Functions<a class="anchor-link" href="#Functions">&#182;</a></h3><p>To declare functions we use the <code>cpdef</code> keyword.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Functions">Functions<a class="anchor-link" href="#Functions">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To declare functions we use the <code>cpdef</code> keyword.</p>
 
 </div>
 </div>
@@ -12423,7 +12456,15 @@ numba 0.34.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Numpy">Numpy<a class="anchor-link" href="#Numpy">&#182;</a></h3><p>Typed memoryviews allow even more efficient numpy manipulation since again, it does not incur the python overhead.</p>
+<h3 id="Numpy">Numpy<a class="anchor-link" href="#Numpy">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Typed memoryviews allow even more efficient numpy manipulation since again, it does not incur the python overhead.</p>
 
 </div>
 </div>
@@ -12480,7 +12521,7 @@ numba 0.34.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll start with simple version of the function that will give us a good benchmark for comparison with Cython alternatives below.</p>
+<p>We'll start by implementing a pure python version of the function that will give us a good benchmark for comparison with Cython alternatives below.</p>
 
 </div>
 </div>

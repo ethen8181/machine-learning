@@ -11791,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12068,15 +12069,15 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2017-07-31 14:35:07 
+<pre>Ethen 2018-09-17 17:58:04 
 
-CPython 3.5.2
-IPython 5.4.1
+CPython 3.6.4
+IPython 6.4.0
 
-numpy 1.13.1
-pandas 0.20.2
-sklearn 0.18.1
-scipy 0.19.1
+numpy 1.14.1
+pandas 0.23.0
+sklearn 0.19.1
+scipy 1.1.0
 joblib 0.11
 </pre>
 </div>
@@ -12101,8 +12102,24 @@ joblib 0.11
 <p>A nice <a href="https://twitter.com/chrisalbon/status/877524257202253825">tweet</a> that gives a brief description of supervised machine learning:</p>
 <blockquote><p>In machine learning, we have a training set — comprised of features (a.k.a inputs, independent variables) and labels (a.k.a. response, target, dependent variables). We use an algorithm to train a set of models with varying hyperparameter values then select the model that best minimizes some cost (a.k.a. loss, objective) function. We then use this model to make prediction on an unseen test set and evaluate the model's final performance. This documentation focuses on methods to select hyperparamters.</p>
 </blockquote>
-<p>It is common practice when performing a (supervised) machine learning experiment to hold out part of the available data as a test set. This way, we can evaluate how well the model will generalize to a new set of data that were not seen during the training phase. In other words, this process tries avoid the overfitting phenomenon where the algorithm starts memorizing the training set's labels but fail to predict anything for the unseen test data. However, if we were just to perfom a train/test split, the results can depend on a particular random choice for the pair of train/test sets. One solution to this problem is a procedure called cross-validation.</p>
-<h2 id="K-Fold-Cross-Validation">K-Fold Cross Validation<a class="anchor-link" href="#K-Fold-Cross-Validation">&#182;</a></h2><p>One of the most common technique for model evaluation and model selection in machine learning practice is K-fold cross validation. The main idea behind cross-validation is that each observation in our dataset has the opportunity of being tested. K-fold cross-validation is a special case of cross-validation where we iterate over a dataset set k times. In each round, we split the dataset into $k$ parts: one part is used for validation, and the remaining $k-1$ parts are merged into a training subset for model evaluation. The figure below illustrates the process of 5-fold cross-validation:</p>
+<p>It is common practice when performing a (supervised) machine learning experiment to hold out part of the available data as a test set. This way, we can evaluate how well the model will generalize to a new set of data that were not seen during the training phase. In other words, this process tries avoid the overfitting phenomenon where the algorithm starts memorizing the training set's labels but fail to predict anything for the unseen test data. However, if we were just to perform a train/test split, the results can depend on a particular random choice for the pair of train/test sets. One solution to this problem is a procedure called cross-validation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="K-Fold-Cross-Validation">K-Fold Cross Validation<a class="anchor-link" href="#K-Fold-Cross-Validation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One of the most common technique for model evaluation and model selection in machine learning practice is K-fold cross validation. The main idea behind cross-validation is that each observation in our dataset has the opportunity of being tested. K-fold cross-validation is a special case of cross-validation where we iterate over a dataset set k times. In each round, we split the dataset into $k$ parts: one part is used for validation, and the remaining $k-1$ parts are merged into a training subset for model evaluation. The figure below illustrates the process of 5-fold cross-validation:</p>
 <p><img src="img/kfolds.png" width="60%" height="60%"></p>
 <p>We use a learning algorithm with fixed hyperparameter settings to fit models to the training folds in each iteration. In 5-fold cross-validation, this procedure will result in 5 models fitted on distinct yet partly overlapping training sets and evaluated on non-overlapping validation sets. Eventually, we compute the cross-validation performance as the arithmetic mean over the $k$ performance estimates from the validation sets. The main benefit behind this approach versus a simple train/test split is to reduce the pessimistic bias by using more training data in contrast to setting aside a relatively large portion of the dataset as test data.</p>
 <p>The following section shows a vanilla implementation of how to generate a K-fold data split.</p>
@@ -12255,7 +12272,23 @@ TRAIN: [0 1 2] TEST: [3 4]
 <li>Then we make use of the independent test set we withheld at the beginning to evaluate the model that we obtained</li>
 </ul>
 <p>Let's now tackle each step one at a time.</p>
-<h2 id="Grid-Search">Grid Search<a class="anchor-link" href="#Grid-Search">&#182;</a></h2><p>There're various ways to perform hyperparamter tuning and one of them is Grid Search. This method simply exhaustively considers all parameter combinations.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Grid-Search">Grid Search<a class="anchor-link" href="#Grid-Search">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are various ways to perform hyperparameter tuning and one of them is Grid Search. This method exhaustively considers all parameter combinations and picks the best one based on the model that gives the best performance (we can specify the performance criteria).</p>
 
 </div>
 </div>
@@ -12320,10 +12353,10 @@ parameters:  (&#39;a&#39;, &#39;b&#39;)
 values ([1, 2], [True, False])
 
 grid search parameters
-{&#39;b&#39;: True, &#39;a&#39;: 1}
-{&#39;b&#39;: False, &#39;a&#39;: 1}
-{&#39;b&#39;: True, &#39;a&#39;: 2}
-{&#39;b&#39;: False, &#39;a&#39;: 2}
+{&#39;a&#39;: 1, &#39;b&#39;: True}
+{&#39;a&#39;: 1, &#39;b&#39;: False}
+{&#39;a&#39;: 2, &#39;b&#39;: True}
+{&#39;a&#39;: 2, &#39;b&#39;: False}
 </pre>
 </div>
 </div>
@@ -12420,10 +12453,10 @@ grid search parameters
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;b&#39;: True, &#39;a&#39;: 1}
-{&#39;b&#39;: False, &#39;a&#39;: 1}
-{&#39;b&#39;: True, &#39;a&#39;: 2}
-{&#39;b&#39;: False, &#39;a&#39;: 2}
+<pre>{&#39;a&#39;: 1, &#39;b&#39;: True}
+{&#39;a&#39;: 1, &#39;b&#39;: False}
+{&#39;a&#39;: 2, &#39;b&#39;: True}
+{&#39;a&#39;: 2, &#39;b&#39;: False}
 </pre>
 </div>
 </div>
@@ -12716,17 +12749,17 @@ grid search parameters
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -12745,43 +12778,43 @@ grid search parameters
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.976667</td>
-      <td>0.012472</td>
-      <td>0.933333</td>
-      <td>0.033993</td>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>0.953333</td>
+      <td>0.024944</td>
       <td>gini</td>
-      <td>3.0</td>
-      <td>{'max_depth': 3, 'criterion': 'gini'}</td>
+      <td>NaN</td>
+      <td>{'criterion': 'gini', 'max_depth': None}</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>1.000000</td>
-      <td>0.000000</td>
-      <td>0.933333</td>
-      <td>0.033993</td>
+      <td>0.983333</td>
+      <td>0.009428</td>
+      <td>0.953333</td>
+      <td>0.009428</td>
       <td>gini</td>
-      <td>NaN</td>
-      <td>{'max_depth': None, 'criterion': 'gini'}</td>
+      <td>3.0</td>
+      <td>{'criterion': 'gini', 'max_depth': 3}</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.976667</td>
-      <td>0.012472</td>
-      <td>0.926667</td>
-      <td>0.037712</td>
+      <td>0.970000</td>
+      <td>0.014142</td>
+      <td>0.953333</td>
+      <td>0.009428</td>
       <td>entropy</td>
       <td>3.0</td>
-      <td>{'max_depth': 3, 'criterion': 'entropy'}</td>
+      <td>{'criterion': 'entropy', 'max_depth': 3}</td>
     </tr>
     <tr>
       <th>3</th>
       <td>1.000000</td>
       <td>0.000000</td>
-      <td>0.926667</td>
-      <td>0.037712</td>
+      <td>0.946667</td>
+      <td>0.033993</td>
       <td>entropy</td>
       <td>NaN</td>
-      <td>{'max_depth': None, 'criterion': 'entropy'}</td>
+      <td>{'criterion': 'entropy', 'max_depth': None}</td>
     </tr>
   </tbody>
 </table>
@@ -12798,7 +12831,15 @@ grid search parameters
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Random-Search">Random Search<a class="anchor-link" href="#Random-Search">&#182;</a></h2><p>While grid search is a widely used method for parameter optimization, other search methods such as random search have more favourable properties. So instead of listing out the list of values to try for each parameter and then trying out all possible combinations of these values, in random search each parameter is sampled from a distribution. The user can specify the distribution to sample from and how many parameters should be sampled (this can be a big benefit if we're limited on computation budget).</p>
+<h2 id="Random-Search">Random Search<a class="anchor-link" href="#Random-Search">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>While grid search is a widely used method for parameter optimization, other search methods such as random search have more favorable properties. So instead of listing out the list of values to try for each parameter and then trying out all possible combinations of these values, in random search each parameter is sampled from a distribution. The user can specify the distribution to sample from and how many parameters should be sampled (this can be a big benefit if we're limited on computation budget).</p>
 <p>The rationale behind why random search can be better than the much more robust-looking grid-search can be nicely illustrated by the figure below:</p>
 <p><img src="img/search_comparison.png" width="50%" height="50%"></p>
 <p>The idea is that in most cases the bumpy surface of the objective/cost function is not as bumpy in all dimensions. In other words, some parameters have much less effect on the objective/cost function than others. Hence, given the same amount of trials, using random search allows us to explore the space more.</p>
@@ -12837,7 +12878,7 @@ grid search parameters
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>7</pre>
+<pre>3</pre>
 </div>
 
 </div>
@@ -12927,7 +12968,15 @@ grid search parameters
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Random-&amp;-Grid-Search-Comparison">Random &amp; Grid Search Comparison<a class="anchor-link" href="#Random-&amp;-Grid-Search-Comparison">&#182;</a></h2><p>The following section demonstrates how to use the scikit-learn <code>GridSearchCV</code> and <code>RandomizedSearchCV</code>. On this particular example using randomized search and the grid search resulted in similar performance when tuning the same parameters, while the run time for randomized search is drastically lower. Note that your mileage may vary. This result is not saying that <code>RandomizedSearchCV</code> will always outperform <code>GridSearchCV</code>.</p>
+<h2 id="Random-&amp;-Grid-Search-Comparison">Random &amp; Grid Search Comparison<a class="anchor-link" href="#Random-&amp;-Grid-Search-Comparison">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following section demonstrates how to use the scikit-learn <code>GridSearchCV</code> and <code>RandomizedSearchCV</code>. On this particular example using randomized search and the grid search resulted in similar performance when tuning the same parameters, while the run time for randomized search is drastically lower. Note that your mileage may vary. This result is not saying that <code>RandomizedSearchCV</code> will always outperform <code>GridSearchCV</code>.</p>
 
 </div>
 </div>
@@ -13008,19 +13057,19 @@ grid search parameters
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>RandomizedSearchCV took 3.24 seconds for 24 parameter settings
-Best score obtained: 0.9309961046188091
+<pre>RandomizedSearchCV took 3.09 seconds for 24 parameter settings
+Best score obtained: 0.9287701725097385
 Parameters:
+	criterion: entropy
 	max_depth: 10
 	max_features: 7
-	criterion: entropy
 
-GridSearchCV took 6.15 seconds for 48 parameter settings
-Best score obtained: 0.9237618252643295
+GridSearchCV took 5.67 seconds for 48 parameter settings
+Best score obtained: 0.9248747913188647
 Parameters:
-	max_depth: 9
-	max_features: 11
 	criterion: gini
+	max_depth: 7
+	max_features: 11
 </pre>
 </div>
 </div>
@@ -13033,7 +13082,15 @@ Parameters:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="https://github.com/scikit-learn/scikit-learn/blob/14031f6/sklearn/model_selection/_split.py#L347">Github: scikit-learn's KFold</a></li>
 <li><a href="https://github.com/scikit-learn/scikit-learn/blob/14031f6/sklearn/model_selection/_search.py#L685">Github: scikit-learn's GridSearch</a></li>
 <li><a href="http://scikit-learn.org/stable/modules/grid_search.html">Scikit-learn Documentation: Tuning the hyper-parameters of an estimator</a></li>

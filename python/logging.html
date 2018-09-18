@@ -11771,6 +11771,15 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Logging" data-toc-modified-id="Logging-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Logging</a></span></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -11782,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">)</span> <span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12072,14 +12082,22 @@ IPython 5.4.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Logging">Logging<a class="anchor-link" href="#Logging">&#182;</a></h1><p>Once your application grows beyond a basic project, having good logging as oppose to just print statement is going to allow us to look at behaviors and errors over time and give us a better overall picture of what's going on.</p>
+<h1 id="Logging">Logging<a class="anchor-link" href="#Logging">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once your application grows beyond a basic project, having good logging as oppose to just print statement is going to allow us to look at behaviors and errors over time and give us a better overall picture of what's going on.</p>
 <p>There are 5 different kinds of logging levels. Levels allow us to to specify exactly what we want to log by separating them into categories. The description of each of these is as follows:</p>
 <ul>
-<li>DEBUG: Detailed debug information, typically of interest only when diagnosing problems</li>
-<li>INFO: Confirmation that things are working as expected</li>
-<li>WARNING: An indication that something unexpected happened, or indicative of some problem in the near future (e.g. ‘disk space low’). The software is still working as expected</li>
-<li>ERROR: Due to a more serious problem, the software has not been able to perform some function</li>
-<li>CRITICAL: A serious error, indicating that the program itself may be unable to continue running</li>
+<li><code>DEBUG</code>: Detailed debug information, typically of interest only when diagnosing problems</li>
+<li><code>INFO</code>: Confirmation that things are working as expected</li>
+<li><code>WARNING</code>: An indication that something unexpected happened, or indicative of some problem in the near future (e.g. ‘disk space low’). The software is still working as expected</li>
+<li><code>ERROR</code>: Due to a more serious problem, the software has not been able to perform some function</li>
+<li><code>CRITICAL</code>: A serious error, indicating that the program itself may be unable to continue running</li>
 </ul>
 <p>The default level is WARNING, meaning that it will capture anything that is a warning or above, and ignore the DEBUG and debug level. we can change this behavior using the basicConfig method.</p>
 

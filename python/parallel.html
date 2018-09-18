@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Parallel-Programming-in-Python" data-toc-modified-id="Parallel-Programming-in-Python-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Parallel Programming in Python</a></span><ul class="toc-item"><li><span><a href="#Global-Interpreter-Lock" data-toc-modified-id="Global-Interpreter-Lock-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Global Interpreter Lock</a></span></li><li><span><a href="#Threads-vs.-Processes" data-toc-modified-id="Threads-vs.-Processes-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Threads vs. Processes</a></span></li><li><span><a href="#Python's-Parallel-Programming-Ecosystem" data-toc-modified-id="Python's-Parallel-Programming-Ecosystem-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Python's Parallel Programming Ecosystem</a></span><ul class="toc-item"><li><span><a href="#threading" data-toc-modified-id="threading-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>threading</a></span></li><li><span><a href="#concurrent.futures" data-toc-modified-id="concurrent.futures-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>concurrent.futures</a></span></li></ul></li><li><span><a href="#Practical-Application" data-toc-modified-id="Practical-Application-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Practical Application</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Parallel-Programming-in-Python" data-toc-modified-id="Parallel-Programming-in-Python-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Parallel Programming in Python</a></span><ul class="toc-item"><li><span><a href="#Global-Interpreter-Lock" data-toc-modified-id="Global-Interpreter-Lock-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Global Interpreter Lock</a></span></li><li><span><a href="#Python's-Parallel-Programming-Ecosystem" data-toc-modified-id="Python's-Parallel-Programming-Ecosystem-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Python's Parallel Programming Ecosystem</a></span><ul class="toc-item"><li><span><a href="#threading" data-toc-modified-id="threading-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>threading</a></span></li><li><span><a href="#concurrent.futures" data-toc-modified-id="concurrent.futures-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>concurrent.futures</a></span></li></ul></li><li><span><a href="#Practical-Application" data-toc-modified-id="Practical-Application-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Practical Application</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -11791,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12093,18 +12094,58 @@ requests 2.18.4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Parallel-Programming-in-Python">Parallel Programming in Python<a class="anchor-link" href="#Parallel-Programming-in-Python">&#182;</a></h1><p>The essence of parallel programming is: If we have two tasks on our hand, task A and task B that does not depend on each other, we can run them simultaneously without having to wait for task A to finish before running running task B. In this tutorial, we're going to take a look at doing parallel computing in Python, we will go through the following:</p>
+<h1 id="Parallel-Programming-in-Python">Parallel Programming in Python<a class="anchor-link" href="#Parallel-Programming-in-Python">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The essence of parallel programming is: If we have two tasks on our hand, task A and task B that does not depend on each other, we can run them simultaneously without having to wait for task A to finish before running running task B. In this tutorial, we're going to take a look at doing parallel computing in Python, we will go through the following:</p>
 <ul>
 <li>Why is parallelism tricky in Python (hint: it's because of the GIL—the global interpreter lock).</li>
 <li>Threads vs. Processes: Different ways of achieving parallelism. When to use one over the other?</li>
 <li>Parallel vs. Concurrent: Why in some cases we can settle for concurrency rather than parallelism.</li>
 <li>Building a simple but practical example using the various techniques discussed.</li>
 </ul>
-<h2 id="Global-Interpreter-Lock">Global Interpreter Lock<a class="anchor-link" href="#Global-Interpreter-Lock">&#182;</a></h2><p>The <strong>Global Interpreter Lock (GIL)</strong> is one of the most controversial subjects in the Python world. In CPython, the most popular implementation of Python, the GIL is a <a href="https://stackoverflow.com/questions/34524/what-is-a-mutex">mutex (mutually exclusive object)</a> that makes things thread-safe. The GIL makes it easy to integrate with external libraries that are not thread-safe, and it makes non-parallel code faster. This comes at a cost, though. Due to the GIL, we can't achieve true parallelism via multithreading. Basically, two different native threads of the same process can't run Python code at the same time.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Global-Interpreter-Lock">Global Interpreter Lock<a class="anchor-link" href="#Global-Interpreter-Lock">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <strong>Global Interpreter Lock (GIL)</strong> is one of the most controversial subjects in the Python world. In CPython, the most popular implementation of Python, the GIL is a <a href="https://stackoverflow.com/questions/34524/what-is-a-mutex">mutex (mutually exclusive object)</a> that makes things thread-safe. The GIL makes it easy to integrate with external libraries that are not thread-safe, and it makes non-parallel code faster. This comes at a cost, though. Due to the GIL, we can't achieve true parallelism via multithreading. Basically, two different native threads of the same process can't run Python code at the same time.</p>
 <p>Things are not that bad, though, and here's why: stuff that happens outside the GIL realm is free to be parallel. In this category fall long-running tasks like I/O and libraries like Numpy (Numpy works around this limitation by running external code in C).</p>
-<h2 id="Threads-vs.-Processes">Threads vs. Processes<a class="anchor-link" href="#Threads-vs.-Processes">&#182;</a></h2><p>From the last section, we learned that unlike other programming language, Python is not truly multithreaded as it can't run multiple threads simultaneously on multiple cores/CPUs due to the GIL. Before we move on, let's take a step back and understand what is a thread, what is a process and the distinction between them?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Threads-vs.-Processes">Threads vs. Processes<a class="anchor-link" href="#Threads-vs.-Processes">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the last section, we learned that unlike other programming language, Python is not truly multithreaded as it can't run multiple threads simultaneously on multiple cores/CPUs due to the GIL. Before we move on, let's take a step back and understand what is a thread, what is a process and the distinction between them?</p>
 <ul>
-<li>A <strong>process</strong> is a program that is in execution—in other words, code that is running (e.g. Jupyter notebook, Google Chrome, Python interpreter). Multiple processes are always running in a computer, and they are executing in parallel.</li>
+<li>A <strong>process</strong> is a program that is in execution other words, code that is running (e.g. Jupyter notebook, Google Chrome, Python interpreter). Multiple processes are always running in a computer, and they are executing in parallel.</li>
 <li>A <strong>process can spawn multiple threads (sub-processes)</strong> to handle subtasks. They live inside processes and share the same memory space (they can read and write to the same variables). Ideally, they run in parallel, but not necessarily. The reason why processes aren't enough is because applications need to be responsive and listen for user actions while updating the display and saving a file.</li>
 </ul>
 <p>e.g. Microsoft Word. When we open up Word, we're essentially creating a process (an instance of the program). When we start typing, the process spawns a number of threads: one to read keystrokes, another to display text on the screen, a thread to autosave our file, and yet another to highlight spelling mistakes. By spawning multiple threads, Microsoft takes advantage of "wasted CPU time" (waiting for our keystrokes or waiting for a file to save) to provide a smoother user interface and make us more productive.</p>
@@ -12145,13 +12186,37 @@ requests 2.18.4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Python's-Parallel-Programming-Ecosystem">Python's Parallel Programming Ecosystem<a class="anchor-link" href="#Python's-Parallel-Programming-Ecosystem">&#182;</a></h2><p>Python has rich APIs for doing parallel programming. Here, we'll cover the most popular ones:</p>
+<h2 id="Python's-Parallel-Programming-Ecosystem">Python's Parallel Programming Ecosystem<a class="anchor-link" href="#Python's-Parallel-Programming-Ecosystem">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Python has built-in libraries for doing parallel programming. Here, we'll cover the most popular ones:</p>
 <ul>
 <li><strong>threading</strong>: The standard way of working with threads in Python. It is a higher-level API wrapper over the functionality exposed by the <code>_thread</code> module, which is a low-level interface over the operating system's thread implementation.</li>
 <li><strong>multiprocessing</strong>: Offers a very similar interface to the threading module but using processes instead of threads.</li>
 <li><strong>concurrent.futures</strong>: A module part of the standard library that provides an even higher-level abstraction layer over threading/multiprocessing.</li>
 </ul>
-<h3 id="threading">threading<a class="anchor-link" href="#threading">&#182;</a></h3><p>We'll first take a look at the threading API. Before we create/initialize a thread, we define a simple function that simply sleeps for a specified amount of time.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="threading">threading<a class="anchor-link" href="#threading">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll first take a look at the threading API. Before we create/initialize a thread, we define a simple function that simply sleeps for a specified amount of time.</p>
 
 </div>
 </div>
@@ -12399,7 +12464,23 @@ Elapse time:  2.004049062728882
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>From the result above, we can observe from the elapse time that it doesn't take n_threads * (the time we told the sleep function to sleep) amount of time to finish all the task, which is pretty neat!</p>
-<h3 id="concurrent.futures">concurrent.futures<a class="anchor-link" href="#concurrent.futures">&#182;</a></h3><p>As mentioned previously, the concurrent.futures module is part of the standard library which provides a high level API for launching asynchronous tasks. This module features the Executor class which is an abstract class and it can not be used directly, however, it has two very useful concrete subclasses – <code>ThreadPoolExecutor</code> and <code>ProcessPoolExecutor</code>. As their names suggest, one uses multithreading and the other one uses multiprocessing as their backend. In both case, we get a pool of threads or processes and we can submit tasks to this pool. The pool would assign tasks to the available resources (threads or pools) and schedule them to run.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="concurrent.futures">concurrent.futures<a class="anchor-link" href="#concurrent.futures">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As mentioned previously, the concurrent.futures module is part of the standard library which provides a high level API for launching asynchronous tasks. This module features the Executor class which is an abstract class and it can not be used directly, however, it has two very useful concrete subclasses – <code>ThreadPoolExecutor</code> and <code>ProcessPoolExecutor</code>. As their names suggest, one uses multithreading and the other one uses multiprocessing as their backend. In both case, we get a pool of threads or processes and we can submit tasks to this pool. The pool would assign tasks to the available resources (threads or pools) and schedule them to run.</p>
 <p>Both executors have a common method – <code>map()</code>. Like the built in function, the map method allows multiple calls to a provided function, passing each of the items in an iterable to that function. Except, in this case, the functions are called concurrently.</p>
 <p>From the <a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor">documentation</a>: For multiprocessing, this iterable is broken into chunks and each of these chunks is passed to the function in separate processes. We can control the chunk size by passing a third parameter, chunk_size. By default the chunk size is 1. For very long iterables, using a large value for chunksize can significantly improve performance compared to the default size of 1. With ThreadPoolExecutor, chunksize has no effect.</p>
 
@@ -12669,7 +12750,23 @@ Threads time= 2.8286261558532715
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The main difference here is in the result of the multithreaded approach. This time it performs very similarly to the serial approach, and here's why: since it performs computations and Python doesn't perform real parallelism, the threads are basically running one after the other until they all finish. In fact it might even be slower, as we need to take into account the overhead of launching multiple threads.</p>
-<h2 id="Practical-Application">Practical Application<a class="anchor-link" href="#Practical-Application">&#182;</a></h2><p>In this section, we're going to walk through all the different paradigms by building a classic application that checks the uptime of websites. The purpose of these apps is to notify us when our website is down so that we can quickly take action. Here's how they work:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Practical-Application">Practical Application<a class="anchor-link" href="#Practical-Application">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this section, we're going to walk through all the different paradigms by building a classic application that checks the uptime of websites. The purpose of these apps is to notify us when our website is down so that we can quickly take action. Here's how they work:</p>
 <ul>
 <li>The application goes very frequently over a list of website URLs and checks if those websites are up.</li>
 <li>Every website should be checked every 5-10 minutes so that the downtime is not significant.</li>

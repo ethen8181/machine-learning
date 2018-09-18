@@ -11771,6 +11771,15 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Strings-and-Text" data-toc-modified-id="Strings-and-Text-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Strings and Text</a></span><ul class="toc-item"><li><span><a href="#Splitting-Strings-on-Any-of-Multiple-Delimiters-Using-re.split" data-toc-modified-id="Splitting-Strings-on-Any-of-Multiple-Delimiters-Using-re.split-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Splitting Strings on Any of Multiple Delimiters Using re.split</a></span></li><li><span><a href="#Matching-Text-at-the-Start-or-End-of-a-String" data-toc-modified-id="Matching-Text-at-the-Start-or-End-of-a-String-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Matching Text at the Start or End of a String</a></span></li><li><span><a href="#Wildcard-Patterns-Way-of-Matching-Strings-Using-fnmatchcase" data-toc-modified-id="Wildcard-Patterns-Way-of-Matching-Strings-Using-fnmatchcase-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Wildcard Patterns Way of Matching Strings Using fnmatchcase</a></span></li><li><span><a href="#Matching-and-Searching-for-Text-Patterns" data-toc-modified-id="Matching-and-Searching-for-Text-Patterns-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Matching and Searching for Text Patterns</a></span></li><li><span><a href="#Searching-and-Replacing-Text" data-toc-modified-id="Searching-and-Replacing-Text-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Searching and Replacing Text</a></span></li><li><span><a href="#Stripping-Unwanted-Characters-from-Strings-Using-strip" data-toc-modified-id="Stripping-Unwanted-Characters-from-Strings-Using-strip-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Stripping Unwanted Characters from Strings Using strip</a></span></li><li><span><a href="#Character-to-Character-Mapping-Using-translate." data-toc-modified-id="Character-to-Character-Mapping-Using-translate.-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>Character to Character Mapping Using translate.</a></span></li><li><span><a href="#Combining-and-Concatenating-Strings" data-toc-modified-id="Combining-and-Concatenating-Strings-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>Combining and Concatenating Strings</a></span></li><li><span><a href="#String-Formatting" data-toc-modified-id="String-Formatting-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>String Formatting</a></span></li><li><span><a href="#Reformatting-Text-to-a-Fixed-Number-of-Columns-Using-textwrap" data-toc-modified-id="Reformatting-Text-to-a-Fixed-Number-of-Columns-Using-textwrap-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>Reformatting Text to a Fixed Number of Columns Using textwrap</a></span></li></ul></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -11782,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12032,6 +12042,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
 <span class="c1"># magic to print version</span>
 <span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v

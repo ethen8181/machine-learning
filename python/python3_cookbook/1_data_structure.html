@@ -11771,6 +11771,15 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Data-Structure" data-toc-modified-id="Data-Structure-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Data Structure</a></span><ul class="toc-item"><li><span><a href="#Simple-Assignments-to-Unpack-Iterables-into-Separate-Variables" data-toc-modified-id="Simple-Assignments-to-Unpack-Iterables-into-Separate-Variables-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Simple Assignments to Unpack Iterables into Separate Variables</a></span></li><li><span><a href="#Use-&quot;Star-Expressions&quot;-to-Unpack-Iterables-of-Arbitrary-Length" data-toc-modified-id="Use-&quot;Star-Expressions&quot;-to-Unpack-Iterables-of-Arbitrary-Length-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Use "Star Expressions" to Unpack Iterables of Arbitrary Length</a></span></li><li><span><a href="#Keeping-the-Last-N-Items-Using-deque" data-toc-modified-id="Keeping-the-Last-N-Items-Using-deque-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Keeping the Last N Items Using deque</a></span></li><li><span><a href="#Finding-the-Largest-or-Smallest-N-Items-Using-heapq" data-toc-modified-id="Finding-the-Largest-or-Smallest-N-Items-Using-heapq-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Finding the Largest or Smallest N Items Using heapq</a></span></li><li><span><a href="#PriorityQueue" data-toc-modified-id="PriorityQueue-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>PriorityQueue</a></span></li><li><span><a href="#Keeping-Dictionaries-in-Order-Using-OrderedDict" data-toc-modified-id="Keeping-Dictionaries-in-Order-Using-OrderedDict-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Keeping Dictionaries in Order Using OrderedDict</a></span></li><li><span><a href="#Calculating-with-Dictionaries-Using-zip" data-toc-modified-id="Calculating-with-Dictionaries-Using-zip-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>Calculating with Dictionaries Using zip</a></span></li><li><span><a href="#Finding-Commonalities-in-Two-Dictionaries-Using-set-operations" data-toc-modified-id="Finding-Commonalities-in-Two-Dictionaries-Using-set-operations-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>Finding Commonalities in Two Dictionaries Using set operations</a></span></li><li><span><a href="#Removing-Duplicates-from-a-Sequence-while-Maintaining-Order" data-toc-modified-id="Removing-Duplicates-from-a-Sequence-while-Maintaining-Order-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>Removing Duplicates from a Sequence while Maintaining Order</a></span></li><li><span><a href="#Naming-Slices" data-toc-modified-id="Naming-Slices-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>Naming Slices</a></span></li><li><span><a href="#Find-the-Most-Frequently-Items-in-a-Sequence-Using-Counter" data-toc-modified-id="Find-the-Most-Frequently-Items-in-a-Sequence-Using-Counter-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>Find the Most Frequently Items in a Sequence Using Counter</a></span></li><li><span><a href="#Sorting-with-itemgetter-and-attrgetter" data-toc-modified-id="Sorting-with-itemgetter-and-attrgetter-1.12"><span class="toc-item-num">1.12&nbsp;&nbsp;</span>Sorting with itemgetter and attrgetter</a></span></li><li><span><a href="#Named-Tuples" data-toc-modified-id="Named-Tuples-1.13"><span class="toc-item-num">1.13&nbsp;&nbsp;</span>Named Tuples</a></span></li><li><span><a href="#DefaultDict" data-toc-modified-id="DefaultDict-1.14"><span class="toc-item-num">1.14&nbsp;&nbsp;</span>DefaultDict</a></span></li><li><span><a href="#Filtering-Sequence-Elements" data-toc-modified-id="Filtering-Sequence-Elements-1.15"><span class="toc-item-num">1.15&nbsp;&nbsp;</span>Filtering Sequence Elements</a></span></li><li><span><a href="#Extracting-a-Subset-of-a-Dictionary" data-toc-modified-id="Extracting-a-Subset-of-a-Dictionary-1.16"><span class="toc-item-num">1.16&nbsp;&nbsp;</span>Extracting a Subset of a Dictionary</a></span></li><li><span><a href="#Transforming-and-Reducing-Data-Using-Generation-Expression" data-toc-modified-id="Transforming-and-Reducing-Data-Using-Generation-Expression-1.17"><span class="toc-item-num">1.17&nbsp;&nbsp;</span>Transforming and Reducing Data Using Generation Expression</a></span></li><li><span><a href="#For-else" data-toc-modified-id="For-else-1.18"><span class="toc-item-num">1.18&nbsp;&nbsp;</span>For else</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -11782,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12032,6 +12042,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
 <span class="c1"># magic to print version</span>
 <span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v
