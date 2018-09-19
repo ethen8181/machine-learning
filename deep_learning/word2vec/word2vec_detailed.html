@@ -11791,8 +11791,9 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">()</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12473,13 +12474,21 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Model-Details">Model Details<a class="anchor-link" href="#Model-Details">&#182;</a></h2><p>The way the model works underneath the hood is that trains a neural network by do the following: Given a specific word in the middle of a sentence (the input word), look at the words nearby and pick one at random.</p>
-<p>There is a <strong>window size</strong> hyperparameter to the algorithm that quantifies the word "nearby". A typical window size might be 5, meaning 5 words behind and 5 words ahead (10 in total). There're some implementations that something even fancier: Instead of using a fix $k$ window around each word, the window is uniformly distributed from $1, 2, ..., K$, where $K$ is the max window size we specify.</p>
+<h2 id="Model-Details">Model Details<a class="anchor-link" href="#Model-Details">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The way the model works underneath the hood is that trains a neural network by do the following: Given a specific word in the middle of a sentence (the input word), look at the words nearby and pick one at random.</p>
+<p>There is a <strong>window size</strong> hyperparameter to the algorithm that quantifies the word "nearby". A typical window size might be 5, meaning 5 words behind and 5 words ahead (10 in total). There are some implementations that does something even fancier: Instead of using a fix $k$ window around each word, the window is uniformly distributed from $1, 2, ..., K$, where $K$ is the max window size we specify.</p>
 <p>The diagram below shows some of the training samples (word pairs) we would take from the sentence "The quick brown fox jumps over the lazy dog." We'll used a small window size of 2 just for the example. The word highlighted in blue is the input word.</p>
 <p><img src="img/skipgram.png" width="60%" height="60%"></p>
 <p>After feeding a bunch of word pairs to the network, it is going to tell us the probability for every word in our vocabulary being "nearby" word that we chose. The output probabilities are going to relate to how likely it is find each vocabulary word nearby our input word. For example, if we gave the trained network the input word "Soviet", the output probabilities should be much higher for words like "Union" and "Russia" than for unrelated words like "watermelon" and "kangaroo".</p>
 <p>So how is this all represented? First of all, we know we can't feed a word just as a text string to a neural network (or probably any machine learning model), i.e. we need a way to represent the words to the network. To do this, we first build a vocabulary of words from our training documents. We'll assume that our corpus has a vocabulary size of 10,000.</p>
-<p>We’re going to represent an input word like "ants" as a one-hot vector. This vector will have 10,000 components (one for every unqiue word in our vocabulary) and we'll place a "1" in the position corresponding to the word "ants", and 0s in all of the other positions. The output of the network is a single vector (also with 10,000 components) containing, for every word in our vocabulary, the probability that a randomly selected nearby word is that vocabulary word. Here’s the architecture of our single-layer neural network.</p>
+<p>We're going to represent an input word like "ants" as a one-hot vector. This vector will have 10,000 components (one for every unique word in our vocabulary) and we'll place a "1" in the position corresponding to the word "ants", and 0s in all of the other positions. The output of the network is a single vector (also with 10,000 components) containing, for every word in our vocabulary, the probability that a randomly selected nearby word is that vocabulary word. Here's the architecture of our single-layer neural network.</p>
 <p><img src="img/word2vec_architecture.png" width="70%" height="70%"></p>
 <p>There is no activation function on the hidden layer neurons, but the output neurons use softmax. We’ll come back to this later.</p>
 <p>When training this network on word pairs, the input is a one-hot vector representing the input word and the training output is also a one-hot vector representing the output word. But when we evaluate the trained network on an input word, the output vector will actually be a probability distribution (i.e., a bunch of floating point values, not a one-hot vector).</p>
@@ -12494,12 +12503,36 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Hidden-Layer">The Hidden Layer<a class="anchor-link" href="#The-Hidden-Layer">&#182;</a></h2><p>Let's say that we wish to learn word vectors with 300 features. The number of features is a hyperparameter that we would have to tune to our application to see which one yields the best result. So the hidden layer is going to be represented by a weight matrix with 10,000 rows (one for every word in our vocabulary) and 300 columns (one for every hidden neuron).</p>
+<h2 id="The-Hidden-Layer">The Hidden Layer<a class="anchor-link" href="#The-Hidden-Layer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's say that we wish to learn word vectors with 300 features. The number of features is a hyperparameter that we would have to tune to our application to see which one yields the best result. So the hidden layer is going to be represented by a weight matrix with 10,000 rows (one for every word in our vocabulary) and 300 columns (one for every hidden neuron).</p>
 <p>Now if we look at what would happen when we multiply the 1 x 10,000 one-hot vector representation of the word with a 10,000 x 300 matrix that represents the hidden layer's weight, it will effectively just select the matrix row corresponding to the "1". The following figure is a small example that does a matrix multiplication of a 1 x 5 one hot vector with a 5 x 2 hidden layer's weight to give you a visual.</p>
 <p><img src="img/hidden_layer.png" width="70%" height="70%"></p>
 <p>This means that the hidden layer of this model is really just operating as a lookup table and the output of the hidden layer is essentially the "word vector" for the input word.</p>
-<h2 id="The-Output-Layer">The Output Layer<a class="anchor-link" href="#The-Output-Layer">&#182;</a></h2><p>The 1 x 300 word vector for "ants" then gets fed to the output layer. The output layer is a softmax regression classifier. There's another documentation on Softmax Regression <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb">here</a>, but the gist of it is that each output neuron, one per word in our vocabulary will produce an output probability between 0 and 1 and the sum of all these output values will add up to 1.</p>
-<p>Specifically, each output neuron has a weight vector which it multiplies against the word vector from the hidden layer, then it applies the function <code>exp(x)</code> to the result. Finally, in order to get the outputs to sum up to 1, we divide this result by the sum of the results from all 10,000 output nodes. Here’s an illustration of calculating the output probability for the word "car".</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-Output-Layer">The Output Layer<a class="anchor-link" href="#The-Output-Layer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The 1 x 300 word vector for "ants" then gets fed to the output layer. The output layer is a Softmax regression classifier. There's another documentation on Softmax Regression <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb">here</a>, but the gist of it is that each output neuron, one per word in our vocabulary will produce an output probability between 0 and 1 and the sum of all these output values will add up to 1.</p>
+<p>Specifically, each output neuron has a weight vector which it multiplies against the word vector from the hidden layer, then it applies the function <code>exp(x)</code> to the result. Finally, in order to get the outputs to sum up to 1, we divide this result by the sum of the results from all 10,000 output nodes. Here's an illustration of calculating the output probability for the word "car".</p>
 <p><img src="img/output_layer.png" width="70%" height="70%"></p>
 <p>Note that neural network does not know anything about the offset of the output word relative to the input word. In other words, it does not learn a different set of probabilities for the word before the input versus the word after.</p>
 <p>Recall that in the beginning of the documentation, we mentioned that the goal for word2vec is to represent each word in the corpus as the vector representation while trying to preserve semantic meaning. This means that if two different words have very similar "contexts" (that is, what words are likely to appear around them), then our model needs to output very similar results for these two words. And one way for the network to output similar context predictions for these two words is if the word vectors are similar. So to hit the notion home, if two words have similar contexts, then word2vec is motivated to learn similar word vectors for these two words!</p>
@@ -12521,18 +12554,11 @@ $$</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>You may have noticed that the skip-gram neural network contains a huge number of weights ... For our example with 300 features and a vocab of 10,000 words, that's 3M weights in the hidden layer and output layer each! Training this on a large dataset would be slow and prone to overfitting, so the word2vec authors introduced a number of tweaks to make training feasible.</p>
 <ul>
-<li>Modifying the optimization objective with a technique they called "Negative Sampling", which causes each training sample to update only a small percentage of the model’s weights</li>
-<li>Subsampling frequent words to decrease the number of training examples</li>
-<li>Treating common word pairs or phrases as single word in the model</li>
+<li>Modifying the optimization objective with a technique they called "Negative Sampling", which causes each training sample to update only a small percentage of the model's weights.</li>
+<li>Subsampling frequent words to decrease the number of training examples.</li>
+<li>Treating common word pairs or phrases as single word in the model.</li>
 </ul>
-<p>It’s worth noting that subsampling frequent words and applying Negative Sampling not only reduced the compute burden of the training process, but also improved the quality of their resulting word vectors as well.</p>
-<h2 id="Negative-Sampling">Negative Sampling<a class="anchor-link" href="#Negative-Sampling">&#182;</a></h2><p>Training a neural network means taking a training example and adjusting all of the neuron weights slightly so that it predicts that training sample more accurately. In other words, each training sample will tweak all of the weights in the neural network. As we discussed above, the size of our word vocabulary means that our skip-gram neural network has a tremendous number of weights, all of which would be updated slightly by every one of our billions of training samples! Negative sampling addresses this by having each training sample only modify a small percentage of the weights, rather than all of them. Here’s how it works:</p>
-<p>When training the network on the word pair ("fox", "quick"), we want the "correct output" of the network, that is the output neuron corresponding to "quick" to output a 1, and for all of the other thousands of output neurons to output a 0.</p>
-<p>With negative sampling, we are instead going to randomly select just a small number of "negative" words (let’s say 5) to update the weights for. (In this context, a "negative" word is one for which we want the network to output a 0 for). We will also still update the weights for our "positive" word (which is the word "quick" in our current example).</p>
-<blockquote><p>The paper says that selecting 5-20 words works well for smaller datasets, and we can get away with only 2-5 words for large datasets.</p>
-</blockquote>
-<p>Recall that the output layer of our model has a weight matrix that's 300 x 10,000. So we will just be updating the weights for our positive word ("quick"), plus the weights for 5 other words that we want to output 0. That’s a total of 6 output neurons, and 1,800 weight values total. That’s only 0.06% of the 3M weights in the output layer!</p>
-<p>In the hidden layer, only the weights for the input word are updated (this is true whether you’re using Negative Sampling or not).</p>
+<p>It's worth noting that subsampling frequent words and applying Negative Sampling not only reduced the compute burden of the training process, but also improved the quality of their resulting word vectors as well.</p>
 
 </div>
 </div>
@@ -12541,7 +12567,38 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Mathematical-Notation">Mathematical Notation<a class="anchor-link" href="#Mathematical-Notation">&#182;</a></h3><p>This section goes back and re-visit the mathematical notation for Word2vec skipgram's objective function. Hopefully, the math won't look so daunting after having an understanding of the model from a non-mathematical standpoint.</p>
+<h2 id="Negative-Sampling">Negative Sampling<a class="anchor-link" href="#Negative-Sampling">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Training a neural network means taking a training example and adjusting all of the neuron weights slightly so that it predicts that training sample more accurately. In other words, each training sample will tweak all of the weights in the neural network. As we discussed above, the size of our word vocabulary means that our skip-gram neural network has a tremendous number of weights, all of which would be updated slightly by every one of our billions of training samples! Negative sampling addresses this by having each training sample only modify a small percentage of the weights, rather than all of them. Here's how it works:</p>
+<p>When training the network on the word pair ("fox", "quick"), we want the "correct output" of the network, that is the output neuron corresponding to "quick" to output a 1, and for all of the other thousands of output neurons to output a 0.</p>
+<p>With negative sampling, we are instead going to randomly select just a small number of "negative" words (let's say 5) to update the weights for. (In this context, a "negative" word is one for which we want the network to output a 0 for). We will also still update the weights for our "positive" word (which is the word "quick" in our current example).</p>
+<blockquote><p>The paper says that selecting 5-20 words works well for smaller datasets, and we can get away with only 2-5 words for large datasets.</p>
+</blockquote>
+<p>Recall that the output layer of our model has a weight matrix that's 300 x 10,000. So we will just be updating the weights for our positive word ("quick"), plus the weights for 5 other words that we want to output 0. That's a total of 6 output neurons, and 1,800 weight values total. That's only 0.06% of the 3M weights in the output layer!</p>
+<p>In the hidden layer, only the weights for the input word are updated (this is true whether you're using Negative Sampling or not).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mathematical-Notation">Mathematical Notation<a class="anchor-link" href="#Mathematical-Notation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This section goes back and re-visit the mathematical notation for Word2vec skipgram's objective function. Hopefully, the math won't look so daunting after having an understanding of the model from a non-mathematical standpoint.</p>
 <p>In this model we are given a corpus of words $w$ and their contexts $c$ (the word pair of the targeted word that we've sampled). We consider the conditional probabilities $p(c | w)$ and given a corpus $Text$, the goal is to set the parameters $\theta$ of $p(c | w; \theta)$ to maximize our objective function $J_\theta$, i.e. our the corpus probability, with regard to our model parameters $\theta$:</p>
 <p>$$
 \begin{align}
@@ -12606,8 +12663,16 @@ J_{\theta}
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Selecting-Negative-Samples">Selecting Negative Samples<a class="anchor-link" href="#Selecting-Negative-Samples">&#182;</a></h3><p>One little detail that's missing from the description above is how do we select the negative samples.</p>
-<p>The negative samples are chosen using the unigram distribution. Essentially, the probability of selecting a word as a negative sample is related to its frequency, with more frequenct words being more likely to be selected as negative samples. Instead of using the raw frequency for $w_i$, $\text{freq}(w_i)$, in the original word2vec paper, each word is given a weight that's equal to it's frequency (word count) raised to the 3/4 power. The probability for selecting a word is just it's weight divided by the sum of weights for all words.</p>
+<h3 id="Selecting-Negative-Samples">Selecting Negative Samples<a class="anchor-link" href="#Selecting-Negative-Samples">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One little detail that's missing from the description above is how do we select the negative samples.</p>
+<p>The negative samples are chosen using the unigram distribution. Essentially, the probability of selecting a word as a negative sample is related to its frequency, with more frequent words being more likely to be selected as negative samples. Instead of using the raw frequency for $w_i$, $\text{freq}(w_i)$, in the original word2vec paper, each word is given a weight that's equal to it's frequency (word count) raised to the 3/4 power. The probability for selecting a word is just it's weight divided by the sum of weights for all words.</p>
 <p>$$
 \begin{align}
 P(w_i) = \frac{ {\text{freq}(w_i)}^{3/4} }{\sum_{j=0}^{n} \left({\text{freq}(w_j)}^{3/4} \right) }
@@ -12623,11 +12688,19 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Subsampling-Frequenct-Words">Subsampling Frequenct Words<a class="anchor-link" href="#Subsampling-Frequenct-Words">&#182;</a></h2><p>Word2vec has two additional parameters for discarding some of the input words: words appearing less
+<h2 id="Subsampling-Frequenct-Words">Subsampling Frequenct Words<a class="anchor-link" href="#Subsampling-Frequenct-Words">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Word2vec has two additional parameters for discarding some of the input words: words appearing less
 than <code>min-count</code> times are not considered as either words or contexts, and in addition frequent words are down-sampled as defined by the <code>sample</code> parameter.</p>
 <p>There are two potential issues with frequently appeared words like "the":</p>
 <ul>
-<li>When looking at word pairs that includes "the", e.g. ("fox", "the"), "the" doesn’t tell us much about the meaning of "fox", since it appears in the context of pretty much every word.</li>
+<li>When looking at word pairs that includes "the", e.g. ("fox", "the"), "the" doesn't tell us much about the meaning of "fox", since it appears in the context of pretty much every word.</li>
 <li>We will have more than enough samples of ("the", "the other word for the word pair") than we need to learn a good vector for "the".</li>
 </ul>
 <p>Word2Vec implements a "subsampling" scheme to address this. For each word we encounter in our training text, there is a chance that we will discard it from the text. The probability that we cut the word is related to the word's frequency.</p>
@@ -12656,7 +12729,15 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Detecting-Phrases">Detecting Phrases<a class="anchor-link" href="#Detecting-Phrases">&#182;</a></h2><p>Word pair like "Boston Globe" (a newspaper) has a much different meaning than the individual words "Boston" and "Globe". So it makes sense to treat "Boston Globe", wherever it occurs in the text, as a single word with its own word vector representation.</p>
+<h2 id="Detecting-Phrases">Detecting Phrases<a class="anchor-link" href="#Detecting-Phrases">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Word pair like "Boston Globe" (a newspaper) has a much different meaning than the individual words "Boston" and "Globe". So it makes sense to treat "Boston Globe", wherever it occurs in the text, as a single word with its own word vector representation.</p>
 <p>The formula our phrase models will use to determine whether two tokens $A$ and $B$ constitute a phrase is:</p>
 <p>$$
 \begin{align}
@@ -12840,7 +12921,23 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>...1/20th of a second or so. Although the text looks exactly the same as before, a lot has actually happened under the hood. Let's take a look at what we got during that time. From here, we'll start to look at the functionalities/properties that spaCy provided us out of the box.</p>
-<h2 id="Tokenization">Tokenization<a class="anchor-link" href="#Tokenization">&#182;</a></h2><p>The first one is sentence detection/segmentation (note that all of these features have already been computed, all we're doing now is accessing it via attribute). Every spaCy document is tokenized into sentences and further into tokens which can be accessed by iterating over the document.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tokenization">Tokenization<a class="anchor-link" href="#Tokenization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first one is sentence detection/segmentation (note that all of these features have already been computed, all we're doing now is accessing it via attribute). Every spaCy document is tokenized into sentences and further into tokens which can be accessed by iterating over the document.</p>
 
 </div>
 </div>
@@ -12902,7 +12999,15 @@ Nice
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Part-of-Speech-Tagging">Part of Speech Tagging<a class="anchor-link" href="#Part-of-Speech-Tagging">&#182;</a></h2><p>Part-of-speech tags (POST) are the properties of the word that are defined by the usage of the word in a grammatically correct sentence. These tags can be used as the text features in information filtering, statistical models and rule based parsing.</p>
+<h2 id="Part-of-Speech-Tagging">Part of Speech Tagging<a class="anchor-link" href="#Part-of-Speech-Tagging">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Part-of-speech tags (POST) are the properties of the word that are defined by the usage of the word in a grammatically correct sentence. These tags can be used as the text features in information filtering, statistical models and rule based parsing.</p>
 
 </div>
 </div>
@@ -12988,7 +13093,23 @@ Nice
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>From the table above, we can see that the word "Nice" is an adjective and so on.</p>
-<h2 id="Named-Entity-Recognition">Named Entity Recognition<a class="anchor-link" href="#Named-Entity-Recognition">&#182;</a></h2><p>Spacy also consists of a fast entity recognition model which is capable of identifying entitiy phrases from the document. Entities can be of different types, such as – person, location, organization, dates, numericals etc.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Named-Entity-Recognition">Named Entity Recognition<a class="anchor-link" href="#Named-Entity-Recognition">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Spacy also consists of a fast entity recognition model which is capable of identifying entity phrases from the document. Entities can be of different types, such as – person, location, organization, dates, numericals etc.</p>
 
 </div>
 </div>
@@ -13121,7 +13242,15 @@ Entity 2: the Prudential Center - ORG
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Token-Level-Attribute">Token Level Attribute<a class="anchor-link" href="#Token-Level-Attribute">&#182;</a></h2><p>What about a variety of other token-level attributes, such as the relative frequency of tokens (how frequently does each token/word appears in the english vocabulary), and whether or not a token matches any of the following categories?</p>
+<h2 id="Token-Level-Attribute">Token Level Attribute<a class="anchor-link" href="#Token-Level-Attribute">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What about a variety of other token-level attributes, such as the relative frequency of tokens (how frequently does each token/word appears in the english vocabulary), and whether or not a token matches any of the following categories?</p>
 <ul>
 <li>stopword (grammatically functional words that don't contribute too much to the context)</li>
 <li>punctuation</li>
@@ -13130,7 +13259,7 @@ Entity 2: the Prudential Center - ORG
 <li>whether the token is included in spaCy's default vocabulary or not?</li>
 <li>In terms of the token's relative frequency, spaCy expresses it as the log probability, so a negative number closer to 0 means it appears more often. Or we can say a smaller absolute value means it commonly appears</li>
 </ul>
-<p>Please refer to the <a href="https://spacy.io/docs/api/token">documentation page</a> to see all the available attrbutes at the token level.</p>
+<p>Please refer to the <a href="https://spacy.io/docs/api/token">documentation page</a> to see all the available attributes at the token level.</p>
 
 </div>
 </div>
@@ -13268,7 +13397,15 @@ Entity 2: the Prudential Center - ORG
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dependency-Parsing">Dependency Parsing<a class="anchor-link" href="#Dependency-Parsing">&#182;</a></h2><p>Spacy also offers a fast and accurate dependency parser. Let's parse the dependency tree of all the sentences which contains a targeted term that we specified and check what are the adjectives that were commonly used with that term.</p>
+<h2 id="Dependency-Parsing">Dependency Parsing<a class="anchor-link" href="#Dependency-Parsing">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Spacy also offers a fast and accurate dependency parser. Let's parse the dependency tree of all the sentences which contains a targeted term that we specified and check what are the adjectives that were commonly used with that term.</p>
 
 </div>
 </div>
@@ -14032,15 +14169,55 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Hyperparameters">Hyperparameters<a class="anchor-link" href="#Hyperparameters">&#182;</a></h2><p>The most crucial decisions that affect the performance are the choice of the model
-architecture, the size of the vectors, the subsampling rate, and the size of the training window. Because Word2vec training is an unsupervised task, there’s no good way to objectively evaluate the result, it all depends on the end application.</p>
-<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2><p>Word2Vec and the concept of word embeddings originated in the domain of NLP, however the idea of words in the context of a sentence or a surrounding word window can be generalized to other problem domain dealing with sequences or sets of related data points. For example:</p>
+<h2 id="Hyperparameters">Hyperparameters<a class="anchor-link" href="#Hyperparameters">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The most crucial decisions that affect the performance are the choice of the model
+architecture, the size of the vectors, the subsampling rate, and the size of the training window. Because Word2vec training is an unsupervised task, there's no good way to objectively evaluate the result, it all depends on the end application.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Word2Vec and the concept of word embeddings originated in the domain of NLP, however the idea of words in the context of a sentence or a surrounding word window can be generalized to other problem domain dealing with sequences or sets of related data points. For example:</p>
 <ul>
 <li>A direct application of Word2Vec to a classical engineering task was recently presented by Spotify. They abstracted the ideas behind Word2Vec to apply them not simply to words in sentences but to any object in any sequence, in this case to songs in a playlist. Songs are treated as words and other songs in a playlist as their surrounding context, depending on whether the playlists in question were genre specific the vocabulary encompassed a number of songs from that collection. Now in order to recommend songs to a user one merely has to examine a neighborhood of the 'song embeddings' of songs the user already likes</li>
 <li>Similarly, we could recommend a user who to connect to in a social network setting by examining the graph of relationships, where the nodes represent words and a path through the graph represents a sentence, then nodes that occur in the context of similar other nodes, would be close together in the vector space.</li>
 </ul>
 <p>These examples show that the general applicability of Word2Vec based algorithms is very rich and that it behooves practitioners to examine their problem domain with respect to sequences of objects that occur in some meaningful context.</p>
-<h2 id="Resources">Resources<a class="anchor-link" href="#Resources">&#182;</a></h2><p>A lot of the non-mathematical notes were taken from Chris McCormick's blog post. If you wish to learn more about the topic, the following link also contains different resources that Chris has curated (including a commented version of word2vec's original C code, derivation of word2vec's gradient update, etc.). <a href="http://mccormickml.com/2016/04/27/word2vec-resources/">Blog: Word2Vec Resources</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Resources">Resources<a class="anchor-link" href="#Resources">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A lot of the non-mathematical notes were taken from Chris McCormick's blog post. If you wish to learn more about the topic, the following link also contains different resources that Chris has curated (including a commented version of word2vec's original C code, derivation of word2vec's gradient update, etc.). <a href="http://mccormickml.com/2016/04/27/word2vec-resources/">Blog: Word2Vec Resources</a></p>
 <p>If you would like to practice using a deep learning framework such as Tensorflow to implement the word2vec model. The following resources are good places to start, the reason that its not included in this documentation is because it was an order of magnitude slower than Gensim's Word2vec and the result weren't as good as well.</p>
 <ul>
 <li><a href="http://web.stanford.edu/class/cs20si/lectures/notes_04.pdf">Note: CS 20SI Lecture note 4: How to structure your model in TensorFlow</a></li>
@@ -14054,7 +14231,15 @@ architecture, the size of the vectors, the subsampling rate, and the size of the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://rare-technologies.com/word2vec-tutorial/">Blog: Word2vec Tutorial</a></li>
 <li><a href="http://www.deeplearningweekly.com/blog/demystifying-word2vec">Blog: Demystifying Word2Vec</a></li>
 <li><a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">Blog: Word2Vec Tutorial - The Skip-Gram Model</a></li>
