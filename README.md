@@ -76,6 +76,7 @@ Recommendation system with a focus on matrix factorization methods. Starters int
     - (Text) Content-Based Recommenders. Introducing Approximate Nearest Neighborhood (ANN) - Locality Sensitive Hashing (LSH) for cosine distance from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/content_based/lsh_text.ipynb)][[html](http://ethen8181.github.io/machine-learning/recsys/content_based/lsh_text.html)]
 - Approximate Nearest Neighborhood (ANN):
     -  Benchmarking ANN implementations (nmslib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/ann_benchmarks/ann_benchmarks.ipynb)][[html](http://ethen8181.github.io/machine-learning/recsys/ann_benchmarks/ann_benchmarks.html)]
+- Calibrated Recommendation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/calibration/calibrated_reco.ipynb)][[html](http://ethen8181.github.io/machine-learning/recsys/calibration/calibrated_reco.html)]
 
 #### trees : 2016.12.10
 
