@@ -14040,6 +14040,19 @@ height=485
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Side Note:</strong></p>
+<ul>
+<li>In the generating calibrated recommendation section, we introduced the maximum marginal relevance formula that has the knob for us to tune the balance between our original recommendation algorithm's score versus the calibration score. This "balancing" notion can actually be applied to many different areas. For example, In the original paper that introduced this idea, they were using this formula in the context of a search engine. To elaborate, when issuing a query on a search engine, the search engine often times assembles results that maximizes the relevance to the user query. By introducing the linear combination "marginal relevance" - a result is now said to have high marginal relevance if it is both relevant to the query and contains minimal similarity to previously selected results.</li>
+<li>The Greedy Algorithm we leveraged to actually generate our top-N items that maximizes the maximum marginal relevance formula is a discrete optimization method that's often times referred to as a submodular optimization. Submodular optimization is a generic optimization method that can also be applied to other areas such as influence maximization and can be a topic by itself and is discussed lightly deeper in another notebook. <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/max_influence/max_influence.ipynb">Notebook: Submodular Optimization &amp; Influence Maximization</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
@@ -14050,6 +14063,8 @@ height=485
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><a href="https://dl.acm.org/citation.cfm?id=3240372">Paper: H. Steck - Calibrated Recommendation (2018)</a></li>
+<li><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.188.3982&amp;rep=rep1&amp;type=pdf">Paper: J. Carbonell, J. Goldstein - The use of MMR, diversity-based reranking for
+reordering documents and producing summaries (1998)</a></li>
 </ul>
 
 </div>

@@ -142,13 +142,14 @@ Naive Bayes and Logistic Regression for text classification.
 - Building intuition with spam classification using scikit-learn (scikit-learn hello world). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/basics/basics.ipynb)][[html](http://ethen8181.github.io/machine-learning/text_classification/basics/basics.html)]
 - Bernoulli and Multinomial Naive Bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)][[html](http://ethen8181.github.io/machine-learning/text_classification/naive_bayes/naive_bayes.html)]
 - Logistic Regression (stochastic gradient descent) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/logistic.ipynb)][[html](http://ethen8181.github.io/machine-learning/text_classification/logistic.html)]
-- Chi-square feature selection. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/chisquare.ipynb)][[html](http://ethen8181.github.io/machine-learning/text_classification/chisquare.html)]
+- Chi-square feature selection from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/chisquare.ipynb)][[html](http://ethen8181.github.io/machine-learning/text_classification/chisquare.html)]
 
 #### networkx : 2016.06.13
 
-PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's API. Includes some basic graph plotting and algorithms.
+Graph library other than `networkx` are also discussed.
 
-- View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/networkx.html)]
+- PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's API. Includes some basic graph plotting and algorithms. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/networkx.html)]
+- Influence Maximization from scratch. Includes discussion on Independent Cascade (IC), Submodular Optimization algorithms including Greedy and Lazy Greedy, a.k.a Cost Efficient Lazy Forward (CELF) [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/max_influence/max_influence.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/max_influence/max_influence.html)]
 
 #### regularization : 2016.05.25
 
