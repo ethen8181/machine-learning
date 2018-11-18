@@ -12139,7 +12139,7 @@ IPython 5.4.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It works as expected. The code prints the number 1, 2, 3 and then stops. The question now is, how does the loop constructs the work behind the scenes. i.e. How does the loop fetch individual elements from the object it is looping over and know when to stop?</p>
-<p>The answer to the question is Python's iterator protocal:</p>
+<p>The answer to the question is Python's iterator protocol:</p>
 <blockquote><p>Objects that support the <strong>iter</strong> and <strong>next</strong> dunder methods automatically work with for-in loops.</p>
 </blockquote>
 <p>Before we answer the question, let's first introduce some terminologies.</p>
@@ -12379,7 +12379,7 @@ Hello
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This implementation gives us the desired result. Iteration stops after the number of repetitions defined in the max_repeats parameter. If you've ever worked with database cursors, this mental model will seem familiar: We first initialize the cursor and prepare it for reading, and then we can fetch data into local variables as needed from it, one element at a time. Because there’s never more than one element in memory, this approach is highly memory-efficient.</p>
+<p>This implementation gives us the desired result. Iteration stops after the number of repetitions defined in the max_repeats parameter. If you've ever worked with database cursors, this mental model will seem familiar: We first initialize the cursor and prepare it for reading, and then we can fetch data into local variables as needed from it, one element at a time. Because there will never be more than one element in memory, this approach is highly memory-efficient.</p>
 <p>Note that we can also take this class and implement it using the <code>iter</code> and <code>next</code> function way.</p>
 
 </div>
@@ -12549,7 +12549,7 @@ Hello
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the result, we can see that when we iterate over an already-exhausted generator, it won't produce any results and we also won't get any errors that tells us it is now exhausted. This is something that's extremely important to keep in mind when working with generators. If we wish to iterate over the content for more than once, we can always make a copy by coverting it to a list.</p>
+<p>From the result, we can see that when we iterate over an already-exhausted generator, it won't produce any results and we also won't get any errors that tells us it is now exhausted. This is something that's extremely important to keep in mind when working with generators. If we wish to iterate over the content for more than once, we can always make a copy by converting it to a list.</p>
 
 </div>
 </div>
@@ -12601,7 +12601,7 @@ Hello
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This approach solves the problem, but to understand why this is not always ideal. We need to step back and understand the rationale behind using generators.</p>
-<p>The real advantage or true power of using generator is it gives us the ability to iterate over sequence lazily, which in turn reduces memory usage. For example, imagine a simulator producing gigabytes of data per second. Clearly we can’t put everything neatly into a Python list first and then start munching, since this copy could cause our program to run out of memory and crash. Ideally, we must process the information as it comes in. The recommended way to deal with this, is to have a class that implements the <code>__iter__</code> dunder method.</p>
+<p>The real advantage or true power of using generator is it gives us the ability to iterate over sequence lazily, which in turn reduces memory usage. For example, imagine a simulator producing gigabytes of data per second. Clearly we can't put everything neatly into a Python list first and then start munching, since this copy could cause our program to run out of memory and crash. Ideally, we must process the information as it comes in. The recommended way to deal with this, is to have a class that implements the <code>__iter__</code> dunder method.</p>
 
 </div>
 </div>
@@ -12675,7 +12675,7 @@ Hello
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This type streaming approach is used a lot in the <code>Gensim</code> library. e.g. with helper class such as <a href="https://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.LineSentence">LineSetence</a> we can feed chunks/batches of documents into the memory to train the model instead of having to load the entire corpus into memory.</p>
+<p>This type of streaming approach is used a lot in the <code>Gensim</code> library. e.g. with helper class such as <a href="https://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.LineSentence">LineSetence</a> we can feed chunks/batches of documents into the memory to train the model instead of having to load the entire corpus into memory.</p>
 <p>To wrap up, the following diagram summarizes the relationship between iterable, iterator and generator.</p>
 <p><img src="img/iterator_relationships.png" width="70%" height="70%"></p>
 

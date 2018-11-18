@@ -12766,7 +12766,7 @@ g &amp;= e^{o_i} \nonumber \\
 h &amp;= \sum_{k=1}^{K}e^{o_k} \nonumber
 \end{align*}
 $$</p>
-<p>It's important to notice that no matter which $o_j$ we compute the derivative of $h$ for the output will always be $e^{o_j}$. Howewer, this is not the case for $g$. It's derivative will be $e^{o_j}$ only if $i = j$, because only then will it have the term $e^{o_j}$. Otherwise, the derivative is simply 0 (because it's simply taking the derivative of a constant).</p>
+<p>It's important to notice that no matter which $o_j$ we compute the derivative of $h$ for the output will always be $e^{o_j}$. However, this is not the case for $g$. It's derivative will be $e^{o_j}$ only if $i = j$, because only then will it have the term $e^{o_j}$. Otherwise, the derivative is simply 0 (because it's simply taking the derivative of a constant).</p>
 <p>So going back to using our quotient rule, we start with the $i = j$ case. In the following derivation we'll use the $\Sigma$ (Sigma) sign to represent $\sum_{k=1}^{K}e^{o_k}$ for simplicity and to prevent cluttering up the notation.</p>
 <p>$$
 \begin{align*}
@@ -12798,7 +12798,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Given this, we can tie this back to the original loss function $-\sum_k^K y_k \log p_k$ and compute its negative gradient.</p>
+<p>Now, we can tie this back to the original loss function $-\sum_k^K y_k \log p_k$ and compute its negative gradient.</p>
 <p>$$
 \begin{align}
 \frac{\partial L}{\partial o_i} 

@@ -13676,9 +13676,9 @@ Nice
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns False if the spacy token is either</span>
 <span class="sd">    a punctuation, whitespace, number or a pronoun</span>
-<span class="sd">    (indicated by the &#39;-PRON-&#39; flag)</span>
+<span class="sd">    (indicated by the &#39;PRON&#39; flag)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pron_flag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="o">!=</span> <span class="s1">&#39;-PRON-&#39;</span>
+    <span class="n">pron_flag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">!=</span> <span class="s1">&#39;PRON&#39;</span>
     <span class="n">word_flag</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">is_punct</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">like_num</span><span class="p">)</span>
     <span class="n">word_len_flag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
     <span class="n">valid</span> <span class="o">=</span> <span class="n">pron_flag</span> <span class="ow">and</span> <span class="n">word_flag</span> <span class="ow">and</span> <span class="n">word_len_flag</span>
@@ -13749,7 +13749,7 @@ Nice
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">PHRASE_MODEL_CHECKPOINT</span><span class="p">):</span>
     <span class="n">phrase_model</span> <span class="o">=</span> <span class="n">Phrases</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PHRASE_MODEL_CHECKPOINT</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="c1"># use LineSetence to stream text as oppose to</span>
+    <span class="c1"># use LineSentence to stream text as oppose to</span>
     <span class="c1"># loading it all into memory</span>
     <span class="n">unigram_sentences</span> <span class="o">=</span> <span class="n">LineSentence</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
