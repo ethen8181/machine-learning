@@ -12599,7 +12599,7 @@ $$</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This section goes back and re-visit the mathematical notation for Word2vec skipgram's objective function. Hopefully, the math won't look so daunting after having an understanding of the model from a non-mathematical standpoint.</p>
-<p>In this model we are given a corpus of words $w$ and their contexts $c$ (the word pair of the targeted word that we've sampled). We consider the conditional probabilities $p(c | w)$ and given a corpus $Text$, the goal is to set the parameters $\theta$ of $p(c | w; \theta)$ to maximize our objective function $J_\theta$, i.e. our the corpus probability, with regard to our model parameters $\theta$:</p>
+<p>In this model, we are given a corpus of words $w$ and their contexts $c$ (the word pair of the targeted word that we've sampled). Our goal is to set the parameters $\theta$ of $p(c | w; \theta)$ to maximize our objective function $J_\theta$, i.e. the corpus probability, with regards to our model parameters $\theta$:</p>
 <p>$$
 \begin{align}
 J_{\theta} &amp;= 
@@ -12618,9 +12618,9 @@ $$</p>
 <li>$v_c$ and $v_w$ are the vector representations for word $c$ and $w$ respectively</li>
 <li>$C$ is the set of all available contexts</li>
 </ul>
-<p>While the objective function above can be computed, it is computationally expensive to do due to the summation $\sum_{c' \in C} exp(v_c' \cdot v_w)$ since there can be thousands if not million of them. And this is where negative sampling comes in.</p>
+<p>While the objective function above can be computed, it is computationally expensive to do so due to the summation $\sum_{c' \in C} exp(v_c' \cdot v_w)$ since there can be thousands if not million of them. And this is where negative sampling comes in.</p>
 <p>Instead of trying to estimate the probability of the word pair directly, we train a model to differentiate the target word from noise (negative sample). We can thus reduce the problem of predicting the correct word to a binary classification task, where the model tries to distinguish positive/genuine data from noise/negative samples.</p>
-<p>We know for the word pair we generated from the data we want to maximize its probability, i.e.</p>
+<p>We know for the word pair we generated from the data, we want to maximize its probability, i.e.</p>
 <p>$$
 \begin{align}
 arg\underset{\theta}{max} \prod_{(w, c) \in D} p(D = 1 \big| c, w; \theta)
@@ -12632,14 +12632,6 @@ $$</p>
 <li>$p(D = 1 \big| w, c)$ the probability that the word pair $(w, c)$ came from the corpus data</li>
 </ul>
 <p>We then generate the set $D'$ of random (w, c) pairs, assuming they are all incorrect. The name "negative sampling" stems from the set $D'$ of randomly sampled negative examples. Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context. If we consider the large number of vocabulary we have, we can argue that the probability is really really tiny, but a lot of the packages still do take care of removing these "accidents".</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Since this is a binary classification loss, we can use logistic regression to minimize the negative log-likelihood, leading to the objective function:</p>
 <p>\begin{align}
 J_{\theta} 
