@@ -2,6 +2,10 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-12]
+
+- First Foray Into Discrete/Fast Fourier Transformation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/fft/fft.ipynb)][[html](http://ethen8181.github.io/machine-learning/time_series/fft/fft.html)]
+
 ## [2018-11]
 
 ### Added

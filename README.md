@@ -48,6 +48,7 @@ Forecasting methods for timeseries-based data.
 
 - Getting started with time series analysis with Exponential Smoothing (Holt-Winters). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/1_exponential_smoothing.ipynb)][[html](http://ethen8181.github.io/machine-learning/time_series/1_exponential_smoothing.html)]
 - Framing time series problem as supervised-learning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/3_supervised_time_series.ipynb)][[html](http://ethen8181.github.io/machine-learning/time_series/3_supervised_time_series.html)]
+- First Foray Into Discrete/Fast Fourier Transformation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/fft/fft.ipynb)][[html](http://ethen8181.github.io/machine-learning/time_series/fft/fft.html)]
 
 ### projects
 
