@@ -4,6 +4,8 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2018-12]
 
+### Added
+
 - First Foray Into Discrete/Fast Fourier Transformation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/time_series/fft/fft.ipynb)][[html](http://ethen8181.github.io/machine-learning/time_series/fft/fft.html)]
 
 ## [2018-11]
