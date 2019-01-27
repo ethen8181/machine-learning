@@ -12245,7 +12245,7 @@ model $F$ cannot do well, so now the role of $h$ is to compensate the shortcomin
 <li>$F_b$ is the version of classifier at step/iteration $b$</li>
 <li>$\eta$ is the learning rate which controls the size of the learning process</li>
 <li>$\nabla$ is the gradient i.e. the first order partial derivative of the cost function with respect to the classifier</li>
-<li>The formula above actually refers to stochastic gradient descent only computing the function for a single observation, $x_i$</li>
+<li>The formula above actually refers to stochastic gradient descent as we are only computing the function for a single observation, $x_i$</li>
 </ul>
 <p>For example, say we're given, sum of squares errors, a well-known quality indicator for regression model as our loss function. So now our loss function $L\big(y_i, F(x_i)\big)$ is defined as: $\frac{1}{2} \big( y_i - F(x_i) \big)^2$ (the 1/2 is simply to make the notation cleaner later). Taking the gradient of this loss function we get:</p>
 <p>$$\frac{ \partial L\big(y_i, F(x_i)\big) }{ \partial F(x_i) } = \frac{ \partial \frac{1}{2} \big( y_i - F(x_i) \big)^2 }{ \partial F(x_i) } = F(x_i) - y_i$$</p>

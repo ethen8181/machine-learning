@@ -2,6 +2,14 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2018-01]
+
+### Added
+
+- Quantile Regression and its application in A/B testing.
+  - Quick Introduction to Quantile Regression. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/quantile_regression/quantile_regression.ipynb.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/quantile_regression/quantile_regression.ipynb.html)]
+  - Quantile Regression's application in A/B testing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/quantile_regression/ab_test_regression.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/quantile_regression/ab_test_regression.html)]
+
 ## [2018-12]
 
 ### Added
