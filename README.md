@@ -1,5 +1,6 @@
 - [machine-learning](#machine-learning)
   - [Documentation Listings](#documentation-listings)
+    - [bandits](#bandits)
     - [search](#search)
     - [time_series](#timeseries)
     - [projects](#projects)
@@ -35,6 +36,10 @@ This is a continuously updated repository that documents personal journey on lea
 
 
 ## Documentation Listings
+
+### bandits
+
+Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/bandits/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/bandits/multi_armed_bandits.html)]
 
 ### search
 
