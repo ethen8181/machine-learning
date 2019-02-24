@@ -14,7 +14,7 @@
         ],
         "extra_link_args": [
             "-std=c++11",
-            "-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/7/",
+            "-Wl,-rpath,/usr/local/opt/gcc/lib/gcc/8/",
             "-fopenmp"
         ],
         "include_dirs": [
