@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-explained version, re-ran the notebook using an updated version of the package), **added** (e.g. a completely new jupyter notebook).
 
+## [2019-03]
+
+### Added
+
+- Short Walkthrough of PageRank. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/page_rank.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/page_rank.html)]
+
 ## [2019-02]
 
 ### Added

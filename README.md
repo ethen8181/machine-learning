@@ -188,6 +188,7 @@ Naive Bayes and Logistic Regression for text classification.
 Graph library other than `networkx` are also discussed.
 
 - PyCon 2016: Practical Network Analysis Made Simple. Quickstart to networkx's API. Includes some basic graph plotting and algorithms. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/networkx.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/networkx.html)]
+- Short Walkthrough of PageRank. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/page_rank.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/page_rank.html)]
 - Influence Maximization from scratch. Includes discussion on Independent Cascade (IC), Submodular Optimization algorithms including Greedy and Lazy Greedy, a.k.a Cost Efficient Lazy Forward (CELF) [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/max_influence/max_influence.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/max_influence/max_influence.html)]
 
 ### regularization
