@@ -4,7 +4,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2019-04]
 
-- Propensity Score Matching. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/casual_inference/matching.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/casual_inference/matching.html)]
+- Propensity Score Matching. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/matching.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/matching.html)]
 
 ## [2019-03]
 

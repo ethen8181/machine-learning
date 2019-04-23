@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Casual-Inference" data-toc-modified-id="Casual-Inference-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Casual Inference</a></span><ul class="toc-item"><li><span><a href="#The-Definition-of-Casual-Effect" data-toc-modified-id="The-Definition-of-Casual-Effect-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>The Definition of Casual Effect</a></span></li><li><span><a href="#Assumptions-of-Estimating-Casual-Effect" data-toc-modified-id="Assumptions-of-Estimating-Casual-Effect-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Assumptions of Estimating Casual Effect</a></span></li><li><span><a href="#Confounders" data-toc-modified-id="Confounders-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Confounders</a></span></li><li><span><a href="#Randomized-Trials-v.s.-Observational-Studies" data-toc-modified-id="Randomized-Trials-v.s.-Observational-Studies-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Randomized Trials v.s. Observational Studies</a></span></li><li><span><a href="#Matching" data-toc-modified-id="Matching-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Matching</a></span><ul class="toc-item"><li><span><a href="#Propensity-Scores" data-toc-modified-id="Propensity-Scores-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>Propensity Scores</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Implementation</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Causal-Inference" data-toc-modified-id="Causal-Inference-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Causal Inference</a></span><ul class="toc-item"><li><span><a href="#The-Definition-of-Causal-Effect" data-toc-modified-id="The-Definition-of-Causal-Effect-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>The Definition of Causal Effect</a></span></li><li><span><a href="#Assumptions-of-Estimating-Causal-Effect" data-toc-modified-id="Assumptions-of-Estimating-Causal-Effect-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Assumptions of Estimating Causal Effect</a></span></li><li><span><a href="#Confounders" data-toc-modified-id="Confounders-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Confounders</a></span></li><li><span><a href="#Randomized-Trials-v.s.-Observational-Studies" data-toc-modified-id="Randomized-Trials-v.s.-Observational-Studies-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Randomized Trials v.s. Observational Studies</a></span></li><li><span><a href="#Matching" data-toc-modified-id="Matching-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Matching</a></span><ul class="toc-item"><li><span><a href="#Propensity-Scores" data-toc-modified-id="Propensity-Scores-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>Propensity Scores</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Implementation</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12103,7 +12103,7 @@ seaborn 0.9.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Casual-Inference">Casual Inference<a class="anchor-link" href="#Casual-Inference">&#182;</a></h1>
+<h1 id="Causal-Inference">Causal Inference<a class="anchor-link" href="#Causal-Inference">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12114,16 +12114,16 @@ seaborn 0.9.0
 <p>A typical statement that people make in the real world follows a pattern like this:</p>
 <blockquote><p>I took ibuprofen and my headache is gone, therefore the medicine worked.</p>
 </blockquote>
-<p>Upon seeing this statement, we may be tempted to view the statement above as a casual effect, where ibuprofen does in fact help with headache. The statement, however, does not tell us what would have happened if the person didn't take the medicine. Maybe headache would have been cured without taking the medicine.</p>
-<p>We'll take a moment and introduce some notation to formalize the discussion of casual inferencing. We denote $Y^a$ as the outcome that would have been observed if treatment was set to $A = a$. In the context of casual inferencing, there are two possible actions that can be applied to an individual. $1$, treatment; $0$, control. Hence $Y^1$ denotes the outcome if the treatment was applied, whereas $Y^0$ measures the outcome if individual was under the control group.</p>
-<p>Coming back to the statement above. The reason why it isn't a proper casual effect is because it's only telling us $Y^1=1$. It doesn't tell us what would have happened had we not taken ibuprofen, $Y^0=?$. And we can only state that there is a casual effect if $Y^1 \neq Y^0$.</p>
+<p>Upon seeing this statement, we may be tempted to view the statement above as a causal effect, where ibuprofen does in fact help with headache. The statement, however, does not tell us what would have happened if the person didn't take the medicine. Maybe headache would have been cured without taking the medicine.</p>
+<p>We'll take a moment and introduce some notation to formalize the discussion of causal inferencing. We denote $Y^a$ as the outcome that would have been observed if treatment was set to $A = a$. In the context of causal inferencing, there are two possible actions that can be applied to an individual. $1$, treatment; $0$, control. Hence $Y^1$ denotes the outcome if the treatment was applied, whereas $Y^0$ measures the outcome if individual was under the control group.</p>
+<p>Coming back to the statement above. The reason why it isn't a proper causal effect is because it's only telling us $Y^1=1$. It doesn't tell us what would have happened had we not taken ibuprofen, $Y^0=?$. And we can only state that there is a causal effect if $Y^1 \neq Y^0$.</p>
 <p>The two main messages that we're getting at in the section above are:</p>
-<p>First, in the context of casual inferencing, a lot of times we're mainly interested in the relationship between means of different potential outcomes.</p>
+<p>First, in the context of causal inferencing, a lot of times we're mainly interested in the relationship between means of different potential outcomes.</p>
 <p>\begin{align}
 E(Y^1 - Y^0)
 \end{align}</p>
 <p>Where the term, <strong>potential outcome, refers to the outcome we would see under each possible treatment option</strong>. More on this formula in the next section.</p>
-<p>Second, our little statement above shows what is known as the <strong>fundamental problem of casual inferencing</strong>. Meaning we can only observe one potential outcome for each person. However, with certain assumptions, we can estimate population level causal effects. In other words, it is possible for us to answer questions such as: what would the rate of headache remission be if everyone took ibuprofen when they had a headache versus if no one did.</p>
+<p>Second, our little statement above shows what is known as the <strong>fundamental problem of causal inferencing</strong>. Meaning we can only observe one potential outcome for each person. However, with certain assumptions, we can estimate population level causal effects. In other words, it is possible for us to answer questions such as: what would the rate of headache remission be if everyone took ibuprofen when they had a headache versus if no one did.</p>
 <p>Thus the next question is, how do we use observed data to link observed outcome to potential outcome.</p>
 
 </div>
@@ -12133,7 +12133,7 @@ E(Y^1 - Y^0)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Definition-of-Casual-Effect">The Definition of Casual Effect<a class="anchor-link" href="#The-Definition-of-Casual-Effect">&#182;</a></h2>
+<h2 id="The-Definition-of-Causal-Effect">The Definition of Causal Effect<a class="anchor-link" href="#The-Definition-of-Causal-Effect">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12141,7 +12141,7 @@ E(Y^1 - Y^0)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the previous section, we flashed the idea that with casual inferencing, we're interesting in estimating $E(Y^1 - Y^0)$. This notation denotes <strong>average casual effect</strong>. What this means is:</p>
+<p>In the previous section, we flashed the idea that with causal inferencing, we're interesting in estimating $E(Y^1 - Y^0)$. This notation denotes <strong>average causal effect</strong>. What this means is:</p>
 <p>Imagine a hypothetical world where our entire population, every single person, got treatment $A=0$. Versus, some other hypothetical world where everyone received the other treatment, $A=1$. The most important thing here is the two hypothetical world have the exact same people, it's the same population of people. But in one case, we do one thing to them, and in another case, we do another. And then, if we were able to observe both of these worlds simultaneously, we could collect the outcome data from everyone in the populations, and then compute average difference.</p>
 <p>This is what we mean by an average causal effect. It's computed over the whole population and we're saying, what would the average outcome be if everybody got one treatment, versus if everybody got another treatment? Of course, in reality, we're not going to see both of these worlds. But this is what we're hoping to estimate.</p>
 <p>In reality, what we get from an experiment is $E(Y|A=1)$. Here, we are saying what is the expected value of $Y$ given $A=1$. An equivalent way of reading this is the expected value of $Y$ restricting to the sub-population who actually had $A=1$. The main point that we're getting at is:</p>
@@ -12150,7 +12150,7 @@ E(Y^1 - Y^0) \neq E(Y|A=1) - E(Y|A=0)
 \end{align}</p>
 <p>The reason being the sub-population might differ from the whole population in important ways. e.g. People at higher risk for the flu might be more likely to get the flu shot. Then if we take the expected value of $Y$ among people who actually got the flu shot, we're taking expected value of $Y$ among a higher risk population. And this will most likely be different than the expected value of the potential outcome $Y^1$ because $Y^1$ is the outcome if everyone in the whole population got treatment, i.e. it's not restricting to a sub-population.</p>
 <p>We could of course still compute $E(Y|A=1) - E(Y|A=0)$, but we need to keep in mind that the people who received treatment $A=0$ might differ in fundamental ways from people who got treatment $A=1$. So we haven't isolated a treatment effect, because these are different people, and they might have different characteristics in general. So that's why this distinction between the two are very important. The causal effect where we're manipulating treatment on the same group of people versus what we actually observe, which is the difference in means among some populations that are defined by treatment.</p>
-<p>In short, the take home message from this paragraph is that $E(Y|A=1) - E(Y|A=0)$ is generally not a casual effect, because it is comparing two different populations of people.</p>
+<p>In short, the take home message from this paragraph is that $E(Y|A=1) - E(Y|A=0)$ is generally not a causal effect, because it is comparing two different populations of people.</p>
 
 </div>
 </div>
@@ -12159,7 +12159,7 @@ E(Y^1 - Y^0) \neq E(Y|A=1) - E(Y|A=0)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Assumptions-of-Estimating-Casual-Effect">Assumptions of Estimating Casual Effect<a class="anchor-link" href="#Assumptions-of-Estimating-Casual-Effect">&#182;</a></h2>
+<h2 id="Assumptions-of-Estimating-Causal-Effect">Assumptions of Estimating Causal Effect<a class="anchor-link" href="#Assumptions-of-Estimating-Causal-Effect">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12182,7 +12182,7 @@ E(Y | A=a, X=x)
 &amp;= E(Y^a | X=x) \text{ due to ignorability}
 \end{align}</p>
 <p>To elaborate on the ignorability assumption, the assumption said that conditional on the set of covariates $X$, the treatment assignment mechanism doesn't matter, it's just random. So, in other words, conditioning on $A$ isn't providing us any additional information about the mean of the potential outcome here.</p>
-<p>After laying down the assumptions behind casual inferencing, we'll also introduce two important concepts <strong>confounders</strong> and <strong>observational studies</strong>.</p>
+<p>After laying down the assumptions behind causal inferencing, we'll also introduce two important concepts <strong>confounders</strong> and <strong>observational studies</strong>.</p>
 
 </div>
 </div>
@@ -13406,7 +13406,7 @@ height=418
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Keep in mind that not every plot will look like this, if there's major lack of overlap in some part of the propensity score distribution plot that means our positivity assumption would essentially be violated. Or in other words, we can't really estimate a causal effect in those area of the distribution since in those areas, those are subjects that have close to zero chance of being in the control/treatment group. One thing that we may wish to do when encountered with this scenario is either look and see if we're missing some covariates or get rid of individuals who have extreme propensity scores and focus on the areas where there are strong overlapping.</p>
 <p>The next step is to perform matching. In general, the procedure looks like this:</p>
-<blockquote><p>We compute the distance between the estimated propensity score for each treated subject with every control. And for every treated subject we would find the subject in the control that has the closest distance to it. These pairs are "matched" together and will be included in the final dataset that will be used to estimate the casual effect.</p>
+<blockquote><p>We compute the distance between the estimated propensity score for each treated subject with every control. And for every treated subject we would find the subject in the control that has the closest distance to it. These pairs are "matched" together and will be included in the final dataset that will be used to estimate the causal effect.</p>
 </blockquote>
 <p>But in practice there are actually many different variants to performing the step mentioned above. e.g.</p>
 <p>First: We mentioned that when there's a lack of balance, we can get rid of individuals who have extreme propensity scores. Some example of doing this includes removing control subjects whose propensity score is less than the minimum in the treatment group and removing treated subjects whose propensity score is greater than the maximum in the control group.</p>
