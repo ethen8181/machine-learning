@@ -163,7 +163,7 @@ Curated notes on deep learning.
     - Vanilla RNN - Tensorflow. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/1_tensorflow_rnn.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/rnn/1_tensorflow_rnn.html)]
     - Long Short Term Memory (LSTM) - Tensorflow. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/2_tensorflow_lstm.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/rnn/2_tensorflow_lstm.html)]
     - RNN, LSTM - PyTorch hello world. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/1_pytorch_rnn.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/rnn/1_pytorch_rnn.html)]
-- Word2vec (skipgram + negative sampling) using Gensim (includes text preprocessing with spaCy). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/word2vec/word2vec_detailed.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/word2vec/word2vec_detailed.html)]
+- Word2vec (skipgram + negative sampling) using Gensim. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/word2vec/word2vec_detailed.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/word2vec/word2vec_detailed.html)]
 
 ### keras
 

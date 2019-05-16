@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Word2vec-(Skipgram)" data-toc-modified-id="Word2vec-(Skipgram)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Word2vec (Skipgram)</a></span><ul class="toc-item"><li><span><a href="#Model-Details" data-toc-modified-id="Model-Details-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Model Details</a></span></li><li><span><a href="#The-Hidden-Layer" data-toc-modified-id="The-Hidden-Layer-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>The Hidden Layer</a></span></li><li><span><a href="#The-Output-Layer" data-toc-modified-id="The-Output-Layer-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>The Output Layer</a></span></li></ul></li><li><span><a href="#Improving-Word2vec" data-toc-modified-id="Improving-Word2vec-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Improving Word2vec</a></span><ul class="toc-item"><li><span><a href="#Negative-Sampling" data-toc-modified-id="Negative-Sampling-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>Negative Sampling</a></span><ul class="toc-item"><li><span><a href="#Mathematical-Notation" data-toc-modified-id="Mathematical-Notation-2.1.1"><span class="toc-item-num">2.1.1&nbsp;&nbsp;</span>Mathematical Notation</a></span></li><li><span><a href="#Selecting-Negative-Samples" data-toc-modified-id="Selecting-Negative-Samples-2.1.2"><span class="toc-item-num">2.1.2&nbsp;&nbsp;</span>Selecting Negative Samples</a></span></li></ul></li><li><span><a href="#Subsampling-Frequenct-Words" data-toc-modified-id="Subsampling-Frequenct-Words-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>Subsampling Frequenct Words</a></span></li><li><span><a href="#Detecting-Phrases" data-toc-modified-id="Detecting-Phrases-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>Detecting Phrases</a></span></li></ul></li><li><span><a href="#Spacy" data-toc-modified-id="Spacy-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Spacy</a></span><ul class="toc-item"><li><span><a href="#Tokenization" data-toc-modified-id="Tokenization-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>Tokenization</a></span></li><li><span><a href="#Part-of-Speech-Tagging" data-toc-modified-id="Part-of-Speech-Tagging-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>Part of Speech Tagging</a></span></li><li><span><a href="#Named-Entity-Recognition" data-toc-modified-id="Named-Entity-Recognition-3.3"><span class="toc-item-num">3.3&nbsp;&nbsp;</span>Named Entity Recognition</a></span></li><li><span><a href="#Token-Level-Attribute" data-toc-modified-id="Token-Level-Attribute-3.4"><span class="toc-item-num">3.4&nbsp;&nbsp;</span>Token Level Attribute</a></span></li><li><span><a href="#Dependency-Parsing" data-toc-modified-id="Dependency-Parsing-3.5"><span class="toc-item-num">3.5&nbsp;&nbsp;</span>Dependency Parsing</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Final-Thoughts" data-toc-modified-id="Final-Thoughts-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Final Thoughts</a></span><ul class="toc-item"><li><span><a href="#Hyperparameters" data-toc-modified-id="Hyperparameters-5.1"><span class="toc-item-num">5.1&nbsp;&nbsp;</span>Hyperparameters</a></span></li><li><span><a href="#Applications" data-toc-modified-id="Applications-5.2"><span class="toc-item-num">5.2&nbsp;&nbsp;</span>Applications</a></span></li><li><span><a href="#Resources" data-toc-modified-id="Resources-5.3"><span class="toc-item-num">5.3&nbsp;&nbsp;</span>Resources</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Word2vec-(Skipgram)" data-toc-modified-id="Word2vec-(Skipgram)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Word2vec (Skipgram)</a></span><ul class="toc-item"><li><span><a href="#Model-Details" data-toc-modified-id="Model-Details-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Model Details</a></span></li><li><span><a href="#The-Hidden-Layer" data-toc-modified-id="The-Hidden-Layer-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>The Hidden Layer</a></span></li><li><span><a href="#The-Output-Layer" data-toc-modified-id="The-Output-Layer-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>The Output Layer</a></span></li></ul></li><li><span><a href="#Improving-Word2vec" data-toc-modified-id="Improving-Word2vec-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Improving Word2vec</a></span><ul class="toc-item"><li><span><a href="#Negative-Sampling" data-toc-modified-id="Negative-Sampling-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>Negative Sampling</a></span><ul class="toc-item"><li><span><a href="#Mathematical-Notation" data-toc-modified-id="Mathematical-Notation-2.1.1"><span class="toc-item-num">2.1.1&nbsp;&nbsp;</span>Mathematical Notation</a></span></li><li><span><a href="#Selecting-Negative-Samples" data-toc-modified-id="Selecting-Negative-Samples-2.1.2"><span class="toc-item-num">2.1.2&nbsp;&nbsp;</span>Selecting Negative Samples</a></span></li></ul></li><li><span><a href="#Subsampling-Frequenct-Words" data-toc-modified-id="Subsampling-Frequenct-Words-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>Subsampling Frequenct Words</a></span></li><li><span><a href="#Detecting-Phrases" data-toc-modified-id="Detecting-Phrases-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>Detecting Phrases</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Final-Thoughts" data-toc-modified-id="Final-Thoughts-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Final Thoughts</a></span><ul class="toc-item"><li><span><a href="#Hyperparameters" data-toc-modified-id="Hyperparameters-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>Hyperparameters</a></span></li><li><span><a href="#Applications" data-toc-modified-id="Applications-4.2"><span class="toc-item-num">4.2&nbsp;&nbsp;</span>Applications</a></span></li><li><span><a href="#Resources" data-toc-modified-id="Resources-4.3"><span class="toc-item-num">4.3&nbsp;&nbsp;</span>Resources</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -11793,7 +11793,7 @@ div#notebook {
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12052,19 +12052,17 @@ div#notebook {
 <span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &#39;retina&#39;
+<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
 
-<span class="kn">import</span> <span class="nn">spacy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Word2Vec</span>
 <span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">fetch_20newsgroups</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,scipy,pandas,sklearn,tensorflow,gensim,spacy
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,scipy,pandas,sklearn,gensim
 </pre></div>
 
 </div>
@@ -12080,30 +12078,17 @@ div#notebook {
 <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using TensorFlow backend.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2017-08-11 17:56:35 
+<pre>Ethen 2019-05-15 20:10:59 
 
-CPython 3.5.2
-IPython 6.1.0
+CPython 3.6.4
+IPython 7.5.0
 
-numpy 1.13.1
-scipy 0.19.1
-pandas 0.19.2
-sklearn 0.18.1
-tensorflow 1.2.1
-gensim 2.3.0
-spacy 1.9.0
+numpy 1.16.3
+scipy 1.2.1
+pandas 0.24.2
+sklearn 0.20.3
+gensim 3.6.0
 </pre>
 </div>
 </div>
@@ -12137,7 +12122,7 @@ spacy 1.9.0
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the .data attribute will access the raw data, where</span>
 <span class="c1"># each element is a document</span>
-<span class="n">newsgroups_train</span> <span class="o">=</span> <span class="n">fetch_20newsgroups</span><span class="p">(</span><span class="n">subset</span> <span class="o">=</span> <span class="s1">&#39;train&#39;</span><span class="p">)</span>
+<span class="n">newsgroups_train</span> <span class="o">=</span> <span class="n">fetch_20newsgroups</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
 
 <span class="c1"># gensim’s Word2vec expects a sequence of sentences as its input,</span>
 <span class="c1"># where each sentence a list of words. We&#39;ll be lazy for now</span>
@@ -12207,13 +12192,13 @@ example input:
 <span class="n">workers</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">workers</span> <span class="o">=</span> <span class="n">workers</span><span class="p">)</span>
+<span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span>
 <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elapse time:&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
 
 <span class="c1"># obtain the learned word vectors (.wv.syn0)</span>
 <span class="c1"># and the vocabulary/word that corresponds to each word vector</span>
-<span class="n">word_vectors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">syn0</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">index2word</span><span class="p">)</span>
+<span class="n">word_vectors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">syn0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">index2word</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;word vector dimension: &#39;</span><span class="p">,</span> <span class="n">word_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">word_vectors</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -12232,7 +12217,7 @@ example input:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>elapse time: 8.487048149108887
+<pre>elapse time: 10.314042806625366
 word vector dimension:  (44593, 100)
 </pre>
 </div>
@@ -12246,6 +12231,19 @@ word vector dimension:  (44593, 100)
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -12276,123 +12274,123 @@ word vector dimension:  (44593, 100)
   <tbody>
     <tr>
       <th>the</th>
-      <td>0.875965</td>
-      <td>-1.072996</td>
-      <td>0.651279</td>
-      <td>0.969601</td>
-      <td>-1.239173</td>
-      <td>-0.000006</td>
-      <td>-0.026741</td>
-      <td>-0.494909</td>
-      <td>-1.147683</td>
-      <td>-0.673804</td>
+      <td>-0.928789</td>
+      <td>-2.039375</td>
+      <td>-0.305224</td>
+      <td>0.689011</td>
+      <td>-1.143947</td>
+      <td>2.466081</td>
+      <td>1.735175</td>
+      <td>0.472579</td>
+      <td>-0.024767</td>
+      <td>-1.647573</td>
       <td>...</td>
-      <td>-0.058065</td>
-      <td>-2.117051</td>
-      <td>-1.844739</td>
-      <td>-3.408572</td>
-      <td>-0.452634</td>
-      <td>1.059920</td>
-      <td>-0.580822</td>
-      <td>-0.359145</td>
-      <td>-1.448598</td>
-      <td>1.770400</td>
+      <td>-0.232337</td>
+      <td>-1.526578</td>
+      <td>0.094503</td>
+      <td>1.259387</td>
+      <td>-0.435328</td>
+      <td>2.616988</td>
+      <td>1.579901</td>
+      <td>1.552686</td>
+      <td>2.852760</td>
+      <td>0.764946</td>
     </tr>
     <tr>
       <th>to</th>
-      <td>0.517399</td>
-      <td>-1.550736</td>
-      <td>0.561461</td>
-      <td>-0.410522</td>
-      <td>-0.834121</td>
-      <td>-0.747776</td>
-      <td>-3.933393</td>
-      <td>2.577003</td>
-      <td>-0.962767</td>
-      <td>-1.607448</td>
+      <td>-0.304363</td>
+      <td>-0.486337</td>
+      <td>-0.131752</td>
+      <td>-0.895452</td>
+      <td>-1.164698</td>
+      <td>-1.287225</td>
+      <td>1.446877</td>
+      <td>-3.485553</td>
+      <td>-0.171611</td>
+      <td>1.540720</td>
       <td>...</td>
-      <td>0.324609</td>
-      <td>-0.802488</td>
-      <td>0.560674</td>
-      <td>-0.493972</td>
-      <td>-0.855662</td>
-      <td>-4.484555</td>
-      <td>0.664931</td>
-      <td>-0.638924</td>
-      <td>-0.567126</td>
-      <td>3.082960</td>
+      <td>1.418543</td>
+      <td>-0.938491</td>
+      <td>-1.139717</td>
+      <td>0.368816</td>
+      <td>-1.815760</td>
+      <td>1.297556</td>
+      <td>1.347316</td>
+      <td>0.298861</td>
+      <td>2.927898</td>
+      <td>-1.502849</td>
     </tr>
     <tr>
       <th>of</th>
-      <td>0.739635</td>
-      <td>-0.995467</td>
-      <td>-1.177334</td>
-      <td>0.167292</td>
-      <td>-0.138621</td>
-      <td>-0.094872</td>
-      <td>-0.553020</td>
-      <td>-0.909594</td>
-      <td>-1.468312</td>
-      <td>-1.804325</td>
+      <td>-0.925221</td>
+      <td>-1.771076</td>
+      <td>1.380647</td>
+      <td>1.303356</td>
+      <td>-0.498485</td>
+      <td>0.392738</td>
+      <td>0.936034</td>
+      <td>1.981436</td>
+      <td>-2.776010</td>
+      <td>-0.492282</td>
       <td>...</td>
-      <td>-1.890942</td>
-      <td>1.142688</td>
-      <td>1.205020</td>
-      <td>-2.180235</td>
-      <td>-3.122204</td>
-      <td>-1.757854</td>
-      <td>-2.372113</td>
-      <td>-3.707302</td>
-      <td>-1.036076</td>
-      <td>-0.625225</td>
+      <td>-1.948198</td>
+      <td>-1.013990</td>
+      <td>2.523699</td>
+      <td>-0.092163</td>
+      <td>-1.313194</td>
+      <td>-0.238258</td>
+      <td>0.697771</td>
+      <td>-0.312460</td>
+      <td>0.871810</td>
+      <td>-1.503165</td>
     </tr>
     <tr>
       <th>a</th>
-      <td>-1.265011</td>
-      <td>-2.267246</td>
-      <td>0.982152</td>
-      <td>-2.038259</td>
-      <td>-3.091936</td>
-      <td>0.127317</td>
-      <td>-2.154119</td>
-      <td>0.969919</td>
-      <td>-1.305455</td>
-      <td>1.667451</td>
+      <td>-1.254138</td>
+      <td>-0.254526</td>
+      <td>-0.242811</td>
+      <td>-1.286800</td>
+      <td>-2.207550</td>
+      <td>1.691819</td>
+      <td>2.454765</td>
+      <td>0.718541</td>
+      <td>-2.484015</td>
+      <td>1.460641</td>
       <td>...</td>
-      <td>2.273709</td>
-      <td>-0.930035</td>
-      <td>-1.947077</td>
-      <td>-1.215089</td>
-      <td>0.988526</td>
-      <td>-0.069218</td>
-      <td>-0.330214</td>
-      <td>-0.889438</td>
-      <td>-0.013739</td>
-      <td>0.192290</td>
+      <td>1.621782</td>
+      <td>1.522206</td>
+      <td>1.093664</td>
+      <td>-1.530593</td>
+      <td>0.211454</td>
+      <td>0.227534</td>
+      <td>2.394310</td>
+      <td>1.052986</td>
+      <td>0.863489</td>
+      <td>-1.458152</td>
     </tr>
     <tr>
       <th>and</th>
-      <td>-0.607925</td>
-      <td>-2.396938</td>
-      <td>-0.081813</td>
-      <td>-0.213720</td>
-      <td>-0.008861</td>
-      <td>-0.413868</td>
-      <td>-0.706492</td>
-      <td>-0.059030</td>
-      <td>0.028941</td>
-      <td>-2.246091</td>
+      <td>-2.747602</td>
+      <td>-2.266969</td>
+      <td>0.493157</td>
+      <td>-0.623855</td>
+      <td>-0.798205</td>
+      <td>1.036047</td>
+      <td>0.911330</td>
+      <td>-0.383022</td>
+      <td>0.382314</td>
+      <td>-0.219421</td>
       <td>...</td>
-      <td>1.299553</td>
-      <td>0.082098</td>
-      <td>-0.096058</td>
-      <td>-1.223995</td>
-      <td>-0.801336</td>
-      <td>-0.227632</td>
-      <td>0.429083</td>
-      <td>-0.770775</td>
-      <td>-1.180003</td>
-      <td>0.248578</td>
+      <td>-0.110118</td>
+      <td>0.594401</td>
+      <td>-0.850503</td>
+      <td>0.581180</td>
+      <td>-0.332337</td>
+      <td>1.026331</td>
+      <td>-0.077282</td>
+      <td>-0.753025</td>
+      <td>1.079456</td>
+      <td>0.257386</td>
     </tr>
   </tbody>
 </table>
@@ -12420,7 +12418,7 @@ word vector dimension:  (44593, 100)
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;computer&#39;</span><span class="p">],</span> <span class="n">topn</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;computer&#39;</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12439,11 +12437,11 @@ word vector dimension:  (44593, 100)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(&#39;machine&#39;, 0.8475774526596069),
- (&#39;keyboard&#39;, 0.8243974447250366),
- (&#39;application&#39;, 0.8197864294052124),
- (&#39;network&#39;, 0.813165009021759),
- (&#39;modem&#39;, 0.8092001676559448)]</pre>
+<pre>[(&#39;keyboard&#39;, 0.8717691898345947),
+ (&#39;network&#39;, 0.8452616333961487),
+ (&#39;machine&#39;, 0.8437634706497192),
+ (&#39;board&#39;, 0.8410136699676514),
+ (&#39;parallel&#39;, 0.8265985250473022)]</pre>
 </div>
 
 </div>
@@ -12754,7 +12752,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Spacy">Spacy<a class="anchor-link" href="#Spacy">&#182;</a></h1>
+<h1 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12762,30 +12760,8 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>After covering a bit of theory about of the Word2vec skipgram model, we'll take a step back and perform some text preprocessing using <a href="https://spacy.io"><strong>spaCy</strong></a>.</p>
-<p><img src="img/spaCy.png" width="80%" height="80%"></p>
-<p><a href="https://spacy.io"><strong>spaCy</strong></a> is an industrial-strength natural language processing (<em>NLP</em>) library for Python. According to the author, spaCy's goal is to take recent advancements in natural language processing out of research papers and put them in the hands of users to build production software.</p>
-<p>Not only does it handles many tasks commonly associated with building an end-to-end natural language processing pipeline:</p>
-<ul>
-<li>Tokenization</li>
-<li>Text normalization, such as lowercasing, stemming/lemmatization</li>
-<li>Part-of-speech tagging</li>
-<li>Syntactic dependency parsing</li>
-<li>Sentence boundary detection</li>
-<li>Named entity recognition and annotation</li>
-</ul>
-<p>But it is also written in optimized Cython, which means it's <em>fast</em>. According to a few independent sources, it's the fastest syntactic parser available in any language. Key pieces of the spaCy parsing pipeline are written in pure C, enabling efficient multithreading (i.e., spaCy can release the <em>GIL</em>).</p>
-<p>The first step to use <code>spaCy</code> is to constructs a language processing pipeline, here we're:</p>
-<ul>
-<li>Loading the pre-trained english model</li>
-<li>Grabbing a sample text and hand it over to spaCy and be prepared to wait...</li>
-</ul>
-<div class="highlight"><pre><span></span><span class="c1"># download the package first</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">spacy</span>
-
-<span class="c1"># after that download the trained english model</span>
-<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">spacy</span> <span class="n">download</span> <span class="n">en</span>
-</pre></div>
+<p>The following code chunks 1) basic preprocess the raw text. 2) trains a Phrase model to glue words that commonly appear next to each other into bigrams. 3) trains the Word2vec model.</p>
+<p>There also a pure python script <a href="https://github.com/ethen8181/machine-learning/tree/master/deep_learning/word2vec/word2vec_workflow.py">here</a> if you're interested.</p>
 
 </div>
 </div>
@@ -12795,800 +12771,10 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we&#39;ll be using reviews of a hotel obtained from tripadvisor’s website</span>
-<span class="c1"># to showcase the general process</span>
-<span class="n">reviews</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="s1">&#39;hotelreviews.txt&#39;</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
-<span class="n">reviews</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[6]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>text</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Nice place Better than some reviews give it cr...</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>what a surprise What a surprise the Sheraton w...</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Good location       Boston from 17th Floor of ...</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Find an alternative to the Sheraton We stayed ...</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Barely Tolerable If it were possible to give o...</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load the model/pipeline, once we have</span>
-<span class="c1"># loaded the object, we can call it as</span>
-<span class="c1"># though it were a function</span>
-<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># grab a single document, hand it over to spacy</span>
-<span class="n">doc</span> <span class="o">=</span> <span class="n">reviews</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">]</span>
-<span class="n">parsed_doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
-<span class="n">parsed_doc</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[8]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Nice place Better than some reviews give it credit for. Overall, the rooms were a bit small but nice. Everything was clean, the view was wonderful and it is very well located (the Prudential Center makes shopping and eating easy and the T is nearby for jaunts out and about the city). Overall, it was a good experience and the staff was quite friendly. </pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>...1/20th of a second or so. Although the text looks exactly the same as before, a lot has actually happened under the hood. Let's take a look at what we got during that time. From here, we'll start to look at the functionalities/properties that spaCy provided us out of the box.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Tokenization">Tokenization<a class="anchor-link" href="#Tokenization">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The first one is sentence detection/segmentation (note that all of these features have already been computed, all we're doing now is accessing it via attribute). Every spaCy document is tokenized into sentences and further into tokens which can be accessed by iterating over the document.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># access the sents attribute, which is a</span>
-<span class="c1"># generator that we can loop through</span>
-<span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parsed_doc</span><span class="o">.</span><span class="n">sents</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sentence </span><span class="si">{}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-<span class="c1"># access the first token</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tokens:&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">parsed_doc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Sentence 1:
-Nice place Better than some reviews give it credit for.
-
-Sentence 2:
-Overall, the rooms were a bit small but nice.
-
-Sentence 3:
-Everything was clean, the view was wonderful and it is very well located (the Prudential Center makes shopping and eating easy and the T is nearby for jaunts out and about the city).
-
-Sentence 4:
-Overall, it was a good experience and the staff was quite friendly.
-
-tokens:
-Nice
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Part-of-Speech-Tagging">Part of Speech Tagging<a class="anchor-link" href="#Part-of-Speech-Tagging">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Part-of-speech tags (POST) are the properties of the word that are defined by the usage of the word in a grammatically correct sentence. These tags can be used as the text features in information filtering, statistical models and rule based parsing.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># .orth_ access the raw string and</span>
-<span class="c1"># .pos_ acess the part of speech tags</span>
-<span class="n">token_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">orth_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_doc</span><span class="p">]</span>
-<span class="n">token_pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_doc</span><span class="p">]</span>
-
-<span class="n">post</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">token_text</span><span class="p">,</span> <span class="n">token_pos</span><span class="p">)),</span>
-                    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;token_text&#39;</span><span class="p">,</span> <span class="s1">&#39;part_of_speech&#39;</span><span class="p">])</span>
-<span class="n">post</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[10]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>token_text</th>
-      <th>part_of_speech</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Nice</td>
-      <td>ADJ</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>place</td>
-      <td>NOUN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Better</td>
-      <td>PROPN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>than</td>
-      <td>ADP</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>some</td>
-      <td>DET</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>From the table above, we can see that the word "Nice" is an adjective and so on.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Named-Entity-Recognition">Named Entity Recognition<a class="anchor-link" href="#Named-Entity-Recognition">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Spacy also consists of a fast entity recognition model which is capable of identifying entity phrases from the document. Entities can be of different types, such as – person, location, organization, dates, numericals etc.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># For a given document, the standard way to access entity is</span>
-<span class="c1"># to use the .ents attribute; for each entity, we can then</span>
-<span class="c1"># access the .label_ attribute to check the entity type for</span>
-<span class="c1"># the entity that got flagged;</span>
-
-<span class="c1"># please check the documentation to see what the label for</span>
-<span class="c1"># entity means</span>
-<span class="c1"># https://spacy.io/docs/usage/entity-recognition#entity-types</span>
-<span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">entity</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parsed_doc</span><span class="o">.</span><span class="n">ents</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Entity </span><span class="si">{}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">entity</span><span class="o">.</span><span class="n">orth_</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">entity</span><span class="o">.</span><span class="n">label_</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Entity 1: Better - FAC
-Entity 2: the Prudential Center - ORG
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can also perform token-level entity analysis. This is basically the name entity recognition that we've already looked at, but at the token by token level. It also provides a inside outside begin indicator. e.g. here "the Prudential Center" represents one single entity, so "the" is the beginning of the entity (B); "Prudential Center" are both inside that entity (I). And the one that does not belong to an entity gets labeled as outside (O).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">token_entity_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">ent_type_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_doc</span><span class="p">]</span>
-<span class="n">token_entity_iob</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">ent_iob_</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_doc</span><span class="p">]</span>
-
-<span class="n">entity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">token_text</span><span class="p">,</span> <span class="n">token_entity_type</span><span class="p">,</span> <span class="n">token_entity_iob</span><span class="p">)),</span>
-                      <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;token_text&#39;</span><span class="p">,</span> <span class="s1">&#39;entity_type&#39;</span><span class="p">,</span> <span class="s1">&#39;inside_outside_begin&#39;</span><span class="p">])</span>
-<span class="n">entity</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">37</span><span class="p">:</span><span class="mi">41</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[12]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>token_text</th>
-      <th>entity_type</th>
-      <th>inside_outside_begin</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>37</th>
-      <td>the</td>
-      <td>ORG</td>
-      <td>B</td>
-    </tr>
-    <tr>
-      <th>38</th>
-      <td>Prudential</td>
-      <td>ORG</td>
-      <td>I</td>
-    </tr>
-    <tr>
-      <th>39</th>
-      <td>Center</td>
-      <td>ORG</td>
-      <td>I</td>
-    </tr>
-    <tr>
-      <th>40</th>
-      <td>makes</td>
-      <td></td>
-      <td>O</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Token-Level-Attribute">Token Level Attribute<a class="anchor-link" href="#Token-Level-Attribute">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>What about a variety of other token-level attributes, such as the relative frequency of tokens (how frequently does each token/word appears in the english vocabulary), and whether or not a token matches any of the following categories?</p>
-<ul>
-<li>stopword (grammatically functional words that don't contribute too much to the context)</li>
-<li>punctuation</li>
-<li>whitespace</li>
-<li>number</li>
-<li>whether the token is included in spaCy's default vocabulary or not?</li>
-<li>In terms of the token's relative frequency, spaCy expresses it as the log probability, so a negative number closer to 0 means it appears more often. Or we can say a smaller absolute value means it commonly appears</li>
-</ul>
-<p>Please refer to the <a href="https://spacy.io/docs/api/token">documentation page</a> to see all the available attributes at the token level.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">token_attrs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">token</span><span class="o">.</span><span class="n">orth_</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">lemma_</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">prob</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">is_stop</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">is_punct</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">is_space</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">like_num</span><span class="p">,</span>
-                <span class="n">token</span><span class="o">.</span><span class="n">is_oov</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_doc</span><span class="p">]</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">token_attrs</span><span class="p">,</span>
-                  <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;lemma&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;log_probability&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;stop&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;punctuation&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;whitespace&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;number&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;out_of_vocab&#39;</span><span class="p">])</span>
-
-<span class="c1"># we convert the boolean columns to only showing Yes for True</span>
-<span class="c1"># and a blank string for False for a cleaner output</span>
-<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;stop&#39;</span><span class="p">:</span><span class="s1">&#39;out_of_vocab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;stop&#39;</span><span class="p">:</span><span class="s1">&#39;out_of_vocab&#39;</span><span class="p">]</span>
-                                      <span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
-<span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[13]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>text</th>
-      <th>lemma</th>
-      <th>log_probability</th>
-      <th>stop</th>
-      <th>punctuation</th>
-      <th>whitespace</th>
-      <th>number</th>
-      <th>out_of_vocab</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>68</th>
-      <td>staff</td>
-      <td>staff</td>
-      <td>-10.720455</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th>69</th>
-      <td>was</td>
-      <td>be</td>
-      <td>-5.404201</td>
-      <td>Yes</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th>70</th>
-      <td>quite</td>
-      <td>quite</td>
-      <td>-8.256200</td>
-      <td>Yes</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th>71</th>
-      <td>friendly</td>
-      <td>friendly</td>
-      <td>-10.444580</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <th>72</th>
-      <td>.</td>
-      <td>.</td>
-      <td>-3.072948</td>
-      <td></td>
-      <td>Yes</td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dependency-Parsing">Dependency Parsing<a class="anchor-link" href="#Dependency-Parsing">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Spacy also offers a fast and accurate dependency parser. Let's parse the dependency tree of all the sentences which contains a targeted term that we specified and check what are the adjectives that were commonly used with that term.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># toy example of how to get the depency</span>
-<span class="n">token</span> <span class="o">=</span> <span class="n">parsed_doc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;target word:&#39;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;depency:&#39;</span><span class="p">)</span>
-
-<span class="c1"># to get the dependency for a token</span>
-<span class="c1"># we can access the .children attribute</span>
-<span class="c1"># and iterate through them</span>
-<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>target word: place
-depency:
-Nice
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">valid_word</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns False if the spacy token is either</span>
-<span class="sd">    a punctuation, whitespace, number or a pronoun</span>
-<span class="sd">    (indicated by the &#39;-PRON-&#39; flag)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pron_flag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="o">!=</span> <span class="s1">&#39;-PRON-&#39;</span>
-    <span class="n">word_flag</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">is_punct</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">like_num</span><span class="p">)</span>
-    <span class="n">valid</span> <span class="o">=</span> <span class="n">word_flag</span> <span class="ow">and</span> <span class="n">pron_flag</span>
-    <span class="k">return</span> <span class="n">valid</span>
-
-
-<span class="k">def</span> <span class="nf">post_words</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="n">target_token</span><span class="p">,</span> <span class="n">post</span><span class="p">,</span> <span class="n">topn</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    given a document/corpus, look for the most commonly</span>
-<span class="sd">    associated part of speech tag associated with the specified token</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">target_sents</span> <span class="o">=</span> <span class="p">[</span><span class="n">sent</span> <span class="k">for</span> <span class="n">sent</span> <span class="ow">in</span> <span class="n">document</span><span class="o">.</span><span class="n">sents</span> <span class="k">if</span> <span class="n">target_token</span> <span class="ow">in</span> <span class="n">sent</span><span class="o">.</span><span class="n">lower_</span><span class="p">]</span>    
-    <span class="n">words</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">target_sents</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">:</span> 
-            <span class="n">words</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">child</span><span class="o">.</span><span class="n">lemma_</span>
-                          <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">children</span>
-                          <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">pos_</span> <span class="o">==</span> <span class="n">post</span> <span class="ow">and</span> <span class="n">valid_word</span><span class="p">(</span><span class="n">child</span><span class="p">)])</span>
-
-    <span class="n">common_words</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">words</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">topn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">common_words</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># lump all the documents into one giant document</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">corpus</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">reviews</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
-<span class="n">document</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">corpus</span><span class="p">)</span>
-<span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elapse:&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>elapse: 3.2930688858032227
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">common_words</span> <span class="o">=</span> <span class="n">post_words</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="n">target_token</span> <span class="o">=</span> <span class="s1">&#39;view&#39;</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="s1">&#39;ADJ&#39;</span><span class="p">)</span>
-<span class="n">common_words</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[17]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&#39;great&#39;, 41), (&#39;good&#39;, 28), (&#39;small&#39;, 13), (&#39;which&#39;, 13), (&#39;fantastic&#39;, 11)]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>If the text you'd like to process is general-purpose English language text (i.e., not domain-specific, like medical literature), spaCy is ready to use out-of-the-box. It will probably become a core part of the Python data science ecosystem — it will do for natural language computing what other great libraries have done for numerical computing.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following code chunks 1) preprocess the raw text using spaCy. 2) trains a Phrase model to glue words that commonly appear next to each other into bigrams. 3) trains the Word2vec model.</p>
-<p>There also a pure python script <a href="https://github.com/ethen8181/machine-learning/tree/master/deep_learning/word2vec/word2vec_workflow.py">here</a> if you're interested.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">spacy</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">string</span> <span class="k">import</span> <span class="n">punctuation</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
 <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Phrases</span>
 <span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Word2Vec</span>
 <span class="kn">from</span> <span class="nn">gensim.models.phrases</span> <span class="k">import</span> <span class="n">Phraser</span>
@@ -13603,78 +12789,46 @@ Nice
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">export_unigrams</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">,</span>
-                    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">n_jobs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">export_unigrams</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocessed the raw text and export it to a .txt file,</span>
 <span class="sd">    where each line is one document, for what sort of preprocessing</span>
-<span class="sd">    is done, please refer to the `clean_corpus` function</span>
+<span class="sd">    is done, please refer to the `normalize_text` function</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    unigram_path : str</span>
-<span class="sd">        output file path of the preprocessed unigram text</span>
+<span class="sd">        output file path of the preprocessed unigram text.</span>
 
 <span class="sd">    texts : iterable</span>
 <span class="sd">        iterable can be simply a list, but for larger corpora,</span>
 <span class="sd">        consider an iterable that streams the sentences directly from</span>
 <span class="sd">        disk/network using Gensim&#39;s Linsentence or something along</span>
-<span class="sd">        those line</span>
+<span class="sd">        those line.</span>
 
-<span class="sd">    parser : spacy model object</span>
-<span class="sd">        e.g. parser = spacy.load(&#39;en&#39;)</span>
-
-<span class="sd">    stopwords : set</span>
-<span class="sd">        stopword set that will be excluded from the corpus</span>
-
-<span class="sd">    batch_size : int, default 10000</span>
-<span class="sd">        batch size for the spacy preprocessing</span>
-
-<span class="sd">    n_jobs : int, default -1</span>
-<span class="sd">        number of jobs/cores/threads to use for the spacy preprocessing</span>
+<span class="sd">    stop_words : set</span>
+<span class="sd">        stopword set that will be excluded from the corpus.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;utf_8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">cleaned_text</span> <span class="ow">in</span> <span class="n">clean_corpus</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf_8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">normalize_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cleaned_text</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">clean_corpus</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">stopwords</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_jobs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generator function using spaCy to parse reviews:</span>
-<span class="sd">    - lemmatize the text</span>
-<span class="sd">    - remove punctuation, whitespace and number</span>
-<span class="sd">    - remove pronoun, e.g. &#39;it&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_threads</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_jobs</span> <span class="o">&lt;</span> <span class="n">n_threads</span><span class="p">:</span>
-        <span class="n">n_threads</span> <span class="o">=</span> <span class="n">n_jobs</span>
+<span class="k">def</span> <span class="nf">normalize_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">):</span>
+    <span class="c1"># remove special characters\whitespaces</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^a-zA-Z\s]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
 
-    <span class="c1"># use the .pip to process texts as a stream;</span>
-    <span class="c1"># this functionality supports using multi-threads</span>
-    <span class="k">for</span> <span class="n">parsed_text</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">n_threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span><span class="p">):</span>
-        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parsed_text</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">valid_word</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">lemma_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stopwords</span><span class="p">:</span>
-                <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lemma_</span><span class="p">)</span>
+    <span class="c1"># lower case &amp; tokenize text</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
-        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">cleaned_text</span>
-
-
-<span class="k">def</span> <span class="nf">valid_word</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns False if the spacy token is either</span>
-<span class="sd">    a punctuation, whitespace, number or a pronoun</span>
-<span class="sd">    (indicated by the &#39;PRON&#39; flag)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pron_flag</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">pos_</span> <span class="o">!=</span> <span class="s1">&#39;PRON&#39;</span>
-    <span class="n">word_flag</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">is_punct</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">is_space</span> <span class="ow">or</span> <span class="n">token</span><span class="o">.</span><span class="n">like_num</span><span class="p">)</span>
-    <span class="n">word_len_flag</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
-    <span class="n">valid</span> <span class="o">=</span> <span class="n">pron_flag</span> <span class="ow">and</span> <span class="n">word_flag</span> <span class="ow">and</span> <span class="n">word_len_flag</span>
-    <span class="k">return</span> <span class="n">valid</span>
+    <span class="c1"># filter stopwords out of text &amp;</span>
+    <span class="c1"># re-create text from filtered tokens</span>
+    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cleaned_text</span>
 </pre></div>
 
 </div>
@@ -13684,15 +12838,14 @@ Nice
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a set of stopwords built-in to spacy,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a set of stopwords built-in to various packages</span>
 <span class="c1"># we can always expand this set for the</span>
-<span class="c1"># problem that we are working on, here we include</span>
+<span class="c1"># problem that we are working on, here we also included</span>
 <span class="c1"># python built-in string punctuation mark</span>
-<span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en&#39;</span><span class="p">)</span>
-<span class="n">STOPWORDS</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">en</span><span class="o">.</span><span class="n">STOP_WORDS</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">punctuation</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">ENGLISH_STOP_WORDS</span><span class="p">)</span>
+<span class="n">STOPWORDS</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">punctuation</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">ENGLISH_STOP_WORDS</span><span class="p">)</span>
 
 <span class="c1"># create a directory called &#39;model&#39; to</span>
 <span class="c1"># store all outputs in later section</span>
@@ -13703,8 +12856,7 @@ Nice
 <span class="n">UNIGRAM_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;unigram.txt&#39;</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">):</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">export_unigrams</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">,</span> <span class="n">texts</span> <span class="o">=</span> <span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-                    <span class="n">parser</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">,</span> <span class="n">stopwords</span> <span class="o">=</span> <span class="n">STOPWORDS</span><span class="p">)</span>
+    <span class="n">export_unigrams</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">,</span> <span class="n">texts</span><span class="o">=</span><span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">stop_words</span><span class="o">=</span><span class="n">STOPWORDS</span><span class="p">)</span>
     <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;text preprocessing, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
 </pre></div>
@@ -13723,7 +12875,7 @@ Nice
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>text preprocessing, elapse 226.76951503753662
+<pre>text preprocessing, elapse 1.7233860492706299
 </pre>
 </div>
 </div>
@@ -13734,7 +12886,7 @@ Nice
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">PHRASE_MODEL_CHECKPOINT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;phrase_model&#39;</span><span class="p">)</span>
@@ -13765,7 +12917,7 @@ Nice
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>training phrase model, elapse 2.6187009811401367
+<pre>training phrase model, elapse 2.9995877742767334
 </pre>
 </div>
 </div>
@@ -13776,7 +12928,7 @@ Nice
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">export_bigrams</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="n">bigram_path</span><span class="p">,</span> <span class="n">phrase_model</span><span class="p">):</span>
@@ -13819,7 +12971,7 @@ Nice
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">BIGRAM_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;bigram.txt&#39;</span><span class="p">)</span>
@@ -13844,7 +12996,7 @@ Nice
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>converting words to phrases, elapse 10.983206987380981
+<pre>converting words to phrases, elapse 13.722484111785889
 </pre>
 </div>
 </div>
@@ -13865,13 +13017,13 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 
 
-<span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">seen</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">seen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively finds size of objects, shamelessly &quot;borrowed&quot;</span>
 <span class="sd">    from link listed in reference</span>
@@ -13909,7 +13061,7 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
@@ -13938,7 +13090,7 @@ and preprocessed text into memory and comparing the two.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>original size uses 1.6859290484964748 times the amount of memory
+<pre>original size uses 1.579115410629266 times the amount of memory
 </pre>
 </div>
 </div>
@@ -13953,12 +13105,12 @@ and preprocessed text into memory and comparing the two.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The Word2vec also accepts several key parameters that affect both training speed and quality. Hopefully these will now make more sense after we covered some theory of the algorithm.</p>
 <ul>
-<li><code>iter</code>: Number of iterations to train the model</li>
-<li><code>min_count</code>: For pruning the internal dictionary. Words that appear only once or twice in a billion-word corpus are probably uninteresting typos and garbage. In addition, there’s not enough data to make any meaningful training on those words, so it’s best to ignore them. A reasonable value for min_count is between 0-100, depending on the size of the dataset.</li>
+<li><code>iter</code>: Number of iterations to train the model.</li>
+<li><code>min_count</code>: For pruning the internal dictionary. Words that appear only once or twice in a billion-word corpus are probably uninteresting typos and garbage. In addition, there's not enough data to make any meaningful training on those words, so it's best to ignore them. A reasonable value for min_count is between 0-100, depending on the size of the dataset.</li>
 <li><code>size</code>: Refers to the hidden layers size. Bigger size values require more training data, but can lead to better (more accurate) models. Reasonable values are in the tens to hundreds</li>
-<li><code>workers</code>: Number of cores/threads used for training</li>
+<li><code>workers</code>: Number of cores/threads used for training.</li>
 <li><code>window</code>: Only terms that occur within a window-neighbourhood of a term in a sentence are associated with it during training. The default value is 4. Unless your text contains big sentences, it might be safe to leave it at that.</li>
-<li><code>sg</code>: This defines the algorithm. If equal to 1, the skip-gram technique is used. Else, the CBoW method is employed. The word2vec framework we introduced here is skip-gram, where we're using the target word to predict the context word, where CBow is simply flipping it the other way around, i.e. using the context word to predict the target word. Based on the original author's <a href="https://arxiv.org/abs/1310.4546">paper</a>, Skip-gram is reported to be a better framework </li>
+<li><code>sg</code>: This defines the algorithm. If equal to 1, the skip-gram technique is used. Else, the CBoW method is employed. The word2vec framework we introduced here is skip-gram, where we're using the target word to predict the context word, where CBow is simply flipping it the other way around, i.e. using the context word to predict the target word. Based on the original author's <a href="https://arxiv.org/abs/1310.4546">paper</a>, Skip-gram is reported to be a better framework.</li>
 </ul>
 <p>You can refer to the full list of parameters <a href="http://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.Word2Vec">here</a>.</p>
 
@@ -13967,7 +13119,7 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">WORD2VEC_CHECKPOINT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;word2vec&#39;</span><span class="p">)</span>
@@ -13976,7 +13128,7 @@ and preprocessed text into memory and comparing the two.</p>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">sentences</span> <span class="o">=</span> <span class="n">LineSentence</span><span class="p">(</span><span class="n">BIGRAM_PATH</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">workers</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">())</span>
+    <span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">())</span>
     <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training word2vec, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
     <span class="n">word2vec</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">WORD2VEC_CHECKPOINT</span><span class="p">)</span>
@@ -13996,7 +13148,7 @@ and preprocessed text into memory and comparing the two.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>training word2vec, elapse 5.97011399269104
+<pre>training word2vec, elapse 7.135304927825928
 </pre>
 </div>
 </div>
@@ -14016,7 +13168,7 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># once we’re finished training the model (i.e. no more updates, only querying)</span>
@@ -14034,40 +13186,40 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">normalize</span>
 
 
 <span class="k">def</span> <span class="nf">most_similar</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">,</span> <span class="n">vocab</span><span class="p">,</span> <span class="n">index2word</span><span class="p">,</span>
-                 <span class="n">positive</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">negative</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">topn</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+                 <span class="n">positive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    No frill version of the function `word2vec.wv.most_similar`;</span>
 <span class="sd">    Find the top-N most similar words. Positive words contribute</span>
-<span class="sd">    positively towards the similarity, negative words negatively</span>
-<span class="sd">    </span>
+<span class="sd">    positively towards the similarity, negative words negatively.</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    word_vectors : 2d ndarray</span>
-<span class="sd">        the learned word vectors</span>
-<span class="sd">        </span>
+<span class="sd">        the learned word vectors.</span>
+
 <span class="sd">    vocab : word2vec.wv.vocab</span>
 <span class="sd">        dictionary like object where the key is the word</span>
 <span class="sd">        and the value has a .index attribute that allows</span>
-<span class="sd">        us to look up the index for a given word</span>
-<span class="sd">        </span>
+<span class="sd">        us to look up the index for a given word.</span>
+
 <span class="sd">    index2word : word2vec.wv.index2word</span>
 <span class="sd">        list like object that serves as the looking up the word</span>
-<span class="sd">        of a given index</span>
-<span class="sd">        </span>
+<span class="sd">        of a given index.</span>
+
 <span class="sd">    positive/negative : list, default None</span>
 <span class="sd">        list of positive or negative words to look for similar words,</span>
 <span class="sd">        positive words will get assign a +1 weight and negative words</span>
-<span class="sd">        will get assign a -1 weight when doing the vector addition</span>
-<span class="sd">    </span>
+<span class="sd">        will get assign a -1 weight when doing the vector addition.</span>
+
 <span class="sd">    topn : int</span>
-<span class="sd">        top-n similar words to find</span>
+<span class="sd">        top-n similar words to find.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># normalize word vectors up front makes the cosine distance</span>
     <span class="c1"># calculation later easier</span>
@@ -14096,7 +13248,7 @@ and preprocessed text into memory and comparing the two.</p>
         <span class="n">all_words</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word_idx</span><span class="p">)</span> 
     
     <span class="c1"># find topn most similar words measured by cosine distance</span>
-    <span class="n">mean_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">mean_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">mean_vector</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mean_vector</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">normed</span><span class="p">,</span> <span class="n">mean_vector</span><span class="p">)</span>
     <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dists</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:(</span><span class="n">topn</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_words</span><span class="p">))]</span>
@@ -14113,7 +13265,7 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">word</span> <span class="o">=</span> <span class="s1">&#39;computer&#39;</span>
@@ -14130,17 +13282,17 @@ and preprocessed text into memory and comparing the two.</p>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[29]:</div>
+<div class="prompt output_prompt">Out[17]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(&#39;modem&#39;, 0.9702850580215454),
- (&#39;board&#39;, 0.9628041386604309),
- (&#39;upgrade&#39;, 0.9603150486946106),
- (&#39;printer&#39;, 0.9596825838088989),
- (&#39;cd_rom&#39;, 0.9565122127532959)]</pre>
+<pre>[(&#39;pc&#39;, 0.9847623109817505),
+ (&#39;mac&#39;, 0.9761186242103577),
+ (&#39;scsi&#39;, 0.9734085202217102),
+ (&#39;modem&#39;, 0.9724104404449463),
+ (&#39;applications_display&#39;, 0.972122073173523)]</pre>
 </div>
 
 </div>
