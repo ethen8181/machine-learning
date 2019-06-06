@@ -101,10 +101,10 @@ CHCriterion <- function( data, kmax, clustermethod, ...  )
 		}		
 	}else # "hclust"
 	{
+		d <- dist( data, method = "euclidean" )
+		clustering <- hclust( d, ... )
 		for( k in 2:kmax )
 		{
-			d <- dist( data, method = "euclidean" )
-			clustering <- hclust( d, ... )
 			groups <- cutree( clustering, k )
 			wss[k] <- WSS( data = data, groups =  groups )
 		}
