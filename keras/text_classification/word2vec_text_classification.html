@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>word2vec_detailed</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>word2vec_text_classification</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Word2vec-(Skipgram)" data-toc-modified-id="Word2vec-(Skipgram)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Word2vec (Skipgram)</a></span><ul class="toc-item"><li><span><a href="#Model-Details" data-toc-modified-id="Model-Details-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Model Details</a></span></li><li><span><a href="#The-Hidden-Layer" data-toc-modified-id="The-Hidden-Layer-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>The Hidden Layer</a></span></li><li><span><a href="#The-Output-Layer" data-toc-modified-id="The-Output-Layer-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>The Output Layer</a></span></li></ul></li><li><span><a href="#Improving-Word2vec" data-toc-modified-id="Improving-Word2vec-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Improving Word2vec</a></span><ul class="toc-item"><li><span><a href="#Negative-Sampling" data-toc-modified-id="Negative-Sampling-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>Negative Sampling</a></span><ul class="toc-item"><li><span><a href="#Mathematical-Notation" data-toc-modified-id="Mathematical-Notation-2.1.1"><span class="toc-item-num">2.1.1&nbsp;&nbsp;</span>Mathematical Notation</a></span></li><li><span><a href="#Selecting-Negative-Samples" data-toc-modified-id="Selecting-Negative-Samples-2.1.2"><span class="toc-item-num">2.1.2&nbsp;&nbsp;</span>Selecting Negative Samples</a></span></li></ul></li><li><span><a href="#Subsampling-Frequenct-Words" data-toc-modified-id="Subsampling-Frequenct-Words-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>Subsampling Frequenct Words</a></span></li><li><span><a href="#Detecting-Phrases" data-toc-modified-id="Detecting-Phrases-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>Detecting Phrases</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Final-Thoughts" data-toc-modified-id="Final-Thoughts-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Final Thoughts</a></span><ul class="toc-item"><li><span><a href="#Hyperparameters" data-toc-modified-id="Hyperparameters-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>Hyperparameters</a></span></li><li><span><a href="#Applications" data-toc-modified-id="Applications-4.2"><span class="toc-item-num">4.2&nbsp;&nbsp;</span>Applications</a></span></li><li><span><a href="#Resources" data-toc-modified-id="Resources-4.3"><span class="toc-item-num">4.3&nbsp;&nbsp;</span>Resources</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Leveraging-Word2vec-for-Text-Classification" data-toc-modified-id="Leveraging-Word2vec-for-Text-Classification-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Leveraging Word2vec for Text Classification</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Gensim-Implementation" data-toc-modified-id="Gensim-Implementation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Gensim Implementation</a></span></li><li><span><a href="#Keras-Implementation" data-toc-modified-id="Keras-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Keras Implementation</a></span></li><li><span><a href="#Benchmarks" data-toc-modified-id="Benchmarks-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Benchmarks</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12056,13 +12056,14 @@ div#notebook {
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">cpu_count</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
-<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Word2Vec</span>
-<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="k">import</span> <span class="n">fetch_20newsgroups</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,scipy,pandas,sklearn,gensim
+<span class="c1"># change default style figure and font size</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,matplotlib,xgboost,keras
 </pre></div>
 
 </div>
@@ -12078,17 +12079,29 @@ div#notebook {
 <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using TensorFlow backend.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-06-14 09:43:53 
+<pre>Ethen 2019-06-14 09:48:45 
 
 CPython 3.6.4
 IPython 7.5.0
 
 numpy 1.16.1
-scipy 1.2.1
 pandas 0.24.2
 sklearn 0.20.3
-gensim 3.6.0
+matplotlib 3.0.3
+xgboost 0.81
+keras 2.2.2
 </pre>
 </div>
 </div>
@@ -12101,7 +12114,7 @@ gensim 3.6.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Word2vec-(Skipgram)">Word2vec (Skipgram)<a class="anchor-link" href="#Word2vec-(Skipgram)">&#182;</a></h1>
+<h1 id="Leveraging-Word2vec-for-Text-Classification">Leveraging Word2vec for Text Classification<a class="anchor-link" href="#Leveraging-Word2vec-for-Text-Classification">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12109,8 +12122,27 @@ gensim 3.6.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>At a high level <code>Word2Vec</code> is a unsupervised learning algorithm that uses a shallow neural network (with one hidden layer) to learn the vectorial representations of all the unique words/phrases for a given corpus. The advantage that word2vec offers is it tries to preserve the semantic meaning behind those terms. For example, a document may employ the words "dog" and "canine" to mean the same thing, but never use them together in a sentence. Ideally, the word2vec algorithm would be able to learn the context and place them together in similar vector semantic space.</p>
-<p>We'll start off by using the Gensim's implementation of the algorithm to provide a high-level intuition.</p>
+<p>Many machine learning algorithms requires the input features to be represented as a fixed-length feature
+vector. When it comes to texts, one of the most common fixed-length features is one hot encoding methods such as bag of words or tf-idf. The advantage of these approach is that they have fast execution time, while the main drawback is they lose the ordering &amp; semantics of the words.</p>
+<p>The motivation behind converting text into semantic vectors (such as the ones provided by <code>Word2Vec</code>) is that not only do these type of methods have the capabilities to extract the semantic relationships (e.g. the word powerful should be closely related to strong as oppose to another word like bank), but they should be preserve most of the relevant information about a text while having relatively low dimensionality.</p>
+<p>In this notebook, we'll take a look at how a <code>Word2Vec</code> model can also be used as a dimensionality reduction algorithm to feed into a text classifier. A good one should be able to extract the signal from the noise efficiently, hence improving the performance of the classifier.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll download the text classification data, read it into a <code>pandas</code> dataframe and split it into train and test set.</p>
 
 </div>
 </div>
@@ -12120,64 +12152,46 @@ gensim 3.6.0
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the .data attribute will access the raw data, where</span>
-<span class="c1"># each element is a document</span>
-<span class="n">newsgroups_train</span> <span class="o">=</span> <span class="n">fetch_20newsgroups</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">call</span>
 
-<span class="c1"># gensim’s Word2vec expects a sequence of sentences as its input,</span>
-<span class="c1"># where each sentence a list of words. We&#39;ll be lazy for now</span>
-<span class="c1"># and not perform any sort of text preprocessing</span>
-<span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
 
-<span class="c1"># example output of the data</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;raw data:</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;example input:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sentences</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">download_data</span><span class="p">(</span><span class="n">base_dir</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;download Reuters&#39; text categorization benchmarks from its url.&quot;&quot;&quot;</span>
+    
+    <span class="n">train_data</span> <span class="o">=</span> <span class="s1">&#39;r8-train-no-stop.txt&#39;</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="s1">&#39;r8-test-no-stop.txt&#39;</span>
+    <span class="n">concat_data</span> <span class="o">=</span> <span class="s1">&#39;r8-no-stop.txt&#39;</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;http://www.cs.umb.edu/~smimarog/textmining/datasets/&#39;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">base_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+    <span class="n">dir_prefix_flag</span> <span class="o">=</span> <span class="s1">&#39; --directory-prefix &#39;</span> <span class="o">+</span> <span class="n">base_dir</span>
+
+    <span class="c1"># brew install wget</span>
+    <span class="c1"># on a mac if you don&#39;t have it</span>
+    <span class="n">train_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">train_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">train_data_path</span><span class="p">):</span>
+        <span class="n">call</span><span class="p">(</span><span class="s1">&#39;wget &#39;</span> <span class="o">+</span> <span class="n">base_url</span> <span class="o">+</span> <span class="n">train_data</span> <span class="o">+</span> <span class="n">dir_prefix_flag</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">test_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">test_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">test_data_path</span><span class="p">):</span>
+        <span class="n">call</span><span class="p">(</span><span class="s1">&#39;wget &#39;</span> <span class="o">+</span> <span class="n">base_url</span> <span class="o">+</span> <span class="n">test_data</span> <span class="o">+</span> <span class="n">dir_prefix_flag</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">concat_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="n">concat_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">concat_data_path</span><span class="p">):</span>
+        <span class="c1"># concatenate train and test files, we&#39;ll make our own train-test splits</span>
+        <span class="c1"># the &gt; piping symbol directs the concatenated file to a new file, it</span>
+        <span class="c1"># will replace the file if it already exists; on the other hand, the &gt;&gt; symbol</span>
+        <span class="c1"># will append if it already exists</span>
+        <span class="n">train_test_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;r8-*-no-stop.txt&#39;</span><span class="p">)</span>
+        <span class="n">call</span><span class="p">(</span><span class="s1">&#39;cat </span><span class="si">{}</span><span class="s1"> &gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">train_test_path</span><span class="p">,</span> <span class="n">concat_data_path</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">concat_data_path</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>raw data:
-
- From: lerxst@wam.umd.edu (where&#39;s my thing)
-Subject: WHAT car is this!?
-Nntp-Posting-Host: rac3.wam.umd.edu
-Organization: University of Maryland, College Park
-Lines: 15
-
- I was wondering if anyone out there could enlighten me on this car I saw
-the other day. It was a 2-door sports car, looked to be from the late 60s/
-early 70s. It was called a Bricklin. The doors were really small. In addition,
-the front bumper was separate from the rest of the body. This is 
-all I know. If anyone can tellme a model name, engine specs, years
-of production, where this car is made, history, or whatever info you
-have on this funky looking car, please e-mail.
-
-Thanks,
-- IL
-   ---- brought to you by your neighborhood Lerxst ----
-
-
-
-
-
-example input:
- [&#39;From:&#39;, &#39;lerxst@wam.umd.edu&#39;, &#34;(where&#39;s&#34;, &#39;my&#39;, &#39;thing)&#39;, &#39;Subject:&#39;, &#39;WHAT&#39;, &#39;car&#39;, &#39;is&#39;, &#39;this!?&#39;, &#39;Nntp-Posting-Host:&#39;, &#39;rac3.wam.umd.edu&#39;, &#39;Organization:&#39;, &#39;University&#39;, &#39;of&#39;, &#39;Maryland,&#39;, &#39;College&#39;, &#39;Park&#39;, &#39;Lines:&#39;, &#39;15&#39;, &#39;I&#39;, &#39;was&#39;, &#39;wondering&#39;, &#39;if&#39;, &#39;anyone&#39;, &#39;out&#39;, &#39;there&#39;, &#39;could&#39;, &#39;enlighten&#39;, &#39;me&#39;, &#39;on&#39;, &#39;this&#39;, &#39;car&#39;, &#39;I&#39;, &#39;saw&#39;, &#39;the&#39;, &#39;other&#39;, &#39;day.&#39;, &#39;It&#39;, &#39;was&#39;, &#39;a&#39;, &#39;2-door&#39;, &#39;sports&#39;, &#39;car,&#39;, &#39;looked&#39;, &#39;to&#39;, &#39;be&#39;, &#39;from&#39;, &#39;the&#39;, &#39;late&#39;, &#39;60s/&#39;, &#39;early&#39;, &#39;70s.&#39;, &#39;It&#39;, &#39;was&#39;, &#39;called&#39;, &#39;a&#39;, &#39;Bricklin.&#39;, &#39;The&#39;, &#39;doors&#39;, &#39;were&#39;, &#39;really&#39;, &#39;small.&#39;, &#39;In&#39;, &#39;addition,&#39;, &#39;the&#39;, &#39;front&#39;, &#39;bumper&#39;, &#39;was&#39;, &#39;separate&#39;, &#39;from&#39;, &#39;the&#39;, &#39;rest&#39;, &#39;of&#39;, &#39;the&#39;, &#39;body.&#39;, &#39;This&#39;, &#39;is&#39;, &#39;all&#39;, &#39;I&#39;, &#39;know.&#39;, &#39;If&#39;, &#39;anyone&#39;, &#39;can&#39;, &#39;tellme&#39;, &#39;a&#39;, &#39;model&#39;, &#39;name,&#39;, &#39;engine&#39;, &#39;specs,&#39;, &#39;years&#39;, &#39;of&#39;, &#39;production,&#39;, &#39;where&#39;, &#39;this&#39;, &#39;car&#39;, &#39;is&#39;, &#39;made,&#39;, &#39;history,&#39;, &#39;or&#39;, &#39;whatever&#39;, &#39;info&#39;, &#39;you&#39;, &#39;have&#39;, &#39;on&#39;, &#39;this&#39;, &#39;funky&#39;, &#39;looking&#39;, &#39;car,&#39;, &#39;please&#39;, &#39;e-mail.&#39;, &#39;Thanks,&#39;, &#39;-&#39;, &#39;IL&#39;, &#39;----&#39;, &#39;brought&#39;, &#39;to&#39;, &#39;you&#39;, &#39;by&#39;, &#39;your&#39;, &#39;neighborhood&#39;, &#39;Lerxst&#39;, &#39;----&#39;]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -12187,20 +12201,68 @@ example input:
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># apart from the input sentence, the only additional paramter</span>
-<span class="c1"># we&#39;ll set is to specify use all possible cpu to train the model</span>
-<span class="n">workers</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="n">download_data</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
+<span class="n">data_path</span>
+</pre></div>
 
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">workers</span><span class="p">)</span>
-<span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elapse time:&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
+</div>
+</div>
+</div>
 
-<span class="c1"># obtain the learned word vectors (.wv.vectors)</span>
-<span class="c1"># and the vocabulary/word that corresponds to each word vector</span>
-<span class="n">word_vectors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">vectors</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">index2word</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;word vector dimension: &#39;</span><span class="p">,</span> <span class="n">word_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">word_vectors</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;data/r8-no-stop.txt&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
+    <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">label</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># texts are already tokenized, just split on space</span>
+            <span class="c1"># in a real use-case we would put more effort in preprocessing</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;texts&#39;</span><span class="p">:</span> <span class="n">texts</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">:</span> <span class="n">labels</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dimension: &#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12217,15 +12279,14 @@ example input:
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>elapse time: 11.304150104522705
-word vector dimension:  (44593, 100)
+<pre>dimension:  (7674, 2)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[4]:</div>
+<div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -12248,541 +12309,43 @@ word vector dimension:  (44593, 100)
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>...</th>
-      <th>90</th>
-      <th>91</th>
-      <th>92</th>
-      <th>93</th>
-      <th>94</th>
-      <th>95</th>
-      <th>96</th>
-      <th>97</th>
-      <th>98</th>
-      <th>99</th>
+      <th>texts</th>
+      <th>labels</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>the</th>
-      <td>0.800643</td>
-      <td>-1.986527</td>
-      <td>0.977325</td>
-      <td>-0.605457</td>
-      <td>-0.930851</td>
-      <td>0.529532</td>
-      <td>0.863752</td>
-      <td>-0.062699</td>
-      <td>-0.299589</td>
-      <td>-0.153011</td>
-      <td>...</td>
-      <td>0.242826</td>
-      <td>-1.691200</td>
-      <td>-2.657021</td>
-      <td>1.045379</td>
-      <td>-1.026594</td>
-      <td>0.227805</td>
-      <td>1.456893</td>
-      <td>-0.545802</td>
-      <td>-0.542880</td>
-      <td>-0.391885</td>
+      <th>0</th>
+      <td>[asian, exporters, fear, damage, japan, rift, ...</td>
+      <td>trade</td>
     </tr>
     <tr>
-      <th>to</th>
-      <td>0.219040</td>
-      <td>1.816056</td>
-      <td>-2.354737</td>
-      <td>-0.099213</td>
-      <td>-4.378406</td>
-      <td>-0.780509</td>
-      <td>-1.826088</td>
-      <td>-1.877190</td>
-      <td>-3.262380</td>
-      <td>-0.298119</td>
-      <td>...</td>
-      <td>0.217874</td>
-      <td>-4.101723</td>
-      <td>-0.673022</td>
-      <td>-1.751550</td>
-      <td>-1.243698</td>
-      <td>2.592210</td>
-      <td>1.250851</td>
-      <td>1.222139</td>
-      <td>1.038643</td>
-      <td>-1.465834</td>
+      <th>1</th>
+      <td>[china, daily, vermin, eat, pct, grain, stocks...</td>
+      <td>grain</td>
     </tr>
     <tr>
-      <th>of</th>
-      <td>-0.350918</td>
-      <td>-1.358160</td>
-      <td>0.871220</td>
-      <td>-0.373295</td>
-      <td>-0.763746</td>
-      <td>1.521049</td>
-      <td>-2.074889</td>
-      <td>0.788673</td>
-      <td>0.642699</td>
-      <td>0.719654</td>
-      <td>...</td>
-      <td>1.431210</td>
-      <td>-1.377120</td>
-      <td>-0.577969</td>
-      <td>-0.647040</td>
-      <td>-0.602083</td>
-      <td>0.210434</td>
-      <td>2.037229</td>
-      <td>-0.518271</td>
-      <td>1.195434</td>
-      <td>0.720554</td>
+      <th>2</th>
+      <td>[australian, foreign, ship, ban, ends, nsw, po...</td>
+      <td>ship</td>
     </tr>
     <tr>
-      <th>a</th>
-      <td>-2.368490</td>
-      <td>-1.427992</td>
-      <td>-0.131853</td>
-      <td>1.031120</td>
-      <td>-2.994447</td>
-      <td>0.075319</td>
-      <td>-0.848089</td>
-      <td>0.646724</td>
-      <td>-0.175409</td>
-      <td>0.728912</td>
-      <td>...</td>
-      <td>0.025669</td>
-      <td>-0.203032</td>
-      <td>-3.961305</td>
-      <td>2.411133</td>
-      <td>-2.031027</td>
-      <td>0.556540</td>
-      <td>2.303332</td>
-      <td>-1.757780</td>
-      <td>-0.780398</td>
-      <td>-2.324198</td>
+      <th>3</th>
+      <td>[sumitomo, bank, aims, quick, recovery, merger...</td>
+      <td>acq</td>
     </tr>
     <tr>
-      <th>and</th>
-      <td>-2.012166</td>
-      <td>0.505729</td>
-      <td>1.470638</td>
-      <td>0.043076</td>
-      <td>-0.796829</td>
-      <td>-1.076530</td>
-      <td>-0.330089</td>
-      <td>-0.839426</td>
-      <td>0.635126</td>
-      <td>0.202480</td>
-      <td>...</td>
-      <td>-0.248939</td>
-      <td>-1.219598</td>
-      <td>-1.832169</td>
-      <td>-1.141254</td>
-      <td>-0.892952</td>
-      <td>-0.717763</td>
-      <td>1.994657</td>
-      <td>0.249245</td>
-      <td>0.011719</td>
-      <td>-1.332175</td>
+      <th>4</th>
+      <td>[amatil, proposes, two, for, bonus, share, iss...</td>
+      <td>earn</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 100 columns</p>
 </div>
 </div>
 
 </div>
 
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>After the model has learned the word vector for each valid word in our corpus, we can use them to look up related words and phrases (words that have similar semantic meaning) for a given term of interest by comparing distances between the vectors using distance metric such as cosine distance.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;computer&#39;</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[5]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&#39;keyboard&#39;, 0.8483761548995972),
- (&#39;machine&#39;, 0.845702052116394),
- (&#39;application&#39;, 0.8282846212387085),
- (&#39;network&#39;, 0.8205068111419678),
- (&#39;board&#39;, 0.8138819932937622)]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Apart from finding similar words using distance metric such as cosine distance, word vectors have the remarkable property that analogies between words seem to be encoded in the difference between word vectors. For example there seems to be a constant male-female difference vector:</p>
-<p><img src="img/word_vectors.png" width="40%" height="40%"></p>
-<p>$$
-\begin{align}
-W(woman) - W(man)
-&amp;\tilde{=} W(aunt) - W(uncle) \\
-&amp;\tilde{=} W(queen) - W(king)
-\end{align}
-$$</p>
-<p>This property means we also perform vector manipulation (e.g. addition and subtraction) with our word vectors. For example, you might have heard or saw the famous example of: King - male + female = queen. In the next section, we'll be taking a look at this model's inner workings. In explanations "borrows" heavily from the next blog post listed below. <a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">Blog: Word2Vec Tutorial - The Skip-Gram Model</a> and <a href="http://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/">Blog: Word2Vec Tutorial Part 2 - Negative Sampling</a>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Model-Details">Model Details<a class="anchor-link" href="#Model-Details">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The way the model works underneath the hood is that trains a neural network by do the following: Given a specific word in the middle of a sentence (the input word), look at the words nearby and pick one at random.</p>
-<p>There is a <strong>window size</strong> hyperparameter to the algorithm that quantifies the word "nearby". A typical window size might be 5, meaning 5 words behind and 5 words ahead (10 in total). There are some implementations that does something even fancier: Instead of using a fix $k$ window around each word, the window is uniformly distributed from $1, 2, ..., K$, where $K$ is the max window size we specify.</p>
-<p>The diagram below shows some of the training samples (word pairs) we would take from the sentence "The quick brown fox jumps over the lazy dog." We'll used a small window size of 2 just for the example. The word highlighted in blue is the input word.</p>
-<p><img src="img/skipgram.png" width="60%" height="60%"></p>
-<p>After feeding a bunch of word pairs to the network, it is going to tell us the probability for every word in our vocabulary being "nearby" word that we chose. The output probabilities are going to relate to how likely it is find each vocabulary word nearby our input word. For example, if we gave the trained network the input word "Soviet", the output probabilities should be much higher for words like "Union" and "Russia" than for unrelated words like "watermelon" and "kangaroo".</p>
-<p>So how is this all represented? First of all, we know we can't feed a word just as a text string to a neural network (or probably any machine learning model), i.e. we need a way to represent the words to the network. To do this, we first build a vocabulary of words from our training documents. We'll assume that our corpus has a vocabulary size of 10,000.</p>
-<p>We're going to represent an input word like "ants" as a one-hot vector. This vector will have 10,000 components (one for every unique word in our vocabulary) and we'll place a "1" in the position corresponding to the word "ants", and 0s in all of the other positions. The output of the network is a single vector (also with 10,000 components) containing, for every word in our vocabulary, the probability that a randomly selected nearby word is that vocabulary word. Here's the architecture of our single-layer neural network.</p>
-<p><img src="img/word2vec_architecture.png" width="70%" height="70%"></p>
-<p>There is no activation function on the hidden layer neurons, but the output neurons use softmax. We’ll come back to this later.</p>
-<p>When training this network on word pairs, the input is a one-hot vector representing the input word and the training output is also a one-hot vector representing the output word. But when we evaluate the trained network on an input word, the output vector will actually be a probability distribution (i.e., a bunch of floating point values, not a one-hot vector).</p>
-<p>An alternative diagram that depicts that Skip-gram model architecture well:</p>
-<p><img src="img/skipgram_architecture.png" width="30%" height="30%"></p>
-<p>Where we're using the centre word $w_{(t)}$ to predict the surrounding words and the training objective is to learn word vector representations, a.k.a projections that are good at predicting the nearby words.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Hidden-Layer">The Hidden Layer<a class="anchor-link" href="#The-Hidden-Layer">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's say that we wish to learn word vectors with 300 features. The number of features is a hyperparameter that we would have to tune to our application to see which one yields the best result. So the hidden layer is going to be represented by a weight matrix with 10,000 rows (one for every word in our vocabulary) and 300 columns (one for every hidden neuron).</p>
-<p>Now if we look at what would happen when we multiply the 1 x 10,000 one-hot vector representation of the word with a 10,000 x 300 matrix that represents the hidden layer's weight, it will effectively just select the matrix row corresponding to the "1". The following figure is a small example that does a matrix multiplication of a 1 x 5 one hot vector with a 5 x 3 hidden layer's weight to give you a visual.</p>
-<p><img src="img/hidden_layer.png" width="70%" height="70%"></p>
-<p>This means that the hidden layer of this model is really just operating as a lookup table and the output of the hidden layer is essentially the "word vector" for the input word.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="The-Output-Layer">The Output Layer<a class="anchor-link" href="#The-Output-Layer">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The 1 x 300 word vector for "ants" then gets fed to the output layer. The output layer is a Softmax regression classifier. There's another documentation on Softmax Regression <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/softmax.ipynb">here</a>, but the gist of it is that each output neuron, one per word in our vocabulary will produce an output probability between 0 and 1 and the sum of all these output values will add up to 1.</p>
-<p>Specifically, each output neuron has a weight vector which it multiplies against the word vector from the hidden layer, then it applies the function <code>exp(x)</code> to the result. Finally, in order to get the outputs to sum up to 1, we divide this result by the sum of the results from all 10,000 output nodes. Here's an illustration of calculating the output probability for the word "car".</p>
-<p><img src="img/output_layer.png" width="70%" height="70%"></p>
-<p>Note that neural network does not know anything about the offset of the output word relative to the input word. In other words, it does not learn a different set of probabilities for the word before the input versus the word after.</p>
-<p>Recall that in the beginning of the documentation, we mentioned that the goal for word2vec is to represent each word in the corpus as the vector representation while trying to preserve semantic meaning. This means that if two different words have very similar "contexts" (that is, what words are likely to appear around them), then our model needs to output very similar results for these two words. And one way for the network to output similar context predictions for these two words is if the word vectors are similar. So to hit the notion home, if two words have similar contexts, then word2vec is motivated to learn similar word vectors for these two words!</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Improving-Word2vec">Improving Word2vec<a class="anchor-link" href="#Improving-Word2vec">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>You may have noticed that the skip-gram neural network contains a huge number of weights ... For our example with 300 features and a vocab of 10,000 words, that's 3M weights in the hidden layer and output layer each! Training this on a large dataset would be slow and prone to overfitting, so the word2vec authors introduced a number of tweaks to make training feasible.</p>
-<ul>
-<li>Modifying the optimization objective with a technique they called "Negative Sampling", which causes each training sample to update only a small percentage of the model's weights.</li>
-<li>Subsampling frequent words to decrease the number of training examples.</li>
-<li>Treating common word pairs or phrases as single word in the model.</li>
-</ul>
-<p>It's worth noting that subsampling frequent words and applying Negative Sampling not only reduced the compute burden of the training process, but also improved the quality of their resulting word vectors as well.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Negative-Sampling">Negative Sampling<a class="anchor-link" href="#Negative-Sampling">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Training a neural network means taking a training example and adjusting all of the neuron weights slightly so that it predicts that training sample more accurately. In other words, each training sample will tweak all of the weights in the neural network. As we discussed above, the size of our word vocabulary means that our skip-gram neural network has a tremendous number of weights, all of which would be updated slightly by every one of our billions of training samples! Negative sampling addresses this by having each training sample only modify a small percentage of the weights, rather than all of them. Here's how it works:</p>
-<p>When training the network on the word pair ("fox", "quick"), we want the "correct output" of the network, that is the output neuron corresponding to "quick" to output a 1, and for all of the other thousands of output neurons to output a 0.</p>
-<p>With negative sampling, we are instead going to randomly select just a small number of "negative" words (let's say 5) to update the weights for. (In this context, a "negative" word is one for which we want the network to output a 0 for). We will also still update the weights for our "positive" word (which is the word "quick" in our current example).</p>
-<blockquote><p>The paper says that selecting 5-20 words works well for smaller datasets, and we can get away with only 2-5 words for large datasets.</p>
-</blockquote>
-<p>Recall that the output layer of our model has a weight matrix that's 300 x 10,000. So we will just be updating the weights for our positive word ("quick"), plus the weights for 5 other words that we want to output 0. That's a total of 6 output neurons, and 1,800 weight values total. That's only 0.06% of the 3M weights in the output layer!</p>
-<p>In the hidden layer, only the weights for the input word are updated (this is true whether you're using Negative Sampling or not).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Mathematical-Notation">Mathematical Notation<a class="anchor-link" href="#Mathematical-Notation">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This section goes back and re-visit the mathematical notation for Word2vec skipgram's objective function. Hopefully, the math won't look so daunting after having an understanding of the model from a non-mathematical standpoint.</p>
-<p>In this model, we are given a corpus of words $w$ and their contexts $c$ (the word pair of the targeted word that we've sampled). Our goal is to set the parameters $\theta$ of $p(c | w; \theta)$ to maximize our objective function $J_\theta$, i.e. the corpus probability, with regards to our model parameters $\theta$:</p>
-<p>$$
-\begin{align}
-J_{\theta} &amp;= 
-arg\underset{\theta}{max} \prod_{w \in Text} \bigg[ \prod_{c \in C(w)} p(c | w; \theta) \bigg]
-\end{align}
-$$</p>
-<p>Here $C(w)$ is word $w$'s set of contexts.</p>
-<p>One approach for parameterizing the $p(c | w; \theta)$ part of the skip-gram model is the classic softmax objective function:</p>
-<p>$$
-\begin{align}
-p(c | w; \theta) &amp;= \dfrac{exp(v_c \cdot v_w)}{ \sum_{c' \in C} exp(v_c' \cdot v_w)}
-\end{align}
-$$</p>
-<p>Where:</p>
-<ul>
-<li>$v_c$ and $v_w$ are the vector representations for word $c$ and $w$ respectively</li>
-<li>$C$ is the set of all available contexts</li>
-</ul>
-<p>While the objective function above can be computed, it is computationally expensive to do so due to the summation $\sum_{c' \in C} exp(v_c' \cdot v_w)$ since there can be thousands if not million of them. And this is where negative sampling comes in.</p>
-<p>Instead of trying to estimate the probability of the word pair directly, we train a model to differentiate the target word from noise (negative sample). We can thus reduce the problem of predicting the correct word to a binary classification task, where the model tries to distinguish positive/genuine data from noise/negative samples.</p>
-<p>We know for the word pair we generated from the data, we want to maximize its probability, i.e.</p>
-<p>$$
-\begin{align}
-arg\underset{\theta}{max} \prod_{(w, c) \in D} p(D = 1 \big| c, w; \theta)
-\end{align}
-$$</p>
-<p>Here:</p>
-<ul>
-<li>$D$ is the set of all word and context pairs we extract from the text</li>
-<li>$p(D = 1 \big| w, c)$ the probability that the word pair $(w, c)$ came from the corpus data</li>
-</ul>
-<p>We then generate the set $D'$ of random (w, c) pairs, assuming they are all incorrect. The name "negative sampling" stems from the set $D'$ of randomly sampled negative examples. Note that when we pick one random word from the vocabulary, there is some tiny chance that the picked word is actually a valid context. If we consider the large number of vocabulary we have, we can argue that the probability is really really tiny, but a lot of the packages still do take care of removing these "accidents".</p>
-<p>Since this is a binary classification loss, we can use logistic regression to minimize the negative log-likelihood, leading to the objective function:</p>
-<p>\begin{align}
-J_{\theta} 
-&amp;= arg\underset{\theta}{max} 
-\prod_{(w, c) \in D} p(D = 1 \big| c, w; \theta) \prod_{(w, c) \in D'} p(D = 0 \big| c, w; \theta) \\
-&amp;= arg\underset{\theta}{max} 
-\prod_{(w, c) \in D} p(D = 1 \big| c, w; \theta) \prod_{(w, c) \in D'} \big(1 - p(D = 1 \big| c, w; \theta)\big) \\
-&amp;= arg\underset{\theta}{max} 
-\sum_{(w, c) \in D} log \big(p(D = 1 \big| c, w; \theta)\big) \sum_{(w, c) \in D'} log \big(1 - p(D = 1 \big| c, w; \theta)\big) \\
-&amp;= arg\underset{\theta}{max} 
-\sum_{(w, c) \in D} log \big( \dfrac{1}{1 + \text{exp}(-v_c \cdot v_w)} \big) \sum_{(w, c) \in D'} log \big (1 - \dfrac{1}{1 + \text{exp}(-v_c \cdot v_w)} \big) \\
-&amp;= arg\underset{\theta}{max}
-\sum_{(w, c) \in D} log \big( \dfrac{1}{1 + \text{exp}(-v_c \cdot v_w)} \big) \sum_{(w, c) \in D'} log \big (\dfrac{1}{1 + \text{exp}(v_c \cdot v_w)} \big) \\
-\end{align}</p>
-<p>Note that there're various other approaches to approximate the expensive softmax objective function. Negative sampling is soley discussed here because it is fast and works really really well. If you would like to go deeper with this topic, the following link might be a good place to start. <a href="http://ruder.io/word-embeddings-softmax/index.html">Blog: On word embeddings - Part 2: Approximating the Softmax</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Selecting-Negative-Samples">Selecting Negative Samples<a class="anchor-link" href="#Selecting-Negative-Samples">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>One little detail that's missing from the description above is how do we select the negative samples.</p>
-<p>The negative samples are chosen using the unigram distribution. Essentially, the probability of selecting a word as a negative sample is related to its frequency, with more frequent words being more likely to be selected as negative samples. Instead of using the raw frequency for $w_i$, $\text{freq}(w_i)$, in the original word2vec paper, each word is given a weight that's equal to it's frequency (word count) raised to the 3/4 power. The probability for selecting a word is just it's weight divided by the sum of weights for all words.</p>
-<p>$$
-\begin{align}
-P(w_i) = \frac{ {\text{freq}(w_i)}^{3/4} }{\sum_{j=0}^{n} \left({\text{freq}(w_j)}^{3/4} \right) }
-\end{align}
-$$</p>
-<p>This decision to raise the frequency to the 3/4 power appears to be empirical; as the author claims it outperformed other functions (e.g. just using unigram distribution).</p>
-<p>Side note: The way this selection is implemented in the original word2vec C code is interesting. They have a large array with 100M elements (which they refer to as the unigram table). They fill this table with the index of each word in the vocabulary multiple times, and the number of times a word’s index appears in the table is given by $P(w_i) \times \text{table_size}$. Then, to actually select a negative sample, we just generate a random integer between 0 and 100M, and use the word at that index in the table. Since the higher probability words occur more times in the table, we're more likely to pick those.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Subsampling-Frequenct-Words">Subsampling Frequenct Words<a class="anchor-link" href="#Subsampling-Frequenct-Words">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Word2vec has two additional parameters for discarding some of the input words: words appearing less
-than <code>min-count</code> times are not considered as either words or contexts, and in addition frequent words are down-sampled as defined by the <code>sample</code> parameter.</p>
-<p>There are two potential issues with frequently appeared words like "the":</p>
-<ul>
-<li>When looking at word pairs that includes "the", e.g. ("fox", "the"), "the" doesn't tell us much about the meaning of "fox", since it appears in the context of pretty much every word.</li>
-<li>We will have more than enough samples of ("the", "the other word for the word pair") than we need to learn a good vector for "the".</li>
-</ul>
-<p>Word2Vec implements a "subsampling" scheme to address this. For each word we encounter in our training text, there is a chance that we will discard it from the text. The probability that we cut the word is related to the word's frequency.</p>
-<p>$$
-\begin{align}
-\text{probability of keeping the word } w_i 
-&amp;= (\sqrt{\frac{z(w_i)}{0.001}} + 1) \cdot \frac{0.001}{z(w_i)}
-\end{align}
-$$</p>
-<p>Where:</p>
-<ul>
-<li>$z(w_i)$ is the fraction of the total words in the corpus that are that word. For example, if the word "peanut" occurs 1,000 times in a 1 billion word corpus, then z("peanut") = 1E-6.</li>
-<li>There is also a parameter called <code>sample</code> which controls how much subsampling occurs, and the default value is 0.001. Smaller values of <code>sample</code> mean words are less likely to be kept</li>
-</ul>
-<p>Here are some interesting observations of this subsampling function (again this is using the default sample value of 0.001).</p>
-<ul>
-<li>$\text{probability of keeping the word } w_i = 1$ (100% chance of being kept) when $z(w_i) &lt;= 0.0026$. This means that only words which represent more than 0.26% of the total words will be subsampled</li>
-<li>$\text{probability of keeping the word } w_i = 0.5$ (50% chance of being kept) when $z(w_i) &lt;= 0.00746$</li>
-<li>$\text{probability of keeping the word } w_i = 0.033$ (3.3% chance of being kept) when $z(w_i) = 1.0$. That is, if the corpus consisted entirely of word $w_i$, which of course is ridiculous</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Detecting-Phrases">Detecting Phrases<a class="anchor-link" href="#Detecting-Phrases">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Word pair like "Boston Globe" (a newspaper) has a much different meaning than the individual words "Boston" and "Globe". So it makes sense to treat "Boston Globe", wherever it occurs in the text, as a single word with its own word vector representation.</p>
-<p>The formula our phrase models will use to determine whether two tokens $A$ and $B$ constitute a phrase is:</p>
-<p>$$
-\begin{align}
-\frac{count(A B) - count_{min}}{count(A) \cdot count(B)} \cdot N &gt; threshold
-\end{align}
-$$</p>
-<p>Where:</p>
-<ul>
-<li>$count(A)$ is the number of times token $A$ appears in the corpus</li>
-<li>$count(B)$ is the number of times token $B$ appears in the corpus</li>
-<li>$count(A B)$ is the number of times the tokens $A B$ appear in the corpus in this specific order</li>
-<li>$N$ is the total size of the corpus vocabulary</li>
-<li>$count_{min}$ is a user-defined parameter to ensure that accepted phrases occur a minimum number of times,</li>
-<li>$threshold$ is a user-defined parameter to control how strong of a relationship between two tokens the model requires before accepting them as a phrase</li>
-</ul>
-<p>As we can infer the formula is designed to make phrases out of words which occur together often relative to the number of individual occurrences. And a higher threshold value will favors phrases made of infrequent words in order to avoid making phrases out of common words like "and the" or "this is".</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following code chunks 1) basic preprocess the raw text. 2) trains a Phrase model to glue words that commonly appear next to each other into bigrams. 3) trains the Word2vec model.</p>
-<p>There also a pure python script <a href="https://github.com/ethen8181/machine-learning/tree/master/deep_learning/word2vec/word2vec_workflow.py">here</a> if you're interested.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">string</span> <span class="k">import</span> <span class="n">punctuation</span>
-<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
-<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Phrases</span>
-<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="k">import</span> <span class="n">Word2Vec</span>
-<span class="kn">from</span> <span class="nn">gensim.models.phrases</span> <span class="k">import</span> <span class="n">Phraser</span>
-<span class="kn">from</span> <span class="nn">gensim.models.word2vec</span> <span class="k">import</span> <span class="n">LineSentence</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">ENGLISH_STOP_WORDS</span>
-</pre></div>
-
-</div>
 </div>
 </div>
 
@@ -12792,43 +12355,10 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">export_unigrams</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Preprocessed the raw text and export it to a .txt file,</span>
-<span class="sd">    where each line is one document, for what sort of preprocessing</span>
-<span class="sd">    is done, please refer to the `normalize_text` function</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    unigram_path : str</span>
-<span class="sd">        output file path of the preprocessed unigram text.</span>
-
-<span class="sd">    texts : iterable</span>
-<span class="sd">        iterable can be simply a list, but for larger corpora,</span>
-<span class="sd">        consider an iterable that streams the sentences directly from</span>
-<span class="sd">        disk/network using Gensim&#39;s Linsentence or something along</span>
-<span class="sd">        those line.</span>
-
-<span class="sd">    stop_words : set</span>
-<span class="sd">        stopword set that will be excluded from the corpus.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf_8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
-            <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">normalize_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cleaned_text</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">normalize_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">stop_words</span><span class="p">):</span>
-    <span class="c1"># remove special characters\whitespaces</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^a-zA-Z\s]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-
-    <span class="c1"># lower case &amp; tokenize text</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-
-    <span class="c1"># filter stopwords out of text &amp;</span>
-    <span class="c1"># re-create text from filtered tokens</span>
-    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cleaned_text</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">label_mapping</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;texts&#39;</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -12841,66 +12371,58 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a set of stopwords built-in to various packages</span>
-<span class="c1"># we can always expand this set for the</span>
-<span class="c1"># problem that we are working on, here we also included</span>
-<span class="c1"># python built-in string punctuation mark</span>
-<span class="n">STOPWORDS</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">punctuation</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">ENGLISH_STOP_WORDS</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">random_state</span> <span class="o">=</span> <span class="mi">1234</span>
 
-<span class="c1"># create a directory called &#39;model&#39; to</span>
-<span class="c1"># store all outputs in later section</span>
-<span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s1">&#39;model&#39;</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">)</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
 
-<span class="n">UNIGRAM_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;unigram.txt&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">):</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">export_unigrams</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">,</span> <span class="n">texts</span><span class="o">=</span><span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">stop_words</span><span class="o">=</span><span class="n">STOPWORDS</span><span class="p">)</span>
-    <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;text preprocessing, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
+<span class="c1"># val_size = 0.1</span>
+<span class="c1"># X_train, X_val, y_train, y_val = train_test_split(</span>
+<span class="c1">#     X_train, y_train, test_size=val_size, random_state=random_state, stratify=y_train)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>text preprocessing, elapse 1.8021948337554932
-</pre>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Gensim-Implementation">Gensim Implementation<a class="anchor-link" href="#Gensim-Implementation">&#182;</a></h2>
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After feeding the <code>Word2Vec</code> algorithm with our corpus, it will learn a vector representation for each word. This by itself, however, is still not enough to be used as features for text classification as each record in our data is a document not a word.</p>
+<p>To extend these word vectors and generate document level vectors, we'll take the naive approach and use an average of all the words in the document (We could also leverage tf-idf to generate a weighted-average version, but that is not done here). The <code>Word2Vec</code> algorithm is wrapped inside a sklearn-compatible transformer which can be used almost the same way as <code>CountVectorizer</code> or <code>TfidfVectorizer</code> from <code>sklearn.feature_extraction.text</code>. Almost - because sklearn vectorizers can also do their own tokenization - a feature which we won't be using anyway because the corpus we will be using is already tokenized.</p>
+<p>In the next few code chunks, we will build a pipeline that transforms the text into low dimensional vectors via average word vectors as use it to fit a boosted tree model, we then report the performance of the training/test set.</p>
+<p>The <code>transformers</code> folder that contains the implementation is at the following <a href="https://github.com/ethen8181/machine-learning/tree/master/keras/text_classification/transformers">link</a>.</p>
 
 </div>
 </div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">PHRASE_MODEL_CHECKPOINT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;phrase_model&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">PHRASE_MODEL_CHECKPOINT</span><span class="p">):</span>
-    <span class="n">phrase_model</span> <span class="o">=</span> <span class="n">Phrases</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">PHRASE_MODEL_CHECKPOINT</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="c1"># use LineSentence to stream text as oppose to</span>
-    <span class="c1"># loading it all into memory</span>
-    <span class="n">unigram_sentences</span> <span class="o">=</span> <span class="n">LineSentence</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">)</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">phrase_model</span> <span class="o">=</span> <span class="n">Phrases</span><span class="p">(</span><span class="n">unigram_sentences</span><span class="p">)</span>
-    <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training phrase model, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
-    <span class="n">phrase_model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">PHRASE_MODEL_CHECKPOINT</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">xgboost</span> <span class="k">import</span> <span class="n">XGBClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="k">import</span> <span class="n">GensimWord2VecVectorizer</span>
+
+<span class="n">gensim_word2vec_tr</span> <span class="o">=</span> <span class="n">GensimWord2VecVectorizer</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">sg</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span> <span class="nb">iter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">xgb</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">w2v_xgb</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;w2v&#39;</span><span class="p">,</span> <span class="n">gensim_word2vec_tr</span><span class="p">),</span> 
+    <span class="p">(</span><span class="s1">&#39;xgb&#39;</span><span class="p">,</span> <span class="n">xgb</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="n">w2v_xgb</span>
 </pre></div>
 
 </div>
@@ -12913,13 +12435,21 @@ $$</p>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[9]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>training phrase model, elapse 3.066694736480713
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Pipeline(memory=None,
+     steps=[(&#39;w2v&#39;, GensimWord2VecVectorizer(alpha=0.025, batch_words=10000, callbacks=(),
+             cbow_mean=1, compute_loss=False,
+             hashfxn=&lt;built-in function hash&gt;, hs=0, iter=10,
+             max_final_vocab=None, max_vocab_size=None, min_alpha=0.0001,
+             min_count=3, negati...tate=0, reg_alpha=0, reg_lambda=1, scale_pos_weight=1,
+       seed=None, silent=True, subsample=1))])</pre>
 </div>
+
 </div>
 
 </div>
@@ -12931,40 +12461,54 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">export_bigrams</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">,</span> <span class="n">bigram_path</span><span class="p">,</span> <span class="n">phrase_model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Use the learned phrase model to create (potential) bigrams,</span>
-<span class="sd">    and output the text that contains bigrams to disk</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    unigram_path : str</span>
-<span class="sd">        input file path of the preprocessed unigram text</span>
-
-<span class="sd">    bigram_path : str</span>
-<span class="sd">        output file path of the transformed bigram text</span>
-
-<span class="sd">    phrase_model : gensim&#39;s Phrase model object</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Gensim Phrase Detection</span>
-<span class="sd">    - https://radimrehurek.com/gensim/models/phrases.html</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># after training the Phrase model, create a performant</span>
-    <span class="c1"># Phraser object to transform any sentence (list of</span>
-    <span class="c1"># token strings) and glue unigrams together into bigrams</span>
-    <span class="n">phraser</span> <span class="o">=</span> <span class="n">Phraser</span><span class="p">(</span><span class="n">phrase_model</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bigram_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">unigram_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
-            <span class="n">unigram</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="n">bigram</span> <span class="o">=</span> <span class="n">phraser</span><span class="p">[</span><span class="n">unigram</span><span class="p">]</span>
-            <span class="n">bigram_sentence</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bigram</span><span class="p">)</span>
-            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bigram_sentence</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">w2v_xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elapsed: &#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
+<span class="n">w2v_xgb</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>elapsed:  11.784907102584839
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Pipeline(memory=None,
+     steps=[(&#39;w2v&#39;, GensimWord2VecVectorizer(alpha=0.025, batch_words=10000, callbacks=(),
+             cbow_mean=1, compute_loss=False,
+             hashfxn=&lt;built-in function hash&gt;, hs=0, iter=10,
+             max_final_vocab=None, max_vocab_size=None, min_alpha=0.0001,
+             min_count=3, negati...
+       reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1))])</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -12974,12 +12518,11 @@ $$</p>
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">BIGRAM_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;bigram.txt&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">BIGRAM_PATH</span><span class="p">):</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">export_bigrams</span><span class="p">(</span><span class="n">UNIGRAM_PATH</span><span class="p">,</span> <span class="n">BIGRAM_PATH</span><span class="p">,</span> <span class="n">phrase_model</span><span class="p">)</span>
-    <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;converting words to phrases, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">confusion_matrix</span>
+
+<span class="n">y_train_pred</span> <span class="o">=</span> <span class="n">w2v_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training set accuracy </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred</span><span class="p">))</span>
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12996,84 +12539,43 @@ $$</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>converting words to phrases, elapse 14.514541864395142
+<pre>Training set accuracy 0.9485954242687518
 </pre>
 </div>
 </div>
 
-</div>
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[2026,    2,   29,    0,    0,    3,    0,    3],
+       [  12,  313,    3,    0,    0,    0,    7,    1],
+       [ 148,    0, 3381,    0,    0,    1,    0,    0],
+       [   3,    1,    6,   23,    1,    0,    4,    8],
+       [   5,    0,    3,    0,  205,   28,    1,    2],
+       [   5,    1,    7,    0,    9,  238,    0,    4],
+       [  16,    6,    5,    0,    2,    1,   96,    4],
+       [   3,    1,    7,    0,    7,    6,    0,  269]])</pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The next two code chunks is a slight digression from the overall process, this is simply used assess the amount of memory that is potentially saved by doing these preprocessing, i.e. loading all the raw text
-and preprocessed text into memory and comparing the two.</p>
 
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-
-
-<span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">seen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Recursively finds size of objects, shamelessly &quot;borrowed&quot;</span>
-<span class="sd">    from link listed in reference</span>
-<span class="sd">    </span>
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    https://goshippo.com/blog/measure-real-size-any-python-object/</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">seen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="n">obj_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mi">0</span>
-
-    <span class="c1"># Important mark as seen *before* entering recursion to gracefully handle</span>
-    <span class="c1"># self-referential objects</span>
-    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj_id</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">size</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">get_size</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
-        <span class="n">size</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">get_size</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">):</span>
-        <span class="n">size</span> <span class="o">+=</span> <span class="n">get_size</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">)):</span>
-        <span class="n">size</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">get_size</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">size</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">BIGRAM_PATH</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-
-<span class="n">original_size</span> <span class="o">=</span> <span class="n">get_size</span><span class="p">(</span><span class="n">newsgroups_train</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-<span class="n">preprocessed_size</span> <span class="o">=</span> <span class="n">get_size</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="n">ratio</span> <span class="o">=</span> <span class="n">original_size</span> <span class="o">/</span> <span class="n">preprocessed_size</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;original size uses </span><span class="si">{}</span><span class="s1"> times the amount of memory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratio</span><span class="p">))</span>
-<span class="k">del</span> <span class="n">X</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_test_pred</span> <span class="o">=</span> <span class="n">w2v_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test set accuracy </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">))</span>
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13090,9 +12592,29 @@ and preprocessed text into memory and comparing the two.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>original size uses 1.579115410629266 times the amount of memory
+<pre>Test set accuracy 0.9244791666666666
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[224,   0,   3,   0,   0,   1,   0,   1],
+       [  2,  34,   0,   0,   0,   0,   1,   1],
+       [ 17,   0, 375,   0,   0,   0,   1,   0],
+       [  0,   0,   0,   1,   0,   0,   1,   3],
+       [  1,   1,   0,   0,  19,   5,   0,   1],
+       [  2,   0,   1,   0,   3,  21,   0,   2],
+       [  1,   1,   2,   0,   0,   0,   8,   2],
+       [  0,   2,   0,   0,   0,   3,   0,  28]])</pre>
+</div>
+
 </div>
 
 </div>
@@ -13103,16 +12625,88 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Word2vec also accepts several key parameters that affect both training speed and quality. Hopefully these will now make more sense after we covered some theory of the algorithm.</p>
-<ul>
-<li><code>iter</code>: Number of iterations to train the model.</li>
-<li><code>min_count</code>: For pruning the internal dictionary. Words that appear only once or twice in a billion-word corpus are probably uninteresting typos and garbage. In addition, there's not enough data to make any meaningful training on those words, so it's best to ignore them. A reasonable value for min_count is between 0-100, depending on the size of the dataset.</li>
-<li><code>size</code>: Refers to the hidden layers size, i.e. dimension of our word vectors. Bigger size values require more training data, but can lead to better (more accurate) models. Reasonable values are in the tens to hundreds</li>
-<li><code>workers</code>: Number of cores/threads used for training.</li>
-<li><code>window</code>: Only terms that occur within a window-neighbourhood of a term in a sentence are associated with it during training. The default value is 4. Unless your text contains big sentences, it might be safe to leave it at that.</li>
-<li><code>sg</code>: This defines the algorithm. If equal to 1, the skip-gram technique is used. Else, the CBoW method is employed. The word2vec framework we introduced here is skip-gram, where we're using the target word to predict the context word, where CBow is simply flipping it the other way around, i.e. using the context word to predict the target word. Based on the original author's <a href="https://arxiv.org/abs/1310.4546">paper</a>, Skip-gram is reported to be a better framework.</li>
-</ul>
-<p>You can refer to the full list of parameters <a href="http://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.Word2Vec">here</a>.</p>
+<p>We can extract the Word2vec part of the pipeline and do some sanity check of whether the word vectors that were learned made any sense.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">w2v_xgb</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;w2v&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">model_</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">index2word</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;vocabulary size:&#39;</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
+<span class="n">w2v_xgb</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;w2v&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">model_</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stock&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>vocabulary size: 9846
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;shares&#39;, 0.8288736939430237),
+ (&#39;common&#39;, 0.8102667927742004),
+ (&#39;dilutive&#39;, 0.7489669919013977),
+ (&#39;effected&#39;, 0.7259572744369507),
+ (&#39;warrants&#39;, 0.718142032623291),
+ (&#39;lazo&#39;, 0.7158320546150208),
+ (&#39;pubco&#39;, 0.7046886682510376),
+ (&#39;dealings&#39;, 0.7039074897766113),
+ (&#39;fractional&#39;, 0.7031500339508057),
+ (&#39;spartech&#39;, 0.7023240327835083)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Keras-Implementation">Keras Implementation<a class="anchor-link" href="#Keras-Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll also show how we can use a generic deep learning framework to implement the <code>Wor2Vec</code> part of the pipeline. There are many variants of <code>Wor2Vec</code>, here, we'll only be implementing skip-gram and negative sampling.</p>
+<p>The flow would look like the following:</p>
+<p>An (integer) input of a target word and a real or negative context word. This is essentially the skipgram part where any word within the context of the target word is a real context word and we randomly draw from the rest of the vocabulary to serve as the negative context words.</p>
+<p>An embedding layer lookup (i.e. looking up the integer index of the word in the embedding matrix to get the word vector).</p>
+<p>A dot product operation. As the network trains, words which are similar should end up having similar embedding vectors. The most popular way of measuring similarity between two vectors $A$ and $B$ is the cosine similarity.</p>
+<p>\begin{align}
+similarity = cos(\theta) = \frac{\textbf{A}\cdot\textbf{B}}{\parallel\textbf{A}\parallel_2 \parallel \textbf{B} \parallel_2}
+\end{align}</p>
+<p>The denominator of this measure acts to normalize the result – the real similarity operation is on the numerator: the dot product between vectors $A$ and $B$.</p>
+<p>Followed by a sigmoid output layer. Our network is a binary classifier since it's distinguishing words from the same context versus those that aren't.</p>
 
 </div>
 </div>
@@ -13122,21 +12716,27 @@ and preprocessed text into memory and comparing the two.</p>
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">WORD2VEC_CHECKPOINT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="s1">&#39;word2vec&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">WORD2VEC_CHECKPOINT</span><span class="p">):</span>
-    <span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">WORD2VEC_CHECKPOINT</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="c1"># the old way of streaming data into gensim&#39;s Word2Vec was to</span>
-    <span class="c1"># leverage the LineSentence generator, i.e.</span>
-    <span class="c1"># sentences = LineSentence(BIGRAM_PATH)</span>
-    <span class="c1"># word2vec = Word2Vec(sentences, workers=cpu_count())</span>
-    <span class="c1"># the latest and faster way is to directly pass the path to</span>
-    <span class="c1"># the corpus_file argument or what they call file based training mode</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    <span class="n">word2vec</span> <span class="o">=</span> <span class="n">Word2Vec</span><span class="p">(</span><span class="n">corpus_file</span><span class="o">=</span><span class="n">BIGRAM_PATH</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">())</span>
-    <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training word2vec, elapse&#39;</span><span class="p">,</span> <span class="n">elapse</span><span class="p">)</span>
-    <span class="n">word2vec</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">WORD2VEC_CHECKPOINT</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the keras model/graph would look something like this:</span>
+<span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">layers</span><span class="p">,</span> <span class="n">optimizers</span><span class="p">,</span> <span class="n">Model</span>
+
+<span class="c1"># adjustable parameter that control the dimension of the word vectors</span>
+<span class="n">embed_size</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">input_center</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
+<span class="n">input_context</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,))</span>
+
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_size</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embed_in&#39;</span><span class="p">)</span>
+<span class="n">center</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="n">input_center</span><span class="p">)</span>  <span class="c1"># shape [seq_len, # features (1), embed_size]</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="n">input_context</span><span class="p">)</span>
+
+<span class="n">center</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Reshape</span><span class="p">((</span><span class="n">embed_size</span><span class="p">,))(</span><span class="n">center</span><span class="p">)</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Reshape</span><span class="p">((</span><span class="n">embed_size</span><span class="p">,))(</span><span class="n">context</span><span class="p">)</span>
+
+<span class="n">dot_product</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">dot</span><span class="p">([</span><span class="n">center</span><span class="p">,</span> <span class="n">context</span><span class="p">],</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">)(</span><span class="n">dot_product</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_center</span><span class="p">,</span> <span class="n">input_context</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizers</span><span class="o">.</span><span class="n">RMSprop</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -13153,7 +12753,32 @@ and preprocessed text into memory and comparing the two.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>training word2vec, elapse 5.049929141998291
+<pre>WARNING:tensorflow:From /Users/mingyuliu/anaconda3/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+input_1 (InputLayer)            (None, 1)            0                                            
+__________________________________________________________________________________________________
+input_2 (InputLayer)            (None, 1)            0                                            
+__________________________________________________________________________________________________
+embed_in (Embedding)            (None, 1, 100)       984600      input_1[0][0]                    
+                                                                 input_2[0][0]                    
+__________________________________________________________________________________________________
+reshape_1 (Reshape)             (None, 100)          0           embed_in[0][0]                   
+__________________________________________________________________________________________________
+reshape_2 (Reshape)             (None, 100)          0           embed_in[1][0]                   
+__________________________________________________________________________________________________
+dot_1 (Dot)                     (None, 1)            0           reshape_1[0][0]                  
+                                                                 reshape_2[0][0]                  
+__________________________________________________________________________________________________
+dense_1 (Dense)                 (None, 1)            2           dot_1[0][0]                      
+==================================================================================================
+Total params: 984,602
+Trainable params: 984,602
+Non-trainable params: 0
+__________________________________________________________________________________________________
 </pre>
 </div>
 </div>
@@ -13162,128 +12787,17 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>After that we can print out similar words to a targeted word that we've specified and use our human judgement of whether the embedding that was learned makes sense. The next code chunk is simply satisfying a personal interest in how the <code>most_similar</code> function is implemented in gensim.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># once we’re finished training the model (i.e. no more updates, only querying)</span>
-<span class="c1"># we can store the word vectors and delete the model to trim unneeded model memory</span>
-<span class="n">vocab</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">vocab</span>
-<span class="n">word_vectors</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">vectors</span>
-<span class="n">index2word</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">wv</span><span class="o">.</span><span class="n">index2word</span>
-<span class="k">del</span> <span class="n">word2vec</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">normalize</span>
-
-
-<span class="k">def</span> <span class="nf">most_similar</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">,</span> <span class="n">vocab</span><span class="p">,</span> <span class="n">index2word</span><span class="p">,</span>
-                 <span class="n">positive</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">negative</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    No frill version of the function `word2vec.wv.most_similar`;</span>
-<span class="sd">    Find the top-N most similar words. Positive words contribute</span>
-<span class="sd">    positively towards the similarity, negative words negatively.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    word_vectors : 2d ndarray</span>
-<span class="sd">        the learned word vectors.</span>
-
-<span class="sd">    vocab : word2vec.wv.vocab</span>
-<span class="sd">        dictionary like object where the key is the word</span>
-<span class="sd">        and the value has a .index attribute that allows</span>
-<span class="sd">        us to look up the index for a given word.</span>
-
-<span class="sd">    index2word : word2vec.wv.index2word</span>
-<span class="sd">        list like object that serves as the looking up the word</span>
-<span class="sd">        of a given index.</span>
-
-<span class="sd">    positive/negative : list, default None</span>
-<span class="sd">        list of positive or negative words to look for similar words,</span>
-<span class="sd">        positive words will get assign a +1 weight and negative words</span>
-<span class="sd">        will get assign a -1 weight when doing the vector addition.</span>
-
-<span class="sd">    topn : int</span>
-<span class="sd">        top-n similar words to find.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># normalize word vectors up front makes the cosine distance</span>
-    <span class="c1"># calculation later easier</span>
-    <span class="n">normed_vectors</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">)</span>
-    
-    <span class="c1"># assign weight to positive and negative words</span>
-    <span class="k">if</span> <span class="n">positive</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">positive</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">positive</span> <span class="o">=</span> <span class="p">[(</span><span class="n">word</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">word</span>
-                    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">negative</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">negative</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">negative</span> <span class="o">=</span> <span class="p">[(</span><span class="n">word</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">word</span>
-                    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">negative</span><span class="p">]</span>
-        
-    <span class="c1"># compute the weighted average of all the query words</span>
-    <span class="n">queries</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">all_word_index</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">positive</span> <span class="o">+</span> <span class="n">negative</span><span class="p">:</span>
-        <span class="c1"># gensim&#39;s Word2vec word2vec.wv.vocab.index</span>
-        <span class="c1"># stores the index of a given word</span>
-        <span class="n">word_index</span> <span class="o">=</span> <span class="n">vocab</span><span class="p">[</span><span class="n">word</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
-        <span class="n">word_vector</span> <span class="o">=</span> <span class="n">normed_vectors</span><span class="p">[</span><span class="n">word_index</span><span class="p">]</span>
-        <span class="n">queries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span> <span class="o">*</span> <span class="n">word_vector</span><span class="p">)</span>
-        <span class="n">all_word_index</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">word_index</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">queries</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot compute similarity with no input&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># find topn most similar words measured by cosine distance</span>
-    <span class="n">query_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">query_vector</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">query_vector</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
-    
-    <span class="c1"># cosine similarity between the query vector and all the existing word vectors</span>
-    <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">normed_vectors</span><span class="p">,</span> <span class="n">query_vector</span><span class="p">)</span>
-
-    <span class="n">actual_len</span> <span class="o">=</span> <span class="n">topn</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_word_index</span><span class="p">)</span>
-    <span class="n">sorted_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="o">-</span><span class="n">actual_len</span><span class="p">)[</span><span class="o">-</span><span class="n">actual_len</span><span class="p">:]</span>
-    <span class="n">best</span> <span class="o">=</span> <span class="n">sorted_index</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="n">sorted_index</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="p">[(</span><span class="n">index2word</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-              <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">best</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_word_index</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[:</span><span class="n">topn</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word</span> <span class="o">=</span> <span class="s1">&#39;computer&#39;</span>
-<span class="n">most_similar</span><span class="p">(</span><span class="n">word_vectors</span><span class="p">,</span> <span class="n">vocab</span><span class="p">,</span> <span class="n">index2word</span><span class="p">,</span> <span class="n">positive</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># then we can feed in the skipgram and its label (whether the word pair is in or outside</span>
+<span class="c1"># the context)</span>
+<span class="n">batch_center</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2354</span><span class="p">,</span> <span class="mi">2354</span><span class="p">,</span> <span class="mi">2354</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">69</span><span class="p">]</span>
+<span class="n">batch_context</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4288</span><span class="p">,</span> <span class="mi">203</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">2535</span><span class="p">,</span> <span class="mi">815</span><span class="p">]</span>
+<span class="n">batch_label</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train_on_batch</span><span class="p">([</span><span class="n">batch_center</span><span class="p">,</span> <span class="n">batch_context</span><span class="p">],</span> <span class="n">batch_label</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13296,17 +12810,26 @@ and preprocessed text into memory and comparing the two.</p>
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[21]:</div>
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>WARNING:tensorflow:From /Users/mingyuliu/anaconda3/lib/python3.6/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[15]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(&#39;software&#39;, 0.9712179),
- (&#39;pc&#39;, 0.9687412),
- (&#39;box&#39;, 0.96866494),
- (&#39;modem&#39;, 0.9682968),
- (&#39;network&#39;, 0.9651587)]</pre>
+<pre>0.6951684</pre>
 </div>
 
 </div>
@@ -13319,55 +12842,270 @@ and preprocessed text into memory and comparing the two.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Final-Thoughts">Final Thoughts<a class="anchor-link" href="#Final-Thoughts">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Hyperparameters">Hyperparameters<a class="anchor-link" href="#Hyperparameters">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The most crucial decisions that affect the performance are the choice of the model
-architecture, the size of the vectors, the subsampling rate, and the size of the training window. Because Word2vec training is an unsupervised task, there's no good way to objectively evaluate the result, it all depends on the end application.</p>
+<p>The <code>transformers</code> folder that contains the implementation is at the following <a href="https://github.com/ethen8181/machine-learning/tree/master/keras/text_classification/transformers">link</a>.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Applications">Applications<a class="anchor-link" href="#Applications">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Word2Vec and the concept of word embeddings originated in the domain of NLP, however the idea of words in the context of a sentence or a surrounding word window can be generalized to other problem domain dealing with sequences or sets of related data points. For example:</p>
-<ul>
-<li>A direct application of Word2Vec to a classical engineering task was recently presented by Spotify. They abstracted the ideas behind Word2Vec to apply them not simply to words in sentences but to any object in any sequence, in this case to songs in a playlist. Songs are treated as words and other songs in a playlist as their surrounding context, depending on whether the playlists in question were genre specific the vocabulary encompassed a number of songs from that collection. Now in order to recommend songs to a user one merely has to examine a neighborhood of the 'song embeddings' of songs the user already likes</li>
-<li>Similarly, we could recommend a user who to connect to in a social network setting by examining the graph of relationships, where the nodes represent words and a path through the graph represents a sentence, then nodes that occur in the context of similar other nodes, would be close together in the vector space.</li>
-</ul>
-<p>These examples show that the general applicability of Word2Vec based algorithms is very rich and that it behooves practitioners to examine their problem domain with respect to sequences of objects that occur in some meaningful context.</p>
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="k">import</span> <span class="n">KerasWord2VecVectorizer</span>
+
+<span class="n">keras_word2vec_tr</span> <span class="o">=</span> <span class="n">KerasWord2VecVectorizer</span><span class="p">(</span><span class="n">embed_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">min_count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                                            <span class="n">negative_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">keras_word2vec_tr</span>
+</pre></div>
 
 </div>
 </div>
 </div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>KerasWord2VecVectorizer(batch_size=64, embed_size=50, epochs=5000,
+            learning_rate=0.05, min_count=3, negative_samples=2,
+            sort_vocab=True, use_sampling_table=True, window_size=5)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">keras_w2v_xgb</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;w2v&#39;</span><span class="p">,</span> <span class="n">keras_word2vec_tr</span><span class="p">),</span> 
+    <span class="p">(</span><span class="s1">&#39;xgb&#39;</span><span class="p">,</span> <span class="n">xgb</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">keras_w2v_xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>100%|██████████| 5000/5000 [02:49&lt;00:00, 29.45it/s]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Pipeline(memory=None,
+     steps=[(&#39;w2v&#39;, KerasWord2VecVectorizer(batch_size=64, embed_size=50, epochs=5000,
+            learning_rate=0.05, min_count=3, negative_samples=2,
+            sort_vocab=True, use_sampling_table=True, window_size=5)), (&#39;xgb&#39;, XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, colsample_bylevel=1,
+     ...
+       reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1))])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_train_pred</span> <span class="o">=</span> <span class="n">keras_w2v_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training set accuracy </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred</span><span class="p">))</span>
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_pred</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Training set accuracy 0.9093541847668694
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1966,    4,   69,    0,    6,    6,    2,   10],
+       [  57,  255,   14,    0,    1,    1,    5,    3],
+       [ 143,    4, 3377,    0,    2,    0,    2,    2],
+       [  10,    2,    3,   16,    0,    2,    8,    5],
+       [   5,    2,    5,    0,  209,   16,    0,    7],
+       [  19,    6,   13,    0,   26,  177,    0,   23],
+       [  43,    6,    7,    4,    0,    1,   65,    4],
+       [  10,   14,   39,    0,    5,    7,    3,  215]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_test_pred</span> <span class="o">=</span> <span class="n">keras_w2v_xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test set accuracy </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">))</span>
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Test set accuracy 0.8958333333333334
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[218,   1,   6,   1,   0,   0,   1,   2],
+       [  7,  28,   1,   0,   0,   0,   1,   1],
+       [ 20,   1, 371,   0,   1,   0,   0,   0],
+       [  1,   1,   1,   0,   0,   0,   1,   1],
+       [  0,   0,   4,   0,  18,   4,   0,   1],
+       [  2,   0,   1,   0,   4,  20,   0,   2],
+       [  2,   2,   1,   0,   0,   1,   7,   1],
+       [  2,   0,   2,   0,   2,   1,   0,  26]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;vocabulary size:&#39;</span><span class="p">,</span> <span class="n">keras_w2v_xgb</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;w2v&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">vocab_size_</span><span class="p">)</span>
+<span class="n">keras_w2v_xgb</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s1">&#39;w2v&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stock&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>vocabulary size: 9847
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;common&#39;, 0.7450751),
+ (&#39;split&#39;, 0.72033733),
+ (&#39;annual&#39;, 0.7107709),
+ (&#39;acquistion&#39;, 0.7084387),
+ (&#39;remaining&#39;, 0.6948875),
+ (&#39;total&#39;, 0.69227046),
+ (&#39;shareholder&#39;, 0.68726707),
+ (&#39;shareholders&#39;, 0.6678084),
+ (&#39;associates&#39;, 0.64986753),
+ (&#39;board&#39;, 0.6477556)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Resources">Resources<a class="anchor-link" href="#Resources">&#182;</a></h2>
+<h2 id="Benchmarks">Benchmarks<a class="anchor-link" href="#Benchmarks">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13375,12 +13113,223 @@ architecture, the size of the vectors, the subsampling rate, and the size of the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A lot of the non-mathematical notes were taken from Chris McCormick's blog post. If you wish to learn more about the topic, the following link also contains different resources that Chris has curated (including a commented version of word2vec's original C code, derivation of word2vec's gradient update, etc.). <a href="http://mccormickml.com/2016/04/27/word2vec-resources/">Blog: Word2Vec Resources</a></p>
-<p>If you would like to practice using a deep learning framework such as Tensorflow to implement the word2vec model. The following resources are good places to start, the reason that its not included in this documentation is because it was an order of magnitude slower than Gensim's Word2vec and the result weren't as good as well.</p>
-<ul>
-<li><a href="http://web.stanford.edu/class/cs20si/lectures/notes_04.pdf">Note: CS 20SI Lecture note 4: How to structure your model in TensorFlow</a></li>
-<li><a href="http://adventuresinmachinelearning.com/word2vec-tutorial-tensorflow/">Blog: Word2Vec word embedding tutorial in Python and TensorFlow</a></li>
-</ul>
+<p>We'll compare the word2vec + xgboost approach with tfidf + logistic regression. The latter approach is known for its interpretability and fast training time, hence serves as a strong baseline.</p>
+<p>Note that for sklearn's tfidf, we didn't use the default analyzer 'words', as this means it expects that input is a single string which it will try to split into individual words, but our texts are already tokenized, i.e. already lists of words.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+ 
+<span class="n">tfidf</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">,</span> <span class="n">analyzer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">logistic</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s1">&#39;liblinear&#39;</span><span class="p">,</span> <span class="n">multi_class</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+
+<span class="n">tfidf_logistic</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;tfidf&#39;</span><span class="p">,</span> <span class="n">tfidf</span><span class="p">),</span> 
+    <span class="p">(</span><span class="s1">&#39;logistic&#39;</span><span class="p">,</span> <span class="n">logistic</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">randint</span><span class="p">,</span> <span class="n">uniform</span>
+
+<span class="n">w2v_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;w2v__size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">]}</span>
+<span class="n">tfidf_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tfidf__ngram_range&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]}</span>
+<span class="n">logistic_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;logistic__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]}</span>
+<span class="n">xgb_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xgb__max_depth&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">),</span>
+              <span class="s1">&#39;xgb__colsample_bytree&#39;</span><span class="p">:</span> <span class="n">uniform</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">),</span>
+              <span class="s1">&#39;xgb__subsample&#39;</span><span class="p">:</span> <span class="n">uniform</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)}</span>
+
+<span class="n">tfidf_logistic_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">tfidf_params</span><span class="p">,</span> <span class="o">**</span><span class="n">logistic_params</span><span class="p">}</span>
+<span class="n">w2v_xgb_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">w2v_params</span><span class="p">,</span> <span class="o">**</span><span class="n">xgb_params</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">RandomizedSearchCV</span>
+
+<span class="n">cv</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">n_iter</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">random_state</span> <span class="o">=</span> <span class="mi">1234</span>
+<span class="n">scoring</span> <span class="o">=</span> <span class="s1">&#39;accuracy&#39;</span>
+
+<span class="n">all_models</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;w2v_xgb&#39;</span><span class="p">,</span> <span class="n">w2v_xgb</span><span class="p">,</span> <span class="n">w2v_xgb_params</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;tfidf_logistic&#39;</span><span class="p">,</span> <span class="n">tfidf_logistic</span><span class="p">,</span> <span class="n">tfidf_logistic_params</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">all_models_info</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">all_models</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training:&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">model_tuned</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
+        <span class="n">estimator</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">param_distributions</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+        <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span>
+        <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">scoring</span><span class="o">=</span><span class="n">scoring</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">,</span>
+        <span class="n">return_train_score</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    
+    <span class="n">y_test_pred</span> <span class="o">=</span> <span class="n">model_tuned</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="n">test_score</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span> <span class="n">model_tuned</span><span class="o">.</span><span class="n">best_score_</span><span class="p">,</span> <span class="n">test_score</span><span class="p">,</span> <span class="n">model_tuned</span>
+    <span class="n">all_models_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model_name&#39;</span><span class="p">,</span> <span class="s1">&#39;train_score&#39;</span><span class="p">,</span> <span class="s1">&#39;test_score&#39;</span><span class="p">,</span> <span class="s1">&#39;estimator&#39;</span><span class="p">]</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_models_info</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">(</span><span class="n">results</span>
+           <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;test_score&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+           <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">results</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>training: w2v_xgb
+Fitting 3 folds for each of 3 candidates, totalling 9 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   4 out of   9 | elapsed:  2.0min remaining:  2.4min
+[Parallel(n_jobs=-1)]: Done   9 out of   9 | elapsed:  2.3min finished
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>training: tfidf_logistic
+Fitting 3 folds for each of 3 candidates, totalling 9 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   4 out of   9 | elapsed:    1.4s remaining:    1.7s
+[Parallel(n_jobs=-1)]: Done   9 out of   9 | elapsed:    2.0s finished
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>model_name</th>
+      <th>train_score</th>
+      <th>test_score</th>
+      <th>estimator</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>tfidf_logistic</td>
+      <td>0.949175</td>
+      <td>0.962240</td>
+      <td>RandomizedSearchCV(cv=3, error_score='raise-de...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>w2v_xgb</td>
+      <td>0.954532</td>
+      <td>0.958333</td>
+      <td>RandomizedSearchCV(cv=3, error_score='raise-de...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that different run may result in different performance being reported. And as our dataset changes, different approaches might that worked the best on one dataset might no longer be the best. Especially since the dataset we're working with here isn't very big, training an embedding from scratch will most likely not reach its full potential.</p>
+<p>There are many other text classification techniques in the deep learning realm that we haven't yet explored, we'll leave that for another day.</p>
 
 </div>
 </div>
@@ -13398,16 +13347,8 @@ architecture, the size of the vectors, the subsampling rate, and the size of the
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="http://rare-technologies.com/word2vec-tutorial/">Blog: Word2vec Tutorial</a></li>
-<li><a href="http://www.deeplearningweekly.com/blog/demystifying-word2vec">Blog: Demystifying Word2Vec</a></li>
-<li><a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">Blog: Word2Vec Tutorial - The Skip-Gram Model</a></li>
-<li><a href="http://mccormickml.com/2017/01/11/word2vec-tutorial-part-2-negative-sampling/">Blog: Word2Vec Tutorial Part 2 - Negative Sampling</a></li>
-<li><a href="https://www.analyticsvidhya.com/blog/2017/04/natural-language-processing-made-easy-using-spacy-%E2%80%8Bin-python/">Blog: Natural Language Processing Made Easy – using SpaCy (in Python)</a></li>
-<li><a href="https://arxiv.org/abs/1402.3722">Paper: Yoav Goldberg, Omer Levy (2014) word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method</a></li>
-<li><a href="https://arxiv.org/abs/1310.4546">Paper: Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg Corrado, Jeffrey Dean (2013) Distributed Representations of Words and Phrases and their Compositionality</a></li>
-<li><a href="https://www.youtube.com/watch?v=6zm9NC9uRkk">Youtube: PyData DC 2016: Modern NLP in Python</a></li>
-<li><a href="http://nbviewer.jupyter.org/github/skipgram/modern-nlp-in-python/blob/master/executable/Modern_NLP_in_Python.ipynb">Jupyter Notebook: PyData DC 2016: Modern NLP in Python</a></li>
-<li><a href="https://nbviewer.jupyter.org/github/RaRe-Technologies/gensim/blob/develop/docs/notebooks/Any2Vec_Filebased.ipynb">Jupyter Notebook: Gensim Docs - 2Vec File-based Training: API Tutorial</a></li>
+<li><a href="https://adventuresinmachinelearning.com/word2vec-keras-tutorial/">Blog: A Word2Vec Keras tutorial</a></li>
+<li><a href="http://nadbordrozd.github.io/blog/2016/05/20/text-classification-with-word2vec/">Blog: Text Classification With Word2Vec</a></li>
 </ul>
 
 </div>

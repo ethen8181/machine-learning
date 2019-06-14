@@ -70,8 +70,7 @@ def main():
         word2vec = Word2Vec.load(WORD2VEC_CHECKPOINT)
     else:
         logger.info('training word2vec')
-        sentences = LineSentence(BIGRAM_PATH)
-        word2vec = Word2Vec(sentences, workers = cpu_count())
+        word2vec = Word2Vec(corpus_file=BIGRAM_PATH, workers=cpu_count())
         word2vec.save(WORD2VEC_CHECKPOINT)
 
     logger.info('job completed')
