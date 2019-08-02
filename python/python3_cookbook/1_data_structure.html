@@ -11793,7 +11793,7 @@ div#notebook {
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12078,7 +12078,23 @@ IPython 6.2.1
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Data-Structure">Data Structure<a class="anchor-link" href="#Data-Structure">&#182;</a></h1><p>Some of the materials are a condensed reimplementation of the resource at the following link. <a href="http://chimera.labs.oreilly.com/books/1230000000393/ch01.html">Online Book: Python3 Cookbook Chapter 1. Data Structures and Algorithms</a></p>
+<h1 id="Data-Structure">Data Structure<a class="anchor-link" href="#Data-Structure">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Some of the materials are a condensed reimplementation from the resource: Python3 Cookbook Chapter 1. Data Structures and Algorithms, which originally was freely available online.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simple-Assignments-to-Unpack-Iterables-into-Separate-Variables">Simple Assignments to Unpack Iterables into Separate Variables<a class="anchor-link" href="#Simple-Assignments-to-Unpack-Iterables-into-Separate-Variables">&#182;</a></h2><p><strong>Example1:</strong> Unpacking a tuple.</p>
 
 </div>
@@ -14015,7 +14031,43 @@ list contains an even number
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
+<p>Note that Python also has a <a href="https://stackoverflow.com/questions/16138232/is-it-a-good-practice-to-use-try-except-else-in-python">try, except, else expression</a>. In this scenario, else will evaluate only if there is no exception from the try block, allowing us to simplify the more complicated code below:</p>
+<div class="highlight"><pre><span></span><span class="c1"># we have a sentinel flag indicating whether our try succeeded without any exception.</span>
+<span class="n">no_error</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">try_this</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+    <span class="n">no_error</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="n">SomeException</span> <span class="k">as</span> <span class="n">the_exception</span><span class="p">:</span>
+    <span class="n">handle</span><span class="p">(</span><span class="n">the_exception</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">no_error</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">something</span>
+</pre></div>
+<p>We can re-write the flow above using else:</p>
+<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">try_this</span><span class="p">(</span><span class="n">whatever</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">SomeException</span> <span class="k">as</span> <span class="n">the_exception</span><span class="p">:</span>
+    <span class="n">handle</span><span class="p">(</span><span class="n">the_exception</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>  <span class="c1"># only execute when there is no exception from the try block</span>
+    <span class="k">return</span> <span class="n">something</span>
+</pre></div>
+<p>The reason why this type of flow control exists is because A try block allows us to handle an "expected" error. The except block should only catch exceptions we are prepared to handle. If we handle an unexpected error, our code may do the wrong thing and hide bugs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li><a href="http://portingguide.readthedocs.io/en/latest/comparisons.html">Notes: Comparing and Sorting</a></li>
 <li><a href="http://psung.blogspot.tw/2007/12/for-else-in-python.html">Blog: for ... else in Python</a></li>
 <li><a href="https://dbader.org/blog/priority-queues-in-python">Blog: Priority Queues in Python</a></li>

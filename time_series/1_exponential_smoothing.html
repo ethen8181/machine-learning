@@ -13437,7 +13437,7 @@ MAPE = \frac{100}{n}\sum\limits_{i=1}^{n} \frac{\big| y_i - \hat{y}_i \big|}{y_i
 </ul>
 <p><strong>Cons:</strong></p>
 <ul>
-<li>The percentage interpretation is a double-edged sword. Looking at the formula of the evaluation metric, we can see that the actual observed data's number is in the denominator of the equation. Meaning this value is actually not defined when the actual value is zero. And the actual caveat is when the actual value is really small, then MAPE will often take on extremely large values, rendering it unusable for low-volume data.</li>
+<li>The percentage interpretation is a double-edged sword. Looking at the formula of the evaluation metric, we can see that the actual observed data's number is in the denominator of the equation. Meaning this value is actually not defined when the actual value is zero. And the actual caveat is when the actual value is really small, then MAPE will often take on extremely large values, rendering it unstable for low-volume data.</li>
 </ul>
 <p>Apart from MAPE, some other evaluation metrics that are commonly used in the field of forecasting are <strong>Mean Absolute Error</strong> and <strong>Median Absolute Error</strong>, where both metric retains the original time series' measurement unit, and median absolute error makes the metric more robust to outliers.</p>
 <p>This concludes our discussion with Additive Exponential Smoothing methods, for readers interested, the following link contains resources that introduces both additive and multiplicative methods. <a href="https://www.otexts.org/fpp/7">Online Book: Forecasting Principle and Practices - Exponential smoothing</a></p>
