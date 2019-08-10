@@ -1,5 +1,5 @@
 - [machine-learning](#machine-learning)
-  - [Documentation Listings](#documentation-listings)
+  - [Documentation Listings](#Documentation-Listings)
     - [bandits](#bandits)
     - [search](#search)
     - [time_series](#timeseries)
@@ -10,19 +10,19 @@
     - [dim_reduct](#dimreduct)
     - [recsys](#recsys)
     - [trees](#trees)
-    - [association_rule](#associationrule)
     - [clustering](#clustering)
     - [data_science_is_software](#datascienceissoftware)
     - [deep_learning](#deeplearning)
     - [keras](#keras)
     - [text_classification](#textclassification)
     - [networkx](#networkx)
+    - [association_rule](#associationrule)
     - [regularization](#regularization)
     - [ga](#ga)
     - [unbalanced](#unbalanced)
     - [clustering_old](#clusteringold)
     - [linear_regression](#linearregression)
-  - [Python Programming](#python-programming)
+  - [Python Programming](#Python-Programming)
 
 # machine-learning
 
@@ -60,6 +60,7 @@ Forecasting methods for timeseries-based data.
 End to end project including data preprocessing, model building.
 
 - [Kaggle: Don't Get Kicked](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unfortunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_dont_get_kicked/)]
+- [Kaggle: Rossman Store Sales](https://www.kaggle.com/c/rossmann-store-sales/): Predicting Daily Store Sales. Also introduces deep learning for tabular data. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_rossman_store_sales/)]
 - mlutils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/mlutils/)]
 
 ### ab_tests

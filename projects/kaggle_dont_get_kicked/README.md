@@ -1,4 +1,4 @@
-# Data Challenge
+# Kaggle Don't Get Kicked
 
 Predict if a car purchased at auction is a unfortunate purchase. Problem description is available at https://www.kaggle.com/c/DontGetKicked
 

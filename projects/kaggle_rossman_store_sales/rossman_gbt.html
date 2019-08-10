@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>pandas</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>rossman_gbt</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Understanding-Pandas-Data-Type" data-toc-modified-id="Understanding-Pandas-Data-Type-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Understanding Pandas Data Type</a></span><ul class="toc-item"><li><span><a href="#Optimizing-Numeric-Columns" data-toc-modified-id="Optimizing-Numeric-Columns-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Optimizing Numeric Columns</a></span></li><li><span><a href="#Optimizing-object-types" data-toc-modified-id="Optimizing-object-types-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Optimizing object types</a></span></li><li><span><a href="#Selecting-Types-While-Reading-the-Data-In" data-toc-modified-id="Selecting-Types-While-Reading-the-Data-In-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Selecting Types While Reading the Data In</a></span></li><li><span><a href="#Ordered-Categorical" data-toc-modified-id="Ordered-Categorical-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Ordered Categorical</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Rossman-GBT-Modeling" data-toc-modified-id="Rossman-GBT-Modeling-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Rossman GBT Modeling</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model Training</a></span></li></ul></li></ul></div>
 </div>
 </div>
 </div>
@@ -11785,15 +11785,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># code for loading the format for the notebook</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="c1"># path : store the current path to convert back to it later</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
-
-<span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="k">import</span> <span class="n">get_themes</span>
+<span class="kn">from</span> <span class="nn">jupyterthemes.stylefx</span> <span class="k">import</span> <span class="n">set_nb_theme</span>
+<span class="n">themes</span> <span class="o">=</span> <span class="n">get_themes</span><span class="p">()</span>
+<span class="n">set_nb_theme</span><span class="p">(</span><span class="n">themes</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11811,223 +11806,2774 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-<style>
-@import url('http://fonts.googleapis.com/css?family=Source+Code+Pro');
-@import url('http://fonts.googleapis.com/css?family=Vollkorn');
-@import url('http://fonts.googleapis.com/css?family=Arimo');
-@import url('http://fonts.googleapis.com/css?family=Fira_sans');
-    
-    div.cell {
-        width: 1000px;
-        margin-left: 0% !important;
-        margin-right: auto;
-    }
-    div.text_cell code {
-        background: transparent;
-        color: #000000;
-        font-weight: 600;
-        font-size: 12pt;
-        font-style: bold;
-        font-family:  'Source Code Pro', Consolas, monocco, monospace;
-    }
-    h1 {
-        font-family: 'Open sans',verdana,arial,sans-serif;
-	}
-	
-    div.input_area {
-        background: #F6F6F9;
-        border: 1px solid #586e75;
-    }
+<style> div#notebook {
+ font-family: sans-serif;
+ font-size: 13pt;
+ line-height: 170%;
+ color: #303030;
+ -webkit-font-smoothing: antialiased !important;
+}
+body,
+div.body {
+ font-family: sans-serif;
+ font-size: 13pt;
+ color: #303030;
+ background-color: #ffffff;
+ background: #ffffff;
+ -webkit-font-smoothing: antialiased !important;
+}
+body.notebook_app {
+ padding: 0;
+ background-color: #ffffff;
+ background: #ffffff;
+ padding-right: 0px !important;
+ overflow-y: hidden;
+}
+a {
+ font-family: sans-serif;
+ color: #303030;
+ -webkit-font-smoothing: antialiased !important;
+}
+a:hover,
+a:focus {
+ color: #2f2f2f;
+ -webkit-font-smoothing: antialiased !important;
+}
+.list_header,
+div#notebook_list_header.row.list_header {
+ font-size: 13.5pt;
+ color: #2f2f2f;
+ background-color: transparent;
+ height: 35px;
+}
+#running .panel-group .panel .panel-heading {
+ font-size: 14pt;
+ color: #303030;
+ padding: 8px 8px;
+ background: #eeeeee;
+ background-color: #eeeeee;
+}
+#running .panel-group .panel .panel-heading a {
+ font-size: 14pt;
+ color: #303030;
+}
+#running .panel-group .panel .panel-heading a:focus,
+#running .panel-group .panel .panel-heading a:hover {
+ font-size: 14pt;
+ color: #303030;
+}
+#running .panel-group .panel .panel-body .list_container .list_item {
+ background: #fafafa;
+ background-color: #fafafa;
+ padding: 2px;
+ border-bottom: 2px solid rgba(180,180,180,.30);
+}
+#running .panel-group .panel .panel-body .list_container .list_item:hover {
+ background: #fafafa;
+ background-color: #fafafa;
+}
+#running .panel-group .panel .panel-body {
+ padding: 2px;
+}
+div.running_list_info.toolbar_info {
+ font-size: 15px;
+ padding: 4px 0 4px 0;
+ margin-top: 5px;
+ margin-bottom: 8px;
+ height: 24px;
+ line-height: 24px;
+ text-shadow: none;
+}
+.list_placeholder {
+ font-weight: normal;
+}
+#tree-selector {
+ padding: 0px;
+}
+#project_name > ul > li > a > i.fa.fa-home {
+ color: #ff7823;
+ font-size: 17pt;
+ display: inline-block;
+ position: static;
+ padding: 0px 0px;
+ font-weight: normal;
+ text-align: center;
+ vertical-align: text-top;
+}
+.fa-folder:before {
+ color: #126dce;
+}
+.fa-arrow-up:before {
+ font-size: 14px;
+}
+.fa-arrow-down:before {
+ font-size: 14px;
+}
+.folder_icon:before {
+ display: inline-block;
+ font: normal normal normal 14px/1 FontAwesome;
+ font-size: inherit;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ content: "\f07b";
+ color: #126dce;
+}
+.notebook_icon:before {
+ display: inline-block;
+ font: normal normal normal 14px/1 FontAwesome;
+ font-size: inherit;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ content: "\f02d";
+ position: relative;
+ color: #2c85f7 !important;
+ top: 0px;
+}
+.file_icon:before {
+ display: inline-block;
+ font: normal normal normal 14px/1 FontAwesome;
+ font-size: inherit;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ content: "\f15b";
+ position: relative;
+ top: 0px;
+ color: #303030 !important;
+}
+#project_name {
+ display: inline-flex;
+ padding-left: 7px;
+ margin-left: -2px;
+ margin-bottom: -20px;
+ text-align: -webkit-auto;
+ vertical-align: text-top;
+}
+div#notebook_toolbar div.dynamic-instructions {
+ font-family: sans-serif;
+ font-size: 15px;
+}
+div#maintoolbar .container {
+ margin-left: -5px !important;
+}
+span#login_widget > .button,
+#logout {
+ font-family: sans-serif;
+ color: #303030;
+ background: #ebebeb;
+ background-color: #ebebeb;
+ border: 2px solid #e8e8e8;
+ font-weight: normal;
+ box-shadow: none;
+ text-shadow: none;
+ border-radius: 2px;
+ font-size: inherit;
+}
+span#login_widget > .button:hover,
+#logout:hover {
+ color: #2f2f2f;
+ background-color: #e4e4e4;
+ background: #e4e4e4;
+ border-color: #e4e4e4;
+ background-image: none;
+ box-shadow: none !important;
+ border-radius: 2px;
+}
+span#login_widget > .button:focus,
+#logout:focus,
+span#login_widget > .button.focus,
+#logout.focus,
+span#login_widget > .button:active,
+#logout:active,
+span#login_widget > .button.active,
+#logout.active,
+.open > .dropdown-togglespan#login_widget > .button,
+.open > .dropdown-toggle#logout {
+ color: #1c1c1c;
+ background-color: #ff7823;
+ background: #ff7823;
+ border-color: #ff7823;
+ background-image: none;
+ box-shadow: none !important;
+ border-radius: 2px;
+}
+body > #header #header-container {
+ padding-bottom: 0px;
+ padding-top: 4px;
+ box-sizing: border-box;
+ -moz-box-sizing: border-box;
+ -webkit-box-sizing: border-box;
+}
+body > #header {
+ background: #ffffff;
+ background-color: #ffffff;
+ position: relative;
+ z-index: 100;
+}
+.list_container {
+ font-size: 12.0pt;
+ color: #303030;
+ border: none;
+ text-shadow: none !important;
+}
+.list_container > div {
+ border-bottom: 1px solid rgba(180,180,180,.14);
+ font-size: 12.0pt;
+}
+.list_header > div,
+.list_item > div {
+ padding-left: 0px;
+}
+.list_header > div .item_link,
+.list_item > div .item_link {
+ margin-left: -1px;
+ vertical-align: middle;
+ line-height: 22px;
+ font-size: 12.0pt;
+}
+.item_icon {
+ font-size: 12.0pt;
+ vertical-align: middle;
+}
+.list_item input:not([type="checkbox"]) {
+ padding-right: 0px;
+ height: auto;
+ width: 20%;
+ margin: 6px 0 0;
+ margin-top: 1px;
+}
+.list_header > div .item_link,
+.list_item > div .item_link {
+ margin-left: -1px;
+ vertical-align: middle;
+ line-height: 22px;
+ font-size: 10.5pt;
+ display: inline-table;
+ position: static;
+}
+#button-select-all {
+ height: 34px;
+ min-width: 55px;
+ z-index: 0;
+ border: none !important;
+ padding-top: 0px;
+ padding-bottom: 0px;
+ margin-bottom: 0px;
+ margin-top: 0px;
+ left: -3px;
+ border-radius: 0px !important;
+}
+button#tree-selector-btn {
+ height: 34px;
+ font-size: 12.0pt;
+ border: none;
+ left: -3px;
+ border-radius: 0px !important;
+}
+input#select-all.pull-left.tree-selector {
+ margin-left: 7px;
+ margin-right: 2px;
+ margin-top: 2px;
+ top: 4px;
+}
+input[type="radio"],
+input[type="checkbox"] {
+ margin-top: 1px;
+ line-height: normal;
+}
+.list_container a {
+ font-size: 16px;
+ color: #303030;
+ border: none;
+ text-shadow: none !important;
+ font-weight: normal;
+ font-style: normal;
+}
+div.list_container a:hover {
+ color: #2f2f2f;
+}
+div.list_item:hover {
+ background-color: #fafafa;
+}
+.breadcrumb > li {
+ font-size: 12.0pt;
+ color: #303030;
+ border: none;
+ text-shadow: none !important;
+}
+.breadcrumb > li + li:before {
+ content: "/\00a0";
+ padding: 0px;
+ color: #303030;
+ font-size: 18px;
+}
+ul#tabs a {
+ font-family: sans-serif;
+ font-size: 13pt;
+ font-weight: normal;
+ font-style: normal;
+ border-color: transparent;
+ text-shadow: none !important;
+}
+.nav-tabs {
+ font-family: sans-serif;
+ font-size: 13pt;
+ font-weight: normal;
+ font-style: normal;
+ background: #ffffff;
+ text-shadow: none !important;
+ border-color: transparent;
+ border-bottom-color: rgba(180,180,180,.30);
+}
+.nav-tabs > li > a:hover {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+}
+.nav-tabs > li > a:active,
+.nav-tabs > li > a:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+ color: #1c1c1c;
+ background-color: #eeeeee;
+ border: 1px solid transparent;
+ border-bottom-color: transparent;
+ cursor: default;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+ text-decoration: none;
+ background-color: rgba(180,180,180,.14);
+ transition: 200ms ease;
+}
+.nav > li.disabled > a,
+.nav > li.disabled > a:hover {
+ color: #aaaaaa;
+}
+div#notebook {
+ font-family: sans-serif;
+ font-size: 13pt;
+ padding-top: 4px;
+}
+.notebook_app {
+ background-color: #ffffff;
+}
+#notebook-container {
+ padding: 13px 2px;
+ background-color: #ffffff;
+ min-height: 0px;
+ box-shadow: none;
+ width: 980px;
+ margin-right: auto;
+ margin-left: auto;
+}
+div#ipython-main-app.container {
+ width: 980px;
+ margin-right: auto;
+ margin-left: auto;
+ margin-right: auto;
+ margin-left: auto;
+}
+.container {
+ width: 980px;
+ margin-right: auto;
+ margin-left: auto;
+}
+div#menubar-container {
+ width: 100%;
+ width: 980px;
+}
+div#header-container {
+ width: 980px;
+}
+.notebook_app #header,
+.edit_app #header {
+ box-shadow: none !important;
+ background-color: #ffffff;
+ border-bottom: 2px solid rgba(180,180,180,.14);
+}
+#header,
+.edit_app #header {
+ font-family: sans-serif;
+ font-size: 13pt;
+ box-shadow: none;
+ background-color: #ffffff;
+}
+#header .header-bar,
+.edit_app #header .header-bar {
+ background: #ffffff;
+ background-color: #ffffff;
+}
+body > #header .header-bar {
+ width: 100%;
+ background: #ffffff;
+}
+span.checkpoint_status,
+span.autosave_status {
+ font-size: small;
+ display: none;
+}
+#menubar,
+div#menubar {
+ background-color: #ffffff;
+ padding-top: 0px !important;
+}
+#menubar .navbar,
+.navbar-default {
+ background-color: #ffffff;
+ margin-bottom: 0px;
+ margin-top: 0px;
+}
+.navbar {
+ border: none;
+}
+div.navbar-text,
+.navbar-text,
+.navbar-text.indicator_area,
+p.navbar-text.indicator_area {
+ margin-top: 8px !important;
+ margin-bottom: 0px;
+ color: #ff7823;
+}
+.navbar-default {
+ font-family: sans-serif;
+ font-size: 13pt;
+ background-color: #ffffff;
+ border-color: rgba(180,180,180,.14);
+ line-height: 1.5em;
+ padding-bottom: 0px;
+}
+.navbar-default .navbar-nav > li > a {
+ font-family: sans-serif;
+ font-size: 13pt;
+ color: #303030;
+ display: block;
+ line-height: 1.5em;
+ padding-top: 14px;
+ padding-bottom: 11px;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+ border-color: rgba(180,180,180,.14);
+ line-height: 1.5em;
+ transition: 200ms ease;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+ color: #1c1c1c;
+ background-color: rgba(180,180,180,.14);
+ border-color: rgba(180,180,180,.14);
+ line-height: 1.5em;
+ transition: 200ms ease;
+}
+.navbar-nav > li > .dropdown-menu {
+ margin-top: 0px;
+}
+.navbar-nav {
+ margin: 0;
+}
+div.notification_widget.info,
+.notification_widget.info,
+.notification_widget:active:hover,
+.notification_widget.active:hover,
+.open > .dropdown-toggle.notification_widget:hover,
+.notification_widget:active:focus,
+.notification_widget.active:focus,
+.open > .dropdown-toggle.notification_widget:focus,
+.notification_widget:active.focus,
+.notification_widget.active.focus,
+.open > .dropdown-toggle.notification_widget.focus,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn:hover,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn:focus {
+ color: #126dce;
+ background-color: transparent !important;
+ border-color: transparent !important;
+ padding-bottom: 0px !important;
+ margin-bottom: 0px !important;
+ font-size: 8pt;
+ z-index: 0;
+}
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn {
+ font-size: 8pt;
+ z-index: 0;
+}
+.notification_widget {
+ color: #126dce;
+ z-index: -500;
+ font-size: 8pt;
+ background: transparent;
+ background-color: transparent;
+ margin-right: 3px;
+ border: none;
+}
+div.notification_widget.info,
+.notification_widget.info {
+ display: none !important;
+}
+.edit_mode .modal_indicator:before {
+ font-size: 18px;
+ color: #ff7823;
+ content: "E";
+ opacity: 0.35;
+ padding-bottom: 0px;
+ vertical-align: -webkit-baseline-middle;
+ margin-left: 1px;
+ margin-bottom: 0px;
+}
+.command_mode .modal_indicator:before {
+ font-family: sans-serif;
+ font-size: 18px;
+ color: #ff7823;
+ content: "C";
+ padding-bottom: 0px;
+ vertical-align: -webkit-baseline-middle;
+ margin-left: 1px;
+ margin-bottom: 0px;
+}
+.item_icon {
+ color: #126dce;
+}
+.item_buttons .kernel-name {
+ font-size: 13pt;
+ color: #126dce;
+}
+.running_notebook_icon:before {
+ color: #009e07 !important;
+ font: normal normal normal 15px/1 FontAwesome;
+ font-size: 15px;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ content: "\f10c";
+ vertical-align: middle;
+ position: static;
+ display: inherit;
+}
+.item_buttons .running-indicator {
+ padding-top: 4px;
+ color: #009e07;
+ font-family: sans-serif;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+}
+#notification_trusted {
+ font-family: sans-serif;
+ font-size: 17px !important;
+ color: #126dce;
+ border: none;
+ background: transparent;
+ background-color: transparent;
+ margin-bottom: 0px !important;
+ margin-top: 11px !important;
+ vertical-align: middle !important;
+}
+#modal_indicator {
+ float: right !important;
+ color: #4c8be2;
+ background: #ffffff;
+ background-color: #ffffff;
+ margin-top: 8px !important;
+ margin-left: 0px;
+}
+#kernel_indicator {
+ float: right !important;
+ color: #ff7823;
+ background: #ffffff;
+ background-color: #ffffff;
+ border-left: 2px solid #ff7823;
+ padding-top: 0px;
+ padding-bottom: 4px;
+ margin-top: 8px !important;
+ margin-left: -2px;
+}
+#kernel_indicator .kernel_indicator_name {
+ font-size: 17px;
+ color: #ff7823;
+ background: #ffffff;
+ background-color: #ffffff;
+ padding-left: 5px;
+ padding-right: 5px;
+ margin-top: 4px;
+ vertical-align: -webkit-baseline-middle;
+ padding-bottom: 0px;
+}
+.kernel_idle_icon:before {
+ display: inline-block;
+ font: normal normal normal 22px/1 FontAwesome;
+ font-size: 22px;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ cursor: pointer;
+ margin-left: 0px !important;
+ opacity: 0.7;
+ vertical-align: middle;
+ margin-top: 1px;
+ content: "\f1db";
+}
+.kernel_busy_icon:before {
+ display: inline-block;
+ font: normal normal normal 22px/1 FontAwesome;
+ font-size: 22px;
+ -webkit-animation: pulsate 2s infinite ease-out;
+ animation: pulsate 2s infinite ease-out;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ cursor: pointer;
+ margin-left: 0px !important;
+ vertical-align: middle;
+ margin-top: 1px;
+ content: "\f111";
+}
+@-webkit-keyframes pulsate {
+ 0% {
+  -webkit-transform: scale(1.0,1.0);
+  opacity: 0.8;
+ }
+ 8% {
+  -webkit-transform: scale(1.0,1.0);
+  opacity: 0.8;
+ }
+ 50% {
+  -webkit-transform: scale(0.75,0.75);
+  opacity: 0.3;
+ }
+ 92% {
+  -webkit-transform: scale(1.0,1.0);
+  opacity: 0.8;
+ }
+ 100% {
+  -webkit-transform: scale(1.0,1.0);
+  opacity: 0.8;
+ }
+}
+i#kernel_indicator_icon {
+ vertical-align: sub;
+}
+div.notification_widget.info,
+.notification_widget.info,
+.notification_widget:active:hover,
+.notification_widget.active:hover,
+.open > .dropdown-toggle.notification_widget:hover,
+.notification_widget:active:focus,
+.notification_widget.active:focus,
+.open > .dropdown-toggle.notification_widget:focus,
+.notification_widget:active.focus,
+.notification_widget.active.focus,
+.open > .dropdown-toggle.notification_widget.focus,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn:hover,
+div#notification_notebook.notification_widget.btn.btn-xs.navbar-btn:focus {
+ color: #126dce;
+ background-color: #ffffff;
+ border-color: #ffffff;
+}
+#notification_area,
+div.notification_area {
+ float: right !important;
+ position: static;
+}
+.notification_widget,
+div.notification_widget {
+ margin-right: 0px;
+ margin-left: 0px;
+ padding-right: 0px;
+ vertical-align: text-top !important;
+ margin-top: 6px !important;
+ z-index: 1000;
+}
+#kernel_logo_widget,
+#kernel_logo_widget .current_kernel_logo {
+ display: none;
+}
+div#ipython_notebook {
+ display: none;
+}
+i.fa.fa-icon {
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+ text-rendering: auto;
+}
+.fa {
+ display: inline-block;
+ font: normal normal normal 10pt/1 "FontAwesome", sans-serif;
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+ -moz-osx-font-smoothing: grayscale;
+}
+.dropdown-menu {
+ font-family: sans-serif;
+ font-size: 13pt;
+ box-shadow: none;
+ padding: 0px;
+ text-align: left;
+ border: 2px solid rgba(180,180,180,.30);
+ background-color: #ffffff;
+ background: #ffffff;
+ line-height: 1;
+}
+.dropdown-menu:hover {
+ font-family: sans-serif;
+ font-size: 13pt;
+ box-shadow: none;
+ padding: 0px;
+ text-align: left;
+ border: 2px solid rgba(180,180,180,.30);
+ background-color: #ffffff;
+ box-shadow: none;
+ line-height: 1;
+}
+.dropdown-menu > li > a {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ line-height: 1.1;
+ display: block;
+ padding: 10px 20px 9px 10px;
+ color: #303030;
+ background-color: #ffffff;
+ background: #ffffff;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+ color: #2f2f2f;
+ background-color: rgba(180,180,180,.14);
+ background: rgba(180,180,180,.14);
+ border-color: rgba(180,180,180,.14);
+ transition: 200ms ease;
+}
+.dropdown-menu .divider {
+ height: 1px;
+ margin: 0px 0px;
+ overflow: hidden;
+ background-color: rgba(180,180,180,.30);
+}
+.dropdown-submenu > .dropdown-menu {
+ top: 0px;
+ left: 100%;
+ margin-top: -2px;
+ margin-left: 0px;
+ padding-top: 0px;
+ transition: 200ms ease;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ font-weight: normal;
+ color: #aaaaaa;
+ padding: none;
+ display: block;
+ clear: both;
+ line-height: 1.1;
+ white-space: nowrap;
+}
+.dropdown-submenu > a:after {
+ color: #303030;
+ margin-right: -16px;
+ margin-top: 0px;
+}
+.dropdown-submenu:hover > a:after,
+.dropdown-submenu:active > a:after,
+.dropdown-submenu:focus > a:after,
+.dropdown-submenu:visited > a:after {
+ color: #ff7823;
+ margin-right: -16px;
+}
+div.kse-dropdown > .dropdown-menu,
+.kse-dropdown > .dropdown-menu {
+ min-width: 0;
+ top: 94%;
+}
+.btn,
+.btn-default {
+ font-family: sans-serif;
+ color: #303030;
+ background: #ebebeb;
+ background-color: #ebebeb;
+ border: 1px solid #e8e8e8;
+ font-weight: normal;
+ box-shadow: none;
+ text-shadow: none;
+ border-radius: 2px;
+ font-size: inherit;
+}
+.btn:hover,
+.btn:active:hover,
+.btn.active:hover,
+.btn-default:hover,
+.open > .dropdown-toggle.btn-default:hover,
+.open > .dropdown-toggle.btn:hover {
+ color: #2f2f2f;
+ border: 1px solid #e4e4e4;
+ background-color: #e4e4e4;
+ background: #e4e4e4;
+ background-image: none;
+ box-shadow: none !important;
+ border-radius: 2px;
+ transition: 200ms ease;
+}
+.btn:active,
+.btn.active,
+.btn:active:focus,
+.btn.active:focus,
+.btn:active.focus,
+.btn.active.focus,
+.btn-default:focus,
+.btn-default.focus,
+.btn-default:active,
+.btn-default.active,
+.btn-default:active:hover,
+.btn-default.active:hover,
+.btn-default:active:focus,
+.btn-default.active:focus,
+.btn-default:active.focus,
+.btn-default.active.focus,
+.open > .dropdown-toggle.btn:focus,
+.open > .dropdown-toggle.btn.focus,
+.open > .dropdown-toggle.btn-default {
+ color: #1c1c1c;
+ border: 1px solid #e4e4e4;
+ background-color: #e4e4e4;
+ background: #e4e4e4;
+ border-color: #e4e4e4;
+ background-image: none;
+ box-shadow: none !important;
+ border-radius: 2px;
+ transition: 200ms ease;
+}
+.item_buttons > .btn,
+.item_buttons > .btn-group,
+.item_buttons > .input-group {
+ margin-left: 5px;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border: 1px solid #eeeeee;
+}
+.item_buttons > .btn:hover,
+.item_buttons > .btn-group:hover,
+.item_buttons > .input-group:hover {
+ margin-left: 5px;
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border: 1px solid #e9e9e9;
+ transition: 200ms ease;
+}
+.btn-group > .btn-mini,
+.btn-sm,
+.btn-group-sm > .btn,
+.btn-xs,
+.btn-group-xs > .btn,
+.alternate_upload .btn-upload,
+.btn-group,
+.btn-group-vertical {
+ font-size: 12.0pt;
+ font-weight: normal;
+ height: inherit;
+}
+.btn-xs,
+.btn-group-xs > .btn {
+ font-size: 12.0pt;
+ background-image: none;
+ font-weight: normal;
+ text-shadow: none;
+ display: inline-table;
+}
+.btn-group > .btn:first-child {
+ margin-left: 3px;
+}
+.alternate_upload input.fileinput {
+ text-align: center;
+ vertical-align: bottom;
+ margin-left: -.5ex;
+ display: inline-table;
+ border: solid 0px #ebebeb;
+ margin-bottom: -1ex;
+}
+.alternate_upload .btn-upload {
+ display: inline-table;
+}
+.dropdown-header {
+ font-family: sans-serif !important;
+ font-size: 13pt !important;
+ color: #ff7823 !important;
+ border-bottom: none !important;
+ padding: 0px !important;
+ margin: 6px 6px 0px !important;
+}
+span#last-modified.btn.btn-xs.btn-default.sort-action,
+span#sort-name.btn.btn-xs.btn-default.sort-action {
+ font-family: sans-serif;
+ font-size: 16px;
+ background-color: transparent;
+ background: transparent;
+ border: none;
+ padding-bottom: 0px;
+ margin-bottom: 0px;
+ vertical-align: sub;
+}
+span#last-modified.btn.btn-xs.btn-default.sort-action {
+ margin-left: 19px;
+}
+button.close {
+ border: 0px none;
+ font-family: sans-serif;
+ font-size: 20pt;
+ font-weight: normal;
+}
+.dynamic-buttons {
+ font-size: 15px;
+ padding-top: 0px;
+ display: inline-block;
+}
+.close {
+ color: #de143d;
+ opacity: .5;
+ text-shadow: none;
+ font-weight: normal;
+}
+.close:hover {
+ color: #de143d;
+ opacity: 1;
+ font-weight: normal;
+}
+div.nbext-enable-btns .btn[disabled],
+div.nbext-enable-btns .btn[disabled]:hover,
+.btn-default.disabled,
+.btn-default[disabled],
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+fieldset[disabled] .btn-default:hover,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+fieldset[disabled] .btn-default:focus,
+.btn-default.disabled.focus,
+.btn-default[disabled].focus,
+fieldset[disabled] .btn-default.focus {
+ color: #4a4a4a;
+ background: #e8e8e8;
+ background-color: #e8e8e8;
+ border-color: #e8e8e8;
+ transition: 200ms ease;
+}
+.input-group-addon {
+ padding: 2px 5px;
+ font-size: 12.0pt;
+ font-weight: normal;
+ height: auto;
+ color: #303030;
+ text-align: center;
+ background-color: #ffffff;
+ border: none;
+}
+.btn-group > .btn + .dropdown-toggle {
+ padding-left: 8px;
+ padding-right: 8px;
+ height: 100%;
+ border-left: 2px solid #ff7823 !important;
+}
+.btn-group > .btn + .dropdown-toggle:hover {
+ border-left: 2px solid #ff7823 !important;
+}
+.input-group-btn {
+ position: relative;
+ font-size: inherit;
+ white-space: nowrap;
+ border: none;
+}
+.input-group-btn:hover {
+ border: none;
+}
+.input-group-btn:first-child > .btn,
+.input-group-btn:first-child > .btn-group {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border: none;
+ margin-right: 3px;
+ font-size: inherit;
+}
+.input-group-btn:first-child > .btn:hover,
+.input-group-btn:first-child > .btn-group:hover {
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border: none;
+ font-size: inherit;
+ transition: 200ms ease;
+}
+div.modal .btn-group > .btn:first-child {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border: 1px solid #ebebeb;
+ margin-top: 0px !important;
+ margin-left: 0px;
+ margin-bottom: 2px;
+}
+div.modal .btn-group > .btn:first-child:hover {
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border: 1px solid #e9e9e9;
+ transition: 200ms ease;
+}
+div.modal > button,
+div.modal-footer > button {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border-color: #eeeeee;
+}
+div.modal > button:hover,
+div.modal-footer > button:hover {
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border-color: #e9e9e9;
+ transition: 200ms ease;
+}
+.modal-content {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ position: relative;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border: none;
+ border-radius: 1px;
+ background-clip: padding-box;
+ outline: none;
+}
+.modal-header {
+ font-family: sans-serif;
+ font-size: 13pt;
+ color: #303030;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border-color: rgba(180,180,180,.30);
+ padding: 12px;
+ min-height: 16.4286px;
+}
+.modal-content h4 {
+ font-family: sans-serif;
+ font-size: 16pt;
+ color: #303030;
+ padding: 5px;
+}
+.modal-body {
+ background-color: #ffffff;
+ position: relative;
+ padding: 15px;
+}
+.modal-footer {
+ padding: 10px;
+ text-align: right;
+ background-color: #fafafa;
+ border-top: 1px solid rgba(180,180,180,.30);
+}
+.alert-info {
+ background-color: #fdfdfd;
+ border-color: rgba(180,180,180,.30);
+ color: #303030;
+}
+.modal-header .close {
+ margin-top: -5px;
+ font-size: 25pt;
+}
+.modal-backdrop,
+.modal-backdrop.in {
+ opacity: 0.7;
+ background-color: #c4c4c4;
+}
+div.panel,
+div.panel-default,
+.panel,
+.panel-default {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ background-color: #fafafa;
+ color: #303030;
+ margin-bottom: 14px;
+ border: 0;
+ box-shadow: none;
+}
+div.panel > .panel-heading,
+div.panel-default > .panel-heading {
+ font-size: 14pt;
+ color: #303030;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border: 0;
+}
+.modal .modal-dialog {
+ min-width: 950px;
+ margin: 50px auto;
+}
+div.container-fluid {
+ margin-right: auto;
+ margin-left: auto;
+ padding-left: 0px;
+ padding-right: 5px;
+}
+div.form-control,
+.form-control {
+ font-family: sans-serif;
+ font-size: inherit;
+ color: #303030;
+ background-color: #ffffff;
+ border: 2px solid #e7e7e7;
+ margin-left: 2px;
+ height: auto;
+ box-shadow: none;
+ padding: 6px 12px;
+ transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+.form-group.list-group-item {
+ color: #303030;
+ background-color: #fafafa;
+ border-color: rgba(180,180,180,.30);
+ margin-bottom: 0px;
+}
+input,
+button,
+select,
+textarea {
+ background-color: #ffffff;
+ font-weight: normal;
+ border: 1px solid rgba(180,180,180,.30);
+}
+select.form-control.select-xs {
+ height: auto;
+}
+.form-control:focus {
+ border-color: #ff7823;
+ outline: 0;
+ -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(240,147,43,.50);
+ box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(240,147,43,.50);
+}
+::-webkit-input-placeholder {
+ color: #aaaaaa;
+}
+::-moz-placeholder {
+ color: #aaaaaa;
+}
+:-ms-input-placeholder {
+ color: #aaaaaa;
+}
+:-moz-placeholder {
+ color: #aaaaaa;
+}
+[dir="ltr"] #find-and-replace .input-group-btn + .form-control {
+ border-left: 2px solid rgba(180,180,180,.30) !important;
+}
+[dir="ltr"] #find-and-replace .input-group-btn + .form-control:focus {
+ border-left-color: #ff7823 !important;
+ outline: 0;
+ -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(240,147,43,.50) !important;
+ box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(240,147,43,.50) !important;
+}
+div.output.output_scroll {
+ box-shadow: none;
+}
+::-webkit-scrollbar {
+ width: 11px;
+ max-height: 9px;
+ background-color: #ebebeb;
+ border-radius: 3px;
+ border: none;
+}
+::-webkit-scrollbar-track {
+ background: #ebebeb;
+ border: none;
+ width: 11px;
+ max-height: 9px;
+}
+::-webkit-scrollbar-thumb {
+ border-radius: 2px;
+ border: none;
+ background: #909090;
+ background-clip: content-box;
+ width: 11px;
+}
+HTML,
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+p,
+blockquote,
+th,
+td,
+span,
+a {
+ text-rendering: auto;
+ -webkit-font-smoothing: antialiased;
+}
+div.input_area {
+ background-color: #ededed;
+ background: #ededed;
+ padding-right: 1.2em;
+ border: 0px;
+ border-radius: 0px;
+ border-top-right-radius: 3px;
+ border-bottom-right-radius: 3px;
+}
+div.cell {
+ padding: 0px;
+ background: #ffffff;
+ background-color: #ffffff;
+ border: medium solid #ffffff;
+ border-radius: 0px;
+ top: 0;
+}
+div.cell.selected {
+ background: #ffffff;
+ background-color: #ffffff;
+ border: medium solid #ffffff;
+ padding: 0px;
+ border-radius: 3px;
+}
+.edit_mode div.cell.selected {
+ padding: 0px;
+ background: #ffffff;
+ background-color: #ffffff;
+ border: medium solid #ffffff;
+ border-radius: 3px;
+}
+div.cell.edit_mode {
+ padding: 0px;
+ background: #ffffff;
+ background-color: #ffffff;
+}
+div.CodeMirror-sizer {
+ margin-left: 0px;
+ margin-bottom: -21px;
+ border-right-width: 16px;
+ min-height: 37px;
+ padding-right: 0px;
+ padding-bottom: 0px;
+ margin-top: 0px;
+}
+div.cell.selected:before {
+ background: #ededed;
+ border: none;
+ border-radius: 3px;
+ position: absolute;
+ display: block;
+ top: 0px;
+ left: 0px;
+ width: 0px;
+ height: 100%;
+}
+.edit_mode div.cell.selected:before {
+ background: #ffffff;
+ border: none;
+ border-radius: 3px;
+ position: absolute;
+ display: block;
+ top: 0px;
+ left: 0px;
+ width: 0px;
+ height: 100%;
+}
+div.cell.code_cell .input {
+ border-left: 5px solid #ededed !important;
+ border-radius: 3px;
+ border-bottom-left-radius: 3px;
+ border-top-left-radius: 3px;
+}
+div.cell.code_cell.selected .input {
+ border-left: 5px solid #ff7823 !important;
+ border-radius: 3px;
+ border-bottom-left-radius: 3px;
+ border-top-left-radius: 3px;
+}
+.edit_mode div.cell.code_cell.selected .input {
+ border-left: 5px solid #ffd5bb !important;
+ border-radius: 3px;
+ border-bottom-left-radius: 3px;
+ border-top-left-radius: 3px;
+}
+div.cell.selected.jupyter-soft-selected:before .input,
+.edit_mode div.cell.selected:before .input {
+ border-left: 3px solid #ffd5bb !important;
+ border-bottom-left-radius: 3px;
+ border-top-left-radius: 3px;
+}
+div.cell.jupyter-soft-selected .input,
+div.cell.selected.jupyter-soft-selected .input {
+ border-left: 3px solid #ffd5bb !important;
+ border-bottom-left-radius: 3px;
+ border-top-left-radius: 3px;
+}
+div.cell.selected.jupyter-soft-selected {
+ border-left-color: #ff7823;
+ border-color: #ffffff;
+ padding-left: 7px;
+ border-radius: 6px;
+}
+div.cell.selected.jupyter-soft-selected .prompt,
+div.cell.text_cell.selected.jupyter-soft-selected .prompt {
+ top: 0;
+ border-left: #ededed !important;
+ border-radius: 2px;
+}
+div.cell.text_cell.selected.jupyter-soft-selected .input_prompt {
+ border-left: none !important;
+}
+div.cell.text_cell.selected.jupyter-soft-selected:before {
+ background: #f2f2f2 !important;
+ border: 2px solid #f2f2f2 !important;
+ border-radius: 6px !important;
+ position: absolute !important;
+ display: block !important;
+ top: 0px !important;
+ left: 0px !important;
+ width: 6px !important;
+ height: 100% !important;
+}
+div.cell.text_cell.jupyter-soft-selected,
+div.cell.text_cell.selected.jupyter-soft-selected {
+ border-left-color: #f2f2f2 !important;
+ border-left-width: 0px !important;
+ padding-left: 7px !important;
+ border-right-color: #f2f2f2 !important;
+ border-right-width: 0px !important;
+ background: #f2f2f2 !important;
+ border-radius: 6px !important;
+}
+div.prompt,
+.prompt {
+ font-family: monospace, monospace;
+ font-size: 9pt !important;
+ font-weight: normal;
+ color: #aaaaaa;
+ line-height: 170%;
+ padding: 0px;
+ padding-top: 4px;
+ padding-left: 0px;
+ padding-right: 1px;
+ text-align: right !important;
+ min-width: 12.5ex !important;
+ width: 12.5ex !important;
+}
+div.prompt.input_prompt {
+ font-size: 9pt !important;
+ background-color: #ededed;
+ border-top: 0px;
+ border-top-right-radius: 0px;
+ border-bottom-left-radius: 0px;
+ border-bottom-right-radius: 0px;
+ padding-right: 3px;
+ min-width: 12.5ex;
+ width: 12.5ex !important;
+}
+div.cell.code_cell .input_prompt {
+ border-right: 2px solid rgba(240,147,43,.50);
+}
+div.cell.selected .prompt {
+ top: 0;
+}
+.edit_mode div.cell.selected .prompt {
+ top: 0;
+}
+.edit_mode div.cell.selected .prompt {
+ top: 0;
+}
+div.output_wrapper {
+ background-color: #ffffff;
+ border: 0px;
+ left: 0px;
+ margin-bottom: 0em;
+ margin-top: 0em;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+}
+div.output_subarea.output_text.output_stream.output_stdout,
+div.output_subarea.output_text {
+ font-family: monospace, monospace;
+ font-size: 8.5pt !important;
+ line-height: 150% !important;
+ background-color: #ffffff;
+ color: #303030;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+}
+div.output_area pre {
+ font-family: monospace, monospace;
+ font-size: 8.5pt !important;
+ line-height: 151% !important;
+ color: #303030;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+}
+div.output_area {
+ display: -webkit-box;
+}
+div.output_html {
+ font-family: monospace, monospace;
+ font-size: 8.5pt;
+ color: #353535;
+ background-color: #ffffff;
+ background: #ffffff;
+}
+div.output_subarea {
+ overflow-x: auto;
+ padding: 0.8em !important;
+ -webkit-box-flex: 1;
+ -moz-box-flex: 1;
+ box-flex: 1;
+ flex: 1;
+}
+div.btn.btn-default.output_collapsed {
+ background: #e1e1e1;
+ background-color: #e1e1e1;
+ border-color: #e1e1e1;
+}
+div.btn.btn-default.output_collapsed:hover {
+ background: #dcdcdc;
+ background-color: #dcdcdc;
+ border-color: #dcdcdc;
+}
+div.prompt.output_prompt {
+ font-family: monospace, monospace;
+ font-size: 9.5pt !important;
+ font-weight: bold !important;
+ background-color: #ffffff;
+ color: transparent;
+ border-bottom-left-radius: 4px;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+ border-bottom-right-radius: 0px;
+ min-width: 12.5ex !important;
+ width: 12.5ex !important;
+ border-right: 2px solid transparent;
+}
+div.out_prompt_overlay.prompt {
+ font-family: monospace, monospace;
+ font-size: 9.5pt !important;
+ font-weight: bold !important;
+ background-color: #ffffff;
+ border-bottom-left-radius: 2px;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+ border-bottom-right-radius: 0px;
+ min-width: 12.5ex !important;
+ width: 12.5ex !important;
+ border-right: 2px solid transparent;
+ color: transparent;
+}
+div.out_prompt_overlay.prompt:hover {
+ background-color: #f7f7f7;
+ box-shadow: none !important;
+ border: none;
+ border-bottom-left-radius: 2px;
+ -webkit-border-: 2px;
+ -moz-border-radius: 2px;
+ border-top-right-radius: 0px;
+ border-top-left-radius: 0px;
+ min-width: 12.5ex !important;
+ width: 12.5ex !important;
+ border-right: 2px solid #f7f7f7 !important;
+}
+div.cell.code_cell .output_prompt {
+ border-right: 2px solid transparent;
+ color: transparent;
+}
+div.cell.selected .output_prompt,
+div.cell.selected .out_prompt_overlay.prompt {
+ border-left: 5px solid #f2f2f2;
+ border-right: 2px solid #ffffff;
+ border-radius: 0px !important;
+}
+.edit_mode div.cell.selected .output_prompt,
+.edit_mode div.cell.selected .out_prompt_overlay.prompt {
+ border-left: 5px solid #f2f2f2;
+ border-right: 2px solid #ffffff;
+ border-radius: 0px !important;
+}
+div.cell.text_cell .input_prompt {
+ border-right: 0;
+}
+div.cell.text_cell.rendered .input_prompt {
+ font-family: monospace, monospace;
+ font-size: 9.5pt;
+ font-weight: normal;
+ color: #aaaaaa;
+ text-align: right !important;
+ min-width: 12.5ex;
+ width: 12.5ex !important;
+ background-color: #ffffff;
+ border-right: 2px solid rgba(30,112,199,.50);
+ border-left: 5px solid #ffffff;
+}
+div.cell.text_cell.unrendered .input_prompt {
+ font-family: monospace, monospace;
+ font-size: 9.5pt;
+ font-weight: normal;
+ color: #aaaaaa;
+ text-align: right !important;
+ min-width: 12.5ex;
+ width: 12.5ex !important;
+ border-right: 2px solid rgba(30,112,199,.50);
+ border-left: 5px solid #ffffff;
+}
+div.cell.text_cell.rendered .input_prompt {
+ border-right: 2px solid rgba(30,112,199,.50);
+}
+div.cell.text_cell.rendered.selected .input_prompt {
+ top: 0;
+ border-left: 5px solid #f2f2f2;
+ border-radius: 2px;
+ border-right: 2px solid rgba(30,112,199,.50);
+}
+div.text_cell.unrendered.selected .prompt {
+ top: 0;
+ border-left: 5px solid #f2f2f2;
+ border-radius: 2px;
+ border-right: 2px solid rgba(30,112,199,.50);
+}
+div.rendered_html code {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ padding-top: 3px;
+ padding-left: 2px;
+ color: #303030;
+ background: #ffffff;
+ background-color: #ffffff;
+}
+pre,
+code,
+kbd,
+samp {
+ white-space: pre-wrap;
+}
+.well code,
+code {
+ font-family: monospace, monospace;
+ font-size: 11pt !important;
+ line-height: 170% !important;
+ color: #353535;
+ background: #efefef;
+ background-color: #efefef;
+ border-color: #efefef;
+}
+kbd {
+ padding: 4px;
+ font-size: 11pt;
+ color: #303030;
+ background-color: #efefef;
+ border: 0;
+ box-shadow: none;
+}
+pre {
+ display: block;
+ padding: 8.5px;
+ margin: 0 0 9px;
+ font-size: 12.0pt;
+ line-height: 1.42857143;
+ color: #303030;
+ background-color: #efefef;
+ border: 1px solid #e7e7e7;
+ border-radius: 2px;
+}
+div.rendered_html {
+ color: #353535;
+}
+.rendered_html * + ul {
+ margin-top: .4em;
+ margin-bottom: .3em;
+}
+.rendered_html * + p {
+ margin-top: .5em;
+ margin-bottom: .5em;
+ margin-left: .5em;
+}
+div.rendered_html pre,
+div.text_cell_render pre {
+ font-family: monospace, monospace;
+ font-size: 11pt !important;
+ line-height: 170% !important;
+ color: #353535;
+ background: #ffffff;
+ background-color: #ffffff;
+ max-width: 80%;
+ border-radius: 0px;
+ border-left: 3px solid rgba(240,147,43,.50);
+ max-width: 80%;
+ border-radius: 0px;
+ padding-left: 5px;
+ margin-left: 6px;
+}
+div.text_cell_render h1,
+div.rendered_html h1,
+div.text_cell_render h2,
+div.rendered_html h2,
+div.text_cell_render h3,
+div.rendered_html h3,
+div.text_cell_render h4,
+div.rendered_html h4,
+div.text_cell_render h5,
+div.rendered_html h5 {
+ font-family: sans-serif;
+ margin: 0.4em .2em .3em .2em !important;
+}
+.rendered_html h1:first-child,
+.rendered_html h2:first-child,
+.rendered_html h3:first-child,
+.rendered_html h4:first-child,
+.rendered_html h5:first-child,
+.rendered_html h6:first-child {
+ margin-top: 0.2em !important;
+ margin-bottom: 0.2em !important;
+}
+.rendered_html h1,
+.text_cell_render h1 {
+ color: #126dce;
+ font-size: 215%;
+ text-align: center;
+ font-style: normal;
+ font-weight: lighter;
+}
+.rendered_html h2,
+.text_cell_render h2 {
+ text-align: left;
+ font-size: 180%;
+ color: #126dce;
+ font-style: normal;
+ font-weight: lighter;
+}
+.rendered_html h3,
+.text_cell_render h3 {
+ font-size: 150%;
+ color: #126dce;
+ font-style: normal;
+ font-weight: lighter;
+}
+.rendered_html h4,
+.text_cell_render h4 {
+ font-size: 120%;
+ color: #126dce;
+ font-style: normal;
+ font-weight: lighter;
+}
+.rendered_html h5,
+.text_cell_render h5 {
+ font-size: 100%;
+ color: #2f2f2f;
+ font-style: normal;
+ font-weight: lighter;
+}
+hr {
+ margin-top: 8px;
+ margin-bottom: 10px;
+ border: 0;
+ border-top: 1px solid #126dce;
+}
+.rendered_html hr {
+ color: #126dce;
+ background-color: #126dce;
+ margin-right: 2em;
+}
+#complete > select > option:hover {
+ background: rgba(180,180,180,.14);
+ background-color: rgba(180,180,180,.14);
+}
+div#_vivaldi-spatnav-focus-indicator._vivaldi-spatnav-focus-indicator {
+ position: absolute;
+ z-index: 9999999999;
+ top: 0px;
+ left: 0px;
+ box-shadow: none;
+ pointer-events: none;
+ border-radius: 2px;
+}
+.rendered_html tr,
+.rendered_html th,
+.rendered_html td {
+ text-align: left;
+ vertical-align: middle;
+ padding: 0.42em 0.47em;
+ line-height: normal;
+ white-space: normal;
+ max-width: none;
+ border: none;
+}
+.rendered_html tr,
+.rendered_html td {
+ font-size: 9.3pt !important;
+}
+.rendered_html thead {
+ font-family: sans-serif;
+ font-size: 10.3pt !important;
+}
+.rendered_html table {
+ font-family: sans-serif !important;
+ margin-left: 8px;
+ margin-right: auto;
+ border: none;
+ border-collapse: collapse;
+ border-spacing: 0;
+ color: #353535;
+ table-layout: fixed;
+}
+.rendered_html thead {
+ background: #ebebeb;
+ color: #353535;
+ border-bottom: 1px solid #ebebeb;
+ vertical-align: bottom;
+}
+.rendered_html tbody tr:nth-child(odd) {
+ background: #fafafa;
+}
+.rendered_html tbody tr {
+ background: #f2f2f2;
+}
+.rendered_html tbody tr:hover:nth-child(odd) {
+ background: #f7f7f7;
+}
+.rendered_html tbody tr:hover {
+ background: #f0f0f0;
+}
+.rendered_html * + table {
+ margin-top: .05em;
+}
+div.widget-area {
+ background-color: #ffffff;
+ background: #ffffff;
+ color: #303030;
+}
+div.widget-area a {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ font-weight: normal;
+ font-style: normal;
+ color: #303030;
+ text-shadow: none !important;
+}
+div.widget-area a:hover,
+div.widget-area a:focus {
+ font-family: sans-serif;
+ font-size: 12.0pt;
+ font-weight: normal;
+ font-style: normal;
+ color: #2f2f2f;
+ background: rgba(180,180,180,.14);
+ background-color: rgba(180,180,180,.14);
+ border-color: transparent;
+ background-image: none;
+ text-shadow: none !important;
+}
+div.widget_item.btn-group > button.btn.btn-default.widget-combo-btn,
+div.widget_item.btn-group > button.btn.btn-default.widget-combo-btn:hover {
+ background: #ebebeb;
+ background-color: #ebebeb;
+ border: 2px solid #ebebeb !important;
+ font-size: inherit;
+ z-index: 0;
+}
+div.jupyter-widgets.widget-hprogress.widget-hbox {
+ display: inline-table !important;
+ width: 38% !important;
+ margin-left: 10px;
+}
+div.jupyter-widgets.widget-hprogress.widget-hbox .widget-label,
+div.widget-hbox .widget-label,
+.widget-hbox .widget-label,
+.widget-inline-hbox .widget-label,
+div.widget-label {
+ text-align: -webkit-auto !important;
+ margin-left: 15px !important;
+ max-width: 240px !important;
+ min-width: 100px !important;
+ vertical-align: text-top !important;
+ color: #303030 !important;
+ font-size: 14px;
+}
+.widget-hprogress .progress {
+ flex-grow: 1;
+ height: 20px;
+ margin-top: auto;
+ margin-left: 12px;
+ margin-bottom: auto;
+ width: 300px;
+}
+.progress {
+ overflow: hidden;
+ height: 22px;
+ margin-bottom: 10px;
+ padding-left: 10px;
+ background-color: #d6d6d6 !important;
+ border-radius: 2px;
+ -webkit-box-shadow: none;
+ box-shadow: none;
+ z-index: 10;
+}
+.progress-bar-danger {
+ background-color: #e5344a !important;
+}
+.progress-bar-info {
+ background-color: #2980b9 !important;
+}
+.progress-bar-warning {
+ background-color: #f39c12 !important;
+}
+.progress-bar-success {
+ background-color: #5cb85c !important;
+}
+.widget-select select {
+ margin-left: 12px;
+}
+.rendered_html :link {
+ font-family: sans-serif;
+ font-size: 100%;
+ color: #126dce;
+ text-decoration: underline;
+}
+.rendered_html :visited,
+.rendered_html :visited:active,
+.rendered_html :visited:focus {
+ color: #1a77da;
+}
+.rendered_html :visited:hover,
+.rendered_html :link:hover {
+ font-family: sans-serif;
+ font-size: 100%;
+ color: #ff8132;
+}
+a.anchor-link:link {
+ font-size: inherit;
+ text-decoration: none;
+ padding: 0px 20px;
+ visibility: none;
+ color: #126dce;
+}
+a.anchor-link:link:hover {
+ font-size: inherit;
+ color: #ff8132;
+}
+.navbar-text {
+ margin-top: 4px;
+ margin-bottom: 0px;
+}
+#clusters > a {
+ color: #ff8132;
+ text-decoration: underline;
+ cursor: auto;
+}
+#clusters > a:hover {
+ color: #126dce;
+ text-decoration: underline;
+ cursor: auto;
+}
+#nbextensions-configurator-container > div.row.container-fluid.nbext-selector > h3 {
+ font-size: 15px;
+ margin-top: 5px;
+ margin-bottom: 8px;
+ height: 24px;
+ padding: 4px 0 4px 0;
+}
+div#nbextensions-configurator-container.container,
+#nbextensions-configurator-container.container {
+ width: 100%;
+ margin-right: auto;
+ margin-left: auto;
+}
+div.nbext-selector > nav > .nav > li > a {
+ font-family: sans-serif;
+ font-size: 10.5pt;
+ padding: 2px 5px;
+}
+div.nbext-readme > .nbext-readme-contents > .rendered_html {
+ font-family: sans-serif;
+ font-size: 11.5pt;
+ line-height: 145%;
+ padding: 1em 1em;
+ color: #353535;
+ background-color: #ffffff;
+ -webkit-box-shadow: none;
+ -moz-box-shadow: none;
+ box-shadow: none;
+}
+.nbext-icon,
+.nbext-desc,
+.nbext-compat-div,
+.nbext-enable-btns,
+.nbext-params {
+ margin-bottom: 8px;
+ font-size: 11.5pt;
+}
+div.nbext-readme > .nbext-readme-contents {
+ padding: 0;
+ overflow-y: hidden;
+}
+div.nbext-readme > .nbext-readme-contents:not(:empty) {
+ margin-top: 0.5em;
+ margin-bottom: 2em;
+ border: none;
+ border-top-color: rgba(180,180,180,.30);
+}
+.nbext-showhide-incompat {
+ padding-bottom: 0.5em;
+ color: #4a4a4a;
+ font-size: 10.5pt;
+}
+.nbext-filter-menu.dropdown-menu > li > a:hover,
+.nbext-filter-menu.dropdown-menu > li > a:focus,
+.nbext-filter-menu.dropdown-menu > li > a.ui-state-focus {
+ color: #2f2f2f !important;
+ background-color: rgba(180,180,180,.14) !important;
+ background: rgba(180,180,180,.14) !important;
+ border-color: rgba(180,180,180,.14) !important;
+}
+span.rendered_html code {
+ background-color: transparent;
+ color: #303030;
+}
+#nbextensions-configurator-container > div.row.container-fluid.nbext-selector {
+ padding-left: 0px;
+ padding-right: 0px;
+}
+.nbext-filter-menu {
+ max-height: 50vh;
+ overflow-y: auto;
+ outline: none;
+ border: 2px solid rgba(180,180,180,.30);
+}
+.alert-warning {
+ background-color: #fafafa;
+ border-color: #fafafa;
+ color: #303030;
+}
+.notification_widget.danger {
+ color: #ffffff;
+ background-color: #e5344a;
+ border-color: #e5344a;
+ padding-right: 5px;
+}
+mark,
+.mark {
+ background-color: #ffffff;
+ color: #353535;
+ padding: .15em;
+}
+a.text-warning,
+a.text-warning:hover {
+ color: #aaaaaa;
+}
+a.text-warning.bg-warning {
+ background-color: #ffffff;
+}
+span.bg-success.text-success {
+ background-color: transparent;
+ color: #009e07;
+}
+span.bg-danger.text-danger {
+ background-color: #ffffff;
+ color: #de143d;
+}
+.has-success .input-group-addon {
+ color: #009e07;
+ border-color: transparent;
+ background: inherit;
+ background-color: rgba(83,180,115,.10);
+}
+.has-success .form-control {
+ border-color: #009e07;
+ -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.025);
+ box-shadow: inset 0 1px 1px rgba(0,0,0,0.025);
+}
+.has-error .input-group-addon {
+ color: #de143d;
+ border-color: transparent;
+ background: inherit;
+ background-color: rgba(192,57,67,.10);
+}
+.has-error .form-control {
+ border-color: #de143d;
+ -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.025);
+ box-shadow: inset 0 1px 1px rgba(0,0,0,0.025);
+}
+.kse-input-group-pretty > kbd {
+ font-family: monospace, monospace;
+ color: #303030;
+ font-weight: normal;
+ background: transparent;
+}
+.kse-input-group-pretty > kbd {
+ font-family: monospace, monospace;
+ color: #303030;
+ font-weight: normal;
+ background: transparent;
+}
+div.nbext-enable-btns .btn[disabled],
+div.nbext-enable-btns .btn[disabled]:hover,
+.btn-default.disabled,
+.btn-default[disabled] {
+ background: #e8e8e8;
+ background-color: #e8e8e8;
+ color: #282828;
+}
+label#Keyword-Filter {
+ display: none;
+}
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+ color: #1c1c1c;
+ background-color: #eeeeee;
+}
+.input-group .nbext-list-btn-add,
+.input-group-btn:last-child > .btn-group > .btn {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border-color: #eeeeee;
+}
+.input-group .nbext-list-btn-add:hover,
+.input-group-btn:last-child > .btn-group > .btn:hover {
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border-color: #e9e9e9;
+}
+#notebook-container > div.cell.code_cell.rendered.selected > div.widget-area > div.widget-subarea > div > div.widget_item.btn-group > button.btn.btn-default.dropdown-toggle.widget-combo-carrot-btn {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border-color: #eeeeee;
+}
+#notebook-container > div.cell.code_cell.rendered.selected > div.widget-area > div.widget-subarea > div > div.widget_item.btn-group > button.btn.btn-default.dropdown-toggle.widget-combo-carrot-btn:hover {
+ background: #e9e9e9;
+ background-color: #e9e9e9;
+ border-color: #e9e9e9;
+}
+.ui-widget-content {
+ background: #ebebeb;
+ background-color: #ebebeb;
+ border: 2px solid #ebebeb;
+ color: #303030;
+}
+div.collapsible_headings_toggle {
+ color: rgba(180,180,180,.30) !important;
+}
+div.collapsible_headings_toggle:hover {
+ color: #ff7823 !important;
+}
+.collapsible_headings_toggle .h1,
+.collapsible_headings_toggle .h2,
+.collapsible_headings_toggle .h3,
+.collapsible_headings_toggle .h4,
+.collapsible_headings_toggle .h5,
+.collapsible_headings_toggle .h6 {
+ margin: 0.3em .4em 0em 0em !important;
+ line-height: 1.2 !important;
+}
+div.collapsible_headings_toggle .fa-caret-down:before,
+div.collapsible_headings_toggle .fa-caret-right:before {
+ font-size: xx-large;
+ transition: transform 1000ms;
+ transform: none !important;
+}
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h1:after,
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h2:after,
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h3:after,
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h4:after,
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h5:after,
+.collapsible_headings_collapsed.collapsible_headings_ellipsis .rendered_html h6:after {
+ position: absolute;
+ right: 0;
+ bottom: 20% !important;
+ content: "[\002026]";
+ color: rgba(180,180,180,.30) !important;
+ padding: 0.5em 0em 0em 0em !important;
+}
+.collapsible_headings_ellipsis .rendered_html h1,
+.collapsible_headings_ellipsis .rendered_html h2,
+.collapsible_headings_ellipsis .rendered_html h3,
+.collapsible_headings_ellipsis .rendered_html h4,
+.collapsible_headings_ellipsis .rendered_html h5,
+.collapsible_headings_ellipsis .rendered_html h6,
+.collapsible_headings_toggle .fa {
+ transition: transform 1000ms !important;
+ -webkit-transform: inherit !important;
+ -moz-transform: inherit !important;
+ -ms-transform: inherit !important;
+ -o-transform: inherit !important;
+ transform: inherit !important;
+ padding-right: 0px !important;
+}
+input.raw_input {
+ font-family: monospace, monospace;
+ font-size: 11pt !important;
+ color: #303030;
+ background-color: #efefef;
+ border-color: #ececec;
+ background: #ececec;
+ width: auto;
+ vertical-align: baseline;
+ padding: 0em 0.25em;
+ margin: 0em 0.25em;
+ -webkit-box-shadow: none;
+ box-shadow: none;
+}
+audio,
+video {
+ display: inline;
+ vertical-align: middle;
+ align-content: center;
+ margin-left: 20%;
+}
+.cmd-palette .modal-body {
+ padding: 0px;
+ margin: 0px;
+}
+.cmd-palette form {
+ background: #eeeeee;
+ background-color: #eeeeee;
+}
+.typeahead-field input:last-child,
+.typeahead-hint {
+ background: #eeeeee;
+ background-color: #eeeeee;
+ z-index: 1;
+}
+.typeahead-field input {
+ font-family: sans-serif;
+ color: #303030;
+ border: none;
+ font-size: 28pt;
+ display: inline-block;
+ line-height: inherit;
+ padding: 3px 10px;
+ height: 70px;
+}
+.typeahead-select {
+ background-color: #eeeeee;
+}
+body > div.modal.cmd-palette.typeahead-field {
+ display: table;
+ border-collapse: separate;
+ background-color: #fafafa;
+}
+.typeahead-container button {
+ font-family: sans-serif;
+ font-size: 28pt;
+ background-color: #ebebeb;
+ border: none;
+ display: inline-block;
+ line-height: inherit;
+ padding: 3px 10px;
+ height: 70px;
+}
+.typeahead-search-icon {
+ min-width: 40px;
+ min-height: 55px;
+ display: block;
+ vertical-align: middle;
+ text-align: center;
+}
+.typeahead-container button:focus,
+.typeahead-container button:hover {
+ color: #2f2f2f;
+ background-color: #ff7823;
+ border-color: #ff7823;
+}
+.typeahead-list > li.typeahead-group.active > a,
+.typeahead-list > li.typeahead-group > a,
+.typeahead-list > li.typeahead-group > a:focus,
+.typeahead-list > li.typeahead-group > a:hover {
+ display: none;
+}
+.typeahead-dropdown > li > a,
+.typeahead-list > li > a {
+ color: #303030;
+ text-decoration: none;
+}
+.typeahead-dropdown,
+.typeahead-list {
+ font-family: sans-serif;
+ font-size: 13pt;
+ color: #303030;
+ background-color: #ffffff;
+ border: none;
+ background-clip: padding-box;
+ margin-top: 0px;
+ padding: 3px 2px 3px 0px;
+ line-height: 1.7;
+}
+.typeahead-dropdown > li.active > a,
+.typeahead-dropdown > li > a:focus,
+.typeahead-dropdown > li > a:hover,
+.typeahead-list > li.active > a,
+.typeahead-list > li > a:focus,
+.typeahead-list > li > a:hover {
+ color: #2f2f2f;
+ background-color: #fafafa;
+ border-color: #fafafa;
+}
+.command-shortcut:before {
+ content: "(command)";
+ padding-right: 3px;
+ color: #aaaaaa;
+}
+.edit-shortcut:before {
+ content: "(edit)";
+ padding-right: 3px;
+ color: #aaaaaa;
+}
+ul.typeahead-list i {
+ margin-left: 1px;
+ width: 18px;
+ margin-right: 10px;
+}
+ul.typeahead-list {
+ max-height: 50vh;
+ overflow: auto;
+}
+.typeahead-list > li {
+ position: relative;
+ border: none;
+}
+div.input.typeahead-hint,
+input.typeahead-hint,
+body > div.modal.cmd-palette.in > div > div > div > form > div > div.typeahead-field > span.typeahead-query > input.typeahead-hint {
+ color: #aaaaaa !important;
+ background-color: transparent;
+ padding: 3px 10px;
+}
+.typeahead-dropdown > li > a,
+.typeahead-list > li > a {
+ display: block;
+ padding: 5px;
+ clear: both;
+ font-weight: 400;
+ line-height: 1.7;
+ border: 1px solid #ffffff;
+ border-bottom-color: rgba(180,180,180,.30);
+}
+body > div.modal.cmd-palette.in > div {
+ min-width: 750px;
+ margin: 150px auto;
+}
+.typeahead-container strong {
+ font-weight: bolder;
+ color: #ff7823;
+}
+#find-and-replace #replace-preview .match,
+#find-and-replace #replace-preview .insert {
+ color: #ffffff;
+ background-color: #ff7823;
+ border-color: #ff7823;
+ border-style: solid;
+ border-width: 1px;
+ border-radius: 0px;
+}
+#find-and-replace #replace-preview .replace .match {
+ background-color: #de143d;
+ border-color: #de143d;
+ border-radius: 0px;
+}
+#find-and-replace #replace-preview .replace .insert {
+ background-color: #009e07;
+ border-color: #009e07;
+ border-radius: 0px;
+}
+.shortcut_key,
+span.shortcut_key {
+ display: inline-block;
+ width: 16ex;
+ text-align: right;
+ font-family: monospace;
+}
+.jupyter-keybindings {
+ padding: 1px;
+ line-height: 24px;
+ border-bottom: 1px solid rgba(180,180,180,.14);
+}
+.jupyter-keybindings i {
+ background: #efefef;
+ font-size: small;
+ padding: 5px;
+ margin-left: 7px;
+}
+div#short-key-bindings-intro.well,
+.well {
+ background-color: #eeeeee;
+ border: 1px solid #eeeeee;
+ color: #303030;
+ border-radius: 2px;
+ -webkit-box-shadow: none;
+ box-shadow: none;
+}
+#texteditor-backdrop {
+ background: #ffffff;
+ background-color: #ffffff;
+}
+#texteditor-backdrop #texteditor-container .CodeMirror-gutter,
+#texteditor-backdrop #texteditor-container .CodeMirror-gutters {
+ background: #e0e1e3;
+ background-color: #e0e1e3;
+ color: #aaaaaa;
+}
+.edit_app #menubar .navbar {
+ margin-bottom: 0px;
+}
+#texteditor-backdrop #texteditor-container {
+ padding: 0px;
+ background-color: #ededed;
+ box-shadow: none;
+}
+.terminal-app {
+ background: #ffffff;
+}
+.terminal-app .terminal {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ line-height: 170%;
+ color: #303030;
+ background: #ededed;
+ padding: 0.4em;
+ border-radius: 2px;
+ -webkit-box-shadow: none;
+ box-shadow: none;
+}
+.terminal .xterm-viewport {
+ background-color: #ededed;
+ color: #303030;
+ overflow-y: auto;
+}
+.terminal .xterm-color-0 {
+ color: #ff7823;
+}
+.terminal .xterm-color-1 {
+ color: #de143d;
+}
+.terminal .xterm-color-2 {
+ color: #713bc5;
+}
+.terminal .xterm-color-3 {
+ color: #e22978;
+}
+.terminal .xterm-color-4 {
+ color: #ff8132;
+}
+.terminal .xterm-color-5 {
+ color: #009e07;
+}
+.terminal .xterm-color-6 {
+ color: #e22978;
+}
+.terminal .xterm-color-7 {
+ color: #e22978;
+}
+.terminal .xterm-color-8 {
+ color: #ff8132;
+}
+.terminal .xterm-color-9 {
+ color: #009e07;
+}
+.terminal .xterm-color-10 {
+ color: #e22978;
+}
+.terminal .xterm-color-14 {
+ color: #e22978;
+}
+.terminal .xterm-bg-color-15 {
+ background-color: #ededed;
+}
+.terminal:not(.xterm-cursor-style-underline):not(.xterm-cursor-style-bar) .terminal-cursor {
+ background-color: #ff7823;
+ color: #ededed;
+}
+.terminal:not(.focus) .terminal-cursor {
+ outline: 1px solid #ff7823;
+ outline-offset: -1px;
+}
+div#pager #pager-contents {
+ background: #ffffff !important;
+ background-color: #ffffff !important;
+}
+div#pager pre {
+ color: #303030 !important;
+ background: #ededed !important;
+ background-color: #ededed !important;
+ padding: 0.4em;
+}
+div#pager .ui-resizable-handle {
+ top: 0px;
+ height: 8px;
+ background: #ff7823 !important;
+ border-top: 1px solid #ff7823;
+ border-bottom: 1px solid #ff7823;
+}
+div.CodeMirror,
+div.CodeMirror pre {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ line-height: 170%;
+ color: #303030;
+}
+div.CodeMirror-lines {
+ padding-bottom: .9em;
+ padding-left: .5em;
+ padding-right: 1.5em;
+ padding-top: .7em;
+}
+span.ansiblack,
+.ansi-black-fg {
+ color: #e22978;
+}
+span.ansiblue,
+.ansi-blue-fg,
+.ansi-blue-intense-fg {
+ color: #009e07;
+}
+span.ansigray,
+.ansi-gray-fg,
+.ansi-gray-intense-fg {
+ color: #ff8132;
+}
+span.ansigreen,
+.ansi-green-fg {
+ color: #333333;
+}
+.ansi-green-intense-fg {
+ color: #ff8132;
+}
+span.ansipurple,
+.ansi-purple-fg,
+.ansi-purple-intense-fg {
+ color: #653bc5;
+}
+span.ansicyan,
+.ansi-cyan-fg,
+.ansi-cyan-intense-fg {
+ color: #653bc5;
+}
+span.ansiyellow,
+.ansi-yellow-fg,
+.ansi-yellow-intense-fg {
+ color: #ff8132;
+}
+span.ansired,
+.ansi-red-fg,
+.ansi-red-intense-fg {
+ color: #de143d;
+}
+div.output-stderr {
+ background-color: #ebb5b7;
+}
+div.output-stderr pre {
+ color: #000000;
+}
+div.js-error {
+ color: #de143d;
+}
+.ipython_tooltip {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ line-height: 170%;
+ border: 2px solid #dadada;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ border-radius: 2px;
+ overflow-x: visible;
+ overflow-y: visible;
+ box-shadow: none;
+ position: absolute;
+ z-index: 1000;
+}
+.ipython_tooltip .tooltiptext pre {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ line-height: 170%;
+ background: #eeeeee;
+ background-color: #eeeeee;
+ color: #303030;
+ overflow-x: visible;
+ overflow-y: visible;
+ max-width: 900px;
+}
+div#tooltip.ipython_tooltip {
+ overflow-x: wrap;
+ overflow-y: visible;
+ max-width: 800px;
+}
+div.tooltiptext.bigtooltip {
+ overflow-x: visible;
+ overflow-y: scroll;
+ height: 400px;
+ max-width: 800px;
+}
+.cm-s-ipython.CodeMirror {
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ background: #ededed;
+ color: #303030;
+ border-radius: 2px;
+ font-style: normal;
+ font-weight: normal;
+}
+.cm-s-ipython div.CodeMirror-selected {
+ background: #e0e1e3;
+}
+.CodeMirror-gutters {
+ border: none;
+ border-right: 1px solid #e0e1e3 !important;
+ background-color: #e0e1e3 !important;
+ background: #e0e1e3 !important;
+ border-radius: 0px;
+ white-space: nowrap;
+}
+.cm-s-ipython .CodeMirror-gutters {
+ background: #e0e1e3;
+ border: none;
+ border-radius: 0px;
+ width: 36px;
+}
+.cm-s-ipython .CodeMirror-linenumber {
+ color: #aaaaaa;
+}
+.CodeMirror-sizer {
+ margin-left: 40px;
+}
+.CodeMirror-linenumber,
+div.CodeMirror-linenumber,
+.CodeMirror-gutter.CodeMirror-linenumberdiv.CodeMirror-gutter.CodeMirror-linenumber {
+ padding-right: 1px;
+ margin-left: 0px;
+ margin: 0px;
+ width: 26px !important;
+ padding: 0px;
+ text-align: right;
+}
+.CodeMirror-linenumber {
+ color: #aaaaaa;
+}
+.cm-s-ipython .CodeMirror-cursor {
+ border-left: 2px solid #ff711a !important;
+}
+.cm-s-ipython span.cm-comment {
+ color: #8d8d8d;
+ font-style: italic;
+}
+.cm-s-ipython span.cm-atom {
+ color: #055be0;
+}
+.cm-s-ipython span.cm-number {
+ color: #ff8132;
+}
+.cm-s-ipython span.cm-property {
+ color: #303030;
+}
+.cm-s-ipython span.cm-attribute {
+ color: #303030;
+}
+.cm-s-ipython span.cm-keyword {
+ color: #713bc5;
+ font-weight: normal;
+}
+.cm-s-ipython span.cm-string {
+ color: #009e07;
+}
+.cm-s-ipython span.cm-meta {
+ color: #aa22ff;
+}
+.cm-s-ipython span.cm-operator {
+ color: #055be0;
+}
+.cm-s-ipython span.cm-builtin {
+ color: #e22978;
+}
+.cm-s-ipython span.cm-variable {
+ color: #303030;
+}
+.cm-s-ipython span.cm-variable-2 {
+ color: #de143d;
+}
+.cm-s-ipython span.cm-variable-3 {
+ color: #aa22ff;
+}
+.cm-s-ipython span.cm-def {
+ color: #e22978;
+ font-weight: normal;
+}
+.cm-s-ipython span.cm-error {
+ background: rgba(191,97,106,.40);
+}
+.cm-s-ipython span.cm-tag {
+ color: #e22978;
+}
+.cm-s-ipython span.cm-link {
+ color: #ff8132;
+}
+.cm-s-ipython span.cm-storage {
+ color: #055be0;
+}
+.cm-s-ipython span.cm-entity {
+ color: #e22978;
+}
+.cm-s-ipython span.cm-quote {
+ color: #009e07;
+}
+div.CodeMirror span.CodeMirror-matchingbracket {
+ color: #1c1c1c;
+ background-color: rgba(30,112,199,.30);
+}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {
+ color: #1c1c1c;
+ background: rgba(191,97,106,.40) !important;
+}
+.cm-header-1 {
+ font-size: 215%;
+}
+.cm-header-2 {
+ font-size: 180%;
+}
+.cm-header-3 {
+ font-size: 150%;
+}
+.cm-header-4 {
+ font-size: 120%;
+}
+.cm-header-5 {
+ font-size: 100%;
+}
+.cm-s-default .cm-hr {
+ color: #055be0;
+}
+div.cell.text_cell .cm-s-default .cm-header {
+ font-family: sans-serif;
+ font-weight: normal;
+ color: #126dce;
+ margin-top: 0.3em !important;
+ margin-bottom: 0.3em !important;
+}
+div.cell.text_cell .cm-s-default span.cm-variable-2 {
+ color: #353535;
+}
+div.cell.text_cell .cm-s-default span.cm-variable-3 {
+ color: #aa22ff;
+}
+.cm-s-default span.cm-comment {
+ color: #8d8d8d;
+}
+.cm-s-default .cm-tag {
+ color: #009fb7;
+}
+.cm-s-default .cm-builtin {
+ color: #e22978;
+}
+.cm-s-default .cm-string {
+ color: #009e07;
+}
+.cm-s-default .cm-keyword {
+ color: #713bc5;
+}
+.cm-s-default .cm-number {
+ color: #ff8132;
+}
+.cm-s-default .cm-error {
+ color: #055be0;
+}
+.cm-s-default .cm-link {
+ color: #ff8132;
+}
+.cm-s-default .cm-atom {
+ color: #ff8132;
+}
+.cm-s-default .cm-def {
+ color: #e22978;
+}
+.CodeMirror-cursor {
+ border-left: 2px solid #ff711a !important;
+ border-right: none;
+ width: 0;
+}
+.cm-s-default div.CodeMirror-selected {
+ background: #e0e1e3;
+}
+.cm-s-default .cm-selected {
+ background: #e0e1e3;
+}
+.MathJax_Display,
+.MathJax {
+ border: 0 !important;
+ font-size: 100% !important;
+ text-align: center !important;
+ margin: 0em !important;
+ line-height: 2.25 !important;
+}
+.MathJax:focus,
+body :focus .MathJax {
+ display: inline-block !important;
+}
+.MathJax:focus,
+body :focus .MathJax {
+ display: inline-block !important;
+}
+.completions {
+ position: absolute;
+ z-index: 110;
+ overflow: hidden;
+ border: medium solid rgba(240,147,43,.50);
+ box-shadow: none;
+ line-height: 1;
+}
+.completions select {
+ background: #ededed;
+ background-color: #ededed;
+ outline: none;
+ border: none;
+ padding: 0px;
+ margin: 0px;
+ margin-left: 2px;
+ overflow: auto;
+ font-family: monospace, monospace;
+ font-size: 11pt;
+ color: #303030;
+ width: auto;
+}
+div#maintoolbar {
+ display: none !important;
+}
+#header-container {
+ display: none !important;
+}
 
-    .text_cell_render h1 {
-        font-weight: 200;
-        font-size: 30pt;
-        line-height: 100%;
-        color:#c76c0c;
-        margin-bottom: 0.5em;
-        margin-top: 1em;
-        display: block;
-        white-space: wrap;
-        text-align: left;
-    } 
-    h2 {
-        font-family: 'Open sans',verdana,arial,sans-serif;
-        text-align: left;
-    }
-    .text_cell_render h2 {
-        font-weight: 200;
-        font-size: 16pt;
-        font-style: italic;
-        line-height: 100%;
-        color:#c76c0c;
-        margin-bottom: 0.5em;
-        margin-top: 1.5em;
-        display: block;
-        white-space: wrap;
-        text-align: left;
-    } 
-    h3 {
-        font-family: 'Open sans',verdana,arial,sans-serif;
-    }
-    .text_cell_render h3 {
-        font-weight: 200;
-        font-size: 14pt;
-        line-height: 100%;
-        color:#d77c0c;
-        margin-bottom: 0.5em;
-        margin-top: 2em;
-        display: block;
-        white-space: wrap;
-        text-align: left;
-    }
-    h4 {
-        font-family: 'Open sans',verdana,arial,sans-serif;
-    }
-    .text_cell_render h4 {
-        font-weight: 100;
-        font-size: 14pt;
-        color:#d77c0c;
-        margin-bottom: 0.5em;
-        margin-top: 0.5em;
-        display: block;
-        white-space: nowrap;
-    }
-    h5 {
-        font-family: 'Open sans',verdana,arial,sans-serif;
-    }
-    .text_cell_render h5 {
-        font-weight: 200;
-        font-style: normal;
-        color: #1d3b84;
-        font-size: 16pt;
-        margin-bottom: 0em;
-        margin-top: 0.5em;
-        display: block;
-        white-space: nowrap;
-    }
-    div.text_cell_render{
-        font-family: 'Fira sans', verdana,arial,sans-serif;
-        line-height: 125%;
-        font-size: 115%;
-        text-align:justify;
-        text-justify:inter-word;
-    }
-    div.output_wrapper{
-        margin-top:0.2em;
-        margin-bottom:0.2em;
-    }
-
-    code{
-      font-size: 70%;
-    }
-    .rendered_html code{
-    background-color: transparent;
-    }
-    ul{
-        margin: 2em;
-    }
-    ul li{
-        padding-left: 0.5em; 
-        margin-bottom: 0.5em; 
-        margin-top: 0.5em; 
-    }
-    ul li li{
-        padding-left: 0.2em; 
-        margin-bottom: 0.2em; 
-        margin-top: 0.2em; 
-    }
-    ol{
-        margin: 2em;
-    }
-    ol li{
-        padding-left: 0.5em; 
-        margin-bottom: 0.5em; 
-        margin-top: 0.5em; 
-    }
-    ul li{
-        padding-left: 0.5em; 
-        margin-bottom: 0.5em; 
-        margin-top: 0.2em; 
-    }
-    a:link{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:visited{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:hover{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:focus{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:active{
-       font-weight: bold;
-       color:#447adb;
-    }
-    .rendered_html :link {
-       text-decoration: underline; 
-    }
-    .rendered_html :hover {
-       text-decoration: none; 
-    }
-    .rendered_html :visited {
-      text-decoration: none;
-    }
-    .rendered_html :focus {
-      text-decoration: none;
-    }
-    .rendered_html :active {
-      text-decoration: none;
-    }
-    .warning{
-        color: rgb( 240, 20, 20 )
-    } 
-    hr {
-      color: #f3f3f3;
-      background-color: #f3f3f3;
-      height: 1px;
-    }
-    blockquote{
-      display:block;
-      background: #fcfcfc;
-      border-left: 5px solid #c76c0c;
-      font-family: 'Open sans',verdana,arial,sans-serif;
-      width:680px;
-      padding: 10px 10px 10px 10px;
-      text-align:justify;
-      text-justify:inter-word;
-      }
-      blockquote p {
-        margin-bottom: 0;
-        line-height: 125%;
-        font-size: 100%;
-      }
-</style>
 <script>
     MathJax.Hub.Config({
-                        TeX: {
-                           extensions: ["AMSmath.js"]
-                           },
-                tex2jax: {
-                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-                },
-                displayAlign: 'center', // Change this to 'center' to center equations.
-                "HTML-CSS": {
-                    scale:100,
-                        availableFonts: [],
-                        preferredFont:null,
-                        webFont: "TeX",
-                    styles: {'.MathJax_Display': {"margin": 4}}
+        "HTML-CSS": {
+            /*preferredFont: "TeX",*/
+            /*availableFonts: ["TeX", "STIX"],*/
+            styles: {
+                scale: 100,
+                ".MathJax_Display": {
+                    "font-size": "100%",
                 }
-        });
+            }
+        }
+    });
 </script>
-
+     </style>
 </div>
 
 </div>
@@ -12041,18 +14587,24 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-<span class="c1"># 1. magic to print version</span>
-<span class="c1"># 2. magic so that the notebook will reload external python modules</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1. magic for inline plot</span>
+<span class="c1"># 2. magic to print version</span>
+<span class="c1"># 3. magic so that the notebook will reload external python modules</span>
+<span class="c1"># 4. magic to enable retina (high resolution) plots</span>
+<span class="c1"># https://gist.github.com/minrk/3301035</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,pyarrow,sklearn
 </pre></div>
 
 </div>
@@ -12069,13 +14621,15 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-08-08 15:15:37 
+<pre>Ethen 2019-08-09 13:25:04 
 
 CPython 3.6.4
 IPython 7.7.0
 
 numpy 1.17.0
 pandas 0.25.0
+pyarrow 0.14.1
+sklearn 0.21.2
 </pre>
 </div>
 </div>
@@ -12088,7 +14642,7 @@ pandas 0.25.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Understanding-Pandas-Data-Type">Understanding Pandas Data Type<a class="anchor-link" href="#Understanding-Pandas-Data-Type">&#182;</a></h1>
+<h1 id="Rossman-GBT-Modeling">Rossman GBT Modeling<a class="anchor-link" href="#Rossman-GBT-Modeling">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12096,8 +14650,15 @@ pandas 0.25.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When working using pandas with small data (under 100 megabytes), performance is rarely a problem. When we move to larger data (100 megabytes to multiple gigabytes), performance issues can make run times much longer, and cause code to fail entirely due to insufficient memory. While tools like Spark can handle large data sets (100 gigabytes to multiple terabytes), taking full advantage of their capabilities usually requires more expensive hardware. And unlike pandas, they lack rich feature sets for high quality data cleaning, exploration, and analysis. For medium-sized data, we're better off trying to get more out of pandas, rather than switching to a different tool.</p>
-<p>In this documentation, we'll learn about memory usage with pandas, how to make pandas DataFrame smaller and faster, simply by selecting the appropriate data types for columns.</p>
+<h2 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We've done most of our data preparation and feature engineering in the previous notebook, we'll still perform some additional ones here, but this notebook focuses on getting the data ready for fitting a Gradient Boosted Tree model. For the model, we will be leveraging lightgbm.</p>
 
 </div>
 </div>
@@ -12107,8 +14668,16 @@ pandas 0.25.0
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">drinks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;http://bit.ly/drinksbycountry&#39;</span><span class="p">)</span>
-<span class="n">drinks</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="s1">&#39;cleaned_data&#39;</span>
+<span class="n">path_train</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;train_clean.parquet&#39;</span><span class="p">)</span>
+<span class="n">path_test</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;test_clean.parquet&#39;</span><span class="p">)</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;pyarrow&#39;</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path_train</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+<span class="n">df_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path_test</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train dimension: &#39;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test dimension: &#39;</span><span class="p">,</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12118,6 +14687,18 @@ pandas 0.25.0
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>train dimension:  (1017209, 71)
+test dimension:  (41088, 70)
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -12144,62 +14725,153 @@ pandas 0.25.0
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>country</th>
-      <th>beer_servings</th>
-      <th>spirit_servings</th>
-      <th>wine_servings</th>
-      <th>total_litres_of_pure_alcohol</th>
-      <th>continent</th>
+      <th>Store</th>
+      <th>DayOfWeek</th>
+      <th>Date</th>
+      <th>Sales</th>
+      <th>Customers</th>
+      <th>Open</th>
+      <th>Promo</th>
+      <th>StateHoliday</th>
+      <th>SchoolHoliday</th>
+      <th>Year</th>
+      <th>...</th>
+      <th>CompetitionMonthsOpen</th>
+      <th>Promo2Since</th>
+      <th>Promo2Days</th>
+      <th>Promo2Weeks</th>
+      <th>AfterSchoolHoliday</th>
+      <th>AfterStateHoliday</th>
+      <th>AfterPromo</th>
+      <th>BeforeSchoolHoliday</th>
+      <th>BeforeStateHoliday</th>
+      <th>BeforePromo</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Afghanistan</td>
+      <td>1</td>
+      <td>5</td>
+      <td>2015-07-31</td>
+      <td>5263</td>
+      <td>555</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>1</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>24</td>
+      <td>1900-01-01</td>
+      <td>42214</td>
+      <td>25</td>
+      <td>0</td>
+      <td>57</td>
       <td>0</td>
       <td>0</td>
+      <td>-48</td>
       <td>0</td>
-      <td>0.0</td>
-      <td>Asia</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Albania</td>
-      <td>89</td>
-      <td>132</td>
-      <td>54</td>
-      <td>4.9</td>
-      <td>Europe</td>
+      <td>2</td>
+      <td>5</td>
+      <td>2015-07-31</td>
+      <td>6064</td>
+      <td>625</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>1</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>24</td>
+      <td>2010-03-29</td>
+      <td>1950</td>
+      <td>25</td>
+      <td>0</td>
+      <td>67</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Algeria</td>
+      <td>3</td>
+      <td>5</td>
+      <td>2015-07-31</td>
+      <td>8314</td>
+      <td>821</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>1</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>24</td>
+      <td>2011-04-04</td>
+      <td>1579</td>
       <td>25</td>
       <td>0</td>
-      <td>14</td>
-      <td>0.7</td>
-      <td>Africa</td>
+      <td>57</td>
+      <td>0</td>
+      <td>0</td>
+      <td>-48</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Andorra</td>
-      <td>245</td>
-      <td>138</td>
-      <td>312</td>
-      <td>12.4</td>
-      <td>Europe</td>
+      <td>4</td>
+      <td>5</td>
+      <td>2015-07-31</td>
+      <td>13995</td>
+      <td>1498</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>1</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>24</td>
+      <td>1900-01-01</td>
+      <td>42214</td>
+      <td>25</td>
+      <td>0</td>
+      <td>67</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Angola</td>
-      <td>217</td>
+      <td>5</td>
+      <td>5</td>
+      <td>2015-07-31</td>
+      <td>4822</td>
+      <td>559</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>1</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>3</td>
+      <td>1900-01-01</td>
+      <td>42214</td>
+      <td>25</td>
+      <td>0</td>
       <td>57</td>
-      <td>45</td>
-      <td>5.9</td>
-      <td>Africa</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
   </tbody>
 </table>
+<p>5 rows × 71 columns</p>
 </div>
 </div>
 
@@ -12213,7 +14885,7 @@ pandas 0.25.0
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll first look at the memory usage of each column, because we're interested in accuracy, we'll set the argument <code>deep</code> to <code>True</code> to get an accurate number.</p>
+<p>We've pulled most of our configurable parameters outside into a json configuration file. In the ideal scenario, we can move all of our code into a python script and only change the configuration file to experiment with different type of settings to see which one leads to the best overall performance.</p>
 
 </div>
 </div>
@@ -12223,9 +14895,11 @@ pandas 0.25.0
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># drinks.info(memory_usage = &#39;deep&#39;)</span>
-<span class="c1"># also works, it gives slightly different information</span>
-<span class="n">drinks</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="s1">&#39;gbt_training_template.json&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config_file</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    
+<span class="n">config_file</span>
 </pre></div>
 
 </div>
@@ -12244,14 +14918,63 @@ pandas 0.25.0
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Index                             128
-country                         12588
-beer_servings                    1544
-spirit_servings                  1544
-wine_servings                    1544
-total_litres_of_pure_alcohol     1544
-continent                       12332
-dtype: int64</pre>
+<pre>{&#39;columns&#39;: {&#39;num_cols_pattern&#39;: [&#39;CloudCover&#39;,
+   &#39;CompetitionDistance&#39;,
+   &#39;Max_Humidity&#39;,
+   &#39;Max_TemperatureC&#39;,
+   &#39;Max_Wind_SpeedKm_h&#39;,
+   &#39;Mean_Humidity&#39;,
+   &#39;Mean_TemperatureC&#39;,
+   &#39;Mean_Wind_SpeedKm_h&#39;,
+   &#39;Min_Humidity&#39;,
+   &#39;Min_TemperatureC&#39;,
+   &#39;Promo&#39;,
+   &#39;SchoolHoliday&#39;,
+   &#39;trend&#39;,
+   &#39;trend_DE&#39;,
+   &#39;AfterSchoolHoliday&#39;,
+   &#39;AfterStateHoliday&#39;,
+   &#39;AfterPromo&#39;,
+   &#39;BeforeSchoolHoliday&#39;,
+   &#39;BeforeStateHoliday&#39;,
+   &#39;BeforePromo&#39;],
+  &#39;cat_cols_pattern&#39;: [&#39;Assortment&#39;,
+   &#39;CompetitionMonthsOpen&#39;,
+   &#39;CompetitionOpenSinceYear&#39;,
+   &#39;Day&#39;,
+   &#39;DayOfWeek&#39;,
+   &#39;Events&#39;,
+   &#39;Month&#39;,
+   &#39;Promo2SinceYear&#39;,
+   &#39;Promo2Weeks&#39;,
+   &#39;PromoInterval&#39;,
+   &#39;State&#39;,
+   &#39;StateHoliday&#39;,
+   &#39;Store&#39;,
+   &#39;StoreType&#39;,
+   &#39;Week&#39;,
+   &#39;Year&#39;],
+  &#39;id_cols&#39;: [&#39;Id&#39;],
+  &#39;label_col&#39;: &#39;Sales&#39;,
+  &#39;weights_col&#39;: None},
+ &#39;model_task&#39;: &#39;regression&#39;,
+ &#39;model_type&#39;: &#39;lgb&#39;,
+ &#39;model_parameters&#39;: {&#39;lgb&#39;: {&#39;n_jobs&#39;: -1,
+   &#39;learning_rate&#39;: 0.01,
+   &#39;n_estimators&#39;: 3000,
+   &#39;min_data_in_leaf&#39;: 100}},
+ &#39;model_hyper_parameters&#39;: {&#39;lgb&#39;: {&#39;max_depth&#39;: [3, 5, 8, 10, 12],
+   &#39;colsampl_bytree&#39;: [0.7, 0.8, 0.9],
+   &#39;subsample&#39;: [0.7, 0.8, 0.9]}},
+ &#39;model_fit_parameters&#39;: {&#39;lgb&#39;: {&#39;eval_metric&#39;: &#39;l2&#39;,
+   &#39;early_stopping_rounds&#39;: 5,
+   &#39;verbose&#39;: 100}},
+ &#39;search_parameters&#39;: {&#39;n_iter&#39;: 3,
+  &#39;n_jobs&#39;: -1,
+  &#39;verbose&#39;: 1,
+  &#39;scoring&#39;: &#39;neg_mean_squared_error&#39;,
+  &#39;random_state&#39;: 1234,
+  &#39;return_train_score&#39;: True}}</pre>
 </div>
 
 </div>
@@ -12259,122 +14982,40 @@ dtype: int64</pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Under the hood, pandas groups the columns into blocks of values of the same type, because each data type is stored separately, we’re going to examine the memory usage by each data type.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;object&#39;</span><span class="p">):</span>
-    <span class="n">selected_dtype</span> <span class="o">=</span> <span class="n">drinks</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span> <span class="o">=</span> <span class="p">[</span><span class="n">dtype</span><span class="p">])</span>
-    <span class="n">mean_usage_b</span> <span class="o">=</span> <span class="n">selected_dtype</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="c1"># we can do / 1024 ** 2 to convert bytes to megabytes</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average memory usage for </span><span class="si">{}</span><span class="s2"> columns: </span><span class="si">{:03.2f}</span><span class="s2"> B&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">mean_usage_b</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># extract settings from the configuration file into local variables</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span>
+<span class="n">num_cols</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;num_cols_pattern&#39;</span><span class="p">]</span>
+<span class="n">cat_cols</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;cat_cols_pattern&#39;</span><span class="p">]</span>
+<span class="n">id_cols</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;id_cols&#39;</span><span class="p">]</span>
+<span class="n">label_col</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;label_col&#39;</span><span class="p">]</span>
+<span class="n">weights_col</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="s1">&#39;weights_col&#39;</span><span class="p">]</span>
+
+<span class="n">model_task</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;model_task&#39;</span><span class="p">]</span>
+<span class="n">model_type</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;model_type&#39;</span><span class="p">]</span>
+<span class="n">model_parameters</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;model_parameters&#39;</span><span class="p">][</span><span class="n">model_type</span><span class="p">]</span>
+<span class="n">model_hyper_parameters</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;model_hyper_parameters&#39;</span><span class="p">][</span><span class="n">model_type</span><span class="p">]</span>
+<span class="n">model_fit_parameters</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;model_fit_parameters&#39;</span><span class="p">][</span><span class="n">model_type</span><span class="p">]</span>
+<span class="n">search_parameters</span> <span class="o">=</span> <span class="n">config_file</span><span class="p">[</span><span class="s1">&#39;search_parameters&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Average memory usage for float columns: 836.00 B
-Average memory usage for int columns: 1190.00 B
-Average memory usage for object columns: 8349.33 B
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Immediately we can see that most of our memory is used by our <code>object</code> columns. We'll look at those later, but first lets see if we can improve on the memory usage for our numeric columns.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Optimizing-Numeric-Columns">Optimizing Numeric Columns<a class="anchor-link" href="#Optimizing-Numeric-Columns">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For blocks representing numeric values like integers and floats, pandas combines the columns and stores them as a NumPy ndarray. The NumPy ndarray is built around a C array, and the values are stored in a contiguous block of memory. This storage model consumes less space and allows us to access the values themselves quickly.</p>
-<p>Many types in pandas have multiple subtypes that can use fewer bytes to represent each value. For example, the float type has the float16, float32, and float64 subtypes. The number portion of a type's name indicates the number of bits that type uses to represent values. For example, the subtypes we just listed use 2, 4, 8 and  16 bytes, respectively. The following table shows the subtypes for the most common pandas types:</p>
-<table>
-<thead><tr>
-<th>memory usage</th>
-<th>float</th>
-<th>int</th>
-<th>uint</th>
-<th>datetime</th>
-<th>bool</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1 bytes</td>
-<td></td>
-<td>int8</td>
-<td>uint8</td>
-<td></td>
-<td>bool</td>
-</tr>
-<tr>
-<td>2 bytes</td>
-<td>float16</td>
-<td>int16</td>
-<td>uint16</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>4 bytes</td>
-<td>float32</td>
-<td>int32</td>
-<td>uint32</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>8 bytes</td>
-<td>float64</td>
-<td>int64</td>
-<td>uint64</td>
-<td>datetime64</td>
-</tr>
-</tbody>
-</table>
-<p>An int8 value uses 1 byte (or 8 bits) to store a value, and can represent 256 values (2^8) in binary. This means that we can use this subtype to represent values ranging from -128 to 127 (including 0). And uint8, which is unsigned int, means we can only have positive values for this type, thus we can represent 256 values ranging from 0 to 255.</p>
-<p>We can use the <code>numpy.iinfo</code> class to verify the minimum and maximum values for each integer subtype. Let's look at an example:</p>
+<p>Here, we will remove all records where the store had zero sale / was closed (feel free to experiment with not excluding the zero sales record and see if improves performance)</p>
+<p>We also perform a train/validation split. The validation split will be used in our hyper-parameter tuning process and for early stopping. Notice that because this is a time series application, where we are trying to predict different stores' daily sales. It's important to not perform a random train/test split, but instead divide the training and validation set based on time/date.</p>
+<p>Our training data is already sorted by date in decreasing order, hence we can create the validation set by checking how big is our test set and select the top-N observations to create a validation set that has similar size to our test set. Here we're saying similar size and not exact size, because we make sure that all the records from the same date falls under either training or validation set.</p>
 
 </div>
 </div>
@@ -12384,9 +15025,11 @@ Average memory usage for object columns: 8349.33 B
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">int_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;uint8&#39;</span><span class="p">,</span> <span class="s1">&#39;int8&#39;</span><span class="p">,</span> <span class="s1">&#39;int16&#39;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">int_type</span> <span class="ow">in</span> <span class="n">int_types</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">int_type</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">df_train</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">mask</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df_test</span><span class="p">)]</span>
+<span class="n">val_index</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;Date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">val_index</span>
 </pre></div>
 
 </div>
@@ -12399,30 +15042,15 @@ Average memory usage for object columns: 8349.33 B
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[6]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Machine parameters for uint8
----------------------------------------------------------------
-min = 0
-max = 255
----------------------------------------------------------------
 
-Machine parameters for int8
----------------------------------------------------------------
-min = -128
-max = 127
----------------------------------------------------------------
 
-Machine parameters for int16
----------------------------------------------------------------
-min = -32768
-max = 32767
----------------------------------------------------------------
-
-</pre>
+<div class="output_text output_subarea output_execute_result">
+<pre>41395</pre>
 </div>
+
 </div>
 
 </div>
@@ -12433,7 +15061,7 @@ max = 32767
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can use the function <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_numeric.html"><code>pd.to_numeric()</code></a> to downcast our numeric types. We’ll use <code>DataFrame.select_dtypes</code> to select only the integer columns, then we’ll optimize the types and compare the memory usage.</p>
+<p>The validation fold we're creating is used for <a href="https://scikit-learn.org/stable/modules/cross_validation.html#predefined-fold-splits-validation-sets">sklearn's PredefinedSplit</a>, where we set the index to 0 for all samples that are part of the validation set, and to -1 for all other samples.</p>
 
 </div>
 </div>
@@ -12443,32 +15071,9 @@ max = 32767
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mem_usage</span><span class="p">(</span><span class="n">pandas_obj</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;memory usage of a pandas DataFrame or Series&quot;&quot;&quot;</span>
-    <span class="c1"># we assume if not a DataFrame it&#39;s a Series</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pandas_obj</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">usage_b</span> <span class="o">=</span> <span class="n">pandas_obj</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">usage_b</span> <span class="o">=</span> <span class="n">pandas_obj</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{:03.2f}</span><span class="s1"> B&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">usage_b</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">drinks_int</span> <span class="o">=</span> <span class="n">drinks</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">])</span>
-<span class="n">converted_int</span> <span class="o">=</span> <span class="n">drinks_int</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s1">&#39;unsigned&#39;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">mem_usage</span><span class="p">(</span><span class="n">drinks_int</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mem_usage</span><span class="p">(</span><span class="n">converted_int</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">val_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">val_fold</span><span class="p">[:(</span><span class="n">val_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">val_fold</span>
 </pre></div>
 
 </div>
@@ -12481,14 +15086,15 @@ max = 32767
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[7]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>4760.00 B
-1286.00 B
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ 0,  0,  0, ..., -1, -1, -1])</pre>
 </div>
+
 </div>
 
 </div>
@@ -12499,7 +15105,190 @@ max = 32767
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Lets do the same thing with our float columns.</p>
+<p>Here, we assign the validation fold back to the original dataframe to illustrate the point, this is technically not required for the rest of the pipeline. Notice in the dataframe that we've printed out, the last record's date, 2015-06-18 is different from the rest, and the record's <code>val_fold</code> takes on a value of -1. This means that all records including/after the date 2015-06-19 will become our validation set.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;val_fold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val_fold</span>
+<span class="n">df_train</span><span class="p">[(</span><span class="n">val_index</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):(</span><span class="n">val_index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Store</th>
+      <th>DayOfWeek</th>
+      <th>Date</th>
+      <th>Sales</th>
+      <th>Customers</th>
+      <th>Open</th>
+      <th>Promo</th>
+      <th>StateHoliday</th>
+      <th>SchoolHoliday</th>
+      <th>Year</th>
+      <th>...</th>
+      <th>Promo2Since</th>
+      <th>Promo2Days</th>
+      <th>Promo2Weeks</th>
+      <th>AfterSchoolHoliday</th>
+      <th>AfterStateHoliday</th>
+      <th>AfterPromo</th>
+      <th>BeforeSchoolHoliday</th>
+      <th>BeforeStateHoliday</th>
+      <th>BeforePromo</th>
+      <th>val_fold</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>41393</th>
+      <td>1113</td>
+      <td>5</td>
+      <td>2015-06-19</td>
+      <td>7114</td>
+      <td>700</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>1900-01-01</td>
+      <td>42172</td>
+      <td>25</td>
+      <td>35</td>
+      <td>25</td>
+      <td>0</td>
+      <td>-31</td>
+      <td>-90</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>41394</th>
+      <td>1114</td>
+      <td>5</td>
+      <td>2015-06-19</td>
+      <td>21834</td>
+      <td>3211</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>1900-01-01</td>
+      <td>42172</td>
+      <td>25</td>
+      <td>35</td>
+      <td>25</td>
+      <td>0</td>
+      <td>-27</td>
+      <td>-90</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>41395</th>
+      <td>1115</td>
+      <td>5</td>
+      <td>2015-06-19</td>
+      <td>8291</td>
+      <td>535</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>2012-05-28</td>
+      <td>1117</td>
+      <td>25</td>
+      <td>70</td>
+      <td>15</td>
+      <td>0</td>
+      <td>-38</td>
+      <td>-90</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>41396</th>
+      <td>1</td>
+      <td>4</td>
+      <td>2015-06-18</td>
+      <td>4645</td>
+      <td>498</td>
+      <td>1</td>
+      <td>1</td>
+      <td>False</td>
+      <td>0</td>
+      <td>2015</td>
+      <td>...</td>
+      <td>1900-01-01</td>
+      <td>42171</td>
+      <td>25</td>
+      <td>69</td>
+      <td>14</td>
+      <td>0</td>
+      <td>-39</td>
+      <td>-91</td>
+      <td>0</td>
+      <td>-1</td>
+    </tr>
+  </tbody>
+</table>
+<p>4 rows × 72 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We proceed to extracting the necessary columns both numerical and categorical that we'll use for modeling.</p>
 
 </div>
 </div>
@@ -12509,11 +15298,19 @@ max = 32767
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">drinks_float</span> <span class="o">=</span> <span class="n">drinks</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;float&#39;</span><span class="p">])</span>
-<span class="n">converted_float</span> <span class="o">=</span> <span class="n">drinks_float</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">downcast</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the model id is used as the indicator when saving the model</span>
+<span class="n">model_id</span> <span class="o">=</span> <span class="s1">&#39;gbt&#39;</span>
+<span class="n">input_cols</span> <span class="o">=</span> <span class="n">num_cols</span> <span class="o">+</span> <span class="n">cat_cols</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">mem_usage</span><span class="p">(</span><span class="n">drinks_float</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mem_usage</span><span class="p">(</span><span class="n">converted_float</span><span class="p">))</span>
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">input_cols</span> <span class="o">+</span> <span class="p">[</span><span class="n">label_col</span><span class="p">]]</span>
+
+<span class="c1"># we will perform the modeling at the log-scale</span>
+<span class="n">df_train</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="n">label_col</span><span class="p">])</span>
+<span class="n">df_test</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">input_cols</span> <span class="o">+</span> <span class="n">id_cols</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train dimension: &#39;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test dimension: &#39;</span><span class="p">,</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12530,47 +15327,203 @@ max = 32767
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>1672.00 B
-900.00 B
+<pre>train dimension:  (844338, 37)
+test dimension:  (41088, 37)
 </pre>
 </div>
 </div>
 
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CloudCover</th>
+      <th>CompetitionDistance</th>
+      <th>Max_Humidity</th>
+      <th>Max_TemperatureC</th>
+      <th>Max_Wind_SpeedKm_h</th>
+      <th>Mean_Humidity</th>
+      <th>Mean_TemperatureC</th>
+      <th>Mean_Wind_SpeedKm_h</th>
+      <th>Min_Humidity</th>
+      <th>Min_TemperatureC</th>
+      <th>...</th>
+      <th>Promo2SinceYear</th>
+      <th>Promo2Weeks</th>
+      <th>PromoInterval</th>
+      <th>State</th>
+      <th>StateHoliday</th>
+      <th>Store</th>
+      <th>StoreType</th>
+      <th>Week</th>
+      <th>Year</th>
+      <th>Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>1270.0</td>
+      <td>98</td>
+      <td>23</td>
+      <td>24</td>
+      <td>54</td>
+      <td>16</td>
+      <td>11</td>
+      <td>18</td>
+      <td>8</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>None</td>
+      <td>HE</td>
+      <td>False</td>
+      <td>1</td>
+      <td>c</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.568456</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.0</td>
+      <td>570.0</td>
+      <td>100</td>
+      <td>19</td>
+      <td>14</td>
+      <td>62</td>
+      <td>13</td>
+      <td>11</td>
+      <td>25</td>
+      <td>7</td>
+      <td>...</td>
+      <td>2010</td>
+      <td>25</td>
+      <td>Jan,Apr,Jul,Oct</td>
+      <td>TH</td>
+      <td>False</td>
+      <td>2</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.710125</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.0</td>
+      <td>14130.0</td>
+      <td>100</td>
+      <td>21</td>
+      <td>14</td>
+      <td>61</td>
+      <td>13</td>
+      <td>5</td>
+      <td>24</td>
+      <td>6</td>
+      <td>...</td>
+      <td>2011</td>
+      <td>25</td>
+      <td>Jan,Apr,Jul,Oct</td>
+      <td>NW</td>
+      <td>False</td>
+      <td>3</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>9.025696</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6.0</td>
+      <td>620.0</td>
+      <td>94</td>
+      <td>19</td>
+      <td>23</td>
+      <td>61</td>
+      <td>14</td>
+      <td>16</td>
+      <td>30</td>
+      <td>9</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>None</td>
+      <td>BE</td>
+      <td>False</td>
+      <td>4</td>
+      <td>c</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>9.546455</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.0</td>
+      <td>29910.0</td>
+      <td>82</td>
+      <td>20</td>
+      <td>14</td>
+      <td>55</td>
+      <td>15</td>
+      <td>11</td>
+      <td>26</td>
+      <td>10</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>None</td>
+      <td>SN</td>
+      <td>False</td>
+      <td>5</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.480944</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 37 columns</p>
 </div>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Optimizing-object-types">Optimizing object types<a class="anchor-link" href="#Optimizing-object-types">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The object type represents values using Python string objects, partly due to the lack of support for missing string values in NumPy. Because Python is a high-level, interpreted language, it doesn't have fine grained-control over how values in memory are stored.</p>
-<p>We'll use <code>sys.getsizeof()</code> to prove this out, first by looking at individual strings, and then items in a pandas series.</p>
 
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">getsizeof</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">cat_col</span> <span class="ow">in</span> <span class="n">cat_cols</span><span class="p">:</span>
+    <span class="n">df_train</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">df_test</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
 
-
-<span class="n">s1</span> <span class="o">=</span> <span class="s1">&#39;working out&#39;</span>
-<span class="n">s2</span> <span class="o">=</span> <span class="s1">&#39;memory usage for&#39;</span>
-<span class="n">s3</span> <span class="o">=</span> <span class="s1">&#39;strings in python is fun!&#39;</span>
-<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s3</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+<span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12583,30 +15536,212 @@ max = 32767
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[10]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>60
-65
-74
-</pre>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CloudCover</th>
+      <th>CompetitionDistance</th>
+      <th>Max_Humidity</th>
+      <th>Max_TemperatureC</th>
+      <th>Max_Wind_SpeedKm_h</th>
+      <th>Mean_Humidity</th>
+      <th>Mean_TemperatureC</th>
+      <th>Mean_Wind_SpeedKm_h</th>
+      <th>Min_Humidity</th>
+      <th>Min_TemperatureC</th>
+      <th>...</th>
+      <th>Promo2SinceYear</th>
+      <th>Promo2Weeks</th>
+      <th>PromoInterval</th>
+      <th>State</th>
+      <th>StateHoliday</th>
+      <th>Store</th>
+      <th>StoreType</th>
+      <th>Week</th>
+      <th>Year</th>
+      <th>Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>1270.0</td>
+      <td>98</td>
+      <td>23</td>
+      <td>24</td>
+      <td>54</td>
+      <td>16</td>
+      <td>11</td>
+      <td>18</td>
+      <td>8</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>NaN</td>
+      <td>HE</td>
+      <td>False</td>
+      <td>1</td>
+      <td>c</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.568456</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.0</td>
+      <td>570.0</td>
+      <td>100</td>
+      <td>19</td>
+      <td>14</td>
+      <td>62</td>
+      <td>13</td>
+      <td>11</td>
+      <td>25</td>
+      <td>7</td>
+      <td>...</td>
+      <td>2010</td>
+      <td>25</td>
+      <td>Jan,Apr,Jul,Oct</td>
+      <td>TH</td>
+      <td>False</td>
+      <td>2</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.710125</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2.0</td>
+      <td>14130.0</td>
+      <td>100</td>
+      <td>21</td>
+      <td>14</td>
+      <td>61</td>
+      <td>13</td>
+      <td>5</td>
+      <td>24</td>
+      <td>6</td>
+      <td>...</td>
+      <td>2011</td>
+      <td>25</td>
+      <td>Jan,Apr,Jul,Oct</td>
+      <td>NW</td>
+      <td>False</td>
+      <td>3</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>9.025696</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6.0</td>
+      <td>620.0</td>
+      <td>94</td>
+      <td>19</td>
+      <td>23</td>
+      <td>61</td>
+      <td>14</td>
+      <td>16</td>
+      <td>30</td>
+      <td>9</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>NaN</td>
+      <td>BE</td>
+      <td>False</td>
+      <td>4</td>
+      <td>c</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>9.546455</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4.0</td>
+      <td>29910.0</td>
+      <td>82</td>
+      <td>20</td>
+      <td>14</td>
+      <td>55</td>
+      <td>15</td>
+      <td>11</td>
+      <td>26</td>
+      <td>10</td>
+      <td>...</td>
+      <td>1900</td>
+      <td>25</td>
+      <td>NaN</td>
+      <td>SN</td>
+      <td>False</td>
+      <td>5</td>
+      <td>a</td>
+      <td>31</td>
+      <td>2015</td>
+      <td>8.480944</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 37 columns</p>
 </div>
 </div>
 
 </div>
+
+</div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Model-Training">Model Training<a class="anchor-link" href="#Model-Training">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We use a helper class to train a boosted tree model, generate the prediction on our test set, create the submission file, check the feature importance of the tree-based model and also make sure we can save and re-load the model.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">obj_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="s1">&#39;working out&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;memory usage for&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;strings in python is fun!&#39;</span><span class="p">])</span>
-<span class="n">obj_series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">getsizeof</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">gbt_module.model</span> <span class="k">import</span> <span class="n">GBTPipeline</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">GBTPipeline</span><span class="p">(</span><span class="n">input_cols</span><span class="p">,</span> <span class="n">cat_cols</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">weights_col</span><span class="p">,</span> <span class="n">model_task</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span>
+                    <span class="n">model_type</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">,</span> <span class="n">model_hyper_parameters</span><span class="p">,</span> <span class="n">search_parameters</span><span class="p">)</span>
+<span class="n">model</span>
 </pre></div>
 
 </div>
@@ -12625,10 +15760,25 @@ max = 32767
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0    60
-1    65
-2    74
-dtype: int64</pre>
+<pre>GBTPipeline(cat_cols=[&#39;Assortment&#39;, &#39;CompetitionMonthsOpen&#39;,
+                      &#39;CompetitionOpenSinceYear&#39;, &#39;Day&#39;, &#39;DayOfWeek&#39;, &#39;Events&#39;,
+                      &#39;Month&#39;, &#39;Promo2SinceYear&#39;, &#39;Promo2Weeks&#39;,
+                      &#39;PromoInterval&#39;, &#39;State&#39;, &#39;StateHoliday&#39;, &#39;Store&#39;,
+                      &#39;StoreType&#39;, &#39;Week&#39;, &#39;Year&#39;],
+            input_cols=[&#39;CloudCover&#39;, &#39;CompetitionDistance&#39;, &#39;Max_Humidity&#39;,
+                        &#39;Max_TemperatureC&#39;, &#39;Max_Wind_SpeedKm_h&#39;,
+                        &#39;Mean_Humidity&#39;, &#39;Mean...
+                                    &#39;max_depth&#39;: [3, 5, 8, 10, 12],
+                                    &#39;subsample&#39;: [0.7, 0.8, 0.9]},
+            model_id=&#39;gbt&#39;,
+            model_parameters={&#39;learning_rate&#39;: 0.01, &#39;min_data_in_leaf&#39;: 100,
+                              &#39;n_estimators&#39;: 3000, &#39;n_jobs&#39;: -1},
+            model_task=&#39;regression&#39;, model_type=&#39;lgb&#39;,
+            search_parameters={&#39;n_iter&#39;: 3, &#39;n_jobs&#39;: -1, &#39;random_state&#39;: 1234,
+                               &#39;return_train_score&#39;: True,
+                               &#39;scoring&#39;: &#39;neg_mean_squared_error&#39;,
+                               &#39;verbose&#39;: 1},
+            weights_col=None)</pre>
 </div>
 
 </div>
@@ -12636,39 +15786,16 @@ dtype: int64</pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can see that the size of strings when stored in a pandas series are identical to their usage as separate strings in Python. This limitation causes strings to be stored in a fragmented way that consumes more memory and is slower to access. Each element in an object column is really a pointer that contains the "address" for the actual value's location in memory. For more information about this part consider referring to the following link. <a href="https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/">Blog: Why Python is Slow: Looking Under the Hood</a></p>
-<p>To overcome this problem, Pandas introduced <a href="http://pandas.pydata.org/pandas-docs/stable/categorical.html"><code>Categoricals</code></a> in version 0.15. The category type uses integer values under the hood to represent the values in a column, rather than the raw values. Pandas uses a separate mapping dictionary that maps the integer values to the raw ones. This arrangement is useful whenever a column contains a limited set of values. When we convert a column to the category dtype, pandas uses the most space efficient int subtype that can represent all of the unique values in a column.</p>
-<p><img src="categorical.png" width="40%" height="40%"></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Since the <code>country</code> and <code>continent</code> columns are strings, they are represented as object types in pandas. Now let's say, instead of storing strings, we want to store the <code>continent</code> column as integers to reduce the memory required to store them by converting it to categorical type. To apply this conversion, we simply have to convert the column type to <code>category</code> using the <code>.astype</code> method.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># convert and print the memory usage</span>
-<span class="n">continent_col</span> <span class="o">=</span> <span class="s1">&#39;continent&#39;</span>
-<span class="n">continent</span> <span class="o">=</span> <span class="n">drinks</span><span class="p">[</span><span class="n">continent_col</span><span class="p">]</span>
-<span class="n">continent_cat</span> <span class="o">=</span> <span class="n">drinks</span><span class="p">[</span><span class="n">continent_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">continent</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">continent_cat</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-<span class="c1"># drinks.memory_usage(deep = True)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">val_fold</span><span class="p">,</span> <span class="n">model_fit_parameters</span><span class="p">)</span>
+<span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elapsed minutes: &#39;</span><span class="p">,</span> <span class="n">elapsed</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12685,19 +15812,71 @@ dtype: int64</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>0      Asia
-1    Europe
-2    Africa
-3    Europe
-4    Africa
-Name: continent, dtype: object
-0      Asia
-1    Europe
-2    Africa
-3    Europe
-4    Africa
-Name: continent, dtype: category
-Categories (6, object): [Africa, Asia, Europe, North America, Oceania, South America]
+<pre>Fitting 1 folds for each of 3 candidates, totalling 3 fits
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/mingyuliu/anaconda3/lib/python3.6/site-packages/lightgbm/__init__.py:46: UserWarning: Starting from version 2.2.1, the library file in distribution wheels for macOS is built by the Apple Clang (Xcode_8.3.3) compiler.
+This means that in case of installing LightGBM from PyPI via the ``pip install lightgbm`` command, you don&#39;t need to install the gcc compiler anymore.
+Instead of that, you need to install the OpenMP library, which is required for running LightGBM on the system with the Apple Clang compiler.
+You can install the OpenMP library by the following command: ``brew install libomp``.
+  &#34;You can install the OpenMP library by the following command: ``brew install libomp``.&#34;, UserWarning)
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 8 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   3 out of   3 | elapsed: 20.0min finished
+/Users/mingyuliu/anaconda3/lib/python3.6/site-packages/lightgbm/basic.py:1209: UserWarning: categorical_feature in Dataset is overridden.
+New categorical_feature is [&#39;Assortment&#39;, &#39;CompetitionMonthsOpen&#39;, &#39;CompetitionOpenSinceYear&#39;, &#39;Day&#39;, &#39;DayOfWeek&#39;, &#39;Events&#39;, &#39;Month&#39;, &#39;Promo2SinceYear&#39;, &#39;Promo2Weeks&#39;, &#39;PromoInterval&#39;, &#39;State&#39;, &#39;StateHoliday&#39;, &#39;Store&#39;, &#39;StoreType&#39;, &#39;Week&#39;, &#39;Year&#39;]
+  &#39;New categorical_feature is {}&#39;.format(sorted(list(categorical_feature))))
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Training until validation scores don&#39;t improve for 5 rounds.
+[100]	valid_0&#39;s l2: 0.0718742	valid_0&#39;s l2: 0.0718742	valid_1&#39;s l2: 0.0654301	valid_1&#39;s l2: 0.0654301
+[200]	valid_0&#39;s l2: 0.0450121	valid_0&#39;s l2: 0.0450121	valid_1&#39;s l2: 0.0404465	valid_1&#39;s l2: 0.0404465
+[300]	valid_0&#39;s l2: 0.0336353	valid_0&#39;s l2: 0.0336353	valid_1&#39;s l2: 0.0314702	valid_1&#39;s l2: 0.0314702
+[400]	valid_0&#39;s l2: 0.027701	valid_0&#39;s l2: 0.027701	valid_1&#39;s l2: 0.0269131	valid_1&#39;s l2: 0.0269131
+[500]	valid_0&#39;s l2: 0.0240796	valid_0&#39;s l2: 0.0240796	valid_1&#39;s l2: 0.0240597	valid_1&#39;s l2: 0.0240597
+[600]	valid_0&#39;s l2: 0.0218724	valid_0&#39;s l2: 0.0218724	valid_1&#39;s l2: 0.0218025	valid_1&#39;s l2: 0.0218025
+[700]	valid_0&#39;s l2: 0.0201603	valid_0&#39;s l2: 0.0201603	valid_1&#39;s l2: 0.0201185	valid_1&#39;s l2: 0.0201185
+[800]	valid_0&#39;s l2: 0.0184851	valid_0&#39;s l2: 0.0184851	valid_1&#39;s l2: 0.0184089	valid_1&#39;s l2: 0.0184089
+[900]	valid_0&#39;s l2: 0.0168288	valid_0&#39;s l2: 0.0168288	valid_1&#39;s l2: 0.0166787	valid_1&#39;s l2: 0.0166787
+[1000]	valid_0&#39;s l2: 0.015335	valid_0&#39;s l2: 0.015335	valid_1&#39;s l2: 0.0151688	valid_1&#39;s l2: 0.0151688
+[1100]	valid_0&#39;s l2: 0.0142658	valid_0&#39;s l2: 0.0142658	valid_1&#39;s l2: 0.0141122	valid_1&#39;s l2: 0.0141122
+[1200]	valid_0&#39;s l2: 0.0135508	valid_0&#39;s l2: 0.0135508	valid_1&#39;s l2: 0.013411	valid_1&#39;s l2: 0.013411
+[1300]	valid_0&#39;s l2: 0.012954	valid_0&#39;s l2: 0.012954	valid_1&#39;s l2: 0.0128038	valid_1&#39;s l2: 0.0128038
+[1400]	valid_0&#39;s l2: 0.0124204	valid_0&#39;s l2: 0.0124204	valid_1&#39;s l2: 0.0122977	valid_1&#39;s l2: 0.0122977
+[1500]	valid_0&#39;s l2: 0.0119961	valid_0&#39;s l2: 0.0119961	valid_1&#39;s l2: 0.011941	valid_1&#39;s l2: 0.011941
+[1600]	valid_0&#39;s l2: 0.01163	valid_0&#39;s l2: 0.01163	valid_1&#39;s l2: 0.0115995	valid_1&#39;s l2: 0.0115995
+[1700]	valid_0&#39;s l2: 0.0113139	valid_0&#39;s l2: 0.0113139	valid_1&#39;s l2: 0.0112803	valid_1&#39;s l2: 0.0112803
+[1800]	valid_0&#39;s l2: 0.0110184	valid_0&#39;s l2: 0.0110184	valid_1&#39;s l2: 0.0109884	valid_1&#39;s l2: 0.0109884
+[1900]	valid_0&#39;s l2: 0.0107764	valid_0&#39;s l2: 0.0107764	valid_1&#39;s l2: 0.0107527	valid_1&#39;s l2: 0.0107527
+[2000]	valid_0&#39;s l2: 0.0105697	valid_0&#39;s l2: 0.0105697	valid_1&#39;s l2: 0.0105339	valid_1&#39;s l2: 0.0105339
+[2100]	valid_0&#39;s l2: 0.0103475	valid_0&#39;s l2: 0.0103475	valid_1&#39;s l2: 0.0103047	valid_1&#39;s l2: 0.0103047
+[2200]	valid_0&#39;s l2: 0.0101752	valid_0&#39;s l2: 0.0101752	valid_1&#39;s l2: 0.0101483	valid_1&#39;s l2: 0.0101483
+[2300]	valid_0&#39;s l2: 0.0100167	valid_0&#39;s l2: 0.0100167	valid_1&#39;s l2: 0.00999843	valid_1&#39;s l2: 0.00999843
+[2400]	valid_0&#39;s l2: 0.00986898	valid_0&#39;s l2: 0.00986898	valid_1&#39;s l2: 0.00983577	valid_1&#39;s l2: 0.00983577
+[2500]	valid_0&#39;s l2: 0.00972949	valid_0&#39;s l2: 0.00972949	valid_1&#39;s l2: 0.00969056	valid_1&#39;s l2: 0.00969056
+[2600]	valid_0&#39;s l2: 0.00960752	valid_0&#39;s l2: 0.00960752	valid_1&#39;s l2: 0.00955977	valid_1&#39;s l2: 0.00955977
+[2700]	valid_0&#39;s l2: 0.00948489	valid_0&#39;s l2: 0.00948489	valid_1&#39;s l2: 0.00944049	valid_1&#39;s l2: 0.00944049
+[2800]	valid_0&#39;s l2: 0.00936427	valid_0&#39;s l2: 0.00936427	valid_1&#39;s l2: 0.00928775	valid_1&#39;s l2: 0.00928775
+[2900]	valid_0&#39;s l2: 0.00924005	valid_0&#39;s l2: 0.00924005	valid_1&#39;s l2: 0.00915616	valid_1&#39;s l2: 0.00915616
+[3000]	valid_0&#39;s l2: 0.00912308	valid_0&#39;s l2: 0.00912308	valid_1&#39;s l2: 0.00904488	valid_1&#39;s l2: 0.00904488
+Did not meet early stopping. Best iteration is:
+[3000]	valid_0&#39;s l2: 0.00912308	valid_0&#39;s l2: 0.00912308	valid_1&#39;s l2: 0.00904488	valid_1&#39;s l2: 0.00904488
+elapsed minutes:  22.69019781748454
 </pre>
 </div>
 </div>
@@ -12706,23 +15885,12 @@ Categories (6, object): [Africa, Asia, Europe, North America, Oceania, South Ame
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As we can see, apart from the fact that the type of the column has changed, the data looks exactly the same. Pandas internals will smooth out the user experience so we don’t notice that we’re actually using a compact array of integers.</p>
-<p>Let’s take a look at what's happening under the hood. In the following code chunk, we use the <code>Series.cat.codes</code> attribute to return the integer values the category type uses to represent each value.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># this is simply showing the first 5 row)</span>
-<span class="n">continent_cat</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model_tuned_</span><span class="o">.</span><span class="n">cv_results_</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12739,14 +15907,100 @@ Categories (6, object): [Africa, Asia, Europe, North America, Oceania, South Ame
 
 
 
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<div class="output_text output_subarea output_execute_result">
-<pre>0    1
-1    2
-2    0
-3    2
-4    0
-dtype: int8</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean_fit_time</th>
+      <th>std_fit_time</th>
+      <th>mean_score_time</th>
+      <th>std_score_time</th>
+      <th>param_subsample</th>
+      <th>param_max_depth</th>
+      <th>param_colsampl_bytree</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+      <th>split0_train_score</th>
+      <th>mean_train_score</th>
+      <th>std_train_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>338.971463</td>
+      <td>0.0</td>
+      <td>23.137303</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>10</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.7, 'max_depth': 10, 'colsampl_...</td>
+      <td>-0.015877</td>
+      <td>-0.015877</td>
+      <td>0.0</td>
+      <td>2</td>
+      <td>-0.011191</td>
+      <td>-0.011191</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>452.571008</td>
+      <td>0.0</td>
+      <td>62.282989</td>
+      <td>0.0</td>
+      <td>0.8</td>
+      <td>5</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.8, 'max_depth': 5, 'colsampl_b...</td>
+      <td>-0.016854</td>
+      <td>-0.016854</td>
+      <td>0.0</td>
+      <td>3</td>
+      <td>-0.012256</td>
+      <td>-0.012256</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>339.133200</td>
+      <td>0.0</td>
+      <td>24.371682</td>
+      <td>0.0</td>
+      <td>0.9</td>
+      <td>12</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.9, 'max_depth': 12, 'colsampl_...</td>
+      <td>-0.015859</td>
+      <td>-0.015859</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-0.011161</td>
+      <td>-0.011161</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -12754,23 +16008,28 @@ dtype: int8</pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This column doesn’t have any missing values, but if it did, the <code>category</code> subtype handles missing values by setting them to <code>-1</code>.</p>
-<p>We can also access the unique categories using the <code>Series.cat.categories</code> attribute. This information servers as the lookup table that stores the mappings of the integer representation to the original category.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">continent_cat</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we logged our label, remember to exponentiate it back to the original scale</span>
+<span class="n">prediction_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="n">input_cols</span><span class="p">])</span>
+<span class="n">df_test</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">prediction_test</span><span class="p">)</span>
+
+<span class="n">submission_cols</span> <span class="o">=</span> <span class="n">id_cols</span> <span class="o">+</span> <span class="p">[</span><span class="n">label_col</span><span class="p">]</span>
+<span class="n">df_test</span><span class="p">[</span><span class="n">submission_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">submission_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+
+<span class="n">submission_dir</span> <span class="o">=</span> <span class="s1">&#39;submission&#39;</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">submission_dir</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">submission_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">submission_file</span> <span class="o">=</span> <span class="s1">&#39;rossmann_submission_</span><span class="si">{}</span><span class="s1">.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+<span class="n">submission_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">submission_dir</span><span class="p">,</span> <span class="n">submission_file</span><span class="p">)</span>
+<span class="n">df_test</span><span class="p">[</span><span class="n">submission_cols</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">df_test</span><span class="p">[</span><span class="n">submission_cols</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12787,11 +16046,58 @@ dtype: int8</pre>
 
 
 
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<div class="output_text output_subarea output_execute_result">
-<pre>Index([&#39;Africa&#39;, &#39;Asia&#39;, &#39;Europe&#39;, &#39;North America&#39;, &#39;Oceania&#39;,
-       &#39;South America&#39;],
-      dtype=&#39;object&#39;)</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Id</th>
+      <th>Sales</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>4031</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>7236</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>9290</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>7094</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>7371</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -12799,23 +16105,13 @@ dtype: int8</pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Lastly, let’s look at the memory usage for this column before and after converting to the  category type.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;original: &#39;</span><span class="p">,</span> <span class="n">mem_usage</span><span class="p">(</span><span class="n">continent</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;categorical: &#39;</span><span class="p">,</span> <span class="n">mem_usage</span><span class="p">(</span><span class="n">continent_cat</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">get_feature_importance</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12828,39 +16124,47 @@ dtype: int8</pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[15]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>original:  12460.00 B
-categorical:  872.00 B
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Store&#39;, 0.6707),
+ (&#39;Promo&#39;, 0.1081),
+ (&#39;BeforePromo&#39;, 0.0653),
+ (&#39;DayOfWeek&#39;, 0.0574),
+ (&#39;Week&#39;, 0.0463),
+ (&#39;Day&#39;, 0.019),
+ (&#39;AfterStateHoliday&#39;, 0.0049),
+ (&#39;BeforeStateHoliday&#39;, 0.0045),
+ (&#39;CompetitionDistance&#39;, 0.0041),
+ (&#39;StoreType&#39;, 0.0039),
+ (&#39;Month&#39;, 0.003),
+ (&#39;Year&#39;, 0.0022),
+ (&#39;State&#39;, 0.0016),
+ (&#39;CompetitionOpenSinceYear&#39;, 0.0015),
+ (&#39;AfterPromo&#39;, 0.001)]</pre>
 </div>
+
 </div>
 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can see that by converting the <code>continent</code> column to integers we're being more space-efficient. Apart from that it can actually speed up laters operations, e.g. sorting, groupby as we're storing the strings as compactly as integers. Let's apply this notion again to the <code>country</code> column.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_col</span> <span class="o">=</span> <span class="s1">&#39;country&#39;</span>
-<span class="n">country</span> <span class="o">=</span> <span class="n">drinks</span><span class="p">[</span><span class="n">country_col</span><span class="p">]</span>
-<span class="n">country_cat</span> <span class="o">=</span> <span class="n">drinks</span><span class="p">[</span><span class="n">country_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;original: &#39;</span><span class="p">,</span> <span class="n">mem_usage</span><span class="p">(</span><span class="n">country</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;categorical: &#39;</span><span class="p">,</span> <span class="n">mem_usage</span><span class="p">(</span><span class="n">country_cat</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_checkpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="n">model_id</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">)</span>
+
+<span class="n">loaded_model</span> <span class="o">=</span> <span class="n">GBTPipeline</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">)</span>
+
+<span class="c1"># print the cv_results_ again to ensure the checkpointing works</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">loaded_model</span><span class="o">.</span><span class="n">model_tuned_</span><span class="o">.</span><span class="n">cv_results_</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12873,337 +16177,7 @@ categorical:  872.00 B
 
 <div class="output_area">
 
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>original:  12716.00 B
-categorical:  18222.00 B
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This time, the memory usage for the country column is now larger. The reason is that the country column's  value is unique. If all of the values in a column are unique, the category type will end up using more memory because the column is storing all of the raw string values in addition to the integer category codes.</p>
-<p>Thus we're actually creating 193 (shown below) unqiue categories, and we also have to store a lookup table for that.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">country_cat</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">size</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[17]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>193</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In summary, if we're working with an object column of strings, convert it to <code>category</code> type to make it for efficient. But this must be based on the assumption that the column takes a limited number of unique values, like in this case, the continent column only has 6 unique values.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Selecting-Types-While-Reading-the-Data-In">Selecting Types While Reading the Data In<a class="anchor-link" href="#Selecting-Types-While-Reading-the-Data-In">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So far, we've explored ways to reduce the memory footprint of an existing dataframe. By reading the dataframe in first and then iterating on ways to save memory, we were able to understand the amount of memory we can expect to save from each optimization better. As we mentioned earlier in the mission, however, we often won't have enough memory to represent all the values in a data set. How can we apply memory-saving techniques when we can't even create the dataframe in the first place?</p>
-<p>Fortunately, we can specify the optimal column types when we read the data set in. The <code>pandas.read_csv()</code> function has a few different parameters that allow us to do this. The dtype parameter accepts a dictionary that has (string) column names as the keys and numpy type objects as the values.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">col_types</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;beer_servings&#39;</span><span class="p">:</span> <span class="s1">&#39;uint32&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;continent&#39;</span><span class="p">:</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;spirit_servings&#39;</span><span class="p">:</span> <span class="s1">&#39;uint32&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;total_litres_of_pure_alcohol&#39;</span><span class="p">:</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;wine_servings&#39;</span><span class="p">:</span> <span class="s1">&#39;uint32&#39;</span><span class="p">}</span>
-
-<span class="c1"># we can see that the column&#39;s memory usage is significantly</span>
-<span class="c1"># smaller than before (the DataFrame at the beginning)</span>
-<span class="n">df_drinks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;http://bit.ly/drinksbycountry&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">col_types</span><span class="p">)</span>
-<span class="n">df_drinks</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Index                             128
-country                         12588
-beer_servings                     772
-spirit_servings                   772
-wine_servings                     772
-total_litres_of_pure_alcohol      772
-continent                         744
-dtype: int64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Or instead of manually specifying the type, we can leverage a function to automatically perform the memory reduction for us.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">reduce_mem_usage</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">blacklist_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Iterate through all the columns of the dataframe and downcast the</span>
-<span class="sd">    data type to reduce memory usage.</span>
-
-<span class="sd">    The logic is numeric type will be downcast to the smallest possible</span>
-<span class="sd">    numeric type. e.g. if an int column&#39;s value ranges from 1 - 8, then it</span>
-<span class="sd">    fits into an int8 type, and will be downcast to int8.</span>
-<span class="sd">    And object type will be converted to categorical type.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df : pd.DataFrame</span>
-<span class="sd">        Dataframe prior the memory reduction.</span>
-
-<span class="sd">    blacklist_cols : collection[str], e.g. list[str], set[str]</span>
-<span class="sd">        A collection of column names that won&#39;t go through the memory</span>
-<span class="sd">        reduction process.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    df : pd.DataFrame</span>
-<span class="sd">        Dataframe post memory reduction.</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    https://www.kaggle.com/gemartin/load-data-reduce-memory-usage</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">start_mem</span> <span class="o">=</span> <span class="n">compute_df_total_mem</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Memory usage of dataframe is </span><span class="si">{:.2f}</span><span class="s1"> MB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_mem</span><span class="p">))</span>
-    
-    <span class="n">blacklist_cols</span> <span class="o">=</span> <span class="n">blacklist_cols</span> <span class="k">if</span> <span class="n">blacklist_cols</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">blacklist_cols</span><span class="p">:</span>
-            <span class="k">continue</span>
-        
-        <span class="n">col_type</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
-        
-        <span class="k">if</span> <span class="n">col_type</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
-            <span class="n">c_min</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-            <span class="n">c_max</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">col_type</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">c_min</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">min</span> <span class="ow">and</span> <span class="n">c_max</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">c_min</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span><span class="o">.</span><span class="n">min</span> <span class="ow">and</span> <span class="n">c_max</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">c_min</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">min</span> <span class="ow">and</span> <span class="n">c_max</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">c_min</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">min</span> <span class="ow">and</span> <span class="n">c_max</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">c_min</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">min</span> <span class="ow">and</span> <span class="n">c_max</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
-
-    <span class="n">end_mem</span> <span class="o">=</span> <span class="n">compute_df_total_mem</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Memory usage after optimization is: </span><span class="si">{:.2f}</span><span class="s1"> MB&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">end_mem</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Decreased by </span><span class="si">{:.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">start_mem</span> <span class="o">-</span> <span class="n">end_mem</span><span class="p">)</span> <span class="o">/</span> <span class="n">start_mem</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">df</span>
-
-
-<span class="k">def</span> <span class="nf">compute_df_total_mem</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns a dataframe&#39;s total memory usage in MB.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_drinks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;http://bit.ly/drinksbycountry&#39;</span><span class="p">)</span>
-<span class="n">df_drinks</span> <span class="o">=</span> <span class="n">reduce_mem_usage</span><span class="p">(</span><span class="n">df_drinks</span><span class="p">,</span> <span class="n">blacklist_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">])</span>
-<span class="n">df_drinks</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Memory usage of dataframe is 0.03 MB
-Memory usage after optimization is: 0.01 MB
-Decreased by 51.9%
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[20]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Index                             128
-country                         12588
-beer_servings                     386
-spirit_servings                   386
-wine_servings                     386
-total_litres_of_pure_alcohol      386
-continent                         744
-dtype: int64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The idea is that after performing the memory reduction, we should save this dataframe back to disk so in the future, we won't have to go through this process every time. (Assuming we'll be reading this data again and again).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Ordered-Categorical">Ordered Categorical<a class="anchor-link" href="#Ordered-Categorical">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Another usage of <code>category</code> is to specify its order to perform sorting.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># toy dataset that contains</span>
-<span class="c1"># the id for a product and</span>
-<span class="c1"># its corresponding customer review</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s1">&#39;ID&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">],</span>
-    <span class="s1">&#39;quality&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;good&#39;</span><span class="p">,</span> <span class="s1">&#39;very good&#39;</span><span class="p">,</span> <span class="s1">&#39;good&#39;</span><span class="p">,</span> <span class="s1">&#39;excellent&#39;</span><span class="p">]</span>
-<span class="p">})</span>
-<span class="n">df</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[21]:</div>
+<div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -13226,109 +16200,77 @@ dtype: int64</pre>
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>ID</th>
-      <th>quality</th>
+      <th>mean_fit_time</th>
+      <th>std_fit_time</th>
+      <th>mean_score_time</th>
+      <th>std_score_time</th>
+      <th>param_subsample</th>
+      <th>param_max_depth</th>
+      <th>param_colsampl_bytree</th>
+      <th>params</th>
+      <th>split0_test_score</th>
+      <th>mean_test_score</th>
+      <th>std_test_score</th>
+      <th>rank_test_score</th>
+      <th>split0_train_score</th>
+      <th>mean_train_score</th>
+      <th>std_train_score</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>100</td>
-      <td>good</td>
+      <td>338.971463</td>
+      <td>0.0</td>
+      <td>23.137303</td>
+      <td>0.0</td>
+      <td>0.7</td>
+      <td>10</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.7, 'max_depth': 10, 'colsampl_...</td>
+      <td>-0.015877</td>
+      <td>-0.015877</td>
+      <td>0.0</td>
+      <td>2</td>
+      <td>-0.011191</td>
+      <td>-0.011191</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>101</td>
-      <td>very good</td>
+      <td>452.571008</td>
+      <td>0.0</td>
+      <td>62.282989</td>
+      <td>0.0</td>
+      <td>0.8</td>
+      <td>5</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.8, 'max_depth': 5, 'colsampl_b...</td>
+      <td>-0.016854</td>
+      <td>-0.016854</td>
+      <td>0.0</td>
+      <td>3</td>
+      <td>-0.012256</td>
+      <td>-0.012256</td>
+      <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>102</td>
-      <td>good</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>103</td>
-      <td>excellent</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># if we do a sort on quality, it will be</span>
-<span class="c1"># sorted alphabetically (default sorting for strings)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;quality&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[22]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ID</th>
-      <th>quality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>3</th>
-      <td>103</td>
-      <td>excellent</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>100</td>
-      <td>good</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>102</td>
-      <td>good</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>101</td>
-      <td>very good</td>
+      <td>339.133200</td>
+      <td>0.0</td>
+      <td>24.371682</td>
+      <td>0.0</td>
+      <td>0.9</td>
+      <td>12</td>
+      <td>0.9</td>
+      <td>{'subsample': 0.9, 'max_depth': 12, 'colsampl_...</td>
+      <td>-0.015859</td>
+      <td>-0.015859</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>-0.011161</td>
+      <td>-0.011161</td>
+      <td>0.0</td>
     </tr>
   </tbody>
 </table>
@@ -13340,177 +16282,6 @@ dtype: int64</pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we can use an instance of CategoricalDtype to specify our own ordering</span>
-<span class="n">cat_dtype</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">CategoricalDtype</span><span class="p">(</span>
-    <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;good&#39;</span><span class="p">,</span> <span class="s1">&#39;very good&#39;</span><span class="p">,</span> <span class="s1">&#39;excellent&#39;</span><span class="p">],</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">cat_dtype</span><span class="p">)</span>
-
-<span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;quality&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[23]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ID</th>
-      <th>quality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>100</td>
-      <td>good</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>102</td>
-      <td>good</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>101</td>
-      <td>very good</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>103</td>
-      <td>excellent</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we can even use boolean method on this new ordering</span>
-<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;quality&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="s1">&#39;good&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[24]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ID</th>
-      <th>quality</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1</th>
-      <td>101</td>
-      <td>very good</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>103</td>
-      <td>excellent</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><a href="https://www.continuum.io/content/pandas-categoricals">Blog: Pandas Categoricals</a></li>
-<li><a href="https://www.dataquest.io/blog/pandas-big-data/">Blog: Using pandas with large data</a></li>
-<li><a href="https://www.youtube.com/watch?v=wDYDYGyN_cw">Youtube: How do I make my pandas DataFrame smaller and faster?</a></li>
-</ul>
-
-</div>
-</div>
 </div>
     </div>
   </div>

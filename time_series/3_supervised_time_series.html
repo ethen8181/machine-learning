@@ -12225,13 +12225,14 @@ matplotlib 3.1.1
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The gist behind time series analysis is that we are given some quantitative measures about the past and we wish to use these informations to predict the future to enable better planning, decision-making and so on. The main difference between time series problem and traditional prediction problems is that: in traditional prediction problems such as image classification, the data points there are assumed to be independent of one another. Whereas, time series analysis' data points have a temporal nature in them, i.e. The time dimension adds an explicit ordering to our data points that should be preserved because they can provide additional/important information to the learning algorithms.</p>
-<p>This is not to say machine learning methods like supervised learning can't be used for time series forecasting, but before we apply these supervised learning methods on our time series data, we need to do some preprocessing step to make them applicable. There are three classes of time series based features that we can create out of our time series dataset.</p>
+<p>This is not to say machine learning methods like supervised learning can't be used for time series forecasting, but before we apply these supervised learning methods on our time series data, we need to do some preprocessing step to make them applicable. There are 4 classes of time series based features that we can create out of our time series dataset.</p>
 <ul>
 <li>Date &amp; time features. e.g. Given the date 2019-08-02, we can extract features such as year, month and date to create 3 additional features out of the original timestamp. Or enumerate all the attributes of a <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Timestamp.html">timestamp</a>.</li>
 <li>Lag features. a.k.a values at prior time steps.</li>
 <li>Window features. These are summary statistics over a fixed window.</li>
+<li>Time until next event / Time since last event.</li>
 </ul>
-<p>We give some examples of how the lag features and window features are constructed.</p>
+<p>We give some examples of how the lag features and window features are constructed in the following two sections.</p>
 
 </div>
 </div>
