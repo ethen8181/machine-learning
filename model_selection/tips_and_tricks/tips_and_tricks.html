@@ -12283,9 +12283,9 @@ matplotlib 3.1.1
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="s1">&#39;bike_sharing&#39;</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
     <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip&#39;</span>
-    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;curl -O &#39;</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;mkdir &#39;</span> <span class="o">+</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;unzip Bike-Sharing-Dataset.zip -d &#39;</span> <span class="o">+</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">shell</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;curl -O &#39;</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;mkdir &#39;</span> <span class="o">+</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">call</span><span class="p">(</span><span class="s1">&#39;unzip Bike-Sharing-Dataset.zip -d &#39;</span> <span class="o">+</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12571,11 +12571,11 @@ height=248
 <span class="c1"># sklearn&#39;s LinearRegression may give harmless errors</span>
 <span class="c1"># https://github.com/scipy/scipy/issues/5998</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;scipy&#39;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;^internal gelsd&#39;</span><span class="p">)</span>
+    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s1">&#39;scipy&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;^internal gelsd&#39;</span><span class="p">)</span>
 
 <span class="n">cv</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">scoring</span> <span class="o">=</span> <span class="s1">&#39;neg_mean_squared_error&#39;</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">scoring</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">scoring</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV Scoring Result: mean =&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;std =&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
 </pre></div>
 
@@ -12611,7 +12611,7 @@ height=248
 <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">input_cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
 <span class="c1"># negative mean squared error, the closer the value is to 0, the better</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">scoring</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">scoring</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CV Scoring Result: mean =&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="s1">&#39;std =&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
 </pre></div>
 
