@@ -1,5 +1,5 @@
 - [machine-learning](#machine-learning)
-  - [Documentation Listings](#Documentation-Listings)
+  - [Documentation Listings](#documentation-listings)
     - [bandits](#bandits)
     - [search](#search)
     - [time_series](#timeseries)
@@ -22,7 +22,7 @@
     - [unbalanced](#unbalanced)
     - [clustering_old](#clusteringold)
     - [linear_regression](#linearregression)
-  - [Python Programming](#Python-Programming)
+  - [Python Programming](#python-programming)
 
 # machine-learning
 
@@ -158,6 +158,8 @@ Curated notes on deep learning.
     - Long Short Term Memory (LSTM) - Tensorflow. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/2_tensorflow_lstm.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/rnn/2_tensorflow_lstm.html)]
     - RNN, LSTM - PyTorch hello world. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/rnn/1_pytorch_rnn.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/rnn/1_pytorch_rnn.html)]
 - Word2vec (skipgram + negative sampling) using Gensim. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/word2vec/word2vec_detailed.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/word2vec/word2vec_detailed.html)]
+- Sequence to Sequence Neural Network (Seq2Seq).
+    - Seq2Seq for German to English Machine Translation - PyTorch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/torch_seq2seq_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/seq2seq/torch_seq2seq_intro.html)]
 
 ### keras
 
