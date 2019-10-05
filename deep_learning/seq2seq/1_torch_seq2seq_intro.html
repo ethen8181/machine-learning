@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>torch_seq2seq_intro</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>1_torch_seq2seq_intro</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq</a></span><ul class="toc-item"><li><span><a href="#Seq2Seq-Introduction" data-toc-modified-id="Seq2Seq-Introduction-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Seq2Seq Introduction</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Seq2Seq-Implementation" data-toc-modified-id="Seq2Seq-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Seq2Seq Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder-Module" data-toc-modified-id="Encoder-Module-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Encoder Module</a></span></li><li><span><a href="#Decoder-Module" data-toc-modified-id="Decoder-Module-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Decoder Module</a></span></li><li><span><a href="#Seq2Seq-Module" data-toc-modified-id="Seq2Seq-Module-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>Seq2Seq Module</a></span></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3.4"><span class="toc-item-num">1.3.4&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.3.5"><span class="toc-item-num">1.3.5&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li></ul></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li><li><span><a href="#Reference" data-toc-modified-id="Reference-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Reference</a></span></li></ul></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq</a></span><ul class="toc-item"><li><span><a href="#Seq2Seq-Introduction" data-toc-modified-id="Seq2Seq-Introduction-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Seq2Seq Introduction</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Seq2Seq-Implementation" data-toc-modified-id="Seq2Seq-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Seq2Seq Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder-Module" data-toc-modified-id="Encoder-Module-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Encoder Module</a></span></li><li><span><a href="#Decoder-Module" data-toc-modified-id="Decoder-Module-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Decoder Module</a></span></li><li><span><a href="#Seq2Seq-Module" data-toc-modified-id="Seq2Seq-Module-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>Seq2Seq Module</a></span></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3.4"><span class="toc-item-num">1.3.4&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.3.5"><span class="toc-item-num">1.3.5&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li></ul></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12201,7 +12201,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-09-27 10:17:59 
+<pre>Ethen 2019-10-04 18:10:00 
 
 CPython 3.6.4
 IPython 7.7.0
@@ -12265,7 +12265,7 @@ spacy 2.1.6
 <li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/1%20-%20Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.ipynb">Jupyter Notebook: Sequence to Sequence Learning with Neural Networks</a></li>
 </ul>
 <p>Some personal preference modifications have been made.</p>
-<p><img src="img/seq2seq1.png" width="70%" height="70%"></p>
+<p><img src="img/1_seq2seq.png" width="70%" height="70%"></p>
 <p>The above image shows an example translation. The input/source sentence, "guten morgen", is input into the encoder (green) one word at a time. We also append a <em>start of sequence</em> (<code>&lt;sos&gt;</code>) and <em>end of sequence</em> (<code>&lt;eos&gt;</code>) token to the start and end of sentence, respectively. At each time-step, the input to the encoder is both the current word, $x_t$, as well as the hidden state from the previous time-step, $h_{t-1}$, and the encoder outputs a new hidden state $h_t$. We can think of the hidden state as a vector representation of the sentence so far. The can be represented as a function of both of $x_t$ and $h_{t-1}$:</p>
 <p>$$h_t = \text{Encoder}(x_t, h_{t-1})$$</p>
 <p>We're using the term encoder loosely here, in practice, it can be any type of architecture, the most common ones being RNN-type network such as <em>LSTM</em> (Long Short-Term Memory) or a <em>GRU</em> (Gated Recurrent Unit).</p>
@@ -12325,7 +12325,7 @@ spacy 2.1.6
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;torch._C.Generator at 0x11ee7d830&gt;</pre>
+<pre>&lt;torch._C.Generator at 0x112952830&gt;</pre>
 </div>
 
 </div>
@@ -12657,30 +12657,9 @@ Unique tokens in target (en) vocabulary: 5893
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pytorch boilerplate that determines whether a GPU is present or not,</span>
 <span class="c1"># this determines whether our dataset or model can to moved to a GPU</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
-<span class="n">device</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>device(type=&#39;cpu&#39;)</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13059,7 +13038,7 @@ Unique tokens in target (en) vocabulary: 5893
 </ul>
 <p>The <code>Seq2Seq</code> model takes in an <code>Encoder</code>, <code>Decoder</code>, and a <code>device</code> (used to place tensors on the GPU, if it exists).</p>
 <p>For this implementation, we have to ensure that the number of layers and the hidden (and cell) dimensions are equal in the <code>Encoder</code> and <code>Decoder</code>. This is not always the case, as we do not necessarily need the same number of layers or the same hidden dimension sizes in a sequence-to-sequence model. However, if we do have a different number of layers we will need to make decisions about how this is handled. For example, if our encoder has 2 layers and our decoder only has 1, how is this handled? Do we average the two context vectors output by the decoder? Do we pass both through a linear layer? Do we only use the context vector from the highest layer? etc.</p>
-<p>Our <code>forward</code> method takes the source sentence, target sentence and a teacher-forcing ratio. The teacher forcing ratio is used when training our model. When decoding, at each time-step we will predict what the next token in the target sequence will be from the previous tokens decoded, $\hat{y}_{t+1}=f(s_t^L)$. With probability equal to the teaching forcing ratio (<code>teacher_forcing_ratio</code>) we will use the actual ground-truth next token in the sequence as the input to the decoder during the next time-step. However, with probability <code>1 - teacher_forcing_ratio</code>, we will use the token that the model predicted as the next input to the model, even if it doesn't match the actual next token in the sequence. Note that the teacher forcing ratio is only done during training and should be shut off during evaluation.</p>
+<p>Our <code>forward</code> method takes the source sentence, target sentence and a teacher-forcing ratio. The teacher forcing ratio is used when training our model. When decoding, at each time-step we will predict what the next token in the target sequence will be from the previous tokens decoded. With probability equal to the teaching forcing ratio (<code>teacher_forcing_ratio</code>) we will use the actual ground-truth next token in the sequence as the input to the decoder during the next time-step. However, with probability <code>1 - teacher_forcing_ratio</code>, we will use the token that the model predicted as the next input to the model, even if it doesn't match the actual next token in the sequence. Note that the teacher forcing ratio is only done during training and should be shut off during evaluation.</p>
 <p>The first thing we do in the <code>forward</code> method is to create an <code>outputs</code> tensor that will store all of our predictions, $\hat{Y}$.</p>
 <p>We then feed the input/source sentence, $X$/<code>src</code>, into the encoder and receive our final hidden and cell states.</p>
 <p>The first input to the decoder is the start of sequence (<code>&lt;sos&gt;</code>) token. As our <code>trg</code> tensor already has the <code>&lt;sos&gt;</code> token appended (all the way back when we defined the <code>init_token</code> in our target field) we get our $y_1$ by slicing into it. We know how long our target sentences should be (<code>max_len</code>), so we loop that many times. During each iteration of the loop, we:</p>
@@ -13084,6 +13063,7 @@ Unique tokens in target (en) vocabulary: 5893
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Seq2Seq</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
@@ -13665,7 +13645,7 @@ target sentence:  two young , white males are outside near many bushes .
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h2>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
 </div>
