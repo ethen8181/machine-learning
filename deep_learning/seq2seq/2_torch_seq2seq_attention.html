@@ -11776,7 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq-with-Attention" data-toc-modified-id="Seq2Seq-with-Attention-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq with Attention</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Implementation" data-toc-modified-id="Model-Implementation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder" data-toc-modified-id="Encoder-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Encoder</a></span></li><li><span><a href="#Attention" data-toc-modified-id="Attention-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Attention</a></span></li><li><span><a href="#Decoder" data-toc-modified-id="Decoder-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Decoder</a></span></li><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1.2.4"><span class="toc-item-num">1.2.4&nbsp;&nbsp;</span>Seq2Seq</a></span></li></ul></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq-With-Attention" data-toc-modified-id="Seq2Seq-With-Attention-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq With Attention</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Implementation" data-toc-modified-id="Model-Implementation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder" data-toc-modified-id="Encoder-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Encoder</a></span></li><li><span><a href="#Attention" data-toc-modified-id="Attention-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Attention</a></span></li><li><span><a href="#Decoder" data-toc-modified-id="Decoder-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Decoder</a></span></li><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1.2.4"><span class="toc-item-num">1.2.4&nbsp;&nbsp;</span>Seq2Seq</a></span></li></ul></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -12201,7 +12201,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-10-04 18:12:06 
+<pre>Ethen 2019-10-09 13:46:01 
 
 CPython 3.6.4
 IPython 7.7.0
@@ -12222,7 +12222,7 @@ spacy 2.1.6
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Seq2Seq-with-Attention">Seq2Seq with Attention<a class="anchor-link" href="#Seq2Seq-with-Attention">&#182;</a></h1>
+<h1 id="Seq2Seq-With-Attention">Seq2Seq With Attention<a class="anchor-link" href="#Seq2Seq-With-Attention">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -12336,7 +12336,7 @@ e_{ij} = fc(s_{i-1}, h_j)
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;torch._C.Generator at 0x11bd65650&gt;</pre>
+<pre>&lt;torch._C.Generator at 0x11e3a86d0&gt;</pre>
 </div>
 
 </div>
@@ -12615,19 +12615,6 @@ Unique tokens in target (en) vocabulary: 5893
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The following sections are heavily "borrowed" from the wonderful tutorial on this topic listed below.</p>
-<ul>
-<li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/3%20-%20Neural%20Machine%20Translation%20by%20Jointly%20Learning%20to%20Align%20and%20Translate.ipynb">Jupyter Notebook: Neural Machine Translation by Jointly Learning to Align and Translate</a></li>
-</ul>
-<p>Some personal preference modifications have been made.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
@@ -12649,6 +12636,19 @@ Unique tokens in target (en) vocabulary: 5893
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following sections are heavily "borrowed" from the wonderful tutorial on this topic listed below.</p>
+<ul>
+<li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/3%20-%20Neural%20Machine%20Translation%20by%20Jointly%20Learning%20to%20Align%20and%20Translate.ipynb">Jupyter Notebook: Neural Machine Translation by Jointly Learning to Align and Translate</a></li>
+</ul>
+<p>Some personal preference modifications have been made.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -13365,7 +13365,7 @@ $$</p>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">seq2seq</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">src</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">trg</span><span class="p">)</span>
 
-        <span class="c1"># as the loss function only works on 2d inputs</span>
+        <span class="c1"># the loss function only works on 2d inputs</span>
         <span class="c1"># and 1d targets we need to flatten each of them</span>
         <span class="n">outputs_flatten</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">trg_flatten</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">trg</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -13472,31 +13472,31 @@ $$</p>
 <pre>Epoch: 01 | Time: 2m 30s
 	Train Loss: 4.844 | Train PPL: 126.976
 	 Val. Loss: 4.691 |  Val. PPL: 108.948
-Epoch: 02 | Time: 2m 29s
+Epoch: 02 | Time: 2m 30s
 	Train Loss: 3.948 | Train PPL:  51.808
 	 Val. Loss: 4.004 |  Val. PPL:  54.793
-Epoch: 03 | Time: 2m 30s
+Epoch: 03 | Time: 2m 31s
 	Train Loss: 3.230 | Train PPL:  25.281
 	 Val. Loss: 3.498 |  Val. PPL:  33.059
 Epoch: 04 | Time: 2m 29s
 	Train Loss: 2.733 | Train PPL:  15.379
 	 Val. Loss: 3.413 |  Val. PPL:  30.360
-Epoch: 05 | Time: 2m 29s
+Epoch: 05 | Time: 2m 28s
 	Train Loss: 2.379 | Train PPL:  10.793
 	 Val. Loss: 3.269 |  Val. PPL:  26.285
-Epoch: 06 | Time: 2m 31s
+Epoch: 06 | Time: 2m 32s
 	Train Loss: 2.089 | Train PPL:   8.079
 	 Val. Loss: 3.228 |  Val. PPL:  25.229
-Epoch: 07 | Time: 2m 30s
+Epoch: 07 | Time: 2m 29s
 	Train Loss: 1.862 | Train PPL:   6.438
 	 Val. Loss: 3.201 |  Val. PPL:  24.561
-Epoch: 08 | Time: 2m 29s
+Epoch: 08 | Time: 2m 30s
 	Train Loss: 1.626 | Train PPL:   5.084
 	 Val. Loss: 3.297 |  Val. PPL:  27.044
-Epoch: 09 | Time: 2m 31s
+Epoch: 09 | Time: 2m 30s
 	Train Loss: 1.406 | Train PPL:   4.078
 	 Val. Loss: 3.312 |  Val. PPL:  27.451
-Epoch: 10 | Time: 2m 30s
+Epoch: 10 | Time: 2m 31s
 	Train Loss: 1.239 | Train PPL:   3.453
 	 Val. Loss: 3.467 |  Val. PPL:  32.050
 </pre>
@@ -13650,7 +13650,7 @@ target sentence:  two young , white males are outside near many bushes .
 <div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">output_idx</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">output_idx</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">target</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">itos</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">output_idx</span><span class="p">])</span>
 </pre></div>
 
@@ -13670,7 +13670,7 @@ target sentence:  two young , white males are outside near many bushes .
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;&lt;unk&gt; two young white white males are outside near near some trees .&#39;</pre>
+<pre>&#39;two young white white males are outside near near some trees .&#39;</pre>
 </div>
 
 </div>
@@ -13697,7 +13697,7 @@ target sentence:  two young , white males are outside near many bushes .
 <blockquote><p>We extended the basic encoder–decoder by letting a model (soft-)search for a set of input words. This frees the model from having to encode the whole source sentence into a fixed-length vector, and also lets the model focus only on information relevant to the generation of the next target word. This has a major positive impact on the ability of the neural machine translation system to yield good results on longer sentences.</p>
 </blockquote>
 <ul>
-<li>Note that another interesting thing that we're capable to do but not done here is to visualize the attention weight to see for a given translation, where the model is focusing on.</li>
+<li>Note that another interesting thing that we're capable of doing but wasn't done here is to visualize the attention weight to see for a given translation, where the model is focusing on.</li>
 </ul>
 
 </div>
