@@ -12947,7 +12947,7 @@ Unique tokens in target (en) vocabulary: 5893
         <span class="bp">self</span><span class="o">.</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">,</span> <span class="n">hid_dim</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hid_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trg</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="n">cell</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trg</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">,</span> <span class="n">cell</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters</span>
@@ -12955,7 +12955,7 @@ Unique tokens in target (en) vocabulary: 5893
 <span class="sd">        trg : 1d torch.LongTensor</span>
 <span class="sd">            Batched tokenized source sentence of shape [batch size].</span>
 <span class="sd">            </span>
-<span class="sd">        hidden, cell : 3d torch.LongTensor</span>
+<span class="sd">        hidden, cell : 3d torch.FloatTensor</span>
 <span class="sd">            Hidden and cell state of the LSTM layer. Each state&#39;s shape</span>
 <span class="sd">            [n layers * n directions, batch size, hidden dim]</span>
 
@@ -12964,8 +12964,8 @@ Unique tokens in target (en) vocabulary: 5893
 <span class="sd">        prediction : 2d torch.LongTensor</span>
 <span class="sd">            For each token in the batch, the predicted target vobulary.</span>
 <span class="sd">            Shape [batch size, output dim]</span>
-<span class="sd">        </span>
-<span class="sd">        hidden, cell : 3d torch.LongTensor</span>
+
+<span class="sd">        hidden, cell : 3d torch.FloatTensor</span>
 <span class="sd">            Hidden and cell state of the LSTM layer. Each state&#39;s shape</span>
 <span class="sd">            [n layers * n directions, batch size, hidden dim]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
