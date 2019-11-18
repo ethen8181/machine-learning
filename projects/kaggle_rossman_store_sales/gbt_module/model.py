@@ -120,8 +120,8 @@ class GBTPipeline(BaseEstimator):
 
         Parameters
         ----------
-        threshold : int, default 1e-3
-            Features that has a normalized gain smaller
+        threshold : float, default 1e-3
+            Features that have a normalized gain smaller
             than the specified ``threshold`` will not be returned.
         """
         booster = self.model_tuned_.best_estimator_.booster_

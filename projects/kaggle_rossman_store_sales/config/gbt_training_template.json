@@ -62,7 +62,7 @@
         "lgb":
         {
             "max_depth": [3, 5, 8, 10, 12],
-            "colsampl_bytree": [0.7, 0.8, 0.9],
+            "colsample_bytree": [0.7, 0.8, 0.9],
             "subsample": [0.7, 0.8, 0.9]
         }
     },
