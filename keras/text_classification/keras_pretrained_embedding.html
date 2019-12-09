@@ -13368,7 +13368,6 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">keras.utils.np_utils</span> <span class="k">import</span> <span class="n">to_categorical</span>
 <span class="kn">from</span> <span class="nn">keras.preprocessing.sequence</span> <span class="k">import</span> <span class="n">pad_sequences</span>
 
-
 <span class="c1"># prevent scientific notations</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
 
@@ -13400,10 +13399,10 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-11-07 11:10:29 
+<pre>Ethen 2019-12-09 11:59:08 
 
 CPython 3.6.4
-IPython 7.7.0
+IPython 7.9.0
 
 numpy 1.16.5
 pandas 0.25.0
@@ -13458,7 +13457,20 @@ keras 2.2.2
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
-<span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;word2vec-nlp-tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;labeledTrainData.tsv&#39;</span><span class="p">)</span>
+<span class="n">submission_dir</span> <span class="o">=</span> <span class="s1">&#39;submission&#39;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;word2vec-nlp-tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;labeledTrainData.tsv&#39;</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -13485,7 +13497,7 @@ keras 2.2.2
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[3]:</div>
+    <div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -13557,7 +13569,7 @@ keras 2.2.2
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">raw_text</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;review&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -13574,7 +13586,7 @@ keras 2.2.2
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -13591,7 +13603,7 @@ keras 2.2.2
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
@@ -13614,7 +13626,7 @@ keras 2.2.2
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">bs4</span> <span class="k">import</span> <span class="n">BeautifulSoup</span>
@@ -13640,7 +13652,7 @@ keras 2.2.2
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;review&#39;</span>
@@ -13676,52 +13688,21 @@ corresponding label: 1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MAX_NUM_WORDS</span> <span class="o">=</span> <span class="mi">20000</span>
-
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">MAX_NUM_WORDS</span><span class="p">,</span> <span class="n">oov_token</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;&#39;</span><span class="p">)</span>
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> unique tokens.&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Found 81502 unique tokens.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MAX_SEQUENCE_LENGTH</span> <span class="o">=</span> <span class="mi">1000</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">random_state</span> <span class="o">=</span> <span class="mi">1234</span>
+<span class="n">val_split</span> <span class="o">=</span> <span class="mf">0.2</span>
 
-<span class="n">sequences</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">MAX_SEQUENCE_LENGTH</span><span class="p">)</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="n">to_categorical</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">texts_train</span><span class="p">,</span> <span class="n">texts_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="n">val_split</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;labels shape:&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">sequences</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train size: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;validation size: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts_val</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13739,21 +13720,10 @@ corresponding label: 1
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>labels shape: (25000, 2)
+train size:  20000
+validation size:  5000
 </pre>
 </div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[9]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[16, 30, 11, 538, 166]</pre>
-</div>
-
 </div>
 
 </div>
@@ -13765,16 +13735,11 @@ corresponding label: 1
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RANDOM_STATE</span> <span class="o">=</span> <span class="mi">1234</span>
-<span class="n">VALIDATION_SPLIT</span> <span class="o">=</span> <span class="mf">0.2</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">max_num_words</span> <span class="o">=</span> <span class="mi">20000</span>
 
-<span class="n">x_train</span><span class="p">,</span> <span class="n">x_val</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span>
-    <span class="n">test_size</span><span class="o">=</span><span class="n">VALIDATION_SPLIT</span><span class="p">,</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train size: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_train</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;validation size: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_val</span><span class="p">))</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">max_num_words</span><span class="p">,</span> <span class="n">oov_token</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;&#39;</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> unique tokens.&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13791,10 +13756,50 @@ corresponding label: 1
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>train size:  20000
-validation size:  5000
+<pre>Found 74207 unique tokens.
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">max_sequence_len</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">sequences_train</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_train</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+
+<span class="n">sequences_val</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_val</span><span class="p">)</span>
+<span class="n">x_val</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_val</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+
+<span class="n">sequences_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[50, 1, 863, 2, 17]</pre>
+</div>
+
 </div>
 
 </div>
@@ -13868,24 +13873,6 @@ validation size:  5000
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 862182613/862182613 [06:27&lt;00:00, 2223708.05B/s]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13900,7 +13887,7 @@ validation size:  5000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_embedding_lookup</span><span class="p">(</span><span class="n">embedding_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -13948,11 +13935,11 @@ validation size:  5000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">glove_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;glove.6B&#39;</span><span class="p">,</span> <span class="s1">&#39;glove.6B.100d.txt&#39;</span><span class="p">)</span>
-<span class="n">max_features</span> <span class="o">=</span> <span class="n">MAX_NUM_WORDS</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">max_features</span> <span class="o">=</span> <span class="n">max_num_words</span> <span class="o">+</span> <span class="mi">1</span>
 
 <span class="n">pretrained_embedding</span> <span class="o">=</span> <span class="n">get_pretrained_embedding</span><span class="p">(</span><span class="n">glove_path</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">index_word</span><span class="p">,</span> <span class="n">max_features</span><span class="p">)</span>
 <span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">shape</span>
@@ -13972,14 +13959,14 @@ validation size:  5000
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>number of words found: 19672
+<pre>number of words found: 19654
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[18]:</div>
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -14063,11 +14050,11 @@ validation size:  5000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">model1</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">MAX_SEQUENCE_LENGTH</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span>
+<span class="n">model1</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span>
                          <span class="n">pretrained_embedding</span><span class="o">=</span><span class="n">pretrained_embedding</span><span class="p">)</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
@@ -14158,7 +14145,7 @@ _________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_model_layers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
@@ -14178,7 +14165,7 @@ _________________________________________________________________
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[21]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -14286,11 +14273,11 @@ _________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 70</span>
-<span class="c1"># test performance : auc 0.93330</span>
+<span class="c1"># test performance : auc 0.93212</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">history1</span> <span class="o">=</span> <span class="n">model1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
                       <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
@@ -14324,34 +14311,34 @@ WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/ten
 
 Train on 20000 samples, validate on 5000 samples
 Epoch 1/8
-20000/20000 [==============================] - 12s 603us/step - loss: 0.6046 - acc: 0.6614 - val_loss: 0.4767 - val_acc: 0.7768
+20000/20000 [==============================] - 12s 604us/step - loss: 0.5854 - acc: 0.6748 - val_loss: 0.4772 - val_acc: 0.7808
 Epoch 2/8
-20000/20000 [==============================] - 8s 407us/step - loss: 0.4140 - acc: 0.8112 - val_loss: 0.4059 - val_acc: 0.8210
+20000/20000 [==============================] - 8s 416us/step - loss: 0.4001 - acc: 0.8186 - val_loss: 0.3766 - val_acc: 0.8352
 Epoch 3/8
-20000/20000 [==============================] - 8s 408us/step - loss: 0.3366 - acc: 0.8566 - val_loss: 0.3493 - val_acc: 0.8484
+20000/20000 [==============================] - 8s 414us/step - loss: 0.3428 - acc: 0.8507 - val_loss: 0.4276 - val_acc: 0.7966
 Epoch 4/8
-20000/20000 [==============================] - 8s 407us/step - loss: 0.2779 - acc: 0.8869 - val_loss: 0.3336 - val_acc: 0.8592
+20000/20000 [==============================] - 8s 415us/step - loss: 0.2790 - acc: 0.8842 - val_loss: 0.3433 - val_acc: 0.8594
 Epoch 5/8
-20000/20000 [==============================] - 8s 407us/step - loss: 0.2238 - acc: 0.9113 - val_loss: 0.3430 - val_acc: 0.8626
+20000/20000 [==============================] - 8s 415us/step - loss: 0.2469 - acc: 0.8987 - val_loss: 0.4015 - val_acc: 0.8310
 Epoch 6/8
-20000/20000 [==============================] - 8s 412us/step - loss: 0.1861 - acc: 0.9274 - val_loss: 0.4252 - val_acc: 0.8412
+20000/20000 [==============================] - 8s 420us/step - loss: 0.1782 - acc: 0.9289 - val_loss: 0.4670 - val_acc: 0.8296
 Epoch 7/8
-20000/20000 [==============================] - 8s 411us/step - loss: 0.1280 - acc: 0.9518 - val_loss: 0.4001 - val_acc: 0.8640
+20000/20000 [==============================] - 8s 419us/step - loss: 0.1017 - acc: 0.9643 - val_loss: 0.5965 - val_acc: 0.8146
 Epoch 8/8
-20000/20000 [==============================] - 8s 407us/step - loss: 0.0648 - acc: 0.9781 - val_loss: 0.5175 - val_acc: 0.8532
+20000/20000 [==============================] - 8s 418us/step - loss: 0.0680 - acc: 0.9758 - val_loss: 0.6876 - val_acc: 0.8332
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[22]:</div>
+    <div class="prompt output_prompt">Out[19]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>69.78339147567749</pre>
+<pre>70.9072277545929</pre>
 </div>
 
 </div>
@@ -14369,11 +14356,11 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">model2</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">MAX_SEQUENCE_LENGTH</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
@@ -14431,11 +14418,11 @@ _________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 86 secs</span>
-<span class="c1"># test performance : auc 0.92367</span>
+<span class="c1"># test performance : auc 0.92310</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">history1</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
                       <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
@@ -14462,34 +14449,34 @@ _________________________________________________________________
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Train on 20000 samples, validate on 5000 samples
 Epoch 1/8
-20000/20000 [==============================] - 11s 561us/step - loss: 0.5083 - acc: 0.7053 - val_loss: 0.3026 - val_acc: 0.8754
+20000/20000 [==============================] - 11s 570us/step - loss: 0.5010 - acc: 0.7065 - val_loss: 0.3016 - val_acc: 0.8730
 Epoch 2/8
-20000/20000 [==============================] - 11s 529us/step - loss: 0.1976 - acc: 0.9245 - val_loss: 0.2707 - val_acc: 0.8890
+20000/20000 [==============================] - 11s 542us/step - loss: 0.2024 - acc: 0.9243 - val_loss: 0.2816 - val_acc: 0.8824
 Epoch 3/8
-20000/20000 [==============================] - 11s 530us/step - loss: 0.0830 - acc: 0.9727 - val_loss: 0.3431 - val_acc: 0.8896
+20000/20000 [==============================] - 11s 538us/step - loss: 0.0806 - acc: 0.9734 - val_loss: 0.3552 - val_acc: 0.8812
 Epoch 4/8
-20000/20000 [==============================] - 11s 531us/step - loss: 0.0212 - acc: 0.9943 - val_loss: 0.6601 - val_acc: 0.8612
+20000/20000 [==============================] - 11s 535us/step - loss: 0.0272 - acc: 0.9917 - val_loss: 0.4671 - val_acc: 0.8836
 Epoch 5/8
-20000/20000 [==============================] - 11s 534us/step - loss: 0.0123 - acc: 0.9957 - val_loss: 0.7183 - val_acc: 0.8758
+20000/20000 [==============================] - 11s 543us/step - loss: 0.0088 - acc: 0.9973 - val_loss: 0.6534 - val_acc: 0.8788
 Epoch 6/8
-20000/20000 [==============================] - 11s 532us/step - loss: 0.0161 - acc: 0.9938 - val_loss: 0.7170 - val_acc: 0.8698
+20000/20000 [==============================] - 11s 542us/step - loss: 0.0090 - acc: 0.9973 - val_loss: 0.7522 - val_acc: 0.8740
 Epoch 7/8
-20000/20000 [==============================] - 11s 532us/step - loss: 0.0170 - acc: 0.9931 - val_loss: 0.6744 - val_acc: 0.8780
+20000/20000 [==============================] - 11s 542us/step - loss: 0.0104 - acc: 0.9967 - val_loss: 1.0453 - val_acc: 0.8480
 Epoch 8/8
-20000/20000 [==============================] - 11s 530us/step - loss: 0.0102 - acc: 0.9963 - val_loss: 0.7483 - val_acc: 0.8766
+20000/20000 [==============================] - 11s 543us/step - loss: 0.0205 - acc: 0.9924 - val_loss: 0.6930 - val_acc: 0.8712
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[24]:</div>
+    <div class="prompt output_prompt">Out[21]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>86.1173346042633</pre>
+<pre>87.63022541999817</pre>
 </div>
 
 </div>
@@ -14507,7 +14494,7 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;word2vec-nlp-tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;testData.tsv&#39;</span><span class="p">)</span>
@@ -14537,7 +14524,7 @@ Epoch 8/8
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[25]:</div>
+    <div class="prompt output_prompt">Out[22]:</div>
 
 
 
@@ -14623,12 +14610,12 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">texts_test</span> <span class="o">=</span> <span class="n">clean_text_without_label</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">text_col</span><span class="p">)</span>
 <span class="n">sequences_test</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_test</span><span class="p">)</span>
-<span class="n">data_test</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">MAX_SEQUENCE_LENGTH</span><span class="p">)</span>
+<span class="n">data_test</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
 <span class="nb">len</span><span class="p">(</span><span class="n">data_test</span><span class="p">)</span>
 </pre></div>
 
@@ -14642,7 +14629,7 @@ Epoch 8/8
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[27]:</div>
+    <div class="prompt output_prompt">Out[25]:</div>
 
 
 
@@ -14687,12 +14674,10 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">submission_dir</span> <span class="o">=</span> <span class="s1">&#39;submission&#39;</span>
-
-<span class="n">ids_col</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ids_col</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
 <span class="n">label_col</span> <span class="o">=</span> <span class="s1">&#39;sentiment&#39;</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">ids_col</span><span class="p">]</span>
 
@@ -14727,9 +14712,9 @@ Epoch 8/8
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>generating submission for:  pretrained_embedding
-25000/25000 [==============================] - 6s 222us/step
+25000/25000 [==============================] - 6s 228us/step
 generating submission for:  without_pretrained_embedding
-25000/25000 [==============================] - 5s 214us/step
+25000/25000 [==============================] - 6s 222us/step
 (25000, 2)
 </pre>
 </div>
@@ -14737,7 +14722,7 @@ generating submission for:  without_pretrained_embedding
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[30]:</div>
+    <div class="prompt output_prompt">Out[27]:</div>
 
 
 
@@ -14778,12 +14763,12 @@ generating submission for:  without_pretrained_embedding
     <tr>
       <th>2</th>
       <td>5828_4</td>
-      <td>0.033</td>
+      <td>0.005</td>
     </tr>
     <tr>
       <th>3</th>
       <td>7186_2</td>
-      <td>1.000</td>
+      <td>0.071</td>
     </tr>
     <tr>
       <th>4</th>
