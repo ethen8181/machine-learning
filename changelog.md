@@ -2,6 +2,14 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2019-12]
+
+### Changed
+
+- Gaussian Mixture Model from scratch; AIC and BIC for choosing the number of Gaussians. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/GMM/GMM.ipynb)][[html](http://ethen8181.github.io/machine-learning/clustering/GMM/GMM.html)]
+    - Fix erroneous log likelihood calculation.
+    - Update deprecated function for plotting contour plots.
+
 ## [2019-11]
 
 ### Added
@@ -125,8 +133,8 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)]
-	+ Moved H2O notebook to its own sub-folder.
-	+ Added model interpretation using partial dependence plot.
+    + Moved H2O notebook to its own sub-folder.
+    + Added model interpretation using partial dependence plot.
 
 ## [2018-05]
 
@@ -181,13 +189,13 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - Random Forest from scratch and Extra Trees. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb)]
-	- Refactored code for visualizating tree's feature importance.
+    - Refactored code for visualizating tree's feature importance.
 - Building intuition on Ridge and Lasso regularization using scikit-learn. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/regularization/regularization.ipynb)]
-	- Include section when there are collinear features in the dataset.
+    - Include section when there are collinear features in the dataset.
 - mlutils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/mlutils/)]
-	- Refer to its changelog for details.
+    - Refer to its changelog for details.
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
-	- Mention notebook extension, a project that contains various functionalities that makes jupyter notebook even more pleasant to work with.
+    - Mention notebook extension, a project that contains various functionalities that makes jupyter notebook even more pleasant to work with.
 
 ## [2017-11]
 
@@ -204,10 +212,10 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - Bernoulli and Multinomial Naive Bayes from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/text_classification/naive_bayes/naive_bayes.ipynb)]
-	- Fixed various typos and added a more efficient implementation of Multinomial Naive Bayes.
+    - Fixed various typos and added a more efficient implementation of Multinomial Naive Bayes.
 - TF-IDF (text frequency - inverse document frequency) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/tfidf/tfidf.ipynb)]
-	- Moved to its own tfidf folder.
-	- Included the full tfidf implementation from scratch.
+    - Moved to its own tfidf folder.
+    - Included the full tfidf implementation from scratch.
 
 ## [2017-09]
 
@@ -218,7 +226,7 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - Using built-in data structure and algorithm. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/python3_cookbook/1_data_structure.ipynb)]
-	- Merged the content from the two notebooks `namedtuple and defaultdict` and `sorting with itemgetter and attrgetter` into this one and improved the section on priority queue.
+    - Merged the content from the two notebooks `namedtuple and defaultdict` and `sorting with itemgetter and attrgetter` into this one and improved the section on priority queue.
 
 ## [2017-08]
 
@@ -232,7 +240,7 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - Optimizing Pandas (e.g. reduce memory usage using category type). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/pandas/pandas.ipynb)]
-	- This is a revamp of the old content Pandas's category type.
+    - This is a revamp of the old content Pandas's category type.
 
 
 ## [2017-07]
@@ -244,20 +252,20 @@ Hosted html-version of all jupyter notebook on github pages.
 ### Changed
 
 - Bayesian Personalized Ranking (BPR) from scratch & AUC evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/4_bpr.ipynb)]
-	- A more efficient matrix operation using Hadamard product.
+    - A more efficient matrix operation using Hadamard product.
 - Cython and Numba quickstart for high performance python. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/cython/cython.ipynb)
-	- Added Numba parallel prange.
+    - Added Numba parallel prange.
 - ALS-WR for implicit feedback data from scratch & mean average precision at k (mapk) and normalized cumulative discounted gain (ndcg) evaluation. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/2_implicit.ipynb)]
-	- Included normalized cumulative discounted gain (ndcg) evaluation.
+    - Included normalized cumulative discounted gain (ndcg) evaluation.
 - Gradient Boosting Machine (GBM) from scratch. [[nbviewer]](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/gbm/gbm.ipynb)
-	- Added a made up number example on how GBM works.
+    - Added a made up number example on how GBM works.
 - data_science_is_software. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)]
-	- Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier.
-	- Mention semantic versioning (what each number in the package version usually represents).
-	- Mention `configparser`, a handy library for storing and loading configuration files.
+    - Mention `nbdime`, a tool that makes checking changes in jupyter notebook on github a lot easier.
+    - Mention semantic versioning (what each number in the package version usually represents).
+    - Mention `configparser`, a handy library for storing and loading configuration files.
 - K-fold cross validation, grid/random search from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/model_selection.ipynb)]
-	- Minor change in Kfolds educational implementation (original was passing redundant arguments to a method).
-	- Minor change in random search educational implementation (did not realize scipy's .rvs method for generating random numbers returns a single element array instead of a number when you pass in size = 1).
+    - Minor change in Kfolds educational implementation (original was passing redundant arguments to a method).
+    - Minor change in random search educational implementation (did not realize scipy's .rvs method for generating random numbers returns a single element array instead of a number when you pass in size = 1).
 
 
 ## [2017-06]
