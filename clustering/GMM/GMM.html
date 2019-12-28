@@ -13908,7 +13908,7 @@ height=419
 <span class="sd">    tol : float</span>
 <span class="sd">        Tolerance. If the log-likelihood between two iterations is smaller than</span>
 <span class="sd">        the specified tolerance level, the algorithm will stop performing the</span>
-<span class="sd">        EM optimization</span>
+<span class="sd">        EM optimization.</span>
 
 <span class="sd">    seed : int</span>
 <span class="sd">        Seed / random state used to initialize the parameters.</span>
@@ -14273,7 +14273,7 @@ height=375
 <blockquote><p>Advice taken from <a href="https://methodology.psu.edu/node/504">Notes: AIC vs. BIC</a>.</p>
 <p>In general, it might be best to use AIC and BIC together in model selection. Most of the times they will agree on the preferred model. The main differences between the two is that BIC penalizes model complexity more heavily. Thus if they do disagree. e.g. If BIC points to a three-class model and AIC points to a five-class model, it makes sense to select from models with 3, 4 and 5 latent classes and see which one leads to a more suitable result.</p>
 </blockquote>
-<p>Another thing to bear in mind when looking at AIC/BIC evaluation metric is that all that matters is the difference between the AIC/BIC values. The actual value of the AIC/BIC and whether it is positive or negative, means nothing. So the bottom line is pay attention to only the difference.</p>
+<p>Another thing to bear in mind when looking at AIC/BIC evaluation metric is that all that matters is the difference between the AIC/BIC values. The actual value of the AIC/BIC and whether it is positive or negative, means nothing. So the bottom line is only pay attention to the difference.</p>
 
 </div>
 </div>
@@ -14282,8 +14282,8 @@ height=375
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Things to Note:</strong></p>
-<p>One drawback of <strong>GMM</strong> is that there are lot parameters to fit, and usually requires lots of data and many iterations to get good results. An unconstrained model with $K$-mixtures (or simply $K$ clusters) and $D$-dimensional data involves fitting $D \times D \times K + D \times K + K$ parameters ($K$ covariance matrices each of size $D \times D$, plus $K$ mean vectors of length $D$, plus a weight vector of length $K$). That could be a problem for datasets with large number of dimensions (e.g. text data), because with the number of parameters growing roughly as the square of the dimension, it may quickly become impossible to find a sufficient amount of data to make good inferences. So it is common to impose restrictions and assumption to simplify the problem (think of it as introducing regularization to avoid overfitting problems).</p>
-<p>One common way to avoid this problem is to fix the covariance matrix of each component to be diagonal (off-diagonal value will be 0 and will not be updated). To acheive this, we can change the <code>covariance_type</code> parameter in scikit-learn's GMM to <code>diag</code>.</p>
+<p>One drawback of <strong>GMM</strong> is that there are lots of parameters to learn, therefore may require lots of data and iterations to get good results. An unconstrained model with $K$-mixtures (or simply $K$ clusters) and $D$-dimensional data involves fitting $D \times D \times K + D \times K + K$ parameters ($K$ covariance matrices each of size $D \times D$, plus $K$ mean vectors of length $D$, plus a weight vector of length $K$). That could be a problem for datasets with large number of dimensions (e.g. text data), because with the number of parameters growing roughly as the square of the dimension, it may quickly become impossible to find a sufficient amount of data to make good inferences. So it is common to impose restrictions and assumption to simplify the problem (think of it as introducing regularization to avoid overfitting problems).</p>
+<p>One common way to avoid this problem is to fix the covariance matrix of each component to be diagonal (off-diagonal value will be 0 and will not be updated). To achieve this, we can change the <code>covariance_type</code> parameter in scikit-learn's GMM to <code>diag</code>.</p>
 <p>The following link includes an example of comparing <strong>GMM</strong> using different covariance matrices on a toy dataset, <a href="http://scikit-learn.org/stable/auto_examples/mixture/plot_gmm_covariances.html#sphx-glr-auto-examples-mixture-plot-gmm-covariances-py">sckit-learn docs: GMM classification</a>.</p>
 
 </div>
