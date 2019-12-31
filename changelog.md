@@ -7,6 +7,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - Byte Pair Encoding (BPE) from scratch and quick walkthrough of sentencepiece. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/subword/bpe.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/subword/bpe.html)]
+- Sentencepiece Subword tokenization for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/keras_subword_tokenization.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/keras_subword_tokenization.html)]
 
 ### Changed
 

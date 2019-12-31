@@ -179,6 +179,7 @@ For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/
 - Text Classification
     - Word2vec for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/word2vec_text_classification.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/word2vec_text_classification.html)]
     - Leveraging Pre-trained Word Embedding for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/keras_pretrained_embedding.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/keras_pretrained_embedding.html)]
+    - Sentencepiece Subword tokenization for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/keras_subword_tokenization.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/keras_subword_tokenization.html)]
 
 ### text_classification
 

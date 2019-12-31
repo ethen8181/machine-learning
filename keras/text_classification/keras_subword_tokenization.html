@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>keras_pretrained_embedding</title>
+<title>keras_subword_tokenization</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Leveraging-Pre-trained-Word-Embedding-for-Text-Classification" data-toc-modified-id="Leveraging-Pre-trained-Word-Embedding-for-Text-Classification-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Leveraging Pre-trained Word Embedding for Text Classification</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Glove" data-toc-modified-id="Glove-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Glove</a></span></li><li><span><a href="#Model" data-toc-modified-id="Model-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model</a></span><ul class="toc-item"><li><span><a href="#Model-with-Pretrained-Embedding" data-toc-modified-id="Model-with-Pretrained-Embedding-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Model with Pretrained Embedding</a></span></li><li><span><a href="#Model-without-Pretrained-Embedding" data-toc-modified-id="Model-without-Pretrained-Embedding-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Model without Pretrained Embedding</a></span></li></ul></li><li><span><a href="#Submission" data-toc-modified-id="Submission-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Submission</a></span></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Subword-Tokenization-for-Text-Classification" data-toc-modified-id="Subword-Tokenization-for-Text-Classification-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Subword Tokenization for Text Classification</a></span><ul class="toc-item"><li><span><a href="#Data-Preprocessing" data-toc-modified-id="Data-Preprocessing-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preprocessing</a></span></li><li><span><a href="#Model" data-toc-modified-id="Model-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model</a></span><ul class="toc-item"><li><span><a href="#Subword-Level-Tokenizer" data-toc-modified-id="Subword-Level-Tokenizer-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Subword-Level Tokenizer</a></span></li><li><span><a href="#Word-Level-Tokenizer" data-toc-modified-id="Word-Level-Tokenizer-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Word-Level Tokenizer</a></span></li></ul></li><li><span><a href="#Submission" data-toc-modified-id="Submission-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Submission</a></span></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13360,8 +13360,8 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">keras</span> <span class="k">import</span> <span class="n">layers</span>
 <span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">keras.preprocessing.text</span> <span class="k">import</span> <span class="n">Tokenizer</span>
@@ -13371,7 +13371,7 @@ div#notebook {
 <span class="c1"># prevent scientific notations</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,keras
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,keras,sentencepiece
 </pre></div>
 
     </div>
@@ -13399,7 +13399,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-12-09 11:59:08 
+<pre>Ethen 2019-12-31 11:20:36 
 
 CPython 3.6.4
 IPython 7.9.0
@@ -13408,6 +13408,7 @@ numpy 1.16.5
 pandas 0.25.0
 sklearn 0.21.2
 keras 2.2.2
+sentencepiece n
 </pre>
 </div>
 </div>
@@ -13419,19 +13420,40 @@ keras 2.2.2
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Leveraging-Pre-trained-Word-Embedding-for-Text-Classification">Leveraging Pre-trained Word Embedding for Text Classification<a class="anchor-link" href="#Leveraging-Pre-trained-Word-Embedding-for-Text-Classification">&#182;</a></h1>
+<h1 id="Subword-Tokenization-for-Text-Classification">Subword Tokenization for Text Classification<a class="anchor-link" href="#Subword-Tokenization-for-Text-Classification">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>There are two main ways to obtain word embeddings:</p>
+<p>In this notebook, we will be experimenting with subword tokenization. Tokenization is often times one of the first mandatory task that's performed in NLP task, where we break down a piece of text into meaningful individual units/tokens.</p>
+<p>There're three major ways of performing tokenization.</p>
+<p><strong>Character Level</strong></p>
+<p>Treats each character (or unicode) as one individual token.</p>
 <ul>
-<li>Learn it from scratch: We specify a neural network architecture and learn the word embeddings jointly with the main task at our hand (e.g. sentiment classification). i.e. we would start off with some random word embeddings, and it would update itself along with the word embeddings.</li>
-<li>Transfer Learning: The whole idea behind transfer learning is to avoid reinventing the wheel as much as possible. It gives us the capability to transfer knowledge that was gained/learned in some other task and use it to improve the learning of another related task. In practice, one way to do this is for the embedding part of the neural network architecture, we load some other embeddings that were trained on a different machine learning task than the one we are trying to solve and use that to bootstrap the process.</li>
+<li>Pros: This one requires the least amount of preprocessing techniques.</li>
+<li>Cons: The downstream task needs to be able to learn relative positions of the characters, dependencies, spellings, making it harder to achieve good performance.</li>
 </ul>
-<p>One area that transfer learning shines is when we have little training data available and using our data alone might not be enough to learn an appropriate task specific embedding/features for our vocabulary. In this case, leveraging a word embedding that captures generic aspect of the language can prove to be beneficial from both a performance and time perspective (i.e. we won't have to spend hours/days training a model from scratch to achieve a similar performance). Keep in mind that, as with all machine learning application, everything is still all about trial and error. What makes a embedding good depends heavily on the task at hand: The word embedding for a movie review sentiment classification model may look very different from a legal document classification model as the semantic of the corpus varies between these two tasks.</p>
+<p><strong>Word Level</strong></p>
+<p>Performs word segmentation on top of our text data.</p>
+<ul>
+<li>Pros: Words are how we as human process text information.</li>
+<li>Cons: The correctness of the segmentation is highly dependent on the software we're using. e.g. <a href="https://spacy.io/usage/spacy-101#annotations-token">Spacy's Tokenization</a> performs language specific rules to segment the original text into words. Also word level can't handle unseen words (a.k.a. out of vocabulary words) and performs poorly on rare words.</li>
+</ul>
+<p><a href="http://torch.ch/blog/2016/07/25/nce.html">Blog: Language modeling a billion words</a> also shared some thoughts comparing character based tokenization v.s. word based tokenization. Taken directly from the post.</p>
+<blockquote><p>Word-level models have an important advantage over char-level models. Take the following sequence as an example (a quote from Robert A. Heinlein):</p>
+<p>Progress isn't made by early risers. It's made by lazy men trying to find easier ways to do something.</p>
+<p>After tokenization, the word-level model might view this sequence as containing 22 tokens. On the other hand, the char-level will view this sequence as containing 102 tokens. This longer sequence makes the task of the character model harder than the word model, as it must take into account dependencies between more tokens over more time-steps. Another issue with character language models is that they need to learn spelling in addition to syntax, semantics, etc. In any case, word language models will typically have lower error than character models.</p>
+<p>The main advantage of character over word language models is that they have a really small vocabulary. For example, the GBW dataset will contain approximately 800 characters compared to 800,000 words (after pruning low-frequency tokens). In practice this means that character models will require less memory and have faster inference than their word counterparts. Another advantage is that they do not require tokenization as a preprocessing step.</p>
+</blockquote>
+<p><strong>Subword Level</strong></p>
+<p>As we can probably imagine, subword level is somewhere between character level and word level, hence tries to bring in the the pros (being able to handle out of vocabulary or rare words better) and mitigate the drawback (too fine-grained for downstream tasks) from both approaches. With subword level, what we are aiming for is to represent open vocabulary through a fixed-sized vocabulary of variable length character sequences. e.g. the word highest might be segmented into subwords high and est.</p>
+<p>There're many different methods for generating these subwords. e.g.</p>
+<ul>
+<li>A naive way way is to brute force generate the subwords by sliding through a fix sized window. e.g. highest -&gt; hig, igh, ghe, etc.</li>
+<li>More clever approaches such as Byte Pair Encoding, Unigram models. We won't be covering the internals of these approaches here. There's another <a href="https://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/subword/bpe.ipynb">document</a> that goes more in-depth into Byte Pair Encoding and sentencepiece, the open-sourced package that we'll be using here to experiment with subword tokenization.</li>
+</ul>
 
 </div>
 </div>
@@ -13439,7 +13461,7 @@ keras 2.2.2
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation">&#182;</a></h2>
+<h2 id="Data-Preprocessing">Data Preprocessing<a class="anchor-link" href="#Data-Preprocessing">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -13653,6 +13675,7 @@ keras 2.2.2
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">text_col</span> <span class="o">=</span> <span class="s1">&#39;review&#39;</span>
 <span class="n">label_col</span> <span class="o">=</span> <span class="s1">&#39;sentiment&#39;</span>
+
 <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">clean_text</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">text_col</span><span class="p">,</span> <span class="n">label_col</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sample text: &#39;</span><span class="p">,</span> <span class="n">texts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;corresponding label:&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -13726,258 +13749,6 @@ validation size:  5000
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">max_num_words</span> <span class="o">=</span> <span class="mi">20000</span>
-
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">max_num_words</span><span class="p">,</span> <span class="n">oov_token</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;&#39;</span><span class="p">)</span>
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> unique tokens.&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span><span class="p">))</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Found 74207 unique tokens.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">max_sequence_len</span> <span class="o">=</span> <span class="mi">1000</span>
-
-<span class="n">sequences_train</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
-<span class="n">x_train</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_train</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
-
-<span class="n">sequences_val</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_val</span><span class="p">)</span>
-<span class="n">x_val</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_val</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
-
-<span class="n">sequences_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[11]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[50, 1, 863, 2, 17]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Glove">Glove<a class="anchor-link" href="#Glove">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>There are many different pretrained word embeddings online. The one we'll be using is from <a href="https://nlp.stanford.edu/projects/glove/">Glove</a>. Others include but not limited to <a href="https://fasttext.cc/docs/en/crawl-vectors.html">FastText</a>, <a href="https://github.com/bheinzerling/bpemb">bpemb</a>.</p>
-<p>If we look at the project's wiki page, we can find any different pretrained embeddings available for us to experiment.</p>
-<p><img src="img/pretrained_weights.png" width="100%" height="100%"></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
-
-<span class="k">def</span> <span class="nf">download_glove</span><span class="p">(</span><span class="n">embedding_type</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;glove.6B.zip&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    download GloVe word vector representations, this step may take a while</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    embedding_type : str, default &#39;glove.6B.zip&#39;</span>
-<span class="sd">        Specifying different glove embeddings to download if not already there.</span>
-<span class="sd">        {&#39;glove.6B.zip&#39;, &#39;glove.42B.300d.zip&#39;, &#39;glove.840B.300d.zip&#39;, &#39;glove.twitter.27B.zip&#39;}</span>
-<span class="sd">        Be wary of the size. e.g. &#39;glove.6B.zip&#39; is a 822 MB zipped, 2GB unzipped</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;http://nlp.stanford.edu/data/&#39;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">embedding_type</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="n">embedding_type</span>
-
-        <span class="c1"># the following section is a pretty generic http get request for</span>
-        <span class="c1"># saving large files, provides progress bars for checking progress</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-
-        <span class="n">content_len</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Length&#39;</span><span class="p">)</span>
-        <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">content_len</span><span class="p">)</span> <span class="k">if</span> <span class="n">content_len</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
-
-        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">embedding_type</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>
-                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;application/zip&#39;</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">zipfile</span> <span class="k">import</span> <span class="n">ZipFile</span>
-            <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">embedding_type</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">embedding_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">))</span>
-
-
-<span class="n">download_glove</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The way we'll leverage the pretrained embedding is to first read it in as a dictionary lookup, where the key is the word and the value is the corresponding word embedding. Then for each token in our vocabulary, we'll lookup this dictionary to see if there's a pretrained embedding available, if there is, we'll use the pretrained embedding, if there isn't, we'll leave the embedding for this word in its original randomly initialized form.</p>
-<p>The format for this particular pretrained embedding is for every line, we have a space delimited values, where the first token is the word, and the rest are its corresponding embedding values. e.g. the first line from the line looks like:</p>
-
-<pre><code>the -0.038194 -0.24487 0.72812 -0.39961 0.083172 0.043953 -0.39141 0.3344 -0.57545 0.087459 0.28787 -0.06731 0.30906 -0.26384 -0.13231 -0.20757 0.33395 -0.33848 -0.31743 -0.48336 0.1464 -0.37304 0.34577 0.052041 0.44946 -0.46971 0.02628 -0.54155 -0.15518 -0.14107 -0.039722 0.28277 0.14393 0.23464 -0.31021 0.086173 0.20397 0.52624 0.17164 -0.082378 -0.71787 -0.41531 0.20335 -0.12763 0.41367 0.55187 0.57908 -0.33477 -0.36559 -0.54857 -0.062892 0.26584 0.30205 0.99775 -0.80481 -3.0243 0.01254 -0.36942 2.2167 0.72201 -0.24978 0.92136 0.034514 0.46745 1.1079 -0.19358 -0.074575 0.23353 -0.052062 -0.22044 0.057162 -0.15806 -0.30798 -0.41625 0.37972 0.15006 -0.53212 -0.2055 -1.2526 0.071624 0.70565 0.49744 -0.42063 0.26148 -1.538 -0.30223 -0.073438 -0.28312 0.37104 -0.25217 0.016215 -0.017099 -0.38984 0.87424 -0.72569 -0.51058 -0.52028 -0.1459 0.8278 0.27062</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_embedding_lookup</span><span class="p">(</span><span class="n">embedding_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="n">embedding_lookup</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">embedding_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="n">word</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-            <span class="n">embedding_lookup</span><span class="p">[</span><span class="n">word</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef</span>
-
-    <span class="k">return</span> <span class="n">embedding_lookup</span>
-
-
-<span class="k">def</span> <span class="nf">get_pretrained_embedding</span><span class="p">(</span><span class="n">embedding_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                             <span class="n">index2word</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-                             <span class="n">max_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="n">embedding_lookup</span> <span class="o">=</span> <span class="n">get_embedding_lookup</span><span class="p">(</span><span class="n">embedding_path</span><span class="p">)</span>
-
-    <span class="n">pretrained_embedding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">embedding_lookup</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-    <span class="n">embedding_dim</span> <span class="o">=</span> <span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-                                  <span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
-                                  <span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-    <span class="c1"># we track how many tokens in our vocabulary exists in the pre-trained embedding,</span>
-    <span class="c1"># i.e. how many tokens has a pre-trained embedding from this particular file</span>
-    <span class="n">n_found</span> <span class="o">=</span> <span class="mi">0</span>
-    
-    <span class="c1"># the loop starts from 1 due to keras&#39; Tokenizer reserves 0 for padding index</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_features</span><span class="p">):</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="n">index2word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">embedding_vector</span> <span class="o">=</span> <span class="n">embedding_lookup</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">embedding_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">embeddings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding_vector</span>
-            <span class="n">n_found</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;number of words found:&#39;</span><span class="p">,</span> <span class="n">n_found</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">embeddings</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">glove_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;glove.6B&#39;</span><span class="p">,</span> <span class="s1">&#39;glove.6B.100d.txt&#39;</span><span class="p">)</span>
-<span class="n">max_features</span> <span class="o">=</span> <span class="n">max_num_words</span> <span class="o">+</span> <span class="mi">1</span>
-
-<span class="n">pretrained_embedding</span> <span class="o">=</span> <span class="n">get_pretrained_embedding</span><span class="p">(</span><span class="n">glove_path</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">index_word</span><span class="p">,</span> <span class="n">max_features</span><span class="p">)</span>
-<span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>number of words found: 19654
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[14]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(20001, 100)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13988,34 +13759,22 @@ validation size:  5000
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To train our text classifier, we specify a 1D convolutional network. Our embedding layer can either be initialized randomly or loaded from a pre-trained embedding. Note that for the pre-trained embedding case, apart from loading the weights, we also "freeze" the embedding layer, i.e. we set its trainable attribute to False. This idea is often times used in transfer learning, where when parts of a model are pre-trained (in our case, only our Embedding layer), and parts of it are randomly initialized, the pre-trained part should ideally not be trained together with the randomly initialized part. The rationale behind it is that a large gradient update triggered by the randomly initialized layer would become very disruptive to those pre-trained weights.</p>
-<p>Once we train the randomly initialized weights for a few iterations, we can then go about un-freezing the layers that were loaded with pre-trained weights, and do an update on the weight for the entire thing. The <a href="https://keras.io/applications/#fine-tune-inceptionv3-on-a-new-set-of-classes">keras documentation</a> also provides an example of how to do this, although the example is for image models, the same idea can also be applied here, and can be something that's worth experimenting.</p>
+<p>To train our text classifier, we specify a 1D convolutional network. The comparison we'll be experimenting is whether subword-level model gives a better performance than word-level model.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                    <span class="n">max_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                    <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                    <span class="n">optimizer</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span>
-                    <span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">],</span>
-                    <span class="n">pretrained_embedding</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">optimizer</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
 
     <span class="n">sequence_input</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">pretrained_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">embedded_sequences</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>
-                                              <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding&#39;</span><span class="p">)(</span><span class="n">sequence_input</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">embedded_sequences</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="n">pretrained_embedding</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                              <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="n">pretrained_embedding</span><span class="p">],</span>
-                                              <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding&#39;</span><span class="p">,</span>
-                                              <span class="n">trainable</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">sequence_input</span><span class="p">)</span>
-
+    <span class="n">embedded_sequences</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">max_features</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>
+                                          <span class="n">trainable</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">sequence_input</span><span class="p">)</span>
     <span class="n">conv1</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Conv1D</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">embedded_sequences</span><span class="p">)</span>
     <span class="n">pool1</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">MaxPooling1D</span><span class="p">(</span><span class="mi">5</span><span class="p">)(</span><span class="n">conv1</span><span class="p">)</span>
     <span class="n">conv2</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Conv1D</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">pool1</span><span class="p">)</span>
@@ -14041,18 +13800,214 @@ validation size:  5000
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Model-with-Pretrained-Embedding">Model with Pretrained Embedding<a class="anchor-link" href="#Model-with-Pretrained-Embedding">&#182;</a></h3>
+<h3 id="Subword-Level-Tokenizer">Subword-Level Tokenizer<a class="anchor-link" href="#Subword-Level-Tokenizer">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The next couple of code chunks trains the subword vocabulary, encode our original text into these subwords and pads the sequences into a fixed length.</p>
+<p>Note the the <code>pad_sequences</code> function from keras assumes that index 0 is reserved for padding, hence when learning the subword vocabulary using <code>sentencepiece</code>, we make sure to keep the index consistent.</p>
+
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># write the raw text so that sentencepiece can consume it</span>
+<span class="n">temp_file</span> <span class="o">=</span> <span class="s1">&#39;train.txt&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">texts</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sentencepiece</span> <span class="k">import</span> <span class="n">SentencePieceTrainer</span><span class="p">,</span> <span class="n">SentencePieceProcessor</span>
+
+<span class="n">max_num_words</span> <span class="o">=</span> <span class="mi">30000</span>
+<span class="n">model_type</span> <span class="o">=</span> <span class="s1">&#39;unigram&#39;</span>
+<span class="n">model_prefix</span> <span class="o">=</span> <span class="n">model_type</span>
+<span class="n">pad_id</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">unk_id</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">bos_id</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">eos_id</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">sentencepiece_params</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+    <span class="s1">&#39;--input=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">temp_file</span><span class="p">),</span>
+    <span class="s1">&#39;--model_type=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_type</span><span class="p">),</span>
+    <span class="s1">&#39;--model_prefix=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_type</span><span class="p">),</span>
+    <span class="s1">&#39;--vocab_size=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_num_words</span><span class="p">),</span>
+    <span class="s1">&#39;--pad_id=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pad_id</span><span class="p">),</span>
+    <span class="s1">&#39;--unk_id=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unk_id</span><span class="p">),</span>
+    <span class="s1">&#39;--bos_id=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bos_id</span><span class="p">),</span>
+    <span class="s1">&#39;--eos_id=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">eos_id</span><span class="p">)</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sentencepiece_params</span><span class="p">)</span>
+<span class="n">SentencePieceTrainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">sentencepiece_params</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--input=train.txt --model_type=unigram --model_prefix=unigram --vocab_size=30000 --pad_id=0 --unk_id=1 --bos_id=2 --eos_id=3
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sp</span> <span class="o">=</span> <span class="n">SentencePieceProcessor</span><span class="p">()</span>
+<span class="n">sp</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.model&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_prefix</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> unique tokens.&#39;</span> <span class="o">%</span> <span class="n">sp</span><span class="o">.</span><span class="n">get_piece_size</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Found 30000 unique tokens.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">max_sequence_len</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">sequences_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">encode_as_ids</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts_train</span><span class="p">]</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_train</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+
+<span class="n">sequences_val</span> <span class="o">=</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">encode_as_ids</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts_val</span><span class="p">]</span>
+<span class="n">x_val</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_val</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+
+<span class="n">sequences_train</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[62, 5086, 4170, 2260, 2520]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sample text: &#39;</span><span class="p">,</span> <span class="n">texts_train</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sample text: &#39;</span><span class="p">,</span> <span class="n">sp</span><span class="o">.</span><span class="n">encode_as_pieces</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">decode_ids</span><span class="p">(</span><span class="n">x_train</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sample text:  when gundam0079 became the movie trilogy most of us are familiar with, a lot of it was sheer action and less of anything else. this ova is kinda the opposite. though therere only half a dozen episodes, it isnt filled with action, but emotional things. the two main action sequences in this, i believe, are enough to satisfy me. after seeing so many gundam series, movies, and ovas, i was completely ready for a civilian-esquire movie. this movie did a fantastic job of that. what makes this movie stand out is that shows both sides of the war have good and bad people. it made the zeons seem more human rather than the original movies where theyre depicted as the second rise of evil nazis. most people that dont like anime that ive forced to watch this movie (lol), liked it. so, id recommend it to a lot of people just for the anti-war story. if youre a gundam fan, and havent seen this, you shouldnt be reading this; you should already be watching it right now.
+sample text:  [&#39;▁when&#39;, &#39;▁gundam&#39;, &#39;00&#39;, &#39;7&#39;, &#39;9&#39;, &#39;▁became&#39;, &#39;▁the&#39;, &#39;▁movie&#39;, &#39;▁trilogy&#39;, &#39;▁most&#39;, &#39;▁of&#39;, &#39;▁us&#39;, &#39;▁are&#39;, &#39;▁familiar&#39;, &#39;▁with&#39;, &#39;,&#39;, &#39;▁a&#39;, &#39;▁lot&#39;, &#39;▁of&#39;, &#39;▁it&#39;, &#39;▁was&#39;, &#39;▁sheer&#39;, &#39;▁action&#39;, &#39;▁and&#39;, &#39;▁less&#39;, &#39;▁of&#39;, &#39;▁anything&#39;, &#39;▁else&#39;, &#39;.&#39;, &#39;▁this&#39;, &#39;▁ova&#39;, &#39;▁is&#39;, &#39;▁kinda&#39;, &#39;▁the&#39;, &#39;▁opposite&#39;, &#39;.&#39;, &#39;▁though&#39;, &#39;▁there&#39;, &#39;re&#39;, &#39;▁only&#39;, &#39;▁half&#39;, &#39;▁a&#39;, &#39;▁dozen&#39;, &#39;▁episodes&#39;, &#39;,&#39;, &#39;▁it&#39;, &#39;▁isnt&#39;, &#39;▁filled&#39;, &#39;▁with&#39;, &#39;▁action&#39;, &#39;,&#39;, &#39;▁but&#39;, &#39;▁emotional&#39;, &#39;▁things&#39;, &#39;.&#39;, &#39;▁the&#39;, &#39;▁two&#39;, &#39;▁main&#39;, &#39;▁action&#39;, &#39;▁sequences&#39;, &#39;▁in&#39;, &#39;▁this&#39;, &#39;,&#39;, &#39;▁i&#39;, &#39;▁believe&#39;, &#39;,&#39;, &#39;▁are&#39;, &#39;▁enough&#39;, &#39;▁to&#39;, &#39;▁satisfy&#39;, &#39;▁me&#39;, &#39;.&#39;, &#39;▁after&#39;, &#39;▁seeing&#39;, &#39;▁so&#39;, &#39;▁many&#39;, &#39;▁gundam&#39;, &#39;▁series&#39;, &#39;,&#39;, &#39;▁movies&#39;, &#39;,&#39;, &#39;▁and&#39;, &#39;▁ova&#39;, &#39;s&#39;, &#39;,&#39;, &#39;▁i&#39;, &#39;▁was&#39;, &#39;▁completely&#39;, &#39;▁ready&#39;, &#39;▁for&#39;, &#39;▁a&#39;, &#39;▁civilian&#39;, &#39;-&#39;, &#39;esquire&#39;, &#39;▁movie&#39;, &#39;.&#39;, &#39;▁this&#39;, &#39;▁movie&#39;, &#39;▁did&#39;, &#39;▁a&#39;, &#39;▁fantastic&#39;, &#39;▁job&#39;, &#39;▁of&#39;, &#39;▁that&#39;, &#39;.&#39;, &#39;▁what&#39;, &#39;▁makes&#39;, &#39;▁this&#39;, &#39;▁movie&#39;, &#39;▁stand&#39;, &#39;▁out&#39;, &#39;▁is&#39;, &#39;▁that&#39;, &#39;▁shows&#39;, &#39;▁both&#39;, &#39;▁sides&#39;, &#39;▁of&#39;, &#39;▁the&#39;, &#39;▁war&#39;, &#39;▁have&#39;, &#39;▁good&#39;, &#39;▁and&#39;, &#39;▁bad&#39;, &#39;▁people&#39;, &#39;.&#39;, &#39;▁it&#39;, &#39;▁made&#39;, &#39;▁the&#39;, &#39;▁zeon&#39;, &#39;s&#39;, &#39;▁seem&#39;, &#39;▁more&#39;, &#39;▁human&#39;, &#39;▁rather&#39;, &#39;▁than&#39;, &#39;▁the&#39;, &#39;▁original&#39;, &#39;▁movies&#39;, &#39;▁where&#39;, &#39;▁theyre&#39;, &#39;▁depicted&#39;, &#39;▁as&#39;, &#39;▁the&#39;, &#39;▁second&#39;, &#39;▁rise&#39;, &#39;▁of&#39;, &#39;▁evil&#39;, &#39;▁nazis&#39;, &#39;.&#39;, &#39;▁most&#39;, &#39;▁people&#39;, &#39;▁that&#39;, &#39;▁dont&#39;, &#39;▁like&#39;, &#39;▁anime&#39;, &#39;▁that&#39;, &#39;▁ive&#39;, &#39;▁forced&#39;, &#39;▁to&#39;, &#39;▁watch&#39;, &#39;▁this&#39;, &#39;▁movie&#39;, &#39;▁(&#39;, &#39;lol&#39;, &#39;),&#39;, &#39;▁liked&#39;, &#39;▁it&#39;, &#39;.&#39;, &#39;▁so&#39;, &#39;,&#39;, &#39;▁id&#39;, &#39;▁recommend&#39;, &#39;▁it&#39;, &#39;▁to&#39;, &#39;▁a&#39;, &#39;▁lot&#39;, &#39;▁of&#39;, &#39;▁people&#39;, &#39;▁just&#39;, &#39;▁for&#39;, &#39;▁the&#39;, &#39;▁anti&#39;, &#39;-&#39;, &#39;war&#39;, &#39;▁story&#39;, &#39;.&#39;, &#39;▁if&#39;, &#39;▁youre&#39;, &#39;▁a&#39;, &#39;▁gundam&#39;, &#39;▁fan&#39;, &#39;,&#39;, &#39;▁and&#39;, &#39;▁havent&#39;, &#39;▁seen&#39;, &#39;▁this&#39;, &#39;,&#39;, &#39;▁you&#39;, &#39;▁shouldnt&#39;, &#39;▁be&#39;, &#39;▁reading&#39;, &#39;▁this&#39;, &#39;;&#39;, &#39;▁you&#39;, &#39;▁should&#39;, &#39;▁already&#39;, &#39;▁be&#39;, &#39;▁watching&#39;, &#39;▁it&#39;, &#39;▁right&#39;, &#39;▁now&#39;, &#39;.&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">model1</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span>
-                         <span class="n">pretrained_embedding</span><span class="o">=</span><span class="n">pretrained_embedding</span><span class="p">)</span>
+<span class="n">model1</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_num_words</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 <span class="n">model1</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
@@ -14076,18 +14031,6 @@ WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/ten
 
 WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:4432: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
 
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:190: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
-
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:197: The name tf.ConfigProto is deprecated. Please use tf.compat.v1.ConfigProto instead.
-
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:203: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
-
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:207: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
-
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:216: The name tf.is_variable_initialized is deprecated. Please use tf.compat.v1.is_variable_initialized instead.
-
-WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:223: The name tf.variables_initializer is deprecated. Please use tf.compat.v1.variables_initializer instead.
-
 WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:4267: The name tf.nn.max_pool is deprecated. Please use tf.nn.max_pool2d instead.
 
 WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/optimizers.py:793: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
@@ -14100,7 +14043,7 @@ Layer (type)                 Output Shape              Param #
 =================================================================
 input_1 (InputLayer)         (None, 1000)              0         
 _________________________________________________________________
-embedding (Embedding)        (None, 1000, 100)         2000100   
+embedding_1 (Embedding)      (None, 1000, 100)         3000100   
 _________________________________________________________________
 conv1d_1 (Conv1D)            (None, 996, 128)          64128     
 _________________________________________________________________
@@ -14120,9 +14063,9 @@ dense_1 (Dense)              (None, 128)               16512
 _________________________________________________________________
 dense_2 (Dense)              (None, 2)                 258       
 =================================================================
-Total params: 2,245,094
-Trainable params: 244,994
-Non-trainable params: 2,000,100
+Total params: 3,245,094
+Trainable params: 3,245,094
+Non-trainable params: 0
 _________________________________________________________________
 </pre>
 </div>
@@ -14132,149 +14075,13 @@ _________________________________________________________________
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can confirm whether our embedding layer is trainable by looping through each layer and checking the trainable attribute.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_model_layers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">[(</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="o">.</span><span class="n">trainable</span><span class="p">,</span> <span class="n">layer</span><span class="o">.</span><span class="n">count_params</span><span class="p">())</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model1</span><span class="o">.</span><span class="n">layers</span><span class="p">],</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="s1">&#39;trainable&#39;</span><span class="p">,</span> <span class="s1">&#39;n_params&#39;</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">df_model_layers</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>layer</th>
-      <th>trainable</th>
-      <th>n_params</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>input_1</td>
-      <td>False</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>embedding</td>
-      <td>False</td>
-      <td>2000100</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>conv1d_1</td>
-      <td>True</td>
-      <td>64128</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>max_pooling1d_1</td>
-      <td>True</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>conv1d_2</td>
-      <td>True</td>
-      <td>82048</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>max_pooling1d_2</td>
-      <td>True</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>conv1d_3</td>
-      <td>True</td>
-      <td>82048</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>max_pooling1d_3</td>
-      <td>True</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>flatten_1</td>
-      <td>True</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>dense_1</td>
-      <td>True</td>
-      <td>16512</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>dense_2</td>
-      <td>True</td>
-      <td>258</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 70</span>
-<span class="c1"># test performance : auc 0.93212</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 120</span>
+<span class="c1"># performance : 0.92936</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="n">history1</span> <span class="o">=</span> <span class="n">model1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
                       <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
@@ -14306,36 +14113,48 @@ WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/ten
 
 WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:1020: The name tf.assign is deprecated. Please use tf.compat.v1.assign instead.
 
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:3005: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
+
 Train on 20000 samples, validate on 5000 samples
 Epoch 1/8
-20000/20000 [==============================] - 12s 604us/step - loss: 0.5854 - acc: 0.6748 - val_loss: 0.4772 - val_acc: 0.7808
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:190: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:197: The name tf.ConfigProto is deprecated. Please use tf.compat.v1.ConfigProto instead.
+
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:207: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:216: The name tf.is_variable_initialized is deprecated. Please use tf.compat.v1.is_variable_initialized instead.
+
+WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/keras/backend/tensorflow_backend.py:223: The name tf.variables_initializer is deprecated. Please use tf.compat.v1.variables_initializer instead.
+
+20000/20000 [==============================] - 7s 363us/step - loss: 0.5963 - acc: 0.6101 - val_loss: 0.3138 - val_acc: 0.8702
 Epoch 2/8
-20000/20000 [==============================] - 8s 416us/step - loss: 0.4001 - acc: 0.8186 - val_loss: 0.3766 - val_acc: 0.8352
+20000/20000 [==============================] - 4s 224us/step - loss: 0.2239 - acc: 0.9120 - val_loss: 0.2991 - val_acc: 0.8820
 Epoch 3/8
-20000/20000 [==============================] - 8s 414us/step - loss: 0.3428 - acc: 0.8507 - val_loss: 0.4276 - val_acc: 0.7966
+20000/20000 [==============================] - 4s 223us/step - loss: 0.0797 - acc: 0.9738 - val_loss: 0.3427 - val_acc: 0.8852
 Epoch 4/8
-20000/20000 [==============================] - 8s 415us/step - loss: 0.2790 - acc: 0.8842 - val_loss: 0.3433 - val_acc: 0.8594
+20000/20000 [==============================] - 4s 224us/step - loss: 0.0193 - acc: 0.9946 - val_loss: 0.5095 - val_acc: 0.8814
 Epoch 5/8
-20000/20000 [==============================] - 8s 415us/step - loss: 0.2469 - acc: 0.8987 - val_loss: 0.4015 - val_acc: 0.8310
+20000/20000 [==============================] - 4s 222us/step - loss: 0.0050 - acc: 0.9988 - val_loss: 0.7519 - val_acc: 0.8704
 Epoch 6/8
-20000/20000 [==============================] - 8s 420us/step - loss: 0.1782 - acc: 0.9289 - val_loss: 0.4670 - val_acc: 0.8296
+20000/20000 [==============================] - 4s 223us/step - loss: 0.0016 - acc: 0.9999 - val_loss: 0.7487 - val_acc: 0.8840
 Epoch 7/8
-20000/20000 [==============================] - 8s 419us/step - loss: 0.1017 - acc: 0.9643 - val_loss: 0.5965 - val_acc: 0.8146
+20000/20000 [==============================] - 4s 223us/step - loss: 2.0759e-04 - acc: 1.0000 - val_loss: 0.8045 - val_acc: 0.8810
 Epoch 8/8
-20000/20000 [==============================] - 8s 418us/step - loss: 0.0680 - acc: 0.9758 - val_loss: 0.6876 - val_acc: 0.8332
+20000/20000 [==============================] - 4s 223us/step - loss: 5.2034e-05 - acc: 1.0000 - val_loss: 0.8260 - val_acc: 0.8824
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[19]:</div>
+    <div class="prompt output_prompt">Out[0]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>70.9072277545929</pre>
+<pre>39.04836106300354</pre>
 </div>
 
 </div>
@@ -14347,17 +14166,67 @@ Epoch 8/8
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Model-without-Pretrained-Embedding">Model without Pretrained Embedding<a class="anchor-link" href="#Model-without-Pretrained-Embedding">&#182;</a></h3>
+<h3 id="Word-Level-Tokenizer">Word-Level Tokenizer<a class="anchor-link" href="#Word-Level-Tokenizer">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">max_num_words</span><span class="p">,</span> <span class="n">oov_token</span><span class="o">=</span><span class="s1">&#39;&lt;unk&gt;&#39;</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Found </span><span class="si">%s</span><span class="s1"> unique tokens.&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Found 74207 unique tokens.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sequences_train</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_train</span><span class="p">)</span>
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_train</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+
+<span class="n">sequences_val</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_val</span><span class="p">)</span>
+<span class="n">x_val</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_val</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_classes</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">model2</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="n">simple_text_cnn</span><span class="p">(</span><span class="n">max_sequence_len</span><span class="p">,</span> <span class="n">max_num_words</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
@@ -14381,7 +14250,7 @@ Layer (type)                 Output Shape              Param #
 =================================================================
 input_2 (InputLayer)         (None, 1000)              0         
 _________________________________________________________________
-embedding (Embedding)        (None, 1000, 100)         2000100   
+embedding_2 (Embedding)      (None, 1000, 100)         3000100   
 _________________________________________________________________
 conv1d_4 (Conv1D)            (None, 996, 128)          64128     
 _________________________________________________________________
@@ -14401,8 +14270,8 @@ dense_3 (Dense)              (None, 128)               16512
 _________________________________________________________________
 dense_4 (Dense)              (None, 2)                 258       
 =================================================================
-Total params: 2,245,094
-Trainable params: 2,245,094
+Total params: 3,245,094
+Trainable params: 3,245,094
 Non-trainable params: 0
 _________________________________________________________________
 </pre>
@@ -14415,19 +14284,19 @@ _________________________________________________________________
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 86 secs</span>
-<span class="c1"># test performance : auc 0.92310</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># time : 120</span>
+<span class="c1"># performance : 0.92520</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">history1</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
+<span class="n">history2</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span>
                       <span class="n">validation_data</span><span class="o">=</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">),</span>
                       <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
                       <span class="n">epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">elapse1</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
-<span class="n">elapse1</span>
+<span class="n">elapse2</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+<span class="n">elapse2</span>
 </pre></div>
 
     </div>
@@ -14446,34 +14315,34 @@ _________________________________________________________________
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Train on 20000 samples, validate on 5000 samples
 Epoch 1/8
-20000/20000 [==============================] - 11s 570us/step - loss: 0.5010 - acc: 0.7065 - val_loss: 0.3016 - val_acc: 0.8730
+20000/20000 [==============================] - 5s 257us/step - loss: 0.5386 - acc: 0.6734 - val_loss: 0.3237 - val_acc: 0.8708
 Epoch 2/8
-20000/20000 [==============================] - 11s 542us/step - loss: 0.2024 - acc: 0.9243 - val_loss: 0.2816 - val_acc: 0.8824
+20000/20000 [==============================] - 5s 227us/step - loss: 0.2028 - acc: 0.9216 - val_loss: 0.2670 - val_acc: 0.8908
 Epoch 3/8
-20000/20000 [==============================] - 11s 538us/step - loss: 0.0806 - acc: 0.9734 - val_loss: 0.3552 - val_acc: 0.8812
+20000/20000 [==============================] - 4s 225us/step - loss: 0.0668 - acc: 0.9785 - val_loss: 0.3612 - val_acc: 0.8886
 Epoch 4/8
-20000/20000 [==============================] - 11s 535us/step - loss: 0.0272 - acc: 0.9917 - val_loss: 0.4671 - val_acc: 0.8836
+20000/20000 [==============================] - 5s 225us/step - loss: 0.0205 - acc: 0.9937 - val_loss: 0.4852 - val_acc: 0.8826
 Epoch 5/8
-20000/20000 [==============================] - 11s 543us/step - loss: 0.0088 - acc: 0.9973 - val_loss: 0.6534 - val_acc: 0.8788
+20000/20000 [==============================] - 5s 225us/step - loss: 0.0059 - acc: 0.9985 - val_loss: 0.6764 - val_acc: 0.8786
 Epoch 6/8
-20000/20000 [==============================] - 11s 542us/step - loss: 0.0090 - acc: 0.9973 - val_loss: 0.7522 - val_acc: 0.8740
+20000/20000 [==============================] - 5s 228us/step - loss: 0.0021 - acc: 0.9995 - val_loss: 0.7321 - val_acc: 0.8788
 Epoch 7/8
-20000/20000 [==============================] - 11s 542us/step - loss: 0.0104 - acc: 0.9967 - val_loss: 1.0453 - val_acc: 0.8480
+20000/20000 [==============================] - 5s 226us/step - loss: 0.0022 - acc: 0.9995 - val_loss: 0.8057 - val_acc: 0.8840
 Epoch 8/8
-20000/20000 [==============================] - 11s 543us/step - loss: 0.0205 - acc: 0.9924 - val_loss: 0.6930 - val_acc: 0.8712
+20000/20000 [==============================] - 5s 226us/step - loss: 0.0034 - acc: 0.9990 - val_loss: 0.8816 - val_acc: 0.8808
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[21]:</div>
+    <div class="prompt output_prompt">Out[0]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>87.63022541999817</pre>
+<pre>37.271193742752075</pre>
 </div>
 
 </div>
@@ -14492,14 +14361,14 @@ Epoch 8/8
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For the submission section, we read in and preprocess the test data provided by the competition, then generate the predicted probability column for both the model that uses pretrained embedding and one that doesn't to compare their performance.</p>
+<p>For the submission section, we read in and preprocess the test data provided by the competition, then generate the predicted probability column for both the model that uses word-level tokenization and one that uses subword tokenization to compare their performance.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;word2vec-nlp-tutorial&#39;</span><span class="p">,</span> <span class="s1">&#39;testData.tsv&#39;</span><span class="p">)</span>
@@ -14529,7 +14398,7 @@ Epoch 8/8
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[22]:</div>
+    <div class="prompt output_prompt">Out[0]:</div>
 
 
 
@@ -14615,13 +14484,15 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">texts_test</span> <span class="o">=</span> <span class="n">clean_text_without_label</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">text_col</span><span class="p">)</span>
-<span class="n">sequences_test</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_test</span><span class="p">)</span>
-<span class="n">x_test</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sequences_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
-<span class="nb">len</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+<span class="c1"># word-level</span>
+<span class="n">word_sequences_test</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts_test</span><span class="p">)</span>
+<span class="n">word_x_test</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">word_sequences_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">word_x_test</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14634,7 +14505,43 @@ Epoch 8/8
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[25]:</div>
+    <div class="prompt output_prompt">Out[0]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>25000</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># subword-level</span>
+<span class="n">sentencepiece_sequences_test</span> <span class="o">=</span> <span class="p">[</span><span class="n">sp</span><span class="o">.</span><span class="n">encode_as_ids</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts_test</span><span class="p">]</span>
+<span class="n">sentencepiece_x_test</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">sentencepiece_sequences_test</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_sequence_len</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">sentencepiece_x_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[0]:</div>
 
 
 
@@ -14679,22 +14586,21 @@ Epoch 8/8
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ids_col</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
 <span class="n">label_col</span> <span class="o">=</span> <span class="s1">&#39;sentiment&#39;</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">ids_col</span><span class="p">]</span>
 
-<span class="n">models</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;pretrained_embedding&#39;</span><span class="p">:</span> <span class="n">model1</span><span class="p">,</span>
-    <span class="s1">&#39;without_pretrained_embedding&#39;</span><span class="p">:</span> <span class="n">model2</span>
+<span class="n">predictions_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;sentencepiece_cnn&#39;</span><span class="p">:</span> <span class="n">model1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sentencepiece_x_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="c1"># 0.92936</span>
+    <span class="s1">&#39;word_cnn&#39;</span><span class="p">:</span> <span class="n">model2</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">word_x_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="c1"># 0.92520</span>
 <span class="p">}</span>
 
-<span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">predictions</span> <span class="ow">in</span> <span class="n">predictions_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;generating submission for: &#39;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
     <span class="n">submission_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">submission_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_submission.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span><span class="p">))</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">df_submission</span> <span class="o">=</span> <span class="n">create_submission</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">ids_col</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">)</span>
 
 <span class="c1"># sanity check to make sure the size and the output of the submission makes sense</span>
@@ -14716,10 +14622,8 @@ Epoch 8/8
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>generating submission for:  pretrained_embedding
-25000/25000 [==============================] - 6s 228us/step
-generating submission for:  without_pretrained_embedding
-25000/25000 [==============================] - 6s 222us/step
+<pre>generating submission for:  sentencepiece_cnn
+generating submission for:  word_cnn
 (25000, 2)
 </pre>
 </div>
@@ -14727,7 +14631,7 @@ generating submission for:  without_pretrained_embedding
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[27]:</div>
+    <div class="prompt output_prompt">Out[0]:</div>
 
 
 
@@ -14768,12 +14672,12 @@ generating submission for:  without_pretrained_embedding
     <tr>
       <th>2</th>
       <td>5828_4</td>
-      <td>0.005</td>
+      <td>0.000</td>
     </tr>
     <tr>
       <th>3</th>
       <td>7186_2</td>
-      <td>0.071</td>
+      <td>1.000</td>
     </tr>
     <tr>
       <th>4</th>
@@ -14801,7 +14705,11 @@ generating submission for:  without_pretrained_embedding
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this article, we took a look at how to leverage pre-trained word embeddings for our text classification task. There're also various Kaggle Kernels <a href="https://www.kaggle.com/sudalairajkumar/a-look-at-different-embeddings">here</a> and <a href="https://www.kaggle.com/sbongo/do-pretrained-embeddings-give-you-the-extra-edge">here</a> that experiments whether different pre-trained embeddings or even an ensemble of models each with a different pre-trained embedding on various text classification tasks to see if it gives us an edge.</p>
+<p>We've looked at the performance of leveraging subword tokenization for our text classification task. Note that some other ideas that we did not try out are:</p>
+<ul>
+<li>Use <a href="https://www.analyticsvidhya.com/blog/2019/07/how-get-started-nlp-6-unique-ways-perform-tokenization/">other word-level tokenizers</a>. Another popular choice at the point of writing this documentation is <a href="https://spacy.io/usage/spacy-101#annotations-token">spacy's tokenizer</a>.</li>
+<li><a href="https://github.com/google/sentencepiece#trains-from-raw-sentences">Sentencepiece suggests</a> that it can be trained on raw text without the need to perform language specific segmentation beforehand, e.g. using the spacy tokenizer on our raw text data before feeding it to sentencepiece to learn the subword vocabulary. We can conduct our own experiment on the task at hand to verify that claim. Sentencepiece also includes an <a href="https://github.com/google/sentencepiece/blob/master/doc/experiments.md">experiments page</a> that documents some of the experiments they've conducted.</li>
+</ul>
 
 </div>
 </div>
@@ -14817,9 +14725,8 @@ generating submission for:  without_pretrained_embedding
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://richliao.github.io/supervised/classification/2016/11/26/textclassifier-convolutional/">Blog: Text Classification, Part I - Convolutional Networks</a></li>
-<li><a href="https://blog.keras.io/using-pre-trained-word-embeddings-in-a-keras-model.html">Blog: Using pre-trained word embeddings in a Keras model</a></li>
-<li><a href="https://nbviewer.jupyter.org/github/fchollet/deep-learning-with-python-notebooks/blob/master/6.1-using-word-embeddings.ipynb">Jupyter Notebook - Deep Learning with Python - Using Word Embeddings</a></li>
+<li><a href="https://github.com/google/sentencepiece">Github: sentencepiece</a></li>
+<li><a href="https://medium.com/the-artificial-impostor/nlp-four-ways-to-tokenize-chinese-documents-f349eb6ba3c3">Blog: NLP - Four Ways to Tokenize Chinese Documents</a></li>
 </ul>
 
 </div>

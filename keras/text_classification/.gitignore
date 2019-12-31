@@ -1,3 +1,10 @@
 data/
+
+# pretrained embedding
 glove.6B.zip
 glove.6B/
+
+# subword tokenization
+train.txt
+unigram.model
+unigram.vocab
