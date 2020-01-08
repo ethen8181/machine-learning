@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq</a></span><ul class="toc-item"><li><span><a href="#Seq2Seq-Introduction" data-toc-modified-id="Seq2Seq-Introduction-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Seq2Seq Introduction</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Seq2Seq-Implementation" data-toc-modified-id="Seq2Seq-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Seq2Seq Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder-Module" data-toc-modified-id="Encoder-Module-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Encoder Module</a></span></li><li><span><a href="#Decoder-Module" data-toc-modified-id="Decoder-Module-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Decoder Module</a></span></li><li><span><a href="#Seq2Seq-Module" data-toc-modified-id="Seq2Seq-Module-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>Seq2Seq Module</a></span></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3.4"><span class="toc-item-num">1.3.4&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.3.5"><span class="toc-item-num">1.3.5&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li></ul></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq</a></span><ul class="toc-item"><li><span><a href="#Seq2Seq-Introduction" data-toc-modified-id="Seq2Seq-Introduction-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Seq2Seq Introduction</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span><ul class="toc-item"><li><span><a href="#Declaring-Fields" data-toc-modified-id="Declaring-Fields-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Declaring Fields</a></span></li><li><span><a href="#Constructing-Dataset" data-toc-modified-id="Constructing-Dataset-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Constructing Dataset</a></span></li><li><span><a href="#Constructing-Iterator" data-toc-modified-id="Constructing-Iterator-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Constructing Iterator</a></span></li></ul></li><li><span><a href="#Seq2Seq-Implementation" data-toc-modified-id="Seq2Seq-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Seq2Seq Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder-Module" data-toc-modified-id="Encoder-Module-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Encoder Module</a></span></li><li><span><a href="#Decoder-Module" data-toc-modified-id="Decoder-Module-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Decoder Module</a></span></li><li><span><a href="#Seq2Seq-Module" data-toc-modified-id="Seq2Seq-Module-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>Seq2Seq Module</a></span></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3.4"><span class="toc-item-num">1.3.4&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.3.5"><span class="toc-item-num">1.3.5&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li></ul></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13483,6 +13483,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">torchtext.datasets</span> <span class="k">import</span> <span class="n">Multi30k</span>
 <span class="kn">from</span> <span class="nn">torchtext.data</span> <span class="k">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">BucketIterator</span>
 
@@ -13503,14 +13504,14 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2019-10-09 13:37:57 
+<pre>Ethen 2020-01-07 21:44:32 
 
 CPython 3.6.4
-IPython 7.7.0
+IPython 7.9.0
 
 numpy 1.16.5
-torch 1.1.0.post2
-torchtext 0.3.1
+torch 1.3.1
+torchtext 0.4.0
 spacy 2.1.6
 </pre>
 </div>
@@ -13618,7 +13619,7 @@ $$\hat{y}_t = f(s_t)$$<p>The words in the decoder are always generated one after
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;torch._C.Generator at 0x11e288650&gt;</pre>
+<pre>&lt;torch._C.Generator at 0x123280170&gt;</pre>
 </div>
 
 </div>
@@ -13658,9 +13659,7 @@ $$\hat{y}_t = f(s_t)$$<p>The words in the decoder are always generated one after
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
-
-<span class="c1"># the link below contains explanation of how spacy&#39;s tokenization works</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the link below contains explanation of how spacy&#39;s tokenization works</span>
 <span class="c1"># https://spacy.io/usage/spacy-101#annotations-token</span>
 <span class="n">spacy_de</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;de_core_news_sm&#39;</span><span class="p">)</span>
 <span class="n">spacy_en</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
@@ -13720,8 +13719,22 @@ $$\hat{y}_t = f(s_t)$$<p>The words in the decoder are always generated one after
 <blockquote><p>Normally, when we concatenate a source sentence with a target sentence, each word in the source sentence is far from its corresponding word in the target sentence. By reversing the source sentence, the first few words in the source sentence now becomes very close to the first few words in the target sentence, thus the model would have lesser issue establishing communication between the source and target sentence.
 Although, the average distance between words in the source and target language remains the same during this process, however, it was shown that the model learned much better even on later parts of the sentence.</p>
 </blockquote>
-<p>Moving on, we will begin leveraging torchtext's functionality. The first once is <a href="https://pytorch.org/text/data.html#field"><code>Field</code></a>, which is where we specify how we wish to preprocess our text data.</p>
-<p>Here, we set the <code>tokenize</code> argument to the correct tokenization function for each, with German being the source field and English being the target field. The field also appends the "start of sequence" and "end of sequence" tokens via the <code>init_token</code> and <code>eos_token</code> arguments, and converts all words to lowercase.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Declaring-Fields">Declaring Fields<a class="anchor-link" href="#Declaring-Fields">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Moving on, we will begin leveraging torchtext's functionality. The first once is <a href="https://pytorch.org/text/data.html#field"><code>Field</code></a>, which is where we specify how we wish to preprocess our text data for a certain field.</p>
+<p>Here, we set the <code>tokenize</code> argument to the correct tokenization function for the source and target field, with German being the source field and English being the target field. The field also appends the "start of sequence" and "end of sequence" tokens via the <code>init_token</code> and <code>eos_token</code> arguments, and converts all words to lowercase. The docstring of the <code>Field</code> object is pretty well-written, please refer to it to see other arguments that it takes in.</p>
 
 </div>
 </div>
@@ -13743,7 +13756,14 @@ Although, the average distance between words in the source and target language r
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next, we download and load the train, validation and test data.  The dataset we'll be using is the <a href="https://pytorch.org/text/datasets.html#multi30k">Multi30k dataset</a>. This is a dataset with ~30,000 parallel English, German and French sentences, each with ~12 words per sentence.</p>
+<h3 id="Constructing-Dataset">Constructing Dataset<a class="anchor-link" href="#Constructing-Dataset">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We've defined the logic of processing our raw text data, now we need to tell the fields what data it should work on. This is where <code>Dataset</code> comes in. The dataset we'll be using is the <a href="https://pytorch.org/text/datasets.html#multi30k">Multi30k dataset</a>. This is a dataset with ~30,000 parallel English, German and French sentences, each with ~12 words per sentence. Torchtext comes with a capability for us to download and load the training, validation and test data.</p>
 <p><code>exts</code> specifies which languages to use as the source and target (source goes first) and <code>fields</code> specifies which field to use for the source and target.</p>
 
 </div>
@@ -13788,7 +13808,7 @@ Number of testing examples: 1000
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can access the <code>.examples</code> attribute, which is a list and then access the <code>.src</code> and <code>.trg</code> attribute to take a look at the tokenized source and target sentence.</p>
+<p>Upon loading the dataset, we can indexed and iterate over the <code>Dataset</code> like a normal list. Each element in the dataset bundles the attributes of a single record for us. We can index our dataset like a list and then access the <code>.src</code> and <code>.trg</code> attribute to take a look at the tokenized source and target sentence.</p>
 
 </div>
 </div>
@@ -13798,7 +13818,8 @@ Number of testing examples: 1000
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span><span class="o">.</span><span class="n">examples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">src</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># equivalent, albeit more verbiage train_data.examples[0].src</span>
+<span class="n">train_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">src</span>
 </pre></div>
 
     </div>
@@ -13843,7 +13864,7 @@ Number of testing examples: 1000
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span><span class="o">.</span><span class="n">examples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">trg</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">trg</span>
 </pre></div>
 
     </div>
@@ -13884,9 +13905,9 @@ Number of testing examples: 1000
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next, we'll build the vocabulary for the source and target languages. The vocabulary is used to associate each unique token with an index (an integer) and this is used to build a one-hot encoding for each token (a vector of all zeros except for the position represented by the index, which is 1). The vocabularies of the source and target languages are distinct.</p>
-<p>Using the <code>min_freq</code> argument, we only allow tokens that appear at least 2 times to appear in our vocabulary. Tokens that appear only once are converted into an <code>&lt;unk&gt;</code> (unknown) token (we can customize this in the Field earlier if we like).</p>
-<p>It is important to note that your vocabulary should only be built from the training set and not the validation/test set. This prevents "information leakage" into your model, giving you artificially inflated validation/test scores.</p>
+<p>The next missing piece is to build the vocabulary for the source and target languages. That way we can convert our tokenized tokens into integers so that they can be fed into downstream models. Constructing the vocabulary and word to integer mapping is done by calling the <code>build_vocab</code> method of a <code>Field</code> on a dataset. This adds the <code>vocab</code> attribute to the field.</p>
+<p>The vocabularies of the source and target languages are distinct. Using the <code>min_freq</code> argument, we only allow tokens that appear at least 2 times to appear in our vocabulary. Tokens that appear only once are converted into an <code>&lt;unk&gt;</code> (unknown) token (we can customize this in the Field earlier if we like).</p>
+<p>It is important to note that our vocabulary should only be built from the training set and not the validation/test set. This prevents "information leakage" into our model, giving us artificially inflated validation/test scores.</p>
 
 </div>
 </div>
@@ -13929,9 +13950,15 @@ Unique tokens in target (en) vocabulary: 5893
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The final step of preparing the data is to create the iterators. These can be iterated on to return a batch of data which will have a <code>src</code> attribute (the PyTorch tensors containing a batch of numericalized source sentences) and a <code>trg</code> attribute (the PyTorch tensors containing a batch of numericalized target sentences). Numericalized is just a fancy way of saying they have been converted from a sequence of readable tokens to a sequence of corresponding indexes, using the vocabulary.</p>
-<p>When we get a batch of examples using an iterator we need to make sure that all of the source sentences are padded to the same length, the same with the target sentences. Luckily, torchtext iterators handle this for us!</p>
-<p>We use a <code>BucketIterator</code> instead of the standard <code>Iterator</code> as it creates batches in such a way that it minimizes the amount of padding in both the source and target sentences.</p>
+<h3 id="Constructing-Iterator">Constructing Iterator<a class="anchor-link" href="#Constructing-Iterator">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The final step of preparing the data is to create the iterators. Very similar to <code>DataLoader</code> in the standard pytorch package, <code>Iterator</code> in torchtext converts our data into batches, so that they can be fed into the model. These can be iterated on to return a batch of data which will have a <code>src</code> and <code>trg</code> attribute (PyTorch tensors containing a batch of numericalized source and target sentences). Numericalized is just a fancy way of saying they have been converted from a sequence of tokens to a sequence of corresponding indices, where the mapping between the tokens and indices comes from the learned vocabulary.</p>
+<p>When we get a batch of examples using an iterator we need to make sure that all of the source sentences are padded to the same length, the same with the target sentences. Luckily, torchtext iterators handle this for us! <code>BucketIterator</code> is a extremely useful torchtext feature. It automatically shuffles and buckets the input sequences into sequences of similar length, this minimizes the amount of padding that we need to perform.</p>
 
 </div>
 </div>
@@ -13941,22 +13968,11 @@ Unique tokens in target (en) vocabulary: 5893
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pytorch boilerplate that determines whether a GPU is present or not,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="c1"># pytorch boilerplate that determines whether a GPU is present or not,</span>
 <span class="c1"># this determines whether our dataset or model can to moved to a GPU</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
 
 <span class="c1"># create batches out of the dataset and sends them to the appropriate device</span>
 <span class="n">train_iterator</span><span class="p">,</span> <span class="n">valid_iterator</span><span class="p">,</span> <span class="n">test_iterator</span> <span class="o">=</span> <span class="n">BucketIterator</span><span class="o">.</span><span class="n">splits</span><span class="p">(</span>
@@ -13970,11 +13986,48 @@ Unique tokens in target (en) vocabulary: 5893
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># pretend that we&#39;re iterating over the iterator and print out the print element</span>
+<span class="n">test_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">test_iterator</span><span class="p">))</span>
+<span class="n">test_batch</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>
+[torchtext.data.batch.Batch of size 128 from MULTI30K]
+	[.src]:[torch.LongTensor of size 10x128]
+	[.trg]:[torch.LongTensor of size 14x128]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">test_iterator</span><span class="p">))</span>
-<span class="n">test_batch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_batch</span><span class="o">.</span><span class="n">src</span>
 </pre></div>
 
     </div>
@@ -13993,10 +14046,13 @@ Unique tokens in target (en) vocabulary: 5893
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>
-[torchtext.data.batch.Batch of size 128 from MULTI30K]
-	[.src]:[torch.LongTensor of size 10x128]
-	[.trg]:[torch.LongTensor of size 14x128]</pre>
+<pre>tensor([[   2,    2,    2,  ...,    2,    2,    2],
+        [   4,    4,    4,  ...,    4,  714,    4],
+        [ 123,   91, 3449,  ...,  669,   12, 1643],
+        ...,
+        [6788,   41,   26,  ...,    1,    1,    1],
+        [  18,  105,    5,  ...,    1,    1,    1],
+        [   3,    3,    3,  ...,    1,    1,    1]])</pre>
 </div>
 
 </div>
@@ -14008,7 +14064,7 @@ Unique tokens in target (en) vocabulary: 5893
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can list out the first batch, we see that it is not size [sent len, batch size], i.e. the longest sentence in the first batch of the source language has a length of 10.</p>
+<p>We can list out the first batch, we see each element of the iterator is a <code>Batch</code> object, similar to element of a <code>Dataset</code>, we can access the fields via its attributes. The next important thing to note that it is of size [sentence length, batch size], and the longest sentence in the first batch of the source language has a length of 10.</p>
 
 </div>
 </div>
@@ -14935,6 +14991,8 @@ target sentence:  two young , white males are outside near many bushes .
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
+<li><a href="https://mlexplained.com/2018/02/08/a-comprehensive-tutorial-to-torchtext/">Blog: A Comprehensive Introduction to Torchtext (Practical Torchtext part 1)</a></li>
+<li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-sentiment-analysis/blob/master/A%20-%20Using%20TorchText%20with%20Your%20Own%20Datasets.ipynb">Jupyter Notebook: Using TorchText with Your Own Datasets</a></li>
 <li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/1%20-%20Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.ipynb">Jupyter Notebook: Sequence to Sequence Learning with Neural Networks</a></li>
 <li><a href="https://arxiv.org/abs/1409.3215">Paper: Sutskever, I., Vinyals, O., and Le, Q. (2014). Sequence to sequence learning with neural networks.</a></li>
 </ul>
