@@ -4,6 +4,10 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2020-01]
 
+### Added
+
+- [Kaggle: Quora Insincere Questions Classification](https://www.kaggle.com/c/quora-insincere-questions-classification/): Predicting insincere questions. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_quora_insincere/)]
+
 ### Changed
 
 - Seq2Seq for German to English Machine Translation - PyTorch. Includes quick intro to torchtext [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/1_torch_seq2seq_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/seq2seq/1_torch_seq2seq_intro.html)]
@@ -46,7 +50,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- [Kaggle: Rossman Store Sales](https://www.kaggle.com/c/rossmann-store-sales/): Predicting Daily Store Sales. Also introduces deep learning for tabular data. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_rossman_store_sales/)]
+- [Kaggle: Rossman Store Sales](https://www.kaggle.com/c/rossmann-store-sales/): Predicting daily store sales. Also introduces deep learning for tabular data. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_rossman_store_sales/)]
 
 ### Changed
 

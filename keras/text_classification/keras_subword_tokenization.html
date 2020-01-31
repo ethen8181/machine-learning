@@ -14561,11 +14561,11 @@ Epoch 8/8
 <div class="prompt input_prompt">In&nbsp;[0]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">create_submission</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">ids_col</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">create_submission</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">ids_col</span><span class="p">,</span> <span class="n">prediction_col</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="n">df_submission</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
         <span class="n">ids_col</span><span class="p">:</span> <span class="n">ids</span><span class="p">,</span>
-        <span class="n">label_col</span><span class="p">:</span> <span class="n">predictions</span>
-    <span class="p">},</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">ids_col</span><span class="p">,</span> <span class="n">label_col</span><span class="p">])</span>
+        <span class="n">prediction_col</span><span class="p">:</span> <span class="n">predictions</span>
+    <span class="p">},</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">ids_col</span><span class="p">,</span> <span class="n">prediction_col</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">submission_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># create the directory if need be, e.g. if the submission_path = submission/submission.csv</span>
@@ -14590,7 +14590,7 @@ Epoch 8/8
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">ids_col</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
-<span class="n">label_col</span> <span class="o">=</span> <span class="s1">&#39;sentiment&#39;</span>
+<span class="n">prediction_col</span> <span class="o">=</span> <span class="s1">&#39;sentiment&#39;</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">ids_col</span><span class="p">]</span>
 
 <span class="n">predictions_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -14601,7 +14601,7 @@ Epoch 8/8
 <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">predictions</span> <span class="ow">in</span> <span class="n">predictions_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;generating submission for: &#39;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
     <span class="n">submission_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">submission_dir</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_submission.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span><span class="p">))</span>
-    <span class="n">df_submission</span> <span class="o">=</span> <span class="n">create_submission</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">ids_col</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">)</span>
+    <span class="n">df_submission</span> <span class="o">=</span> <span class="n">create_submission</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">ids_col</span><span class="p">,</span> <span class="n">prediction_col</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">)</span>
 
 <span class="c1"># sanity check to make sure the size and the output of the submission makes sense</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_submission</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
