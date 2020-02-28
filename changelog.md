@@ -4,10 +4,18 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2020-02]
 
+### Added
+
+- FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/README.md)]
+
 ### Changed
 
-- Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)]
+- Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)][[html](http://ethen8181.github.io/machine-learning/python/parallel.html)]
     - Added a short section to asynchronous programming.
+- Monotonic Constraint with Boosted Tree. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/monotonic.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/monotonic.html)]
+    - The original notebook uses xgboost to demonstrate the feature. Added lightgbm example.
+- Logging module. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/logging.ipynb)][[html](http://ethen8181.github.io/machine-learning/python/logging.html)]
+    - Added a section that emphasizes the importance of logging the full stack trace of an exception.
 
 ## [2020-01]
 

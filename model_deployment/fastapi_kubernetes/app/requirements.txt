@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+numpy==1.16.5
+lightgbm==2.2.3

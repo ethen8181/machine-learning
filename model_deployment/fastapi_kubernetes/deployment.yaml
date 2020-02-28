@@ -1,0 +1,64 @@
+# 1. we're creating a deployment called fastapi-model-deployment, deployment tells
+# Kubernetes to manage a set of replicas and make sure a certain number
+# of them are always available
+
+# 2. the specification says we want 3 copies of an app called fastapi-model,
+# we define 3 copies of what under template
+
+# 3. it's going to have 1 container, the `-` symbol is indicating that the
+# configuration is an array, in which we specify the name and most importantly
+# the image for that container.
+
+# 4. we also specify we're going to run on port 80 in that container.
+
+# the deployment option wasn't available in apiVersion v1
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: fastapi-model-deployment
+spec:
+    replicas: 3
+    template:
+        metadata:
+            labels:
+                app: fastapi-model
+        spec:
+            containers:
+                - name: fastapi-model
+                  # note that it's consider bad practice to use the latest tag
+                  # in production as it makes it harder to track which version of
+                  # the image is running, hence more difficult to roll back properly
+                  # https://kubernetes.io/docs/concepts/configuration/overview/#container-images
+                  image: ethen8181/fastapi_model:latest
+                  imagePullPolicy: Always
+                  ports:
+                    - containerPort: 80
+
+---
+# A service handles request either coming from inside the Kubernetes cluster
+# from one pod to another or outside the cluster. They define how requests
+# should be routed/handled. Service is usually a load balancer, though there
+# are many different types of service that we can configure.
+
+# 1. we create a service, and it's going to be applied to any pods that has
+# the name fastapi-model (the selector section). `selector` labels are key-value
+# pairs specified/used by the users to select a set of objects. We have the
+# flexibility to develop our own conventions.
+
+# 2. there're many different options for configuring ports, see comments
+apiVersion: v1
+kind: Service
+metadata:
+    name: fastapi-model-service
+spec:
+    selector:
+        app: fastapi-model
+    type: LoadBalancer
+    ports:
+        - protocol: TCP
+          # this port is accessible within the cluster,
+          # i.e. inter-communications between the pods, so if a pod inside
+          # the cluster wants to talk to this application
+          port: 80
+          # port to forward to inside the pod
+          targetPort: 80

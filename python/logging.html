@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Logging" data-toc-modified-id="Logging-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Logging</a></span></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Logging" data-toc-modified-id="Logging-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Logging</a></span><ul class="toc-item"><li><span><a href="#Logging-Exception" data-toc-modified-id="Logging-Exception-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Logging Exception</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13092,10 +13092,10 @@ div#notebook {
 
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">)</span> <span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13348,7 +13348,7 @@ div#notebook {
 <span class="c1"># 1. magic to print version</span>
 <span class="c1"># 2. magic so that the notebook will reload external python modules</span>
 <span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">load_ext</span> autoreload 
+<span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 
 <span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v
@@ -13368,10 +13368,10 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2017-07-07 08:50:19 
+<pre>Ethen 2020-02-24 14:21:58 
 
-CPython 3.5.2
-IPython 5.4.1
+CPython 3.6.4
+IPython 7.9.0
 </pre>
 </div>
 </div>
@@ -13390,16 +13390,16 @@ IPython 5.4.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Once your application grows beyond a basic project, having good logging as oppose to just print statement is going to allow us to look at behaviors and errors over time and give us a better overall picture of what's going on.</p>
+<p>Once our application grows beyond a basic project, having good logging as oppose to just print statement is going to allow us to look at behaviors and errors over time and give us a better overall picture of what's going on.</p>
 <p>There are 5 different kinds of logging levels. Levels allow us to to specify exactly what we want to log by separating them into categories. The description of each of these is as follows:</p>
 <ul>
-<li><code>DEBUG</code>: Detailed debug information, typically of interest only when diagnosing problems</li>
-<li><code>INFO</code>: Confirmation that things are working as expected</li>
-<li><code>WARNING</code>: An indication that something unexpected happened, or indicative of some problem in the near future (e.g. ‘disk space low’). The software is still working as expected</li>
-<li><code>ERROR</code>: Due to a more serious problem, the software has not been able to perform some function</li>
-<li><code>CRITICAL</code>: A serious error, indicating that the program itself may be unable to continue running</li>
+<li><code>DEBUG</code>: Detailed debug information, typically of interest only when diagnosing problems.</li>
+<li><code>INFO</code>: Confirmation that things are working as expected.</li>
+<li><code>WARNING</code>: An indication that something unexpected happened, or indicative of some problem in the near future (e.g. disk space low). The software is still working as expected.</li>
+<li><code>ERROR</code>: Due to a more serious problem, the software has not been able to perform some function.</li>
+<li><code>CRITICAL</code>: A serious error, indicating that the program itself may be unable to continue running.</li>
 </ul>
-<p>The default level is WARNING, meaning that it will capture anything that is a warning or above, and ignore the DEBUG and debug level. we can change this behavior using the basicConfig method.</p>
+<p>The default level is WARNING, meaning that it will capture anything that is a warning or above, and ignore the DEBUG and INFO level. we can change this behavior using the basicConfig method.</p>
 
 </div>
 </div>
@@ -13417,13 +13417,13 @@ IPython 5.4.1
 <span class="n">reload</span><span class="p">(</span><span class="n">logging</span><span class="p">)</span>
 
 <span class="c1"># In the following not only did we change the logging level, but</span>
-<span class="c1"># also specify a logging file to write the log in, and the format.</span>
+<span class="c1"># also specify a logging file to write the log to, and the format.</span>
 <span class="c1"># the format we specified here is simply the time, the level name</span>
 <span class="c1"># and the message that we&#39;ll later specify, for more information</span>
 <span class="c1"># about what format we can specify, refer to the following webpage</span>
 <span class="c1"># https://docs.python.org/3/library/logging.html#logrecord-attributes</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;test.log&#39;</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-                    <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">:</span><span class="si">%(levelname)s</span><span class="s1">:</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;test.log&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1">:</span><span class="si">%(levelname)s</span><span class="s1">:</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add Function&quot;&quot;&quot;</span>
@@ -13443,25 +13443,35 @@ IPython 5.4.1
 <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Divide Function&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+</pre></div>
 
+    </div>
+</div>
+</div>
 
-<span class="n">num_1</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">num_2</span> <span class="o">=</span> <span class="mi">10</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num1</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">num2</span> <span class="o">=</span> <span class="mi">10</span>
 
 <span class="c1"># add logging debugrmation instead of print statement </span>
 <span class="c1"># to record what was going on, note that if we were to</span>
 <span class="c1"># run it for multiple </span>
-<span class="n">add_result</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Add: </span><span class="si">{}</span><span class="s1"> + </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">add_result</span><span class="p">))</span>
+<span class="n">add_result</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Add: </span><span class="si">{}</span><span class="s1"> + </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">add_result</span><span class="p">))</span>
 
-<span class="n">sub_result</span> <span class="o">=</span> <span class="n">subtract</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Sub: </span><span class="si">{}</span><span class="s1"> - </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">sub_result</span><span class="p">))</span>
+<span class="n">sub_result</span> <span class="o">=</span> <span class="n">subtract</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Sub: </span><span class="si">{}</span><span class="s1"> - </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">sub_result</span><span class="p">))</span>
 
-<span class="n">mul_result</span> <span class="o">=</span> <span class="n">multiply</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Mul: </span><span class="si">{}</span><span class="s1"> * </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">mul_result</span><span class="p">))</span>
+<span class="n">mul_result</span> <span class="o">=</span> <span class="n">multiply</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Mul: </span><span class="si">{}</span><span class="s1"> * </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">mul_result</span><span class="p">))</span>
 
-<span class="n">div_result</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Div: </span><span class="si">{}</span><span class="s1"> / </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">div_result</span><span class="p">))</span>
+<span class="n">div_result</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Div: </span><span class="si">{}</span><span class="s1"> / </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">div_result</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13485,7 +13495,7 @@ IPython 5.4.1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
@@ -13531,24 +13541,34 @@ IPython 5.4.1
         <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Tried to divide by 0&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">result</span>
+</pre></div>
 
+    </div>
+</div>
+</div>
 
-<span class="n">num_1</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">num_2</span> <span class="o">=</span> <span class="mi">0</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num1</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">num2</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="c1"># note that we&#39;ll use the logger we explicitly created </span>
 <span class="c1"># to log to message as oppose to logging in the last example</span>
-<span class="n">add_result</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Add: </span><span class="si">{}</span><span class="s1"> + </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">add_result</span><span class="p">))</span>
+<span class="n">add_result</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Add: </span><span class="si">{}</span><span class="s1"> + </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">add_result</span><span class="p">))</span>
 
-<span class="n">sub_result</span> <span class="o">=</span> <span class="n">subtract</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sub: </span><span class="si">{}</span><span class="s1"> - </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">sub_result</span><span class="p">))</span>
+<span class="n">sub_result</span> <span class="o">=</span> <span class="n">subtract</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sub: </span><span class="si">{}</span><span class="s1"> - </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">sub_result</span><span class="p">))</span>
 
-<span class="n">mul_result</span> <span class="o">=</span> <span class="n">multiply</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Mul: </span><span class="si">{}</span><span class="s1"> * </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">mul_result</span><span class="p">))</span>
+<span class="n">mul_result</span> <span class="o">=</span> <span class="n">multiply</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Mul: </span><span class="si">{}</span><span class="s1"> * </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">mul_result</span><span class="p">))</span>
 
-<span class="n">div_result</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Div: </span><span class="si">{}</span><span class="s1"> / </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_1</span><span class="p">,</span> <span class="n">num_2</span><span class="p">,</span> <span class="n">div_result</span><span class="p">))</span>
+<span class="n">div_result</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Div: </span><span class="si">{}</span><span class="s1"> / </span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">,</span> <span class="n">div_result</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13572,7 +13592,156 @@ ZeroDivisionError: division by zero</code></pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that apart from the base logging module, there are projects like <a href="https://logzero.readthedocs.io/en/latest/">logzero</a> that tries to make it less tedious to setup the logs.</p>
+<h2 id="Logging-Exception">Logging Exception<a class="anchor-link" href="#Logging-Exception">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the previous section, we've were logging the exception to the log file. This is actually an important practice and should not be taken lightly.</p>
+<p>When using try and except to catch exceptions, we should be more diligent in the way we handle the exceptions. In other words, NEVER do the following:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num1</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">num2</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">num1</span> <span class="o">/</span> <span class="n">num2</span>
+<span class="k">except</span><span class="p">:</span> <span class="c1"># or except Exception:</span>
+    <span class="k">pass</span>
+
+<span class="n">result</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It might be quick for us as a developer to simply ignore the exception so that we can move on with our life and not worry about dealing with the exception. But when we do this, it is actually doing a massive disservice as it not only swallows up the various errors that might occur, even the ones we weren't expecting when writing try, expect block, but also throws away the stack trace, which provides useful information to speed up our bugging process when an error occurs.</p>
+<p>This is not to say that we should not be using try and expect to catch Exception, as this ensures our critical or long-running process doesn't go down due to some unexpected error. It is to enforce the fact that we should not be silently swallowing the error.</p>
+<p>The solution to this is to use a more specific exception type and log the full stack trace. In the function we've defined, we:</p>
+<ul>
+<li>Use the <code>ZeroDivisionError</code> to specify what errors we were expecting when writing the try, except block.</li>
+<li>We also leverage logging object's exception method.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Divide Function&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+        <span class="c1"># by calling .exception it will produce the traceback,</span>
+        <span class="c1"># which is helpful for knowing where the bug occurred</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Tried to divide by 0&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If for some reason, our application does logging in some other way, then we can use the trackback module to format the exception's stack trace.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Divide Function&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ZeroDivisionError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="n">error_message</span> <span class="o">=</span> <span class="n">log_traceback</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="n">error_message</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<span class="k">def</span> <span class="nf">log_traceback</span><span class="p">(</span><span class="n">ex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Format full stack trace into a single string.&quot;&quot;&quot;</span>
+    <span class="n">traceback_lines</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">ex</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+    <span class="n">traceback_text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback_lines</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">traceback_text</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">output</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">output</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;result&#39;: None,
+ &#39;error&#39;: &#39;Traceback (most recent call last):\n  File &#34;&lt;ipython-input-9-b27e677bf7be&gt;&#34;, line 6, in divide\n    result = x / y\nZeroDivisionError: division by zero\n&#39;}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The bottom line is do log the full stack trace if we decide to use the try, except pattern in our codebase. This ensures we get as much information as possible when an unexpected error occurs, which significantly speeds up the debugging process.</p>
+<p>Apart from the base logging module, there are projects like <a href="https://logzero.readthedocs.io/en/latest/">logzero</a> that tries to make it less tedious to setup the logs.</p>
 
 </div>
 </div>
@@ -13583,6 +13752,7 @@ ZeroDivisionError: division by zero</code></pre>
 <h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
 <li><a href="https://www.youtube.com/watch?v=-ARI4Cz-awo">Youtube: Python Tutorial: Logging Basics - Logging to Files, Setting Levels, and Formatting</a></li>
 <li><a href="https://www.youtube.com/watch?v=jxmzY9soFXg&amp;feature=youtu.be">Toutube: Python Tutorial: Logging Advanced - Loggers, Handlers, and Formatters</a></li>
+<li><a href="https://realpython.com/the-most-diabolical-python-antipattern/">Blog: The Most Diabolical Python Antipattern</a></li>
 </ul>
 
 </div>

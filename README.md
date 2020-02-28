@@ -1,5 +1,6 @@
 - [machine-learning](#machine-learning)
   - [Documentation Listings](#documentation-listings)
+    - [model_deployment](#modeldeployment)
     - [bandits](#bandits)
     - [search](#search)
     - [time_series](#timeseries)
@@ -36,6 +37,10 @@ This is a continuously updated repository that documents personal journey on lea
 
 
 ## Documentation Listings
+
+### model_deployment
+
+- FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/README.md)]
 
 ### bandits
 

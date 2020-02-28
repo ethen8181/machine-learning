@@ -1,0 +1,208 @@
+# FastAPI Machine Learning Service on Azure Kubernetes Cluster
+
+In this repo, we'll be:
+
+1. Training a machine learning model using LightGBM.
+2. Writing a service using FastAPI to expose the model through a service endpoint.
+3. Packaging the service into a Docker container.
+4. Deploy the Docker container to Azure Kubernetes Cluster to scale up the service.
+
+It is recommended that the reader spend some time to understand some of the container terminologies such as images, nodes, pods, etc. There should be mainly tutorials online that explains docker and kubernetes at a high-level. e.g. [Youtube: Introduction to Microservices, Docker, and Kubernetes](https://www.youtube.com/watch?v=1xo-0gCVhTU) is an hour long video that introduces the background behind container-based technology.
+
+## Model Training
+
+The `tree_model_deployment.ipynb` trains a regression model and saves the model checkpoint under `app`.
+
+## FastAPI Service
+
+The `app` folder is where we'll store the service application, the model checkpoint, and the requirements.txt file that specifies the python dependencies for the application.
+
+We'll use [FastAPI](https://fastapi.tiangolo.com/) to create the service. The library's main website contains thorough documentation and is pretty similar to Flask when it comes to specifying an endpoint.
+
+For this service, we will have a `/predict` endpoint which accepts the features as the body, this service then returns the corresponding score.
+
+## Docker Container
+
+Follow the [Docker Installation Page](https://docs.docker.com/install/) to install Docker if folks haven't done so already.
+
+```bash
+# confirm the docker command line works
+docker --version
+```
+
+Creates the docker image for the application located under the `app` folder.
+
+```bash
+# build and tag a docker image, . parameter assumes the
+# Dockerfile is within the same path. The built
+# image resides within our local docker image registry
+docker build --no-cache -t local_fastapi_model .
+
+# run the container to ensure it works locally
+docker run -p 80:80 local_fastapi_model
+```
+
+- We should see the message "Hello World" upon navigating to http://0.0.0.0:80
+- Access the automatic documentation via the endpoint http://0.0.0.0:80/docs or http://0.0.0.0:80/redoc
+- Test our model endpoint by using the following python script.
+
+```python
+import json
+import requests
+
+data = {
+    'MedInc': 3.7917,
+    'HouseAge': 40.0,
+    'AveRooms': 4.959798994974874,
+    'AveBedrms': 1.0301507537688441,
+    'Population': 1039.0,
+    'AveOccup': 2.6105527638190953,
+    'Latitude': 38.24,
+    'Longitude': -122.64
+}
+
+# change the url accordingly, here we're specifying the IP address along
+# with the port number 80, which we configured to be the port that exposes the service
+url = 'http://0.0.0.0:80/predict'
+raw_response = requests.post(url, data=json.dumps(data))
+raw_response.raise_for_status()
+response = json.loads(raw_response.text)
+response
+# example output
+#
+# {'score': 2.2418686032176747}
+```
+
+Once we confirm that the docker image works locally, we can push the image to [docker hub](https://docs.docker.com/docker-hub/) for sharing.
+
+```bash
+docker login
+
+docker build --no-cache -t ethen8181/fastapi_model .
+
+docker push ethen8181/fastapi_model
+```
+
+## Azure Kubernetes Cluster
+
+The [Azure documentation on Deploying an Azure Kubernetes Service](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough) is pretty well written, this section is mainly following the instructions provided in that documentation.
+
+We'll be mainly using the the command line here, to do so, we'll need to install:
+
+- `az`. Azure command line tool for interacting with Azure. Follow the [Installing Azure Cli Documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+- `kubectl` Kubernetes command line tool to run commands against Kubernetes cluster. Follow the [Install and Set Up Kubectl Documentation](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+
+```bash
+# showing the installation option on mac
+brew install azure-cli
+
+# we can check the version of the installed azure command line tool
+az --version
+
+# ditto for kubectl
+brew install kubernetes-cli
+kubectl version
+```
+
+This installs the command line tool for working with the Azure cloud computing resource, `az`. The first step is to login to Azure. Link to creating an [Azure account](https://azure.microsoft.com/en-us/free/) if folks haven't done so already.
+
+```bash
+az login
+```
+
+## Setting Up Azure Kubernetes Cluster
+
+Listing down the concrete steps for deploying our applications to Azure Kubernetes Cluster.
+
+1. **Create Resource Group.** This specifies where we want our resources to be stored. During this step, we specifiy the resource group's name and the location where the resource group's metadata will be stored.
+2. **Create Azure Kubernetes Cluster.** This step actually creates the cluster, we associate the cluster with a resource group (the one we just created in step 1), specify the cluster name, how many node we would like in the cluster, and also enables the Azure Monitor container, which as its name suggests provides monitoring functionality for our cluster. Creating the cluster might take a few minutes. If we encounter a bad request error during this step, it is most likely due to [service principal](https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal). Re-running the command for the second time usually works.
+3. **Connecting to the Cluster.** To configure our credentials for the Kubernetes cluster we just created to our local `kubectl`. This command downloads credentials and configures the Kubernetes CLI to use them.
+
+```bash
+# step 1: create resource group
+az group create --resource-group ethen8181-fastapi-model --location westus
+
+# step 2: create azure kubernetes cluster
+az aks create \
+    --resource-group ethen8181-fastapi-model \
+    --name fastapi-model \
+    --node-count 1 \
+    --enable-addons monitoring \
+    --generate-ssh-keys
+
+# step 3: connecting to the cluster
+az aks get-credentials --resource-group ethen8181-fastapi-model --name fastapi-model
+
+# we can verify the connection to our cluster by returning the list of cluster nodes
+# make sure the status shows ready
+kubectl get nodes
+
+# confirm our kubectl is pointed at the right context
+kubectl config get-contexts
+
+# example output
+# 
+# CURRENT   NAME                 CLUSTER          AUTHINFO                                
+# *         fastapi-model        fastapi-model    clusterUser_ethen8181-fastapi-model_fastapi-model
+```
+
+## Deploying the Application
+
+We've already did the work of creating the application, packaging it into a docker container, and pushing it to docker hub. What's left is to deploy the container to our Kubernetes cluster.
+
+To create the application on Kubernetes, a.k.a deployment, we provide the information to `kubectl` in a .yaml file. The `deployment.yaml` contains a template configuration file showing how we can configure our deployment. Each section of the configuration file should be heavily commented.
+
+- `apiVersion` Which version of the Kubernetes API we're using to create this object.
+- `kind` What kind of object we're creating.
+- `metadata` Data that helps uniquely identify the object, e.g. we can provide a name.
+- `spec`: What state/characteristics we would like the object to have. The precise format of the object spec is different for every Kubernetes object.
+
+```bash
+kubectl apply -f deployment.yaml
+# example output
+#
+# deployment.apps/fastapi-model-deployment created
+# service/fastapi-model-service created
+```
+
+## Testing the Application
+
+When we successfully deploy the applications, the Kubernetes service will expose the application to the internet via an external IP. We can using the `get service` command the retrieve this information.
+
+```bash
+kubectl get service fastapi-model-service --watch
+# example output 
+#
+# NAME                    TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+# fastapi-model-service   LoadBalancer   10.0.76.205   13.87.216.62   80:31243/TCP   41s
+
+# there're various other commands we can use to check the pods,nodes,services
+kubectl get pods,svc -o wide
+```
+
+We can now test the service we've created by specifying the correct url. We can use the same python script in the docker container section and swap the url.
+
+```python
+# change the url accordingly, here we're specifying the external IP address along
+# with the port number 80, which we configured to be the port that exposes the service
+url = 'http://13.87.216.62:80/predict'
+```
+
+Once we're done testing the service/cluster and the it is no longer needed, we should delete the resource group & cluster with the following command.
+
+```bash
+az group delete --resource-group ethen8181-fastapi-model --yes --no-wait
+```
+
+
+# Reference
+
+- [Youtube: Introduction to Microservices, Docker, and Kubernetes](https://www.youtube.com/watch?v=1xo-0gCVhTU)
+- [Azure Documentation: Quickstart - Deploy an Azure Kubernetes Service cluster using the Azure CLI](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)
+- [Kubernetes Documentation: Get started with Kubernetes (using Python)](https://kubernetes.io/blog/2019/07/23/get-started-with-kubernetes-using-python/)
+- [Kubernetes Documentation: Learn Kubernetes Basics](https://kubernetes.io/docs/tutorials/kubernetes-basics/)
+- [Blog: A Simple Web App in Python, Flask, Docker, Kubernetes, Microsoft Azure, and GoDaddy](https://acaird.github.io/2019/02/11/docker-web-app-with-azure)
+- [Blog: Introduction to YAML: Creating a Kubernetes deployment](https://www.mirantis.com/blog/introduction-to-yaml-creating-a-kubernetes-deployment/)
+- [Blog: Porting Flask to FastAPI for ML Model Serving](https://www.pluralsight.com/tech-blog/porting-flask-to-fastapi-for-ml-model-serving/)
+- [Blog: Getting started with Azure Kubernetes Service (AKS)](https://blog.rafay.co/getting-started-with-azure-kubernetes-service-aks)
+- [Blog: Set up Kubernetes on Azure](https://mikebridge.github.io/post/python-flask-kubernetes-4/)
