@@ -1,17 +1,17 @@
-# FastAPI Machine Learning Service on Azure Kubernetes Cluster
+# FastAPI Machine Learning Model Service on Azure Kubernetes Cluster
 
 In this repo, we'll be:
 
 1. Training a machine learning model using LightGBM.
-2. Writing a service using FastAPI to expose the model through a service endpoint.
+2. Writing a service using FastAPI for exposing the model through a service endpoint.
 3. Packaging the service into a Docker container.
-4. Deploy the Docker container to Azure Kubernetes Cluster to scale up the service.
+4. Deploying the Docker container to Azure Kubernetes Cluster to scale up the service.
 
 It is recommended that the reader spend some time to understand some of the container terminologies such as images, nodes, pods, etc. There should be mainly tutorials online that explains docker and kubernetes at a high-level. e.g. [Youtube: Introduction to Microservices, Docker, and Kubernetes](https://www.youtube.com/watch?v=1xo-0gCVhTU) is an hour long video that introduces the background behind container-based technology.
 
 ## Model Training
 
-The `tree_model_deployment.ipynb` trains a regression model and saves the model checkpoint under `app`.
+The `tree_model_deployment.ipynb` [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/tree_model_deployment.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/fastapi_kubernetes/tree_model_deployment.html)] trains a regression model using LightGBM and saves the model checkpoint under `app`.
 
 ## FastAPI Service
 
