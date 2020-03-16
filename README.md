@@ -1,28 +1,28 @@
 - [machine-learning](#machine-learning)
   - [Documentation Listings](#documentation-listings)
-    - [model_deployment](#modeldeployment)
+    - [model deployment](#model-deployment)
     - [bandits](#bandits)
     - [search](#search)
-    - [time_series](#timeseries)
+    - [time series](#time-series)
     - [projects](#projects)
-    - [ab_tests](#abtests)
-    - [model_selection](#modelselection)
-    - [big_data](#bigdata)
-    - [dim_reduct](#dimreduct)
+    - [ab tests](#ab-tests)
+    - [model selection](#model-selection)
+    - [big data](#big-data)
+    - [dim reduct](#dim-reduct)
     - [recsys](#recsys)
     - [trees](#trees)
     - [clustering](#clustering)
-    - [data_science_is_software](#datascienceissoftware)
-    - [deep_learning](#deeplearning)
+    - [data science is software](#data-science-is-software)
+    - [deep learning](#deep-learning)
     - [keras](#keras)
-    - [text_classification](#textclassification)
+    - [text classification](#text-classification)
     - [networkx](#networkx)
-    - [association_rule](#associationrule)
+    - [association rule](#association-rule)
     - [regularization](#regularization)
     - [ga](#ga)
     - [unbalanced](#unbalanced)
-    - [clustering_old](#clusteringold)
-    - [linear_regression](#linearregression)
+    - [clustering old](#clustering-old)
+    - [linear regression](#linear-regression)
   - [Python Programming](#python-programming)
 
 # machine-learning
@@ -38,7 +38,7 @@ This is a continuously updated repository that documents personal journey on lea
 
 ## Documentation Listings
 
-### model_deployment
+### model deployment
 
 - FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes)]
 
@@ -52,7 +52,7 @@ Information Retrieval, some examples are demonstrated using ElasticSearch.
 
 - Introduction to BM25 (Best Match). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/search/bm25_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/search/bm25_intro.html)]
 
-### time_series
+### time series
 
 Forecasting methods for timeseries-based data.
 
@@ -69,7 +69,7 @@ End to end project including data preprocessing, model building.
 - [Kaggle: Quora Insincere Questions Classification](https://www.kaggle.com/c/quora-insincere-questions-classification/): Predicting insincere questions. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_quora_insincere/)]
 - mlutils: Machine learning utility function package [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/mlutils/)]
 
-### ab_tests
+### ab tests
 
 A/B testing, a.k.a experimental design. Includes: Quick review of necessary statistic concepts. Methods and workflow/thought-process for conducting the test and caveats to look out for.
 
@@ -80,7 +80,7 @@ A/B testing, a.k.a experimental design. Includes: Quick review of necessary stat
 - Casual Inference
     - Propensity Score Matching. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/matching.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/matching.html)]
 
-### model_selection
+### model selection
 
 Methods for selecting, improving, evaluating models/algorithms.
 
@@ -93,7 +93,7 @@ Methods for selecting, improving, evaluating models/algorithms.
 - Kullback-Leibler (KL) Divergence. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/kl_divergence.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/kl_divergence.html)]
 - Probability Calibration for classification models. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html)]
 
-### big_data
+### big data
 
 Exploring big data tools, such as Spark and H2O.ai. For those interested there's also a [pyspark rdd cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_Cheat_Sheet_Python.pdf) and [pyspark dataframe cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/PySpark_SQL_Cheat_Sheet_Python.pdf) that may come in handy.
 
@@ -105,7 +105,7 @@ Exploring big data tools, such as Spark and H2O.ai. For those interested there's
 - H2O API walkthrough (using GBM as an example). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/big_data/h2o/h2o_api_walkthrough.ipynb)][[html](http://ethen8181.github.io/machine-learning/big_data/h2o/h2o_api_walkthrough.html)]
 - Spark MLlib Binary Classification (using GBM as an example). [[raw zeppelin notebook](https://github.com/ethen8181/machine-learning/blob/master/big_data/sparkml/sparkml.json)][[Zepl](https://www.zepl.com/explore)]
 
-### dim_reduct
+### dim reduct
 
 Dimensionality reduction methods.
 
@@ -147,13 +147,13 @@ TF-IDF and Topic Modeling are techniques specifically used for text analytics.
 - Gaussian Mixture Model from scratch; AIC and BIC for choosing the number of Gaussians. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/GMM/GMM.ipynb)][[html](http://ethen8181.github.io/machine-learning/clustering/GMM/GMM.html)]
 - Topic Modeling with gensim's Latent Dirichlet Allocation(LDA). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/topic_model/LDA.ipynb)][[html](http://ethen8181.github.io/machine-learning/clustering/topic_model/LDA.html)]
 
-### data_science_is_software  
+### data science is software  
 
 Best practices for doing data science in Python.
 
 - View [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/data_science_is_software/notebooks/data_science_is_software.ipynb)][[html](http://ethen8181.github.io/machine-learning/data_science_is_software/notebooks/data_science_is_software.html)]
 
-### deep_learning
+### deep learning
 
 Curated notes on deep learning.
 
@@ -187,7 +187,7 @@ For those interested there's also a [keras cheatsheet](https://s3.amazonaws.com/
     - Leveraging Pre-trained Word Embedding for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/keras_pretrained_embedding.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/keras_pretrained_embedding.html)]
     - Sentencepiece Subword tokenization for Text Classification. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/keras/text_classification/keras_subword_tokenization.ipynb)][[html](http://ethen8181.github.io/machine-learning/keras/text_classification/keras_subword_tokenization.html)]
 
-### text_classification
+### text classification
 
 Deep learning techniques for text classification are categorized in its own section.
 
@@ -204,7 +204,7 @@ Graph library other than `networkx` are also discussed.
 - Short Walkthrough of PageRank. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/page_rank.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/page_rank.html)]
 - Influence Maximization from scratch. Includes discussion on Independent Cascade (IC), Submodular Optimization algorithms including Greedy and Lazy Greedy, a.k.a Cost Efficient Lazy Forward (CELF) [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/networkx/max_influence/max_influence.ipynb)][[html](http://ethen8181.github.io/machine-learning/networkx/max_influence/max_influence.html)]
 
-### association_rule
+### association rule
 
 Also known as market-basket analysis.
 
@@ -231,7 +231,7 @@ Choosing the optimal cutoff value for logistic regression using cost-sensitive m
 - Visualize two by two standard confusion matrix and ROC curve with costs using ggplot2.
 - View [[Rmarkdown](http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html)]
 
-### clustering_old
+### clustering old
 
 A collection of scattered old clustering documents in R.
 
@@ -240,7 +240,7 @@ A collection of scattered old clustering documents in R.
 - Introducing tf-idf (term frequency-inverse document frequency), a text mining technique. Also uses it to perform text clustering via hierarchical clustering. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/tf_idf/tf_idf.html)]
 - Some useful evaluations when working with hierarchical clustering and K-means clustering (K-means++ is used here). Including Calinski-Harabasz index for determine the right K (cluster number) for clustering and boostrap evaluation of the clustering result’s stability. [[Rmarkdown](http://ethen8181.github.io/machine-learning/clustering_old/clustering/clustering.html)]
 
-### linear_regression
+### linear regression
 
 - Training Linear Regression with gradient descent in R, briefly covers the interpretation and visualization of linear regression's summary output. [[Rmarkdown](http://ethen8181.github.io/machine-learning/linear_regression/linear_regession.html)]
 

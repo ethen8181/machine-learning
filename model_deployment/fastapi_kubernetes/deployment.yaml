@@ -1,15 +1,48 @@
-# 1. we're creating a deployment called fastapi-model-deployment, deployment tells
-# Kubernetes to manage a set of replicas and make sure a certain number
-# of them are always available
+# 1. we're creating a deployment called fastapi-model-deployment, indicated by
+# metadata.name. Deployment tells Kubernetes to manage a set of replicas and
+# make sure a certain number of them are always available.
 
 # 2. the specification says we want 3 copies of an app called fastapi-model,
-# we define 3 copies of what under template
+# we define 3 copies of what under template.
 
-# 3. it's going to have 1 container, the `-` symbol is indicating that the
+# 3. For the 3 replicas on pod that we've created, we labeled them as app: fastapi-model,
+# this allows us later use this label to select these pods together using this label.
+
+# 4. it's going to have 1 container, the `-` symbol is indicating that the
 # configuration is an array, in which we specify the name and most importantly
 # the image for that container.
 
-# 4. we also specify we're going to run on port 80 in that container.
+# 5. we also specify we're going to run on port 80 in that container.
+
+# 6. Pod Health Checks. As mentioned above, with Kubernetes, we specify the desired state
+# in a configuration file, and the cluster will do its best to ensure that our desired
+# state is met. In this case, it needs to ensure that we always have 3 healthy pods
+# running our application, and to do so, we have the capability of using probes to
+# define the logic of checking whether our pods are considered healthy or not.
+# refer to the resource link for explanation of the syntax.
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+# https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-setting-up-health-checks-with-readiness-and-liveness-probes
+
+# 7. Pod Resource Management. To drive up our cluster's utilization (resources ideally
+# shouldn't be left idle since we're still paying ofr it), we should tell Kubernetes
+# the amount of resources our application requires. We can do so by specifying
+# the requests, mininum amount of resource required to run the application. And limit,
+# the maximum amount of resource an application can consume.
+
+# Together with probe definition and resource management, we ensure that we have a healthy
+# application that is ready before exposing it to clients, it is healthy and running at all
+# times with enough resources.
+
+# 8. With Kubernetes, we get to define our rollout strategy.
+# e.g. when deploying a version of our application, we want to ensure our
+# service has minimal downtime. The rolling update strategy works by updating
+# a few pods at a time, and perform the new releases incrementally until all
+# the pods are running the new application.
+# refer to the resource link for explanation of the syntax.
+# https://tachingchen.com/blog/kubernetes-rolling-update-with-deployment/
+
+# 9. The deployment documentation contains a lot useful references
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
 
 # the deployment option wasn't available in apiVersion v1
 apiVersion: apps/v1beta1
@@ -18,6 +51,14 @@ metadata:
     name: fastapi-model-deployment
 spec:
     replicas: 3
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+    revisionHistoryLimit: 10
+    minReadySeconds: 30
+    progressDeadlineSeconds: 300
     template:
         metadata:
             labels:
@@ -25,20 +66,50 @@ spec:
         spec:
             containers:
                 - name: fastapi-model
-                  # note that it's consider bad practice to use the latest tag
-                  # in production as it makes it harder to track which version of
-                  # the image is running, hence more difficult to roll back properly
+                  # note that it's consider good practice be explicit about the image tag
+                  # in production as it makes it easier to track which version of
+                  # the image is running, hence less complicated to roll back properly
                   # https://kubernetes.io/docs/concepts/configuration/overview/#container-images
-                  image: ethen8181/fastapi_model:latest
+                  image: ethen8181/fastapi_model:0.0.1
                   imagePullPolicy: Always
                   ports:
                     - containerPort: 80
+                  # Pod Health Check
+                  readinessProbe:
+                      httpGet:
+                          path: /
+                          port: 80
+                      initialDelaySeconds: 10
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                  livenessProbe:
+                      httpGet:
+                          path: /
+                          port: 80
+                      initialDelaySeconds: 10
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                      failureThreshold: 3
+                  # Pod Resource Management
+                  resources:
+                      requests:
+                          memory: 2G
+                          cpu: 0.5
+                      limits:
+                          memory: 4G
+                          cpu: 1
 
 ---
 # A service handles request either coming from inside the Kubernetes cluster
 # from one pod to another or outside the cluster. They define how requests
 # should be routed/handled. Service is usually a load balancer, though there
 # are many different types of service that we can configure.
+
+# Another term that is associated with exposing our application is ingress,
+# we won't be using/discussing it here, as it's generally used for exposing
+# multiple services under the same IP address, which we technically don't have/need
+# for this application.
+# https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0
 
 # 1. we create a service, and it's going to be applied to any pods that has
 # the name fastapi-model (the selector section). `selector` labels are key-value

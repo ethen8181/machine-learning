@@ -11,7 +11,7 @@ It is recommended that the reader spend some time to understand some of the cont
 
 ## Model Training
 
-The `tree_model_deployment.ipynb` [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/tree_model_deployment.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/fastapi_kubernetes/tree_model_deployment.html)] trains a regression model using LightGBM and saves the model checkpoint under `app`.
+The `tree_model_deployment.ipynb` trains a regression model using LightGBM and saves the model checkpoint under `app`. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/tree_model_deployment.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/fastapi_kubernetes/tree_model_deployment.html)]
 
 ## FastAPI Service
 
@@ -30,7 +30,7 @@ Follow the [Docker Installation Page](https://docs.docker.com/install/) to insta
 docker --version
 ```
 
-Creates the docker image for the application located under the `app` folder.
+The [Dockerfile](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/Dockerfile) creates the docker image for the application located under the `app` folder.
 
 ```bash
 # build and tag a docker image, . parameter assumes the
@@ -78,7 +78,9 @@ Once we confirm that the docker image works locally, we can push the image to [d
 ```bash
 docker login
 
-docker build --no-cache -t ethen8181/fastapi_model .
+# apart from the image name, it's generally a good practice to
+# be explicit about the version number of the image
+docker build --no-cache -t ethen8181/fastapi_model:0.0.1 .
 
 docker push ethen8181/fastapi_model
 ```
@@ -122,11 +124,11 @@ Listing down the concrete steps for deploying our applications to Azure Kubernet
 # step 1: create resource group
 az group create --resource-group ethen8181-fastapi-model --location westus
 
-# step 2: create azure kubernetes cluster
+# step 2: create azure kubernetes cluster, this step might take a while
 az aks create \
     --resource-group ethen8181-fastapi-model \
     --name fastapi-model \
-    --node-count 1 \
+    --node-count 2 \
     --enable-addons monitoring \
     --generate-ssh-keys
 
@@ -135,7 +137,13 @@ az aks get-credentials --resource-group ethen8181-fastapi-model --name fastapi-m
 
 # we can verify the connection to our cluster by returning the list of cluster nodes
 # make sure the status shows ready
-kubectl get nodes
+kubectl get nodes,pods
+
+# or we can get a more detail information using describe
+# a lot of times, the pods will show a status of pending,
+# common issues with this is not enough cluster resource,
+# or issue with the docker image
+kubectl describe pods
 
 # confirm our kubectl is pointed at the right context
 kubectl config get-contexts
@@ -150,7 +158,7 @@ kubectl config get-contexts
 
 We've already did the work of creating the application, packaging it into a docker container, and pushing it to docker hub. What's left is to deploy the container to our Kubernetes cluster.
 
-To create the application on Kubernetes, a.k.a deployment, we provide the information to `kubectl` in a .yaml file. The `deployment.yaml` contains a template configuration file showing how we can configure our deployment. Each section of the configuration file should be heavily commented.
+To create the application on Kubernetes, a.k.a deployment, we provide the information/configuration to `kubectl` in a .yaml file. The [deployment.yaml](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/deployment.yaml) contains a template configuration file showing how we can configure our deployment. Each section of the configuration file should be heavily commented.
 
 - `apiVersion` Which version of the Kubernetes API we're using to create this object.
 - `kind` What kind of object we're creating.
@@ -177,8 +185,24 @@ kubectl get service fastapi-model-service --watch
 # fastapi-model-service   LoadBalancer   10.0.76.205   13.87.216.62   80:31243/TCP   41s
 
 # there're various other commands we can use to check the pods,nodes,services
+# the common pattern for kubectl is the get command followed by the resource name.
+# the -o wide, is one way of getting more details on the specified resource. If we wish
+# the inspect the complete object, we can view the raw json or yaml using the -o json or
+# -o yaml flag
 kubectl get pods,svc -o wide
 ```
+
+The `logs` command allows us to check the logs for our pods.
+
+```bash
+# or add the -f flag to continously stream logs
+kubectl logs <pod-name>
+
+# or execute commands iteractively on the container/pod itself 
+kubectl exec -it <pod-name> bash
+```
+
+These are useful for one-off debugging, although it might be more useful to use a log aggregation service such as elasticsearch or cloud provider specific service. Log aggregation service provides more capabilities such as storing, filtering, searching, and aggregating logs from multiple pods into a single view.
 
 We can now test the service we've created by specifying the correct url. We can use the same python script in the docker container section and swap the url.
 
