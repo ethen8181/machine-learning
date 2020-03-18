@@ -158,7 +158,7 @@ kubectl config get-contexts
 
 We've already did the work of creating the application, packaging it into a docker container, and pushing it to docker hub. What's left is to deploy the container to our Kubernetes cluster.
 
-To create the application on Kubernetes, a.k.a deployment, we provide the information/configuration to `kubectl` in a .yaml file. The [deployment.yaml](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/deployment.yaml) contains a template configuration file showing how we can configure our deployment. Each section of the configuration file should be heavily commented.
+To create the application on Kubernetes, a.k.a deployment, we provide the information/configuration to `kubectl` in a .yaml file. The [deployment.yaml](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/deployment.yaml) and [service.yaml](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes/service.yaml) contains a template configuration files showing how we can configure our deployment. Each section of the configuration file should be heavily commented.
 
 - `apiVersion` Which version of the Kubernetes API we're using to create this object.
 - `kind` What kind of object we're creating.
@@ -167,6 +167,7 @@ To create the application on Kubernetes, a.k.a deployment, we provide the inform
 
 ```bash
 kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
 # example output
 #
 # deployment.apps/fastapi-model-deployment created
@@ -181,8 +182,8 @@ When we successfully deploy the applications, the Kubernetes service will expose
 kubectl get service fastapi-model-service --watch
 # example output 
 #
-# NAME                    TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
-# fastapi-model-service   LoadBalancer   10.0.76.205   13.87.216.62   80:31243/TCP   41s
+# NAME                    TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)        AGE
+# fastapi-model-service   LoadBalancer   10.0.71.181   13.91.195.109   80:31785/TCP   41s
 
 # there're various other commands we can use to check the pods,nodes,services
 # the common pattern for kubectl is the get command followed by the resource name.
@@ -209,7 +210,7 @@ We can now test the service we've created by specifying the correct url. We can 
 ```python
 # change the url accordingly, here we're specifying the external IP address along
 # with the port number 80, which we configured to be the port that exposes the service
-url = 'http://13.87.216.62:80/predict'
+url = 'http://13.91.195.109:80/predict'
 ```
 
 Once we're done testing the service/cluster and the it is no longer needed, we should delete the resource group & cluster with the following command.

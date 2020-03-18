@@ -1,0 +1,33 @@
+# A service handles request either coming from inside the Kubernetes cluster
+# from one pod to another or outside the cluster. They define how requests
+# should be routed/handled. Service is usually a load balancer, though there
+# are many different types of service that we can configure.
+
+# Another term that is associated with exposing our application is ingress,
+# we won't be using/discussing it here, as it's generally used for exposing
+# multiple services under the same IP address, which we technically don't have/need
+# for this application.
+# https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0
+
+# 1. we create a service, and it's going to be applied to any pods that has
+# the name fastapi-model (the selector section). `selector` labels are key-value
+# pairs specified/used by the users to select a set of objects. We have the
+# flexibility to develop our own conventions.
+
+# 2. there're many different options for configuring ports, see comments
+apiVersion: v1
+kind: Service
+metadata:
+    name: fastapi-model-service
+spec:
+    selector:
+        app: fastapi-model
+    type: LoadBalancer
+    ports:
+        - protocol: TCP
+          # this port is accessible within the cluster,
+          # i.e. inter-communications between the pods, so if a pod inside
+          # the cluster wants to talk to this application
+          port: 80
+          # port to forward to inside the pod
+          targetPort: 80
