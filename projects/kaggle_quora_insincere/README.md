@@ -14,9 +14,9 @@ Refer to the [Kaggle competition description](https://www.kaggle.com/c/quora-ins
 
 Private Leaderboard Score, F1 score:
 
-- boosted tree: 0.69
+- this repo: 0.69
 - leaderboard score 850th place: 0.69
 - leaderboard score 1st place: 0.71
 
-Note that the model here is not tuned extensively and no ensembling/blending/stacking was used.
+Note that the model here is not extensively tuned and no ensembling/blending/stacking was used.
   

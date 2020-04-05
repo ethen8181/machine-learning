@@ -247,6 +247,7 @@ A collection of scattered old clustering documents in R.
 
 ## Python Programming
 
+- Extremely Quick Guide to Unicode. [[markdown](https://github.com/ethen8181/machine-learning/blob/master/python/unicode.md)]
 - Quick Example of Factory Design Pattern. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/factory_pattern.ipynb)][[html](http://ethen8181.github.io/machine-learning/python/factory_pattern.html)]
 - Parallel programming with Python (threading, multiprocessing, concurrent.futures, joblib). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/parallel.ipynb)][[html](http://ethen8181.github.io/machine-learning/python/parallel.html)]
 - Understanding iterables, iterator and generators. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/python/iterator/iterator.ipynb)][[html](http://ethen8181.github.io/machine-learning/python/iterator/iterator.html)]
