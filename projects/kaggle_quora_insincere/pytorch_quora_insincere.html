@@ -14682,7 +14682,7 @@ height=359
 
         <span class="n">padded_texts</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_len</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_index</span><span class="p">)</span>
         <span class="n">texts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">padded_texts</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>   
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>       
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>       
         <span class="k">return</span> <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span>
 </pre></div>
 
@@ -14848,7 +14848,8 @@ is as expected.</p>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_size</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_size</span> <span class="o">=</span> <span class="n">feature_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">feature_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">feature_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="c1"># inputs : [batch size, sequence len, hidden size * num directions]</span>
@@ -14856,7 +14857,7 @@ is as expected.</p>
         <span class="n">reshaped_inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_size</span><span class="p">)</span>
 
         <span class="c1"># [batch size, sequence len]</span>
-        <span class="n">uit</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">reshaped_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+        <span class="n">uit</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">(</span><span class="n">reshaped_inputs</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
 
         <span class="c1"># [batch size, sequence len]</span>
         <span class="n">ait</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">uit</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -14864,7 +14865,7 @@ is as expected.</p>
         <span class="n">ait_reshaped</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">ait</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># [batch size, hidden layer]</span>
-        <span class="n">weighted_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ait_reshaped</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">weighted_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ait_reshaped</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">weighted_inputs</span><span class="p">,</span> <span class="n">ait</span>
 
     <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -14887,8 +14888,9 @@ is as expected.</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_size</span> <span class="o">=</span> <span class="n">feature_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attention_size</span> <span class="o">=</span> <span class="n">attention_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">feature_size</span><span class="p">,</span> <span class="n">attention_size</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">attention_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">feature_size</span><span class="p">,</span> <span class="n">attention_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">attention_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
         <span class="c1"># inputs : [batch size, sequence len, hidden size * num directions]</span>
@@ -14896,10 +14898,10 @@ is as expected.</p>
         <span class="n">reshaped_inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_size</span><span class="p">)</span>
 
         <span class="c1"># [batch size * sequence len, attention size]</span>
-        <span class="n">uit</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">reshaped_inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">))</span>
+        <span class="n">uit</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">(</span><span class="n">reshaped_inputs</span><span class="p">))</span>
 
         <span class="c1"># [batch size, sequence len]</span>
-        <span class="n">ait</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">uit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+        <span class="n">ait</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">uit</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
 
         <span class="c1"># [batch size, sequence len]</span>
         <span class="n">ait</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">ait</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -14907,7 +14909,7 @@ is as expected.</p>
         <span class="n">ait_reshaped</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">ait</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># [batch size, hidden layer]</span>
-        <span class="n">weighted_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ait_reshaped</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">weighted_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ait_reshaped</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">weighted_inputs</span><span class="p">,</span> <span class="n">ait</span>
 
     <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -14960,7 +14962,7 @@ is as expected.</p>
         <span class="c1"># embedded : [batch size, sent len, embed size]</span>
         <span class="n">embedded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="c1"># output : [batch size, sent len, hidden size * num directions]</span>
-        <span class="c1"># hidden : [n layers * n directions, batch size, hidden dim]</span>
+        <span class="c1"># hidden : [n layers * n directions, batch size, hidden size]</span>
         <span class="n">lstm_outputs</span><span class="p">,</span> <span class="p">(</span><span class="n">lstm_hidden</span><span class="p">,</span> <span class="n">lstm_cell</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">embedded</span><span class="p">)</span>
         <span class="n">weighted_lstm_outputs</span><span class="p">,</span> <span class="n">attention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">(</span><span class="n">lstm_outputs</span><span class="p">)</span>
         <span class="n">dense</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">weighted_lstm_outputs</span><span class="p">))</span>
@@ -15007,7 +15009,7 @@ is as expected.</p>
         <span class="c1"># embedded : [batch size, sent len, embed size]</span>
         <span class="n">embedded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="c1"># output : [batch size, sent len, hidden size * num directions]</span>
-        <span class="c1"># hidden : [n layers * n directions, batch size, hidden dim]</span>
+        <span class="c1"># hidden : [n layers * n directions, batch size, hidden size]</span>
         <span class="n">lstm_outputs</span><span class="p">,</span> <span class="p">(</span><span class="n">lstm_hidden</span><span class="p">,</span> <span class="n">lstm_cell</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">embedded</span><span class="p">)</span>
         <span class="n">concated</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">lstm_hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">lstm_hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">dense</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">concated</span><span class="p">))</span>

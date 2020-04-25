@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#MultiLabel-Text-Classification-with-FastText" data-toc-modified-id="MultiLabel-Text-Classification-with-FastText-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>MultiLabel Text Classification with FastText</a></span><ul class="toc-item"><li><span><a href="#Quick-Introduction-to-Fasttext" data-toc-modified-id="Quick-Introduction-to-Fasttext-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Quick Introduction to Fasttext</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model Training</a></span></li><li><span><a href="#Tokenizer" data-toc-modified-id="Tokenizer-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Tokenizer</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#MultiLabel-Text-Classification-with-FastText" data-toc-modified-id="MultiLabel-Text-Classification-with-FastText-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>MultiLabel Text Classification with FastText</a></span><ul class="toc-item"><li><span><a href="#Quick-Introduction-to-Fasttext" data-toc-modified-id="Quick-Introduction-to-Fasttext-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Quick Introduction to Fasttext</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model Training</a></span></li><li><span><a href="#Tokenizer" data-toc-modified-id="Tokenizer-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Tokenizer</a></span></li><li><span><a href="#Fasttext-Text-Classification-Pipeline" data-toc-modified-id="Fasttext-Text-Classification-Pipeline-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Fasttext Text Classification Pipeline</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13377,7 +13377,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2020-04-12 18:00:54 
+<pre>Ethen 2020-04-25 14:26:23 
 
 CPython 3.6.4
 IPython 7.9.0
@@ -13481,16 +13481,16 @@ __label__cast-iron __label__stove How do I cover up the white spots on my cast i
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>--2020-04-12 17:59:30--  https://dl.fbaipublicfiles.com/fasttext/data/cooking.stackexchange.tar.gz
-Resolving dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)... 104.22.74.142, 104.22.75.142
-Connecting to dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)|104.22.74.142|:443... connected.
+<pre>--2020-04-25 14:26:23--  https://dl.fbaipublicfiles.com/fasttext/data/cooking.stackexchange.tar.gz
+Resolving dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)... 104.22.75.142, 104.22.74.142
+Connecting to dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)|104.22.75.142|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 457609 (447K) [application/x-tar]
-Saving to: ‘data/cooking.stackexchange.tar.gz’
+Saving to: ‘data/cooking.stackexchange.tar.gz.1’
 
-cooking.stackexchan 100%[===================&gt;] 446.88K  --.-KB/s    in 0.05s   
+cooking.stackexchan 100%[===================&gt;] 446.88K  --.-KB/s    in 0.09s   
 
-2020-04-12 17:59:30 (9.63 MB/s) - ‘data/cooking.stackexchange.tar.gz’ saved [457609/457609]
+2020-04-25 14:26:24 (4.81 MB/s) - ‘data/cooking.stackexchange.tar.gz.1’ saved [457609/457609]
 
 x cooking.stackexchange.id
 x cooking.stackexchange.txt
@@ -13743,7 +13743,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>((&#39;__label__sauce&#39;, &#39;__label__cheese&#39;), array([0.73716819, 0.49219814]))</pre>
+<pre>((&#39;__label__sauce&#39;, &#39;__label__cheese&#39;), array([0.77730989, 0.49219814]))</pre>
 </div>
 
 </div>
@@ -13786,7 +13786,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 <div class="output_text output_subarea output_execute_result">
 <pre>((&#39;__label__food-safety&#39;, &#39;__label__storage-method&#39;),
- array([0.21207881, 0.06372499]))</pre>
+ array([0.17782086, 0.04085571]))</pre>
 </div>
 
 </div>
@@ -13829,7 +13829,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>((&#39;__label__food-safety&#39;,), array([0.21207881]))</pre>
+<pre>((&#39;__label__food-safety&#39;,), array([0.17782086]))</pre>
 </div>
 
 </div>
@@ -13877,8 +13877,8 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 <div class="output_text output_subarea output_execute_result">
 <pre>([[&#39;__label__sauce&#39;, &#39;__label__cheese&#39;],
   [&#39;__label__food-safety&#39;, &#39;__label__storage-method&#39;]],
- array([[0.73716819, 0.49219814],
-        [0.21207881, 0.06372499]]))</pre>
+ array([[0.77730989, 0.49219814],
+        [0.17782086, 0.04085571]]))</pre>
 </div>
 
 </div>
@@ -13945,27 +13945,27 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>train metrics:
 records	12297
-Precision@1	0.482
-Recall@1	0.209
-F1@1	0.292
+Precision@1	0.484
+Recall@1	0.210
+F1@1	0.293
 
 test metrics:
 records	3107
 Precision@1	0.409
-Recall@1	0.177
-F1@1	0.247
+Recall@1	0.176
+F1@1	0.246
 
 train metrics:
 records	12297
 Precision@2	0.357
 Recall@2	0.310
-F1@2	0.331
+F1@2	0.332
 
 test metrics:
 records	3107
-Precision@2	0.304
-Recall@2	0.263
-F1@2	0.282
+Precision@2	0.307
+Recall@2	0.265
+F1@2	0.284
 
 </pre>
 </div>
@@ -14431,20 +14431,20 @@ F1@1	0.294
 
 test metrics:
 records	3107
-Precision@1	0.446
+Precision@1	0.444
 Recall@1	0.192
-F1@1	0.269
+F1@1	0.268
 
 train metrics:
 records	12297
-Precision@2	0.357
-Recall@2	0.310
-F1@2	0.332
+Precision@2	0.358
+Recall@2	0.311
+F1@2	0.333
 
 test metrics:
 records	3107
 Precision@2	0.324
-Recall@2	0.279
+Recall@2	0.280
 F1@2	0.300
 
 </pre>
@@ -14484,27 +14484,27 @@ F1@2	0.300
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>train metrics:
 records	12297
-Precision@1	0.482
-Recall@1	0.209
-F1@1	0.292
+Precision@1	0.484
+Recall@1	0.210
+F1@1	0.293
 
 test metrics:
 records	3107
 Precision@1	0.409
-Recall@1	0.177
-F1@1	0.247
+Recall@1	0.176
+F1@1	0.246
 
 train metrics:
 records	12297
 Precision@2	0.357
 Recall@2	0.310
-F1@2	0.331
+F1@2	0.332
 
 test metrics:
 records	3107
-Precision@2	0.304
-Recall@2	0.263
-F1@2	0.282
+Precision@2	0.307
+Recall@2	0.265
+F1@2	0.284
 
 </pre>
 </div>
@@ -14658,7 +14658,7 @@ F1@2	0.282
 
 <div class="output_text output_subarea output_execute_result">
 <pre>((&#39;__label__baking&#39;, &#39;__label__bread&#39;, &#39;__label__yeast&#39;),
- array([0.9867872 , 0.97069776, 0.24509501]))</pre>
+ array([0.99143255, 0.97405267, 0.26285186]))</pre>
 </div>
 
 </div>
@@ -14713,13 +14713,247 @@ F1@2	0.282
 
 <div class="output_text output_subarea output_execute_result">
 <pre>([[&#39;__label__baking&#39;, &#39;__label__bread&#39;],
-  [&#39;__label__equipment&#39;, &#39;__label__microwave&#39;],
+  [&#39;__label__equipment&#39;, &#39;__label__coffee&#39;],
   [&#39;__label__cast-iron&#39;, &#39;__label__equipment&#39;]],
- array([[0.9867872 , 0.97069776],
-        [0.27513972, 0.09535946],
-        [0.60019839, 0.46102679]]))</pre>
+ array([[0.99143255, 0.97405267],
+        [0.22816648, 0.08270735],
+        [0.64423513, 0.38492218]]))</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Fasttext-Text-Classification-Pipeline">Fasttext Text Classification Pipeline<a class="anchor-link" href="#Fasttext-Text-Classification-Pipeline">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The following provides a sample code on how to wrap a <code>FasttextPipeline</code> class on top of the fasttext model to allow for hyperparameter tuning. The <a href="https://github.com/ethen8181/machine-learning/tree/master/deep_learning/multi_label/fasttext_module"><code>fasttext_module</code></a> can be found here for those interested.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_id</span> <span class="o">=</span> <span class="s1">&#39;cooking&#39;</span>
+<span class="n">fasttext_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s2">&quot;lrUpdateRate&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="s2">&quot;thread&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;wordNgrams&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;dim&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="s2">&quot;ova&quot;</span>
+<span class="p">}</span>
+
+<span class="n">fasttext_hyper_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;dim&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+    <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">fasttext_search_parameters</span> <span class="o">=</span>  <span class="p">{</span>
+    <span class="s2">&quot;n_iter&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;n_jobs&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;scoring&quot;</span><span class="p">:</span> <span class="s2">&quot;f1@1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;random_state&quot;</span><span class="p">:</span> <span class="mi">1234</span>
+<span class="p">}</span>
+<span class="n">val_size</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">split_random_state</span> <span class="o">=</span> <span class="mi">1234</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">fasttext_module.model</span> <span class="k">import</span> <span class="n">FasttextPipeline</span>
+
+<span class="n">fasttext_pipeline</span> <span class="o">=</span> <span class="n">FasttextPipeline</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">fasttext_params</span><span class="p">,</span>
+                                     <span class="n">fasttext_hyper_params</span><span class="p">,</span> <span class="n">fasttext_search_parameters</span><span class="p">)</span>
+
+<span class="c1"># fit the pipeline by giving it the training text file and specify the</span>
+<span class="c1"># size of the validation split that will be used for hyperparameter tuning</span>
+<span class="c1"># note that here the file in input_path_train should already be in the format</span>
+<span class="c1"># that fasttext expects</span>
+<span class="n">fasttext_pipeline</span><span class="o">.</span><span class="n">fit_file</span><span class="p">(</span><span class="n">input_path_train</span><span class="p">,</span> <span class="n">val_size</span><span class="p">,</span> <span class="n">split_random_state</span><span class="p">)</span>
+
+<span class="c1"># check the hyperparameter tuning result stored in a pandas DataFrame</span>
+<span class="n">fasttext_pipeline</span><span class="o">.</span><span class="n">df_tune_results_</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
+[Parallel(n_jobs=1)]: Done   2 out of   2 | elapsed:   10.3s finished
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>params</th>
+      <th>epoch</th>
+      <th>dim</th>
+      <th>train_precision@1</th>
+      <th>train_recall@1</th>
+      <th>train_f1@1</th>
+      <th>test_precision@1</th>
+      <th>test_recall@1</th>
+      <th>test_f1@1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>{'epoch': 15, 'dim': 80}</td>
+      <td>15</td>
+      <td>80</td>
+      <td>0.614</td>
+      <td>0.266</td>
+      <td>0.372</td>
+      <td>0.477</td>
+      <td>0.207</td>
+      <td>0.289</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>{'epoch': 15, 'dim': 100}</td>
+      <td>15</td>
+      <td>100</td>
+      <td>0.609</td>
+      <td>0.264</td>
+      <td>0.368</td>
+      <td>0.476</td>
+      <td>0.207</td>
+      <td>0.288</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># save and load the model back</span>
+<span class="n">model_checkpoint_dir</span> <span class="o">=</span> <span class="n">fasttext_pipeline</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;cooking&#39;</span><span class="p">)</span>
+<span class="n">fasttext_pipeline_loaded</span> <span class="o">=</span> <span class="n">FasttextPipeline</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_checkpoint_dir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># compute the evaluation metric on the train and test text dataset</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">score_str_train</span> <span class="o">=</span> <span class="n">fasttext_pipeline</span><span class="o">.</span><span class="n">score_str</span><span class="p">(</span><span class="n">input_path_train</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<span class="n">score_str_test</span> <span class="o">=</span> <span class="n">fasttext_pipeline</span><span class="o">.</span><span class="n">score_str</span><span class="p">(</span><span class="n">input_path_test</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train&#39;</span> <span class="o">+</span> <span class="n">score_str_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test&#39;</span> <span class="o">+</span> <span class="n">score_str_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>train metric - num_records: 12297, precision@1: 0.639, recall@1: 0.277, f1@1: 0.387
+test metric - num_records: 3107, precision@1: 0.489, recall@1: 0.211, f1@1: 0.295
+</pre>
+</div>
 </div>
 
 </div>
