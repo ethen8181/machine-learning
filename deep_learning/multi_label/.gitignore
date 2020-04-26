@@ -1,3 +1,4 @@
 data/
 cooking_model/
 cooking/
+fasttext_module/__pycache__/

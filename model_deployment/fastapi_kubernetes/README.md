@@ -219,6 +219,57 @@ Once we're done testing the service/cluster and the it is no longer needed, we s
 az group delete --resource-group ethen8181-fastapi-model --yes --no-wait
 ```
 
+## Load Testing Application with Apache Jmeter
+
+Upon developing our application, often times we would need to perform some load testing (a.k.a Load and Performance or LnP for short) to ensure our application meets the required SLA.
+
+The following link provides a great introduction on how to do this with Apache Jmeter. [Blog: Rest API Load testing with Apache JMeter](https://medium.com/@chamikakasun/rest-api-load-testing-with-apache-jmeter-a4d25ea2b7b6)
+
+Here we'll just be listing down the high level steps for reference purposes. Folks should walk through the the blog above if it's the first time using Apache Jmeter for a more in-depth walk through.
+
+```bash
+# upon downloading apache jmeter https://jmeter.apache.org/download_jmeter.cgi
+# launch the GUI to set up the test plan
+apache-jmeter-5.2.1/bin/jmeter.sh
+```
+
+For the test plan, we should be creating:
+
+- Thread Group from Threads.
+- HTTP Request from Sampler.
+- HTTP Header Manager from Config Element.
+
+Upon saving the test plan as a .jmx file. We should run the LnP via the command line as opposed to using the GUI (best practice suggested by Apache Jmeter).
+
+```bash
+cd jmeter
+
+TEST_PLAN=fastapi_test_plan.jmx
+JMETER_PATH=/Users/mingyuliu/apache-jmeter-5.2.1/bin/jmeter.sh
+RESULT_FILE=fastapi_jmeter_results.jtl
+REPORT_PATH=fastapi_jmeter_report
+rm ${RESULT_FILE}
+rm -r ${REPORT_PATH}
+
+# run the LnP
+# -n for non-gui
+# -t points to our test plan
+# -l location for the results file
+${JMETER_PATH} -n -t ${TEST_PLAN} -l ${RESULT_FILE}
+
+# generate a stats summary from the results file
+# -g location for existing results file
+# -o web report folder, provides a nicer visualization on top the report file
+${JMETER_PATH} -g ${RESULT_FILE} -o ${REPORT_PATH}
+
+# open the visualization
+open ${REPORT_PATH}/index.html
+```
+
+The most important part of the report is the LnP summary statistics.
+
+<img src="jmeter/jmeter_stats.png" width="50%" height="50%">
+
 
 # Reference
 
@@ -231,3 +282,4 @@ az group delete --resource-group ethen8181-fastapi-model --yes --no-wait
 - [Blog: Porting Flask to FastAPI for ML Model Serving](https://www.pluralsight.com/tech-blog/porting-flask-to-fastapi-for-ml-model-serving/)
 - [Blog: Getting started with Azure Kubernetes Service (AKS)](https://blog.rafay.co/getting-started-with-azure-kubernetes-service-aks)
 - [Blog: Set up Kubernetes on Azure](https://mikebridge.github.io/post/python-flask-kubernetes-4/)
+- [Blog: Rest API Load testing with Apache JMeter](https://medium.com/@chamikakasun/rest-api-load-testing-with-apache-jmeter-a4d25ea2b7b6)

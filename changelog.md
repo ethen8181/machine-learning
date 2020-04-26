@@ -9,6 +9,11 @@ The changelog will record what content was **changed** (e.g. changed an existing
 - Extremely Quick Guide to Unicode. [[markdown](https://github.com/ethen8181/machine-learning/blob/master/python/unicode.md)]
 - MultiLabel Text Classification with Fasttext and Huggingface Tokenizers.  [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
 
+### Changed
+
+- FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes)]
+    - Added application load testing with Apache Jmeter.
+
 ## [2020-03]
 
 ### Changed

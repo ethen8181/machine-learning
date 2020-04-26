@@ -9,7 +9,12 @@ from fasttext_module.utils import prepend_file_name
 from fasttext_module.split import train_test_split_file
 
 
-__all__ = ['FasttextPipeline']
+__all__ = [
+    'FasttextPipeline',
+    'fit_and_score',
+    'fit_fasttext',
+    'score'
+]
 
 
 class FasttextPipeline:
@@ -27,6 +32,7 @@ class FasttextPipeline:
 
     fasttext_hyper_params : dict
         Controls which parameters and its corresponding range that will be tuned.
+        e.g. {"dim": [80, 100]}
 
     fasttext_search_params : dict
         Controls how long to perform the hyperparameter search and what metric to optimize for.
@@ -77,7 +83,7 @@ class FasttextPipeline:
             The validation set will be used to pick the best parameter from
             the hyperparameter search.
 
-        split_random_state : int
+        split_random_state : int, default 1234
             Seed for the split.
 
         Returns
@@ -114,7 +120,7 @@ class FasttextPipeline:
         self.best_params_ = df_tune_results['params'].iloc[0]
         self.df_tune_results_ = df_tune_results
 
-        # clean up the interediate train/test split file to prevent hogging up
+        # clean up the intermediate train/test split file to prevent hogging up
         # un-needed disk space
         for file_path in [fasttext_file_path_train, fasttext_file_path_val]:
             os.remove(file_path)
