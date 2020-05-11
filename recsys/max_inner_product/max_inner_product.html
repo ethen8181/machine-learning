@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>ann_benchmarks</title>
+<title>max_inner_product</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Approximate-Nearest-Neighbor-Search" data-toc-modified-id="Approximate-Nearest-Neighbor-Search-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Approximate Nearest Neighbor Search</a></span><ul class="toc-item"><li><span><a href="#Setting-Up-the-Data" data-toc-modified-id="Setting-Up-the-Data-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Setting Up the Data</a></span></li><li><span><a href="#Benchmarking-ANN-Methods" data-toc-modified-id="Benchmarking-ANN-Methods-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Benchmarking ANN Methods</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Maximum-Inner-Product" data-toc-modified-id="Maximum-Inner-Product-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Maximum Inner Product</a></span><ul class="toc-item"><li><span><a href="#Order-Preserving-Transformations" data-toc-modified-id="Order-Preserving-Transformations-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Order Preserving Transformations</a></span></li><li><span><a href="#Matrix-Factorization" data-toc-modified-id="Matrix-Factorization-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Matrix Factorization</a></span></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Benchmark" data-toc-modified-id="Benchmark-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Benchmark</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13474,23 +13474,19 @@ div#notebook {
 <span class="o">%</span><span class="k">autoreload</span> 2
 <span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
 
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">nmslib</span>  <span class="c1"># pip install nmslib&gt;=1.7.3.2 pybind11&gt;=2.2.3</span>
-<span class="kn">import</span> <span class="nn">zipfile</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">hnswlib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">trange</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">dump</span><span class="p">,</span> <span class="n">load</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">normalize</span>
-<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">NearestNeighbors</span>
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">call</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">csr_matrix</span>
+<span class="kn">from</span> <span class="nn">implicit.bpr</span> <span class="k">import</span> <span class="n">BayesianPersonalizedRanking</span>
 
-<span class="c1"># change default style figure and font size</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="c1"># prevent scientific notations</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,sklearn,matplotlib,tqdm,nmslib
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,scipy,implicit,hnswlib
 </pre></div>
 
     </div>
@@ -13507,16 +13503,16 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2018-08-21 18:38:17 
+<pre>Ethen 2020-05-11 09:57:24 
 
 CPython 3.6.4
-IPython 6.4.0
+IPython 7.9.0
 
-numpy 1.14.1
-sklearn 0.19.1
-matplotlib 2.2.2
-tqdm 4.24.0
-nmslib 1.7.3.4
+numpy 1.18.4
+pandas 0.25.0
+scipy 1.4.1
+implicit 0.4.2
+hnswlib n
 </pre>
 </div>
 </div>
@@ -13528,16 +13524,16 @@ nmslib 1.7.3.4
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Approximate-Nearest-Neighbor-Search">Approximate Nearest Neighbor Search<a class="anchor-link" href="#Approximate-Nearest-Neighbor-Search">&#182;</a></h1>
+<h1 id="Maximum-Inner-Product">Maximum Inner Product<a class="anchor-link" href="#Maximum-Inner-Product">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Approximate nearest neighbor (ANN) search is useful when we have a large dataset with hundred thousands/millions/billions of data-points, and for a given data point we wish to find its nearest neighbors. There are many use case for this type of methods and the one we'll be focusing on here is finding similar vector representations, so think algorithms such as matrix factorization or word2vec that compresses our original data into embeddings, or so called latent factors. And throughout the notebook, the notion of similar here will be referring to two vectors' cosine distance.</p>
-<p>There are many open-source implementations already that we can use to see whether it solves our problem, but the question is always which one is better? The following github repo contains a thorough benchmarks of various open-sourced implementations. <a href="https://github.com/erikbern/ann-benchmarks">Github: Benchmarking nearest neighbors</a>.</p>
-<p>The goal of this notebook shows how to run a quicker benchmark ourselves without all the complexity. The repo listed above benchmarks multiple algorithms on multiple datasets using multiple hyperparameters, which can take a really long time. We will pick one of the open-source implementation that has been identified as a solid choice and walk through step-by-step of the process using one dataset.</p>
+<p>Matrix factorization are potent techniques in solving the collaborative filtering problem. It mainly involves building up the user-item interaction matrix, then decomposing it into a user latent factor (a.k.a embedding) and item latent factor each with some user specified dimension (a hyperparameter that we get to tweak).</p>
+<p><img src="img/matrix_factorization.png" width="60%" height="60%"></p>
+<p>To generate the items recommended for each user, we would perform a dot product between the two matrices and retrieve the top-k items that have the highest "scores". This process, however, can often times becomes a large bottleneck for these type of algorithms when the number of users and items becomes fairly large. As exhaustive computation of the dot product is extremely expensive. This document's focus is to demonstrate a order preserving transformation that converts the maximum inner product into a nearest neighborhood search problem to significantly speed up the process for generating the top-k recommendations.</p>
 
 </div>
 </div>
@@ -13545,14 +13541,55 @@ nmslib 1.7.3.4
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Setting-Up-the-Data">Setting Up the Data<a class="anchor-link" href="#Setting-Up-the-Data">&#182;</a></h2>
+<h2 id="Order-Preserving-Transformations">Order Preserving Transformations<a class="anchor-link" href="#Order-Preserving-Transformations">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The first step is to get our hands on some data and split it into training and test set, here we'll be using the glove vector representation trained on twitter dataset.</p>
+<p>We'll first describe the notation we'll be using. Lower case is for scalars, $x$, bold lower case for vectors, $\mathbf{x}$, and bold upper case for matrices, $\mathbf{X}$.</p>
+<p>Given a vector, $\mathbf{x}$. The norm is denoted by $\Vert \mathbf{x} \Vert = \sqrt{\sum^d_{i=1} x_i^2}$. The inner product is represented as $\mathbf{x} \cdot \mathbf{y}$. Last but not least, $(a, \mathbf{x}^T)^T$ is for denoting a concatenation of a scalar $a$ with a vector $\mathbf{x}$.</p>
+<p>On one hand, we have a matrix of $n$ vectors $\mathbf{Y} = [\mathbf{y}_1, \mathbf{y}_2, ..., \mathbf{y}_n]$, such that $\mathbf{y}_i \in \mathbb{R}^d$. Where $d$ is the number of dimensions we set for the latent factor. Whereas, our query vector $\mathbf{x} \in \mathbb{R}^d$.</p>
+<p>Our objective is to retrieve an index according to the maximum inner product.</p>
+$$
+\begin{align}
+f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmax}} \space \mathbf{x} \cdot \mathbf{y}_i
+\end{align}
+$$<p>The idea behind speeding up the workload for maximum inner product operations is to transform the problem into a distance minimization problem or nearest neighborhood search.</p>
+\begin{align}
+f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x} - \mathbf{y}_i \Vert}^2
+\end{align}<p>Once we transform the problem into a euclidean distance problem, there are plethora of algorithms/packages available for doing fast similarity search. To do so, we are going to apply a transformation function on our matrix, $\mathbf{Y}$and our query vector, $\mathbf{x}$. Note that the idea here is only to perform transformation on top of the existing $\mathbf{x}$ and $\mathbf{y}$, not to design a whole new algorithm in itself to learn embeddings/latent factors that directly uses distance minimization to generate the prediction, as this prevents us from using the existing matrix factorization algorithms.</p>
+<p>The order transformation is to add an additional dimension to each of the latent factors:</p>
+\begin{align}
+\mathbf{y}_i^* &amp;= \big(\sqrt{\phi^2 - {\Vert \mathbf{y_i} \Vert}^2 }, \mathbf{y_i}^T\big)^T, \text{where } \phi = \underset{i}{\text{max}} \Vert \mathbf{y}_i \Vert \\
+\mathbf{x}^* &amp;= (0, \mathbf{x}^T)^T
+\end{align}<p>As</p>
+\begin{align}
+{\Vert \mathbf{x}^* \Vert}^2 &amp;= {\Vert \mathbf{x} \Vert}^2 \\
+{\Vert \mathbf{y}_i^* \Vert}^2 &amp;= \phi^2 - {\Vert \mathbf{y}_i \Vert}^2 + {\Vert \mathbf{y}_i \Vert}^2 = \phi^2 \\
+\mathbf{x}^* \cdot \mathbf{y}^*_i &amp;= \sqrt{\phi^2 - {\Vert \mathbf{y}_i \Vert}^2 } \cdot 0 + \mathbf{x} \cdot \mathbf{y}_i = \mathbf{x} \cdot \mathbf{y}_i
+\end{align}<p>To link the maximum inner product to the distance minimization problem, we would then have:</p>
+\begin{align}
+{\Vert \mathbf{x}^* - \mathbf{y}_i^* \Vert}^2 = {\Vert \mathbf{x}^* \Vert}^2 + {\Vert \mathbf{y}_i^* \Vert}^2 - 2 \cdot \mathbf{x}^* \cdot \mathbf{y}^*_i = {\Vert \mathbf{x} \Vert}^2 + \phi^2 - 2 \cdot \mathbf{x} \cdot \mathbf{y}_i
+\end{align}<p>Since both $\mathbf{x}$ and $\phi$ are independent of the term $i$, that concludes our order preserving transformation.</p>
+<p>Upon building the transformation, our original matrices would have 1 extra dimension. Then the next step is to pick our favorite nearest neighborhood algorithm and use it to generate the predictions. Popular options at the time of writing this includes, <a href="https://github.com/facebookresearch/faiss">faiss</a>, <a href="https://github.com/nmslib/nmslib">nmslib</a>, or <a href="https://github.com/nmslib/hnswlib">hnswlib</a>. The <a href="https://github.com/erikbern/ann-benchmarks">ann-benchmarks</a> also lists down the comparison between different open-source nearest neighborhood search algorithms/packages.</p>
+<p>Let's now take a look at these concepts in practice.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Matrix-Factorization">Matrix Factorization<a class="anchor-link" href="#Matrix-Factorization">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll be using the movielens data to illustrate to concept.</p>
 
 </div>
 </div>
@@ -13562,57 +13599,16 @@ nmslib 1.7.3.4
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">file_dir</span> <span class="o">=</span> <span class="s1">&#39;ml-100k&#39;</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;u.data&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;curl&#39;</span><span class="p">,</span> <span class="s1">&#39;-O&#39;</span><span class="p">,</span> <span class="s1">&#39;http://files.grouplens.org/datasets/movielens/&#39;</span> <span class="o">+</span> <span class="n">file_dir</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">])</span>
+    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;unzip&#39;</span><span class="p">,</span> <span class="n">file_dir</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">])</span>
 
-<span class="c1"># we&#39;ll download the data to DATA_DIR location</span>
-<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="s1">&#39;./datasets/&#39;</span>
-<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;http://nlp.stanford.edu/data/glove.twitter.27B.zip&#39;</span>
-<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s1">&#39;glove.twitter.27B.zip&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="n">download</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_train_test_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1234</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    dimension : int, {25, 50, 100, 200}, default 25</span>
-<span class="sd">        The dataset contains embeddings of different size.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">zip_filename</span> <span class="o">=</span> <span class="s1">&#39;glove.twitter.27B.</span><span class="si">{}</span><span class="s1">d.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">zip_filename</span><span class="p">):</span>
-            <span class="c1"># remove the first index, id field and only get the vectors</span>
-            <span class="n">vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]])</span>
-            <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
-
-        <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
-
-    <span class="c1"># we can downsample for experimentation purpose</span>
-    <span class="c1"># X_train = X_train[:50000]</span>
-    <span class="c1"># X_test = X_test[:10000]</span>
-    <span class="k">return</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span>
-
-
-<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">get_train_test_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;training data shape: &#39;</span><span class="p">,</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;testing data shape: &#39;</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data dimension: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13629,81 +13625,99 @@ nmslib 1.7.3.4
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>training data shape:  (954811, 25)
-testing data shape:  (238703, 25)
+<pre>data dimension: 
+ (100000, 4)
 </pre>
 </div>
 </div>
 
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user_id</th>
+      <th>item_id</th>
+      <th>rating</th>
+      <th>timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>196</td>
+      <td>242</td>
+      <td>3</td>
+      <td>881250949</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>186</td>
+      <td>302</td>
+      <td>3</td>
+      <td>891717742</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>22</td>
+      <td>377</td>
+      <td>1</td>
+      <td>878887116</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>244</td>
+      <td>51</td>
+      <td>2</td>
+      <td>880606923</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>166</td>
+      <td>346</td>
+      <td>1</td>
+      <td>886397596</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Benchmarking an approximate nearest neighbor method involves looking at how much faster it is compared to exact nearest neighbor methods and how much precision/recall are we losing for the speed that was gained. To measure this, we first need to use an exact nearest neighbor methods to see how long it takes and store the ground truth. e.g. if out exact nearest neighbor methods, thinks that for data point 1, its top 3 nearest neighbors excluding itself are [2, 4, 1], and our approximate nearest neighbor method returns [2, 1, 5], then our precision/recall depending on which way we're looking at it would be 66%, since 2 and 1 are both in the ground truth set whereas 5 is not.</p>
 
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">BruteForce</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Brute force way of computing cosine distance, this</span>
-<span class="sd">    is more of clarifying what we&#39;re trying to accomplish,</span>
-<span class="sd">    don&#39;t actually use it as it will take extremely long.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">lens</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">X</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">lens</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">topn</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Find indices of most similar vectors for a given query vector.&quot;&quot;&quot;</span>
-
-        <span class="c1"># argmax_a dot(a, b) / |a||b| = argmin_a -dot(a, b)</span>
-        <span class="n">dists</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_</span><span class="p">,</span> <span class="n">vector</span><span class="p">)</span>
-        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span> <span class="n">topn</span><span class="p">)[:</span><span class="n">topn</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">index</span><span class="p">:</span> <span class="n">dists</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-
-
-<span class="k">class</span> <span class="nc">KDTree</span><span class="p">:</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">topn</span> <span class="o">=</span> <span class="n">topn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
-
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-
-        <span class="c1"># cosine distance is proportional to normalized euclidean distance,</span>
-        <span class="c1"># thus we normalize the item vectors and use euclidean metric so</span>
-        <span class="c1"># we can use the more efficient kd-tree for nearest neighbor search</span>
-        <span class="n">X_normed</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span>
-            <span class="n">n_neighbors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">topn</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">)</span>
-        <span class="n">index</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_normed</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_</span> <span class="o">=</span> <span class="n">index</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">query_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">X_normed</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">X_normed</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">indices</span>
-
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">):</span>
-        <span class="n">vector_normed</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">vector_normed</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">indices</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">users_col</span> <span class="o">=</span> <span class="s1">&#39;user_id&#39;</span>
+<span class="n">items_col</span> <span class="o">=</span> <span class="s1">&#39;item_id&#39;</span>
+<span class="n">value_col</span> <span class="o">=</span> <span class="s1">&#39;rating&#39;</span>
+<span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;timestamp&#39;</span>
 </pre></div>
 
     </div>
@@ -13713,30 +13727,47 @@ testing data shape:  (238703, 25)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">users_col</span><span class="p">,</span> <span class="n">items_col</span><span class="p">):</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the train/test split, the process is to split each user's behavior based on chronological order.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_ground_truth</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">kdtree_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the ground truth or so called golden standard, during</span>
-<span class="sd">    which we&#39;ll compute the time to build the index using the</span>
-<span class="sd">    training set, time to query the nearest neighbors for all</span>
-<span class="sd">    the data points in the test set. The ground_truth returned</span>
-<span class="sd">    will be of type list[(ndarray, ndarray)], where the first</span>
-<span class="sd">    ndarray will be the query vector, and the second ndarray will</span>
-<span class="sd">    be the corresponding nearest neighbors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">kdtree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="o">**</span><span class="n">kdtree_params</span><span class="p">)</span>
-    <span class="n">kdtree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-    <span class="n">build_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">train_test_user_time_split</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+    <span class="n">train_size</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">test_size</span>
 
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">indices</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">query_batch</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-    <span class="n">query_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">df_train_user</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">df_test_user</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">df_grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">time_col</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">users_col</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df_group</span> <span class="ow">in</span> <span class="n">df_grouped</span><span class="p">:</span>
+        <span class="n">n_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_group</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">train_size</span><span class="p">)</span>
+        <span class="n">df_group_train</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">n_train</span><span class="p">]</span>
+        <span class="n">df_group_test</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_train</span><span class="p">:]</span>
+        <span class="n">df_train_user</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_group_train</span><span class="p">)</span>
+        <span class="n">df_test_user</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_group_test</span><span class="p">)</span>
 
-    <span class="n">ground_truth</span> <span class="o">=</span> <span class="p">[(</span><span class="n">vector</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">indices</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">build_time</span><span class="p">,</span> <span class="n">query_time</span><span class="p">,</span> <span class="n">ground_truth</span>
+    <span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_train_user</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_test_user</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span>
 </pre></div>
 
     </div>
@@ -13749,28 +13780,11 @@ testing data shape:  (238703, 25)
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we&#39;ll compute the ground truth for the first time and</span>
-<span class="c1"># store it on disk to prevent computing it over and over again</span>
-<span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s1">&#39;model&#39;</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_user_time_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="p">)</span>
 
-<span class="n">ground_truth_filename</span> <span class="o">=</span> <span class="s1">&#39;ground_truth.pkl&#39;</span>
-<span class="n">ground_truth_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_DIR</span><span class="p">,</span> <span class="n">ground_truth_filename</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ground truth filepath: &#39;</span><span class="p">,</span> <span class="n">ground_truth_filepath</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ground_truth_filepath</span><span class="p">):</span>
-    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">ground_truth_filepath</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="c1"># using a setting of kdtree_params = {&#39;topn&#39;: 10, &#39;n_jobs&#39;: -1},</span>
-    <span class="c1"># it took at least 1 hour to finish on a 8 core machine</span>
-    <span class="n">kdtree_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;topn&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;n_jobs&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
-    <span class="n">build_time</span><span class="p">,</span> <span class="n">query_time</span><span class="p">,</span> <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">get_ground_truth</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">kdtree_params</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;build time: &#39;</span><span class="p">,</span> <span class="n">build_time</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;query time: &#39;</span><span class="p">,</span> <span class="n">query_time</span><span class="p">)</span>
-    <span class="n">dump</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">ground_truth_filepath</span><span class="p">)</span>
-
-<span class="n">ground_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train size: &#39;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test size: &#39;</span><span class="p">,</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -13787,32 +13801,12 @@ testing data shape:  (238703, 25)
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ground truth filepath:  model/ground_truth.pkl
-build time:  5.02460503578186
-query time:  5105.871987104416
+<pre>train size:  79619
+test size:  20381
 </pre>
 </div>
 </div>
 
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(array([ 0.84227,  0.19005,  1.5346 ,  0.88995, -1.6548 , -0.60046,
-        -1.3206 , -1.5521 , -0.30763, -0.56361,  1.5054 ,  3.2881 ,
-         1.7582 , -0.63313, -0.48781,  2.0016 , -2.5334 ,  1.0601 ,
-        -0.19666, -0.38252,  0.65653,  0.89475,  2.7882 ,  2.4109 ,
-        -0.72981]),
- array([213945, 566700, 232533, 673941,  79801, 932371,  59183, 318977,
-        649659, 871934]))</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13820,14 +13814,7 @@ query time:  5105.871987104416
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Benchmarking-ANN-Methods">Benchmarking ANN Methods<a class="anchor-link" href="#Benchmarking-ANN-Methods">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The library that we'll be leveraging here is <a href="https://github.com/nmslib/nmslib"><code>nmslib</code></a>, specifically the algorithm HNSW (Hierarchical Navigable Small World), a graph-based approximate nearest neighborhood search method, we will only be using the library and will not be introducing the details of the algorithm in this notebook.</p>
+<p>The model we'll be using is Bayesian Personalized Ranking from the <a href="https://github.com/benfred/implicit">implicit</a> library.</p>
 
 </div>
 </div>
@@ -13837,42 +13824,170 @@ query time:  5105.871987104416
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Hnsw</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_users</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">users_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">n_items</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">items_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="o">=</span><span class="s1">&#39;cosinesimil&#39;</span><span class="p">,</span> <span class="n">index_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">query_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">space</span> <span class="o">=</span> <span class="n">space</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_params</span> <span class="o">=</span> <span class="n">index_params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span> <span class="o">=</span> <span class="n">query_params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">print_progress</span> <span class="o">=</span> <span class="n">print_progress</span>
+<span class="c1"># implicit library expects items to be rows</span>
+<span class="c1"># and users to be columns of the sparse matrix</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">items_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">users_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">value_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">item_user</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">n_users</span><span class="p">))</span>
+<span class="n">item_user</span>
+</pre></div>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">index_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_params</span>
-        <span class="k">if</span> <span class="n">index_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">index_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">}</span>
+    </div>
+</div>
+</div>
 
-        <span class="n">query_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_params</span>
-        <span class="k">if</span> <span class="n">query_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ef&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">}</span>
+<div class="output_wrapper">
+<div class="output">
 
-        <span class="c1"># this is the actual nmslib part, hopefully the syntax should</span>
-        <span class="c1"># be pretty readable, the documentation also has a more verbiage</span>
-        <span class="c1"># introduction: https://nmslib.github.io/nmslib/quickstart.html</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">nmslib</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">space</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">space</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;hnsw&#39;</span><span class="p">)</span>
-        <span class="n">index</span><span class="o">.</span><span class="n">addDataPointBatch</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">index</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">index_params</span><span class="p">,</span> <span class="n">print_progress</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">print_progress</span><span class="p">)</span>
-        <span class="n">index</span><span class="o">.</span><span class="n">setQueryTimeParams</span><span class="p">(</span><span class="n">query_params</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_</span> <span class="o">=</span> <span class="n">index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_params_</span> <span class="o">=</span> <span class="n">index_params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">query_params_</span> <span class="o">=</span> <span class="n">query_params</span>
-        <span class="k">return</span> <span class="bp">self</span>
+<div class="output_area">
 
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">,</span> <span class="n">topn</span><span class="p">):</span>
-        <span class="c1"># the knnQuery returns indices and corresponding distance</span>
-        <span class="c1"># we will throw the distance away for now</span>
-        <span class="n">indices</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_</span><span class="o">.</span><span class="n">knnQuery</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">topn</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">indices</span>
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;1682x943 sparse matrix of type &#39;&lt;class &#39;numpy.float32&#39;&gt;&#39;
+	with 79619 stored elements in Compressed Sparse Row format&gt;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we won&#39;t be doing any hyperparameter tuning</span>
+<span class="c1"># as training the &quot;best&quot; model is not the main purpose here</span>
+<span class="n">bpr</span> <span class="o">=</span> <span class="n">BayesianPersonalizedRanking</span><span class="p">()</span>
+<span class="n">bpr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">item_user</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+
+ 
+ 
+<div id="b7482766-5036-451b-8be5-68442130f954"></div>
+<div class="output_subarea output_widget_view ">
+<script type="text/javascript">
+var element = $('#b7482766-5036-451b-8be5-68442130f954');
+</script>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "ee67ea977e554f999a756d4c669d3d6b", "version_major": 2, "version_minor": 0}
+</script>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The model object also provides a <code>.recommend</code> method that generates the recommendation for a user.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">user_id</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">topn</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">user_item</span> <span class="o">=</span> <span class="n">item_user</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+<span class="n">recommendations</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_item</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">filter_already_liked_items</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">recommendations</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(174, 3.0052617),
+ (180, 2.8591871),
+ (143, 2.6832802),
+ (49, 2.6188507),
+ (213, 2.6169426)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also generate the recommendations ourselves. We'll first confirm that the <code>recommend</code> function that we've implemented matches the one provided by the library, also implement a <code>recommend_all</code> function that generates the recommendation for all the user, this will be used to compare against the nearest neighborhood search on the order transformed matrix later.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">query_factors</span><span class="p">[</span><span class="n">query_id</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">index_factors</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">argpartition_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">-</span><span class="n">topn</span><span class="p">)[</span><span class="o">-</span><span class="n">topn</span><span class="p">:]</span>
+    <span class="n">sort_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">argpartition_indices</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="p">[</span><span class="n">sort_indices</span><span class="p">]</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">labels</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">distances</span>
 </pre></div>
 
     </div>
@@ -13883,21 +13998,244 @@ query time:  5105.871987104416
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Like a lot of machine learning algorithms, there are hyperparameters that we can tune. We will pick a random one for now and look at the influence of each hyperparameters in later section.</p>
+<p>Different model/library have different ways of extracting the item and user factors/embeddings, we assign it to <code>index_factors</code> and <code>query_factors</code> to make all downstream code agnostic of libraries' implementation.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_factors</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">item_factors</span>
+<span class="n">query_factors</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">user_factors</span>
+<span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[174 180 143  49 213]
+[3.0052617 2.8591871 2.6832802 2.6188507 2.6169426]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">query_factors</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">index_factors</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">argpartition_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">-</span><span class="n">topn</span><span class="p">)[:,</span> <span class="o">-</span><span class="n">topn</span><span class="p">:]</span>
+
+    <span class="n">x_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">topn</span><span class="p">)</span>
+    <span class="n">y_indices</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">top_value</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">topn</span><span class="p">)</span>
+    <span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">top_value</span><span class="p">)[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">y_indices</span> <span class="o">=</span> <span class="n">top_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">top_indices</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">top_indices</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">top_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">distances</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[174 180 143  49 213]
+ [285  13 274 125 284]
+ [299 330 332 331 287]
+ ...
+ [256 287   6   0 221]
+ [312 299 315 271 314]
+ [ 68  55 203 469 567]]
+[[3.0052621 2.8591871 2.6832805 2.6188507 2.6169431]
+ [4.053235  3.6379702 3.6113174 3.5244005 3.5000963]
+ [4.46495   4.380792  4.2894416 4.280343  4.2222657]
+ ...
+ [2.9497485 2.9439096 2.942726  2.8972204 2.8738377]
+ [3.186943  3.1394417 3.1009166 2.9625754 2.9234204]
+ [3.7362995 3.5745556 3.5423145 3.4201126 3.3898365]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To implement our order preserving transformation, we first apply the transformation on our index factors. Recall that the formula is: Let $\phi = \underset{i}{\text{max}} \Vert \mathbf{y}_i \Vert$. $\mathbf{y}_i^* = g(\mathbf{y}_i) = \big(\sqrt{\phi^2 - {\Vert \mathbf{y_i} \Vert}^2 }, \mathbf{y_i}^T\big)^T$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">augment_inner_product</span><span class="p">(</span><span class="n">factors</span><span class="p">):</span>
+    <span class="n">normed_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">max_norm</span> <span class="o">=</span> <span class="n">normed_factors</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="n">extra_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">max_norm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">normed_factors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">augmented_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">extra_dim</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">max_norm</span><span class="p">,</span> <span class="n">augmented_factors</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pre shape: &#39;</span><span class="p">,</span> <span class="n">index_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">max_norm</span><span class="p">,</span> <span class="n">augmented_index_factors</span> <span class="o">=</span> <span class="n">augment_inner_product</span><span class="p">(</span><span class="n">index_factors</span><span class="p">)</span>
+<span class="n">augmented_index_factors</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>pre shape:  (1682, 101)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(1682, 102)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Our next step is to use our favorite nearest neighborhood search algorithm/library to conduct the search. We'll be leveraging <a href="https://github.com/nmslib/hnswlib">hnswlib</a> in this example, explaining the details behind the this nearest neighborhood search algorithm is beyond the scope of this document.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">build_hnsw</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+    <span class="c1"># Declaring index</span>
+    <span class="n">max_elements</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">factors</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">hnsw</span> <span class="o">=</span> <span class="n">hnswlib</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="c1"># possible options for space are l2, cosine or ip</span>
+
+    <span class="c1"># Initing index - the maximum number of elements should be known beforehand</span>
+    <span class="n">hnsw</span><span class="o">.</span><span class="n">init_index</span><span class="p">(</span><span class="n">max_elements</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">)</span>
+
+    <span class="c1"># Element insertion (can be called several times)</span>
+    <span class="n">hnsw</span><span class="o">.</span><span class="n">add_items</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hnsw</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the library directly supports inner product,</span>
+<span class="c1"># this might not be the case for all the nearest neighborhood search library</span>
+<span class="n">space</span> <span class="o">=</span> <span class="s1">&#39;ip&#39;</span>
+<span class="n">ef_construction</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">M</span> <span class="o">=</span> <span class="mi">24</span>
 
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">hnsw</span> <span class="o">=</span> <span class="n">Hnsw</span><span class="p">(</span><span class="n">index_params</span><span class="o">=</span><span class="n">index_params</span><span class="p">)</span>
-<span class="n">hnsw</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">hnsw</span> <span class="o">=</span> <span class="n">build_hnsw</span><span class="p">(</span><span class="n">augmented_index_factors</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
 <span class="n">build_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
 <span class="n">build_time</span>
 </pre></div>
@@ -13912,13 +14250,13 @@ query time:  5105.871987104416
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>42.73225116729736</pre>
+<pre>0.09450387954711914</pre>
 </div>
 
 </div>
@@ -13930,30 +14268,19 @@ query time:  5105.871987104416
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>we'll first use the first element from the ground truth to show-case what we'll be doing before scaling it to all the data points.</p>
+<p>To generate the the prediction, we first transform the incoming "queries". $\mathbf{x}^* = h(\mathbf{x}) = (0, \mathbf{x}^T)^T$.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">topn</span> <span class="o">=</span> <span class="mi">10</span>
-
-<span class="n">query_vector</span><span class="p">,</span> <span class="n">correct_indices</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-<span class="c1"># use the query_vector to find its corresponding</span>
-<span class="c1"># approximate nearest neighbors</span>
-<span class="n">found_indices</span> <span class="o">=</span> <span class="n">hnsw</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
-
-<span class="n">query_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;query time:&#39;</span><span class="p">,</span> <span class="n">query_time</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;correct indices: &#39;</span><span class="p">,</span> <span class="n">correct_indices</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;found indices: &#39;</span><span class="p">,</span> <span class="n">found_indices</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">extra_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">query_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">augmented_query_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">extra_zero</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">augmented_query_factors</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
     </div>
@@ -13966,49 +14293,13 @@ query time:  5105.871987104416
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>query time: 0.0002560615539550781
-correct indices:  [213945 566700 232533 673941  79801 932371  59183 318977 649659 871934]
-found indices:  [213945 566700 232533 673941  79801 318977 871934 221617 107727 705332]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># compute the proportion of data points that overlap between the</span>
-<span class="c1"># two sets</span>
-<span class="n">precision</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">found_indices</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">correct_indices</span><span class="p">))</span> <span class="o">/</span> <span class="n">topn</span>
-<span class="n">precision</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt output_prompt">Out[19]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.7</pre>
+<pre>(943, 102)</pre>
 </div>
 
 </div>
@@ -14019,82 +14310,21 @@ found indices:  [213945 566700 232533 673941  79801 318977 871934 221617 107727 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">run_algo</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">,</span> <span class="n">algo_type</span><span class="o">=</span><span class="s1">&#39;hnsw&#39;</span><span class="p">,</span> <span class="n">algo_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    We can extend this benchmark across multiple algorithm or algorithm&#39;s hyperparameter</span>
-<span class="sd">    by adding more algo_type options. The algo_params can be a dictionary that is passed</span>
-<span class="sd">    to the algorithm&#39;s __init__ method.</span>
-<span class="sd">    Here only 1 method is included.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">5</span>
 
-    <span class="k">if</span> <span class="n">algo_type</span> <span class="o">==</span> <span class="s1">&#39;hnsw&#39;</span><span class="p">:</span>
-        <span class="n">algo</span> <span class="o">=</span> <span class="n">Hnsw</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">algo_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">algo</span> <span class="o">=</span> <span class="n">Hnsw</span><span class="p">(</span><span class="o">**</span><span class="n">algo_params</span><span class="p">)</span>
+<span class="c1"># Controlling the recall by setting ef, should always be &gt; k</span>
+<span class="n">hnsw</span><span class="o">.</span><span class="n">set_ef</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>
 
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
-    <span class="n">build_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<span class="c1"># retrieve the top-n search neighbors</span>
+<span class="n">label</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">augmented_query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
-    <span class="n">total_correct</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">total_query_time</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">n_queries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="n">n_queries</span><span class="p">):</span>
-        <span class="n">query_vector</span><span class="p">,</span> <span class="n">correct_indices</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">found_indices</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
-        <span class="n">query_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-        <span class="n">total_query_time</span> <span class="o">+=</span> <span class="n">query_time</span>
-
-        <span class="n">n_correct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">found_indices</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">correct_indices</span><span class="p">))</span>
-        <span class="n">total_correct</span> <span class="o">+=</span> <span class="n">n_correct</span>
-
-    <span class="n">avg_query_time</span> <span class="o">=</span> <span class="n">total_query_time</span> <span class="o">/</span> <span class="n">n_queries</span>
-    <span class="n">avg_precision</span> <span class="o">=</span> <span class="n">total_correct</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_queries</span> <span class="o">*</span> <span class="n">topn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">build_time</span><span class="p">,</span> <span class="n">avg_query_time</span><span class="p">,</span> <span class="n">avg_precision</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The next few code chunks experiments with different parameters to see which one works better for this use-case.</p>
-<p>Recommended by the author of package, the most influential parameters are <code>M</code> and <code>efConstruction</code>.</p>
-<ul>
-<li><code>efConstruction</code>: Increasing this value improves the quality of the constructed graph and leads to a higher search accuracy, at the cost of longer indexing time. The same idea applies to the <code>ef</code> or <code>efSearch</code> parameter that we can pass to <code>query_params</code>. Reasonable range for this parameter is 100-2000.</li>
-<li><code>M</code>: This parameter controls the maximum number of neighbors for each layer. Increasing the values of this parameters (to a certain degree) leads to better recall and shorter retrieval times (at the expense of longer indexing time). Reasonable range for this parameter is 5-100.</li>
-</ul>
-<p>Other parameters include <code>indexThreadQty</code> (we can explicitly set the number of threads) and <code>post</code>. The <code>post</code> parameter controls the amount of post-processing done to the graph. 0, which means no post-processing. Additional options are 1 and 2 (2 means more post-processing).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we will be running four combinations, higher/lower</span>
-<span class="c1"># efConstruction/M parameters and comparing the performance</span>
-<span class="n">algo_type</span> <span class="o">=</span> <span class="s1">&#39;hnsw&#39;</span>
-<span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;index_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">build_time1</span><span class="p">,</span> <span class="n">avg_query_time1</span><span class="p">,</span> <span class="n">avg_precision1</span> <span class="o">=</span> <span class="n">run_algo</span><span class="p">(</span>
-    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">,</span> <span class="n">algo_type</span><span class="p">,</span> <span class="n">algo_params</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;build time: &#39;</span><span class="p">,</span> <span class="n">build_time1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average search time: &#39;</span><span class="p">,</span> <span class="n">avg_query_time1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average precision: &#39;</span><span class="p">,</span> <span class="n">avg_precision1</span><span class="p">)</span>
+<span class="c1"># the distance returned by hnsw is 1 - inner product, hence</span>
+<span class="c1"># we convert it back to just inner product</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14110,210 +14340,21 @@ found indices:  [213945 566700 232533 673941  79801 318977 871934 221617 107727 
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 238703/238703 [00:42&lt;00:00, 5642.16it/s]</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>build time:  96.66552662849426
-average search time:  0.00014930271766456666
-average precision:  0.971047284701072
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;index_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">build_time2</span><span class="p">,</span> <span class="n">avg_query_time2</span><span class="p">,</span> <span class="n">avg_precision2</span> <span class="o">=</span> <span class="n">run_algo</span><span class="p">(</span>
-    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">,</span> <span class="n">algo_type</span><span class="p">,</span> <span class="n">algo_params</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;build time: &#39;</span><span class="p">,</span> <span class="n">build_time2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average search time: &#39;</span><span class="p">,</span> <span class="n">avg_query_time2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average precision: &#39;</span><span class="p">,</span> <span class="n">avg_precision2</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 238703/238703 [00:45&lt;00:00, 5257.06it/s]</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>build time:  312.3543019294739
-average search time:  0.0001598479527504984
-average precision:  0.9770271006229498
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;index_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">build_time3</span><span class="p">,</span> <span class="n">avg_query_time3</span><span class="p">,</span> <span class="n">avg_precision3</span> <span class="o">=</span> <span class="n">run_algo</span><span class="p">(</span>
-    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">,</span> <span class="n">algo_type</span><span class="p">,</span> <span class="n">algo_params</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;build time: &#39;</span><span class="p">,</span> <span class="n">build_time3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average search time: &#39;</span><span class="p">,</span> <span class="n">avg_query_time3</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average precision: &#39;</span><span class="p">,</span> <span class="n">avg_precision3</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 238703/238703 [00:23&lt;00:00, 10106.25it/s]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>build time:  40.743391036987305
-average search time:  7.756965745461889e-05
-average precision:  0.7929644788712333
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;index_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;efConstruction&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">build_time4</span><span class="p">,</span> <span class="n">avg_query_time4</span><span class="p">,</span> <span class="n">avg_precision4</span> <span class="o">=</span> <span class="n">run_algo</span><span class="p">(</span>
-    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">,</span> <span class="n">algo_type</span><span class="p">,</span> <span class="n">algo_params</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;build time: &#39;</span><span class="p">,</span> <span class="n">build_time4</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average search time: &#39;</span><span class="p">,</span> <span class="n">avg_query_time4</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average precision: &#39;</span><span class="p">,</span> <span class="n">avg_precision4</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 238703/238703 [00:24&lt;00:00, 9667.32it/s]</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>build time:  135.51102113723755
-average search time:  8.058855207119328e-05
-average precision:  0.8155624353275828
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>
+<pre>[[174 180 143  49 213]
+ [285  13 274 125 284]
+ [299 330 332 331 287]
+ ...
+ [256 287   6   0 221]
+ [312 299 315 271 314]
+ [ 68  55 203 469 567]]
+[[3.0052621 2.859187  2.6832802 2.6188505 2.6169431]
+ [4.053235  3.63797   3.6113174 3.5244007 3.5000958]
+ [4.4649506 4.380792  4.2894416 4.2803426 4.2222657]
+ ...
+ [2.9497485 2.9439096 2.942726  2.8972206 2.8738375]
+ [3.1869428 3.139442  3.1009169 2.9625754 2.9234204]
+ [3.7362995 3.5745554 3.5423145 3.4201126 3.3898368]]
 </pre>
 </div>
 </div>
@@ -14325,10 +14366,200 @@ average precision:  0.8155624353275828
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Based on the result, we can see that larger values of parameters <code>M</code> and <code>efConstruction</code> does give better precision scores. Another observation is that the result for <code>efConstruction</code> = 100 is on-par with <code>efConstruction</code> = 400 and only one third of the time to build the index.</p>
+<h2 id="Benchmark">Benchmark<a class="anchor-link" href="#Benchmark">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can time the original recommend method using maximum inner product versus the new method of using the order preserving transformed matrices with nearest neighborhood search.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
+<span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>16.4 ms ± 280 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
+<span class="n">extra_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">query_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">augmented_query_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">extra_zero</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>11 ms ± 537 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note that the timing is highly dependent on the dataset. We'll observe a much larger speedup if the number of items/labels in the output/index factor is larger. In the movielens dataset, we only had to rank the top items for each user among 1.6K items, in a much larger dataset, the number of items could easily go up to 100K or even million, that's when we'll see the real potential of this method.</p>
+<p>Another thing worth checking is the quality of the prediction using the new method. Here we're using hnswlib library to generate the nearest neighborhood items, as hnswlib is technically an approximate nearest neighborhood algorithm. We can measure how much overlap the approximate top recommendations are to the original top recommendations to make sure we are using the right parameters for the nearest neighborhood search algorithm. Notation-wise:</p>
+\begin{align}
+\text{overlap@k} = \frac{|L_{rec} \cap L_{opt}|}{k}
+\end{align}<p>Where $L_{rec}$ and $L_{opt}$ are the lists of top k approximate recommendations and top k optimal/original recommendations respectively.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+<span class="n">hnsw_labels</span><span class="p">,</span> <span class="n">hnsw_distances</span> <span class="o">=</span> <span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_label_precision</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">,</span> <span class="n">reco_labels</span><span class="p">):</span>
+    <span class="n">n_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">)</span>
+    <span class="n">label_precision</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">optimal_label</span><span class="p">,</span> <span class="n">reco_label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">,</span> <span class="n">reco_labels</span><span class="p">):</span>
+        <span class="n">topn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reco_label</span><span class="p">)</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">optimal_label</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">reco_label</span><span class="p">))</span> <span class="o">/</span> <span class="n">topn</span>
+        <span class="n">label_precision</span> <span class="o">+=</span> <span class="p">(</span><span class="n">precision</span> <span class="o">/</span> <span class="n">n_labels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">label_precision</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># as expected, the precision between itself should be 1</span>
+<span class="n">label_precision</span> <span class="o">=</span> <span class="n">compute_label_precision</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<span class="n">label_precision</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1.0</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ensure the approximate neighborhood search is of good quality</span>
+<span class="n">label_precision</span> <span class="o">=</span> <span class="n">compute_label_precision</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">hnsw_labels</span><span class="p">)</span>
+<span class="n">label_precision</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.909</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -14341,9 +14572,9 @@ average precision:  0.8155624353275828
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://erikbern.com/2018/06/17/new-approximate-nearest-neighbor-benchmarks.html">Blog: New approximate nearest neighbor benchmarks</a></li>
-<li><a href="https://github.com/nmslib/nmslib/blob/master/manual/methods.md">Nmslib Documentation: Basic parameter tuning for NMSLIB</a></li>
-<li><a href="http://nbviewer.jupyter.org/github/nmslib/nmslib/blob/master/python_bindings/notebooks/search_vector_dense_optim.ipynb">Nmslib Documentation: Jupyter Notebook - Search Dense Vector</a></li>
+<li><a href="https://github.com/nmslib/hnswlib">Github: Hnswlib - fast approximate nearest neighbor search</a></li>
+<li><a href="http://www.benfrederickson.com/approximate-nearest-neighbours-for-recommender-systems/">Blog: Approximate Nearest Neighbours for Recommender Systems</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/XboxInnerProduct.pdf">Paper: Y. Bachrach, Y. Finkelstein, R. Gilad-Bachrach, L. Katzir, N. Koenigstein, N. Nice, U. Paquet - Speeding Up the Xbox Recommender System Using a Euclidean Transformation for Inner-Product Spaces (2016)</a></li>
 </ul>
 
 </div>

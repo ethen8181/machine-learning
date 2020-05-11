@@ -28,4 +28,4 @@ The notes here are more quick reference purposes, for folks looking to go more i
 
 - [Blog: Pragmatic Unicode](https://nedbatchelder.com/text/unipain.html)
 - [Python Documentation: Unicode HOWTO](https://docs.python.org/3.6/howto/unicode.html)
-- [What Every Programmer Absolutely, Positively Needs To Know About Encodings And Character Sets To Work With Text](http://kunststube.net/encoding/)
+- [Blog: What Every Programmer Absolutely, Positively Needs To Know About Encodings And Character Sets To Work With Text](http://kunststube.net/encoding/)

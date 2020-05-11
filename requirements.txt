@@ -1,3 +1,4 @@
+fasttext>=0.9.1
 gensim>=3.6.0
 h2o>=3.18.0.1
 joblib>=0.11
