@@ -6,6 +6,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
+- Product Quantization for Model Compression. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/product_quantization.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/product_quantization.html)]
 - Maximum Inner Product for Speeding Up Generating Recommendations. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/recsys/max_inner_product/max_inner_product.ipynb)][[html](http://ethen8181.github.io/machine-learning/recsys/max_inner_product/max_inner_product.html)]
 
 ## [2020-04]
@@ -13,7 +14,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Added
 
 - Extremely Quick Guide to Unicode. [[markdown](https://github.com/ethen8181/machine-learning/blob/master/python/unicode.md)]
-- MultiLabel Text Classification with Fasttext and Huggingface Tokenizers.  [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
+- MultiLabel Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
 
 ### Changed
 

@@ -290,8 +290,8 @@ def fit_and_score(fasttext_file_path_train: str,
     Returns
     -------
     result : dict
-        Stores the results for the current iteration e.g.:: 
-        
+        Stores the results for the current iteration e.g.::
+
             {
             'params': {'epoch': 10, 'dim': 85},
             'epoch': 10,
