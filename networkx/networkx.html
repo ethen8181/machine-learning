@@ -13094,7 +13094,7 @@ div#notebook {
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
-<span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
@@ -13360,7 +13360,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
 <span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,matplotlib,networkx
 </pre></div>
@@ -13579,7 +13579,7 @@ There are generally two types of networks - directed and undirected. In undirect
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># excercise: Count how many males and females are represented in the graph</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="n">sex</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;sex&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
 <span class="n">Counter</span><span class="p">(</span><span class="n">sex</span><span class="p">)</span>
 </pre></div>
@@ -13760,17 +13760,17 @@ There are generally two types of networks - directed and undirected. In undirect
 <p>Note that networkx will override the old data if you added duplicated ones. e.g. we start out with <code>G.add_node(31, age = 22, sex = 'Male')</code>, if we had another call <code>G.add_node(31, age = 25, sex = 'Male')</code>, then the age for node 31 will be 25.</p>
 <h2 id="Coding-Patterns">Coding Patterns<a class="anchor-link" href="#Coding-Patterns">&#182;</a></h2><p>These are some recommended coding patterns when doing network analysis using networkx.</p>
 <p>Iterating using List Comprehensions:</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;attr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;attr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
 </pre></div>
 <p>And if the node is unimportant, we can use <code>_</code> to indicate that that field will be discarded:</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;attr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;attr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
 </pre></div>
 <p>A similar pattern can be used for edges:</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
-<span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
 </pre></div>
 <p>If the graph we are constructing is a directed graph, with a "source" and "sink" available, then the following pattern is recommended:</p>
-<div class="highlight"><pre><span></span><span class="p">[(</span><span class="n">sc</span><span class="p">,</span> <span class="n">sk</span><span class="p">)</span> <span class="k">for</span> <span class="n">sc</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+<div class="highlight"><pre><span></span><span class="p">[(</span><span class="n">sc</span><span class="p">,</span> <span class="n">sk</span><span class="p">)</span> <span class="k">for</span> <span class="n">sc</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)]</span>
 </pre></div>
 
 </div>
@@ -14183,7 +14183,7 @@ height=361
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">deque</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
 
 
 <span class="k">def</span> <span class="nf">path_exists</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>

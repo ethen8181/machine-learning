@@ -13093,7 +13093,7 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
-<span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
@@ -13350,8 +13350,8 @@ div#notebook {
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 
-<span class="kn">from</span> <span class="nn">pyspark.conf</span> <span class="k">import</span> <span class="n">SparkConf</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="k">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">Row</span>
+<span class="kn">from</span> <span class="nn">pyspark.conf</span> <span class="kn">import</span> <span class="n">SparkConf</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">Row</span>
 
 <span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p pyspark
 </pre></div>
@@ -13880,7 +13880,7 @@ Partitions structure: [[Row(amount=15, country=&#39;United Kingdom&#39;, name=&#
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In real world scenarios, times when we might want to use coalesce is after doing some aggregation or filtering on the giant raw data. e.g. Suppose we have a data that contains 2 billion rows of data (1 TB) split into 13,000 partitions. Suppose after the aggregation, we are only down to 2 million rows of data. Now if we were to save it as is, a lot of the output partitions will be empty. And as we can imagine, it's not efficient to read or write thousands of empty files, to improve this, we should call <code>coalesce</code>.</p>
 <div class="highlight"><pre><span></span><span class="c1"># the .sample method mimics that our data is much smaller after the aggregation/filtering</span>
-<span class="n">smaller_data</span> <span class="o">=</span> <span class="n">huge_data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">withReplacement</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">fraction</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">)</span>
+<span class="n">smaller_data</span> <span class="o">=</span> <span class="n">huge_data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">withReplacement</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fraction</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">)</span>
 <span class="n">smaller_data</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 <p>The next million dollar question is: What is the optimal partition number?</p>

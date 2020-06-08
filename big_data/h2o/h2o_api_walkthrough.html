@@ -13093,7 +13093,7 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
-<span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
@@ -13823,7 +13823,7 @@ dimension: (163987, 15)
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o.estimators.gbm</span> <span class="k">import</span> <span class="n">H2OGradientBoostingEstimator</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o.estimators.gbm</span> <span class="kn">import</span> <span class="n">H2OGradientBoostingEstimator</span>
 
 
 <span class="c1"># we specify an id for the model so we can refer to it more</span>
@@ -14347,7 +14347,7 @@ height=376
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o.grid.grid_search</span> <span class="k">import</span> <span class="n">H2OGridSearch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o.grid.grid_search</span> <span class="kn">import</span> <span class="n">H2OGridSearch</span>
 
 
 <span class="n">gbm_tuned</span> <span class="o">=</span> <span class="n">H2OGridSearch</span><span class="p">(</span>
@@ -15206,7 +15206,7 @@ height=485
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o_explainers</span> <span class="k">import</span> <span class="n">H2OPartialDependenceExplainer</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">h2o_explainers</span> <span class="kn">import</span> <span class="n">H2OPartialDependenceExplainer</span>
 
 
 <span class="n">pd_explainer</span> <span class="o">=</span> <span class="n">H2OPartialDependenceExplainer</span><span class="p">(</span><span class="n">gbm_best</span><span class="p">)</span>

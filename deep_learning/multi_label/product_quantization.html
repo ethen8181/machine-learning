@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>quantization</title>
+<title>product_quantization</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Product-Quantization" data-toc-modified-id="Product-Quantization-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Product Quantization</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation-and-Model" data-toc-modified-id="Data-Preparation-and-Model-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation and Model</a></span></li><li><span><a href="#Product-Quantization-from-Scratch" data-toc-modified-id="Product-Quantization-from-Scratch-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Product Quantization from Scratch</a></span><ul class="toc-item"><li><span><a href="#Learning-Code-Book" data-toc-modified-id="Learning-Code-Book-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Learning Code Book</a></span></li><li><span><a href="#Encode" data-toc-modified-id="Encode-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Encode</a></span></li></ul></li><li><span><a href="#Computing-Query-Distance" data-toc-modified-id="Computing-Query-Distance-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Computing Query Distance</a></span></li><li><span><a href="#Fasttext-Product-Quantization" data-toc-modified-id="Fasttext-Product-Quantization-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Fasttext Product Quantization</a></span></li><li><span><a href="#Product-Quantization-Recap" data-toc-modified-id="Product-Quantization-Recap-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Product Quantization Recap</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Product-Quantization-for-Model-Compression" data-toc-modified-id="Product-Quantization-for-Model-Compression-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Product Quantization for Model Compression</a></span><ul class="toc-item"><li><span><a href="#Data-Preparation-and-Model" data-toc-modified-id="Data-Preparation-and-Model-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preparation and Model</a></span></li><li><span><a href="#Product-Quantization-from-Scratch" data-toc-modified-id="Product-Quantization-from-Scratch-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Product Quantization from Scratch</a></span><ul class="toc-item"><li><span><a href="#Learning-Code-Book" data-toc-modified-id="Learning-Code-Book-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Learning Code Book</a></span></li><li><span><a href="#Encode" data-toc-modified-id="Encode-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Encode</a></span></li></ul></li><li><span><a href="#Computing-Query-Distance" data-toc-modified-id="Computing-Query-Distance-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Computing Query Distance</a></span></li><li><span><a href="#Fasttext-Product-Quantization" data-toc-modified-id="Fasttext-Product-Quantization-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Fasttext Product Quantization</a></span></li><li><span><a href="#Product-Quantization-Recap" data-toc-modified-id="Product-Quantization-Recap-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Product Quantization Recap</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13094,7 +13094,7 @@ div#notebook {
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
-<span class="kn">from</span> <span class="nn">formats</span> <span class="k">import</span> <span class="n">load_style</span>
+<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
@@ -13403,7 +13403,7 @@ scipy 1.4.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Product-Quantization">Product Quantization<a class="anchor-link" href="#Product-Quantization">&#182;</a></h1>
+<h1 id="Product-Quantization-for-Model-Compression">Product Quantization for Model Compression<a class="anchor-link" href="#Product-Quantization-for-Model-Compression">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -13510,8 +13510,8 @@ __label__cast-iron __label__stove How do I cover up the white spots on my cast i
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># train/test split</span>
-<span class="kn">from</span> <span class="nn">fasttext_module.split</span> <span class="k">import</span> <span class="n">train_test_split_file</span>
-<span class="kn">from</span> <span class="nn">fasttext_module.utils</span> <span class="k">import</span> <span class="n">prepend_file_name</span>
+<span class="kn">from</span> <span class="nn">fasttext_module.split</span> <span class="kn">import</span> <span class="n">train_test_split_file</span>
+<span class="kn">from</span> <span class="nn">fasttext_module.utils</span> <span class="kn">import</span> <span class="n">prepend_file_name</span>
 
 <span class="n">data_dir</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
 <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span>
@@ -13709,7 +13709,7 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.cluster.vq</span> <span class="k">import</span> <span class="n">kmeans2</span><span class="p">,</span> <span class="n">vq</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.cluster.vq</span> <span class="kn">import</span> <span class="n">kmeans2</span><span class="p">,</span> <span class="n">vq</span>
 
 
 <span class="k">def</span> <span class="nf">compute_code_books</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">sub_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_cluster</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">minit</span><span class="o">=</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
@@ -14243,7 +14243,7 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
 
 <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">input_path_train</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -14262,9 +14262,9 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
         <span class="n">num_records</span><span class="p">,</span> <span class="n">precision_at_k</span><span class="p">,</span> <span class="n">recall_at_k</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">f1_at_k</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">precision_at_k</span> <span class="o">*</span> <span class="n">recall_at_k</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision_at_k</span> <span class="o">+</span> <span class="n">recall_at_k</span><span class="p">)</span>
         <span class="n">metric</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{group}</span><span class="s1">_precision@</span><span class="si">{k}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">precision_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">),</span>
-            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{group}</span><span class="s1">_recall@</span><span class="si">{k}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">recall_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">),</span>
-            <span class="n">f</span><span class="s1">&#39;</span><span class="si">{group}</span><span class="s1">_f1@</span><span class="si">{k}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f1_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1">_precision@</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">precision_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">),</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1">_recall@</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">recall_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">),</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s1">_f1@</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">f1_at_k</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">)</span>
         <span class="p">}</span>
         <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
 
@@ -14408,7 +14408,7 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
     <span class="n">fasttext_model</span> <span class="o">=</span> <span class="n">fasttext</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dsub</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">dir_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">)</span>
-        <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;model_quantized_dsub</span><span class="si">{dsub}</span><span class="s1">.fasttext&#39;</span><span class="p">)</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;model_quantized_dsub</span><span class="si">{</span><span class="n">dsub</span><span class="si">}</span><span class="s1">.fasttext&#39;</span><span class="p">)</span>
 
         <span class="c1"># qnorm, normalized the vector and quantize it</span>
         <span class="n">fasttext_model</span><span class="o">.</span><span class="n">quantize</span><span class="p">(</span><span class="n">dsub</span><span class="o">=</span><span class="n">dsub</span><span class="p">,</span> <span class="n">qnorm</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
