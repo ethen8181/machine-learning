@@ -147,7 +147,7 @@ Notice that this random assignment already gives you both the topic representati
 For each document d, go through each word w (a double for loop). Reassign a new topic to w, where we choose topic t with the probability of word w given topic t $\times$ probability of topic t given document d, denoted by the following mathematical notations: 
 
 $$ P( z_i = j \text{ }| \text{ } z_{-i}, w_i, d_i ) 
-    = \frac{ C^{WT}_{w_ij} + \eta }{ \sum^W_{ w = 1 }C^{WT}_{wj} + W\eta } \times
+    \propto \frac{ C^{WT}_{w_ij} + \eta }{ \sum^W_{ w = 1 }C^{WT}_{wj} + W\eta } \times
       \frac{ C^{DT}_{d_ij} + \alpha }{ \sum^T_{ t = 1 }C^{DT}_{d_it} + T\alpha }
 $$
 
