@@ -197,7 +197,6 @@ right <- ( dt[1, ] + alpha ) / ( sum( dt[1, ] ) + K * alpha )
 # draw new topic for the first word in the first document 
 t1 <- sample(1:K, 1, prob = left*right)
 t1
-t1
 
 ```
 
