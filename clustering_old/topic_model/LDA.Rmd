@@ -194,11 +194,8 @@ wt[t0, wid] <- wt[t0, wid] - 1
 left  <- ( wt[, wid] + eta ) / ( rowSums(wt) + length(vocab) * eta )
 right <- ( dt[1, ] + alpha ) / ( sum( dt[1, ] ) + K * alpha )
 
-probs <- left * right
-probs <- probs/sum(probs)
-
 # draw new topic for the first word in the first document 
-t1 <- sample(1:K, 1, prob = probs)
+t1 <- sample(1:K, 1, prob = left*right)
 t1
 t1
 
