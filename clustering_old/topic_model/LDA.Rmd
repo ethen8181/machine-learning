@@ -195,7 +195,8 @@ left  <- ( wt[, wid] + eta ) / ( rowSums(wt) + length(vocab) * eta )
 right <- ( dt[1, ] + alpha ) / ( sum( dt[1, ] ) + K * alpha )
 
 # draw new topic for the first word in the first document 
-t1 <- sample(1:K, 1, prob = left*right)
+# The optional prob argument can be used to give a vector of weights for obtaining the elements of the vector being sampled. They need not sum to one, but they should be non-negative and not all zero.
+t1 <- sample(1:K, 1, prob = left * right)
 t1
 
 ```
@@ -219,7 +220,7 @@ alpha <- 1
 eta <- 0.001
 iterations <- 1000
 
-source("/Users/ethen/machine-learning/clustering_old/topic_model/LDA_functions.R")
+source("LDA_functions.R")
 set.seed(4321)
 lda1 <- LDA1( docs = docs, vocab = vocab, 
 			  K = K, alpha = alpha, eta = eta, iterations = iterations )
