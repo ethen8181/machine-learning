@@ -14631,7 +14631,7 @@ height=418
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To wrap up, we'll do a recap of product quantization, this time using a bit more notation.</p>
 <p>The idea behind product quantization is to compress our original matrix into compact codes, where the comparison of the compact codes approximates the comparison in the original space. In the process of doing so, we are essentially retaining the most useful information within our matrix while discarding the less-relevant ones.</p>
-<p>We have an original matrix $\mathbf{X} = [\mathbf{x}^1, \mathbf{x}^2, ..., \mathbf{x}^d]$, where $\mathbf{x}^i \in \mathbb{R}^n$. The input matrix will first be splitted into $m$ distinct sub-matrix, $\mathbf{U}^j$, $1 \leq j \leq m$, each of dimension $d^* = d / m$, where $d$ should ideally be multiple of $m$.</p>
+<p>We have an original matrix $\mathbf{X} = [\mathbf{x}^1, \mathbf{x}^2, ..., \mathbf{x}^d]$, where $\mathbf{x}^i \in \mathbb{R}^n$. The input matrix will first be split into $m$ distinct sub-matrix, $\mathbf{U}^j$, $1 \leq j \leq m$, each of dimension $d^* = d / m$, where $d$ should ideally be multiple of $m$.</p>
 \begin{align}
 \underbrace{\mathbf{x}^1, ..., \mathbf{x}^{d^*}}_{\mathbf{U}^1}, ..., \underbrace{\mathbf{x}^{d - d^* + 1}, ..., \mathbf{x}^{d}}_{\mathbf{U}^m}
 \end{align}<p>Then a product quantizer function, $q(\cdot)$, is defined as a concatenation of sub-quantizer.</p>
