@@ -13552,7 +13552,14 @@ $$<p>Where $\left\{x_{C1}, x_{C2}, \ldots, x_{CN}\right\}$ are the values of $X_
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Individual-Conditional-Expectation-(ICE)-Plot">Individual Conditional Expectation (ICE) Plot<a class="anchor-link" href="#Individual-Conditional-Expectation-(ICE)-Plot">&#182;</a></h2><p>As an extension of a PDP, ICE plot visualizes the relationship between a feature and the predicted responses for each observation. While a PDP visualizes the averaged relationship between features and predicted responses, a set of ICE plots disaggregates the averaged information and visualizes an individual dependence for each observation. Hence, instead of only plotting out the average predictions, ICEbox displays all individual lines. (three lines in total in this case)</p>
+<h2 id="Individual-Conditional-Expectation-(ICE)-Plot">Individual Conditional Expectation (ICE) Plot<a class="anchor-link" href="#Individual-Conditional-Expectation-(ICE)-Plot">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As an extension of a PDP, ICE plot visualizes the relationship between a feature and the predicted responses for each observation. While a PDP visualizes the averaged relationship between features and predicted responses, a set of ICE plots disaggregates the averaged information and visualizes an individual dependence for each observation. Hence, instead of only plotting out the average predictions, ICEbox displays all individual lines. (three lines in total in this case)</p>
 <p><img src="img/pd5.png" width="30%" height="30%"></p>
 <p>The authors of the <a href="https://arxiv.org/abs/1309.6392">Paper: A. Goldstein, A. Kapelner, J. Bleich, E. Pitkin Peeking Inside the Black Box: Visualizing Statistical Learning with Plots of Individual Conditional Expectation</a> claims with everything displayed in its raw state, any interesting discovers wouldn’t be shielded because of the averaging inherented with PDP. A vivid example from the paper is shown below:</p>
 <p><img src="img/pd6.png" width="50%" height="50%"></p>
@@ -13566,7 +13573,21 @@ $$<p>Where $\left\{x_{C1}, x_{C2}, \ldots, x_{CN}\right\}$ are the values of $X_
 <li>Owing to the limitations of computer graphics, and human perception, the size of the subsets $x_S$ must be small (l ≈ 1,2,3). There are of course a large number of such subsets, but only those chosen from among the usually much smaller set of highly relevant predictors are likely to be informative.</li>
 <li>PDP can obfuscate relationship that comes from interactions. PDPs show us how the average relationship between feature $x_S$ and $\hat{y}$ looks like. This works well only in cases where the interactions between $x_S$ and the remaining features $x_C$ are weak. In cases where interactions do exist, the ICE plot may give a lot more insight of the underlying relationship.</li>
 </ul>
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2><p>We'll be using the <a href="https://www.kaggle.com/c/titanic/data">titanic dataset</a> (details of the dataset is listed in the link) to test our implementation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll be using the <a href="https://www.kaggle.com/c/titanic/data">titanic dataset</a> (details of the dataset is listed in the link) to test our implementation.</p>
 
 </div>
 </div>
