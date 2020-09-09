@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2020-09]
+
+### Changed
+
+- Probability Calibration for classification models. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html)]
+    + Massive overhaul to the content. e.g. introducing two additional calibration methods, histogram binning and Plat Scaling Binning. Bundling all helper utility function in a package structure for ease of re-use.
+
 ## [2020-08]
 
 ### Changed
