@@ -13377,13 +13377,13 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2020-04-25 17:26:44 
+<pre>Ethen 2020-09-12 12:05:38 
 
 CPython 3.6.4
-IPython 7.9.0
+IPython 7.15.0
 
-numpy 1.16.5
-tokenizers 0.6.0
+numpy 1.19.1
+tokenizers 0.8.1
 </pre>
 </div>
 </div>
@@ -13481,16 +13481,16 @@ __label__cast-iron __label__stove How do I cover up the white spots on my cast i
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>--2020-04-25 17:26:44--  https://dl.fbaipublicfiles.com/fasttext/data/cooking.stackexchange.tar.gz
-Resolving dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)... 104.22.74.142, 104.22.75.142
-Connecting to dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)|104.22.74.142|:443... connected.
+<pre>--2020-09-12 12:05:38--  https://dl.fbaipublicfiles.com/fasttext/data/cooking.stackexchange.tar.gz
+Resolving dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)... 172.67.9.4, 104.22.74.142, 104.22.75.142
+Connecting to dl.fbaipublicfiles.com (dl.fbaipublicfiles.com)|172.67.9.4|:443... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 457609 (447K) [application/x-tar]
-Saving to: ‘data/cooking.stackexchange.tar.gz.2’
+Saving to: ‘data/cooking.stackexchange.tar.gz.3’
 
-cooking.stackexchan 100%[===================&gt;] 446.88K  --.-KB/s    in 0.1s    
+cooking.stackexchan 100%[===================&gt;] 446.88K  2.35MB/s    in 0.2s    
 
-2020-04-25 17:26:45 (4.53 MB/s) - ‘data/cooking.stackexchange.tar.gz.2’ saved [457609/457609]
+2020-09-12 12:05:39 (2.35 MB/s) - ‘data/cooking.stackexchange.tar.gz.3’ saved [457609/457609]
 
 x cooking.stackexchange.id
 x cooking.stackexchange.txt
@@ -13657,9 +13657,7 @@ test path:  data/test_cooking.stackexchange.txt
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">fasttext</span>
-
-<span class="c1"># lr = learning rate</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># lr = learning rate</span>
 <span class="c1"># lrUpdateRate similar to batch size</span>
 <span class="n">fasttext_params</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">input_path_train</span><span class="p">,</span>
@@ -13743,7 +13741,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>((&#39;__label__sauce&#39;, &#39;__label__cheese&#39;), array([0.78267252, 0.52343035]))</pre>
+<pre>((&#39;__label__sauce&#39;, &#39;__label__cheese&#39;), array([0.76066065, 0.53899324]))</pre>
 </div>
 
 </div>
@@ -13786,7 +13784,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 <div class="output_text output_subarea output_execute_result">
 <pre>((&#39;__label__food-safety&#39;, &#39;__label__storage-method&#39;),
- array([0.20690405, 0.06561483]))</pre>
+ array([0.16886695, 0.04604391]))</pre>
 </div>
 
 </div>
@@ -13829,7 +13827,7 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>((&#39;__label__food-safety&#39;,), array([0.20690405]))</pre>
+<pre>((&#39;__label__food-safety&#39;,), array([0.16886695]))</pre>
 </div>
 
 </div>
@@ -13877,8 +13875,8 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 <div class="output_text output_subarea output_execute_result">
 <pre>([[&#39;__label__sauce&#39;, &#39;__label__cheese&#39;],
   [&#39;__label__food-safety&#39;, &#39;__label__storage-method&#39;]],
- array([[0.78267252, 0.52343035],
-        [0.20690405, 0.06561483]]))</pre>
+ [array([0.76066065, 0.53899324], dtype=float32),
+  array([0.16886695, 0.04604391], dtype=float32)])</pre>
 </div>
 
 </div>
@@ -13945,27 +13943,27 @@ The buckets are used for hashed features (such as character ngrams or word ngram
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>train metrics:
 records	12297
-Precision@1	0.485
-Recall@1	0.211
-F1@1	0.294
+Precision@1	0.483
+Recall@1	0.210
+F1@1	0.292
 
 test metrics:
 records	3107
-Precision@1	0.411
-Recall@1	0.177
-F1@1	0.248
+Precision@1	0.407
+Recall@1	0.175
+F1@1	0.245
 
 train metrics:
 records	12297
-Precision@2	0.358
-Recall@2	0.311
-F1@2	0.333
+Precision@2	0.356
+Recall@2	0.309
+F1@2	0.331
 
 test metrics:
 records	3107
-Precision@2	0.308
-Recall@2	0.265
-F1@2	0.285
+Precision@2	0.306
+Recall@2	0.264
+F1@2	0.283
 
 </pre>
 </div>
@@ -14158,7 +14156,7 @@ What&#39;s the purpose of a bread box?
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Encoding(num_tokens=11, attributes=[ids, type_ids, tokens, offsets, attention_mask, special_tokens_mask, overflowing, original_str, normalized_str])</pre>
+<pre>Encoding(num_tokens=11, attributes=[ids, type_ids, tokens, offsets, attention_mask, special_tokens_mask, overflowing])</pre>
 </div>
 
 </div>
@@ -14425,27 +14423,27 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>train metrics:
 records	12297
-Precision@1	0.493
-Recall@1	0.214
-F1@1	0.298
+Precision@1	0.484
+Recall@1	0.210
+F1@1	0.293
 
 test metrics:
 records	3107
-Precision@1	0.452
-Recall@1	0.195
-F1@1	0.273
+Precision@1	0.445
+Recall@1	0.192
+F1@1	0.268
 
 train metrics:
 records	12297
-Precision@2	0.362
-Recall@2	0.314
-F1@2	0.336
+Precision@2	0.357
+Recall@2	0.310
+F1@2	0.332
 
 test metrics:
 records	3107
-Precision@2	0.328
-Recall@2	0.283
-F1@2	0.304
+Precision@2	0.323
+Recall@2	0.279
+F1@2	0.299
 
 </pre>
 </div>
@@ -14484,27 +14482,27 @@ F1@2	0.304
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>train metrics:
 records	12297
-Precision@1	0.485
-Recall@1	0.211
-F1@1	0.294
+Precision@1	0.483
+Recall@1	0.210
+F1@1	0.292
 
 test metrics:
 records	3107
-Precision@1	0.411
-Recall@1	0.177
-F1@1	0.248
+Precision@1	0.407
+Recall@1	0.175
+F1@1	0.245
 
 train metrics:
 records	12297
-Precision@2	0.358
-Recall@2	0.311
-F1@2	0.333
+Precision@2	0.356
+Recall@2	0.309
+F1@2	0.331
 
 test metrics:
 records	3107
-Precision@2	0.308
-Recall@2	0.265
-F1@2	0.285
+Precision@2	0.306
+Recall@2	0.264
+F1@2	0.283
 
 </pre>
 </div>
@@ -14531,30 +14529,11 @@ F1@2	0.285
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+<span class="n">tokenizer_checkpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;tokenizer.json&#39;</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tokenizer_checkpoint</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[27]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&#39;cooking_model/vocab.json&#39;, &#39;cooking_model/merges.txt&#39;]</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -14578,12 +14557,13 @@ F1@2	0.285
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">loaded_tokenizer</span> <span class="o">=</span> <span class="n">ByteLevelBPETokenizer</span><span class="p">(</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;vocab.json&#39;</span><span class="p">),</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;merges.txt&#39;</span><span class="p">),</span>
-    <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tokenizers</span> <span class="kn">import</span> <span class="n">Tokenizer</span>
+
+<span class="n">loaded_tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">tokenizer_checkpoint</span><span class="p">)</span>
 <span class="n">loaded_model</span> <span class="o">=</span> <span class="n">fasttext</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">tokenized_model_checkpoint</span><span class="p">)</span>
+
+<span class="n">encoded_text</span> <span class="o">=</span> <span class="n">loaded_tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">encoded_text</span><span class="o">.</span><span class="n">tokens</span>
 </pre></div>
 
     </div>
@@ -14600,9 +14580,32 @@ F1@2	0.285
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>
+<pre>Warning : `load_model` does not return WordVectorModel or SupervisedModel any more, but a `FastText` object which is very similar.
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[29]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;how&#39;,
+ &#39;Ġmuch&#39;,
+ &#39;Ġdoes&#39;,
+ &#39;Ġpotato&#39;,
+ &#39;Ġstarch&#39;,
+ &#39;Ġaffect&#39;,
+ &#39;Ġa&#39;,
+ &#39;Ġcheese&#39;,
+ &#39;Ġsauce&#39;,
+ &#39;Ġrecipe&#39;,
+ &#39;?&#39;]</pre>
+</div>
+
 </div>
 
 </div>
@@ -14658,7 +14661,7 @@ F1@2	0.285
 
 <div class="output_text output_subarea output_execute_result">
 <pre>((&#39;__label__baking&#39;, &#39;__label__bread&#39;, &#39;__label__yeast&#39;),
- array([0.98867828, 0.97703266, 0.26285186]))</pre>
+ array([0.98458546, 0.97405267, 0.25684199]))</pre>
 </div>
 
 </div>
@@ -14713,11 +14716,11 @@ F1@2	0.285
 
 <div class="output_text output_subarea output_execute_result">
 <pre>([[&#39;__label__baking&#39;, &#39;__label__bread&#39;],
-  [&#39;__label__equipment&#39;, &#39;__label__coffee&#39;],
+  [&#39;__label__equipment&#39;, &#39;__label__microwave&#39;],
   [&#39;__label__cast-iron&#39;, &#39;__label__equipment&#39;]],
- array([[0.98867828, 0.97703266],
-        [0.26285186, 0.10375863],
-        [0.82219917, 0.34159252]]))</pre>
+ [array([0.98458546, 0.97405267], dtype=float32),
+  array([0.22271016, 0.11597072], dtype=float32),
+  array([0.64423513, 0.3775507 ], dtype=float32)])</pre>
 </div>
 
 </div>
@@ -14815,7 +14818,7 @@ F1@2	0.285
 
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>[Parallel(n_jobs=1)]: Using backend SequentialBackend with 1 concurrent workers.
-[Parallel(n_jobs=1)]: Done   2 out of   2 | elapsed:   10.2s finished
+[Parallel(n_jobs=1)]: Done   2 out of   2 | elapsed:    9.7s finished
 </pre>
 </div>
 </div>
@@ -14862,24 +14865,24 @@ F1@2	0.285
       <td>{'epoch': 15, 'dim': 80}</td>
       <td>15</td>
       <td>80</td>
-      <td>0.617</td>
-      <td>0.268</td>
-      <td>0.373</td>
-      <td>0.481</td>
-      <td>0.209</td>
-      <td>0.291</td>
+      <td>0.612</td>
+      <td>0.265</td>
+      <td>0.370</td>
+      <td>0.477</td>
+      <td>0.208</td>
+      <td>0.289</td>
     </tr>
     <tr>
       <th>1</th>
       <td>{'epoch': 15, 'dim': 100}</td>
       <td>15</td>
       <td>100</td>
-      <td>0.611</td>
-      <td>0.265</td>
-      <td>0.370</td>
-      <td>0.478</td>
-      <td>0.208</td>
-      <td>0.290</td>
+      <td>0.607</td>
+      <td>0.264</td>
+      <td>0.368</td>
+      <td>0.474</td>
+      <td>0.206</td>
+      <td>0.287</td>
     </tr>
   </tbody>
 </table>
@@ -14916,7 +14919,7 @@ F1@2	0.285
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>
+<pre>Warning : `load_model` does not return WordVectorModel or SupervisedModel any more, but a `FastText` object which is very similar.
 </pre>
 </div>
 </div>
@@ -14952,8 +14955,8 @@ F1@2	0.285
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>train metric - num_records: 12297, precision@1: 0.638, recall@1: 0.277, f1@1: 0.386
-test metric - num_records: 3107, precision@1: 0.489, recall@1: 0.211, f1@1: 0.295
+<pre>train metric - num_records: 12297, precision@1: 0.637, recall@1: 0.276, f1@1: 0.385
+test metric - num_records: 3107, precision@1: 0.491, recall@1: 0.212, f1@1: 0.296
 </pre>
 </div>
 </div>
@@ -14995,11 +14998,12 @@ test metric - num_records: 3107, precision@1: 0.489, recall@1: 0.211, f1@1: 0.29
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[[(0.9850529432296753, &#39;__label__baking&#39;),
-  (0.9046605229377747, &#39;__label__bread&#39;)],
- [(0.9399233460426331, &#39;__label__equipment&#39;),
-  (0.14034625887870789, &#39;__label__cleaning&#39;)],
- [(0.6442351341247559, &#39;__label__cast-iron&#39;)]]</pre>
+<pre>([[&#39;__label__baking&#39;, &#39;__label__bread&#39;],
+  [&#39;__label__equipment&#39;, &#39;__label__cleaning&#39;],
+  [&#39;__label__cast-iron&#39;]],
+ [array([0.98594636, 0.9073222 ], dtype=float32),
+  array([0.93629503, 0.12253322], dtype=float32),
+  array([0.64423513], dtype=float32)])</pre>
 </div>
 
 </div>
