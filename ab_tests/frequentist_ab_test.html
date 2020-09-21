@@ -16676,7 +16676,14 @@ height=353
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparing-Two-Proportions">Comparing Two Proportions<a class="anchor-link" href="#Comparing-Two-Proportions">&#182;</a></h2><p>Let's formalize our thought process a little bit, suppose that we have obtained data from n visitors, $n_A$ of which have been (randomly) sent to page A, and $n_B$ of which have been sent to page B. Further, let $X_A$ and $X_B$ denote the number of visitors for whom we obtained a 'successful' outcome in the two groups. The proportion of successes in the two groups is then given by $\hat{p_A} = X_A/n_A$ and $\hat{p_B} = X_B/n_B$ respectively. The estimated difference in success rates is then give by the difference in proportions: $\hat{p_A} - \hat{p_B}$:</p>
+<h2 id="Comparing-Two-Proportions">Comparing Two Proportions<a class="anchor-link" href="#Comparing-Two-Proportions">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's formalize our thought process a little bit, suppose that we have obtained data from n visitors, $n_A$ of which have been (randomly) sent to page A, and $n_B$ of which have been sent to page B. Further, let $X_A$ and $X_B$ denote the number of visitors for whom we obtained a 'successful' outcome in the two groups. The proportion of successes in the two groups is then given by $\hat{p_A} = X_A/n_A$ and $\hat{p_B} = X_B/n_B$ respectively. The estimated difference in success rates is then give by the difference in proportions: $\hat{p_A} - \hat{p_B}$:</p>
 <p>To assess whether we have statistical evidence that the two pages' success rates truely differ, we can perform a hypothesis test. The null hypothesis that we want to test is that the two pages' true success rates are equal, whereas the alternative is that they differ (one is higher than the other). If $p_A$ = the proportion of the page A population whom we obtained a successful outcome and $p_B$ = the proportion of the page B population whom we obtained a successful outcome then we are interested in testing the following hypothesis:</p>
 $$
 \begin{align}
@@ -16967,7 +16974,21 @@ confidence interval: [-0.00362633  0.02002633]
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Up till this point, we've been using the 5000 as the total number of observations/samples that are involved in the A/B testing process. The next question that we'll address is, in real world scenarios, how many obeservations do we need in order to draw a valid verdict on the test result. This leads us to our next topic <strong>power</strong>.</p>
-<h2 id="Introducing-Power">Introducing Power<a class="anchor-link" href="#Introducing-Power">&#182;</a></h2><p>In the world of hypothesis testing, rejecting the null hypothesis when it is actually true is called a type 1 error, often denoted as $\alpha$. Committing a type 1 error is a false positive because we end up recommending something that does not work. Conversely, a type 2 error, often denoted as $\beta$, occurs when we do not reject the null hypothesis when it is actually false. This is a false negative because we end up sitting on our hands when we should have taken action. We need to consider both types of errors when choosing the sample size.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introducing-Power">Introducing Power<a class="anchor-link" href="#Introducing-Power">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the world of hypothesis testing, rejecting the null hypothesis when it is actually true is called a type 1 error, often denoted as $\alpha$. Committing a type 1 error is a false positive because we end up recommending something that does not work. Conversely, a type 2 error, often denoted as $\beta$, occurs when we do not reject the null hypothesis when it is actually false. This is a false negative because we end up sitting on our hands when we should have taken action. We need to consider both types of errors when choosing the sample size.</p>
 <p>Two important probabilities related to type 1 and type 2 error are:</p>
 <ul>
 <li><strong>Significance level:</strong> Governs the chance of a false positive. A significance level of 0.05 means that there is a 5% chance of a false positive. Choosing level of significance is an arbitrary task, but for many applications, a level of 5% is chosen, for no better reason than that it is conventional</li>
@@ -21548,7 +21569,21 @@ height=370
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The following link illustrates power for a two-sided hypothesis test for those interested. <a href="https://www.youtube.com/watch?v=NbeHZp23ubs">Youtube: Calculating Power and the Probability of a Type II Error (A Two-Tailed Example)</a></p>
-<h2 id="Determining-Sample-Size">Determining Sample Size<a class="anchor-link" href="#Determining-Sample-Size">&#182;</a></h2><p>Say we've followed the rule of thumb and required the significance level to be 5% and the power to be 80%. This means we have now specified the two key components of a power analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Determining-Sample-Size">Determining Sample Size<a class="anchor-link" href="#Determining-Sample-Size">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Say we've followed the rule of thumb and required the significance level to be 5% and the power to be 80%. This means we have now specified the two key components of a power analysis.</p>
 <ul>
 <li>A decision rule of when to reject the null hypothesis. We reject the null when the p-value is less than 5%.</li>
 <li>Our tolerance for committing type 2 error (1−80%=20%).</li>
@@ -23073,7 +23108,7 @@ height=371
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>From the graph, we can see that we need roughly 10x more observations to get a detectable difference of 0.01 compared to 0.03.</p>
-<p>The following section is an alternative way of conducting a test statistic for proportional A/B test, feel free to skip it, it will not affect that understanding of later section.</p>
+<p>The following section is an alternative way of conducting a test statistic for proportional A/B test, feel free to skip it as it will not affect the understanding of later section.</p>
 
 </div>
 </div>
@@ -23081,7 +23116,14 @@ height=371
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Alternative-View-of-the-Test-Statistic">Alternative View of the Test Statistic<a class="anchor-link" href="#Alternative-View-of-the-Test-Statistic">&#182;</a></h2><p>There are two types of the chi-squared test, goodness of fit and test of independence, but it is the latter which is useful for the case in question. The reason as to why a test of “independence” is applicable becomes clear by converting the contingency table into a probability matrix by dividing each element by the grand total of frequencies:</p>
+<h2 id="Alternative-View-of-the-Test-Statistic">Alternative View of the Test Statistic<a class="anchor-link" href="#Alternative-View-of-the-Test-Statistic">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are two types of the chi-squared test, goodness of fit and test of independence, where the latter is more applicable for our use case here. We start off by converting the contingency table into a probability matrix by dividing each element with the total frequencies:</p>
 
 </div>
 </div>
@@ -23183,7 +23225,7 @@ height=371
 </tbody>
 </table>
 <p>Now, our interest is whether the conversion $C$ depends on the page version $V$, and if it does, to learn which version converts better. In probability theory, the events $C$ and $V$ are said to be independent if the joint probability can be computed by $P(V, C) = P(V) \cdot P(C)$, where $P(V)$ and $P(C)$ are marginal probabilities of $V$ and $C$, respectively. It is straightforward to compute the marginal probabilities from row and column marginals:</p>
-$$P(V = a) = \frac{4514 + 486}{10000}  \hspace{1cm} P(V = b) = \frac{4473 + 527}{10000}$$$$P(C = f) = \frac{4514 + 4473}{10000} \hspace{1cm} P(C = t) = \frac{486 + 527}{10000}$$<p>The null hypothesis is that $V$ and $C$ are independent, in which case the elements of the matrix, a.k.a the distribution that we're expecting is equivalent to:</p>
+$$P(V = a) = \frac{4514 + 486}{10000}  \hspace{1cm} P(V = b) = \frac{4473 + 527}{10000}$$$$P(C = f) = \frac{4514 + 4473}{10000} \hspace{1cm} P(C = t) = \frac{486 + 527}{10000}$$<p>Our null hypothesis is $V$ and $C$ are independent, in which case the elements of the matrix, a.k.a the distribution that we're expecting is equivalent to:</p>
 <table>
 <thead><tr>
 <th style="text-align:center">Version (V)</th>
@@ -23204,13 +23246,13 @@ $$P(V = a) = \frac{4514 + 486}{10000}  \hspace{1cm} P(V = b) = \frac{4473 + 527}
 </tr>
 </tbody>
 </table>
-<p>The conversion $C$ is said to be dependent on the version $V$ of the web site if this null hypothesis is rejected. Hence rejecting the null hypothesis means that one version is better at converting than the other. This is the reason why the test is on independence.</p>
+<p>The conversion $C$ is said to be dependent on the version $V$ of the web site if this null hypothesis is rejected. Hence rejecting the null hypothesis means that one version is better at converting than the other.</p>
 <p>When dealing with counts and investigating how far the observed counts are from the expected counts, we use a test statistic called the <strong>chi-square test</strong>. The chi-squared test compares an observed distribution $O_{ij}$ to an expected distribution $E_{ij}$:</p>
 $$
 \begin{align}
 \chi^2 = \sum_{i,j} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}
 \end{align}
-$$<p>It's calculated as the observed minus the expected for each cell squared divided by the expected counts, the division with the expected counts makes final result proportional to our expected frequency. After performing the computation for each cell, we want to sum this over all of the cells (levels of the categorical variable).</p>
+$$<p>It's calculated as the observed minus the expected for each cell squared divided by the expected counts, the division with the expected counts makes final result proportional to our expected frequency. After performing the computation for each cell, we want to sum this over all the cells (levels of the categorical variable).</p>
 <p>This $\chi^2$ probability distribution has only one parameter, the degrees of freedom. It influences the shape, the center and the spread of the chi-square distribution.</p>
 
 </div>
@@ -25100,7 +25142,21 @@ $$<p>to account for an error between the observed discrete distribution and the 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>After diving into the technical details of conducting a frequentist A/B testing, we will now introduce one possible template/workflow/thought-process for conducting A/B testing.</p>
-<h2 id="Formulate-Business-Goals-&amp;-Hypothesis-Test">Formulate Business Goals &amp; Hypothesis Test<a class="anchor-link" href="#Formulate-Business-Goals-&amp;-Hypothesis-Test">&#182;</a></h2><p><strong>Define Business Goal</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Formulate-Business-Goals-&amp;-Hypothesis-Test">Formulate Business Goals &amp; Hypothesis Test<a class="anchor-link" href="#Formulate-Business-Goals-&amp;-Hypothesis-Test">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Define Business Goal</strong></p>
 <p>Every project or plan or test always starts with a goal e.g. A business objective for an online flower store is to "Increase our sales by receiving online orders for our bouquets"</p>
 <p><strong>Formulate A/B Test</strong></p>
 <p>The crux of A/B testing can be summarized into one sentence:</p>
@@ -25111,9 +25167,23 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <li><strong>[Result]</strong> is basically what we expect to see, such as more clicks, more sign-ups. The effect size of [Result] will be determined by the data</li>
 <li><strong>[Rationale]</strong> what assumptions will be proven right/wrong after the experiment</li>
 </ul>
-<h3 id="Result">Result<a class="anchor-link" href="#Result">&#182;</a></h3><p>We start by asking ourselves, what result are we expecting out of this test? To do this, we need to:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Result">Result<a class="anchor-link" href="#Result">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We start by asking ourselves, what result are we expecting out of this test? To do this, we need to:</p>
 <ul>
-<li><strong>Define our Key Performance Indicators.</strong> e.g. Our flower store’s business objective is to sell bouquets. Our KPI could be number of bouquets sold online.</li>
+<li><strong>Define our Key Performance Indicators.</strong> e.g. Our flower store's business objective is to sell bouquets. Our KPI could be number of bouquets sold online.</li>
 <li><strong>Define our target metrics.</strong> e.g. For our imaginary flower store, we can define a monthly target of 175 bouquets sold.</li>
 </ul>
 
@@ -25123,7 +25193,14 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Rationale">Rationale<a class="anchor-link" href="#Rationale">&#182;</a></h3><p>A lot of times, people have the idea that A/B testing is panacea, too many people think they'll just guess their way to great conversion and revenue, when trully successful tests are typically much more complicated than that.</p>
+<h3 id="Rationale">Rationale<a class="anchor-link" href="#Rationale">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A lot of times, people have the idea that A/B testing is panacea, too many people think they'll just guess their way to great conversion and revenue, when truly successful tests are typically much more complicated than that.</p>
 <p>After defining the high level goal and knowing the result that we're aiming for, find out (not guess) which parts of our business are underperforming or trending and why. Ways to perform this step are:</p>
 <p><strong>Quantitative methods</strong> We can start by looking at quantitative data if we have any. These methods do a much better job answering how many and how much types of questions.</p>
 <p>Say we're a website, we can take a look at our conversion funnel and examine the flow from the persuasive end (top of the funnel) and the transactional end (bottom of the funnel). e.g. We can identify problems by starting from the top 5 highest bounce rate pages. During the examination, segment to spot underlying underperformance or trends.</p>
@@ -25146,7 +25223,14 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Variable">Variable<a class="anchor-link" href="#Variable">&#182;</a></h3><p>Now that we've identify the overall business goal and the possible issue, it's time to determine the variable, which is the element that we'll be testing for. e.g. we've identified through quantitative method that less than one percent of visitors sign up for our newsletter and after conducting qualitative studies it's because the call to action wording does not resonate with the audience, then our variable will be changing the call to action's wording.</p>
+<h3 id="Variable">Variable<a class="anchor-link" href="#Variable">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Upon identifying the overall business goal and the possible issue, it's time to determine the variable, which is the element that we'll be testing for. e.g. we've identified through quantitative method that less than one percent of visitors sign up for our newsletter and after conducting qualitative studies it's because the call to action wording does not resonate with the audience, then our variable will be changing the call to action's wording.</p>
 <p>Note that we may have multiple ideas for our variable, in that case we can collate all the ideas, prioritize them based on three simple metrics:</p>
 <ul>
 <li><strong>Potential</strong> How much potential for a conversion rate increase? We can check to see if this kind of idea worked before.</li>
@@ -25172,13 +25256,34 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Quantitative-A/B-testing">Quantitative A/B testing<a class="anchor-link" href="#Quantitative-A/B-testing">&#182;</a></h2><p>So now, suppose you're running an educational platform and your A/B testing hypothesis is : Will changing the "Start Now" button from orange to pink increase how many students explore the platform's courses. So in this case the metric that's use to evaluate the change's performance is the click through probability (unique visitors who click the button / unique visitors to page). Note that it is often times impractical to use metrices such as total number of students that completed the course as it often takes weeks or months before a student can do that.</p>
+<h2 id="Quantitative-A/B-testing">Quantitative A/B testing<a class="anchor-link" href="#Quantitative-A/B-testing">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we're running an educational platform and your A/B testing hypothesis is : Will changing the "Start Now" button from orange to pink increase how many students explore the platform's courses. So in this case the metric that's use to evaluate the change's performance is the click through probability (unique visitors who click the button / unique visitors to page). Note that it is often times impractical to use metrices such as total number of students that completed the course as it often takes weeks or months before a student can do that.</p>
 <p>Next we will jot down the hypothesis that we wish to test out, in our case the null and alternative hypothesis would be:</p>
 <ul>
 <li>$H_0$: The experimental and control groups have the same probability of clicking the button. Or equivalent to saying that the differences of the two groups' probability is 0</li>
 <li>$H_1$: The two groups have different probability of completing a clicking the button</li>
 </ul>
-<h3 id="Define-the-Size-and-Duration">Define the Size and Duration<a class="anchor-link" href="#Define-the-Size-and-Duration">&#182;</a></h3><p>Now that we've defined our hypothesis, the first question that comes into mind is how many tests do we need to run, or in a sense how long should the test last in order for us to make our decisions. To do that we can use a power analysis for two independent samples:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-the-Size-and-Duration">Define the Size and Duration<a class="anchor-link" href="#Define-the-Size-and-Duration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After we've defined our hypothesis, the first question that comes into mind is how many tests do we need to run, or in a sense how long should the test last in order for us to make our decisions. To do that we can use a power analysis for two independent samples:</p>
 <p>Now suppose that our current baseline is 0.1, i.e. there's a 10 percent chance that people who saw the button will click it and we wish to detect a change of 2 percent in the click through rate (This change is quite high for online experiment).</p>
 
 </div>
@@ -25236,7 +25341,14 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Define-the-Population">Define the Population<a class="anchor-link" href="#Define-the-Population">&#182;</a></h2><p>Another consideration is what fraction of the traffic are we going to send through the experiment. The key is to identify which population of our users will be affected by our experiment, we might want to target our experiment to that traffic (e.g. changing features specific to one language’s users) so that the rest of the population won’t dilute the effect.</p>
+<h2 id="Define-the-Population">Define the Population<a class="anchor-link" href="#Define-the-Population">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another consideration is what fraction of the traffic are we going to send through the experiment. The key is to identify which population of our users will be affected by our experiment, we might want to target our experiment to that traffic (e.g. changing features specific to one language’s users) so that the rest of the population won’t dilute the effect.</p>
 <p>Next, depending on the problem we're looking at, we might want to use a cohort instead of a population. A cohort makes much more sense than looking at the entire population when testing out learning effects, examining user retention or anything else that requires the users to be established for some reason.</p>
 <p>A quick note on cohort. The gist of cohort analysis is basically putting our customers into buckets so we can track their behaviours over a period of time. The term cohort stands for a group of customers grouped by the timeline (can be week, month) where they first made a purchase (can be a different action that’s valuable to the business). Having similar traits makes the two groups more comparable.</p>
 <p>e.g. You’re an educational platform has an existing course that’s already up and running. Some of the students have completed the course, some of them are midway through and there’re students who have not yet started. If you want to change the structure of of one of the lessons to see if it improves the completion rate of the entire course and they started the experiment at time X. For students who have started before the experiment initiated they may have already finished the lesson already leading to the fact that they may not even see the change. So taking the whole population of students and running the experiment on them isn’t what you want. Instead, you want to segment out the cohort, the group of customers, that started the lesson as the experiment was launched and split that into an experiment and control group.</p>
@@ -25247,7 +25359,14 @@ $$<p>to account for an error between the observed discrete distribution and the 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evaluating-Result">Evaluating Result<a class="anchor-link" href="#Evaluating-Result">&#182;</a></h2><p>Suppose we have ran the test and we've obtain the total number of sample sizes and the total number of successes for both groups. Given these variables we can use it to calculate whether the proportional change was due to variation or not.</p>
+<h2 id="Evaluating-Result">Evaluating Result<a class="anchor-link" href="#Evaluating-Result">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Suppose we have ran the test and obtained the total number of sample sizes and the total number of successes for both groups. Given these variables we can use it to calculate whether the proportional change was due to variation or not.</p>
 
 </div>
 </div>

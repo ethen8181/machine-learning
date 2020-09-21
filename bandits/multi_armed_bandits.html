@@ -14210,7 +14210,7 @@ height=446
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Section Conclusion:</strong> The plot of the cumulative expected regret of the experiment above showed that all three different algorithms have converged (the cumulative expected regret gradually decreases to a steady level). And the <strong>UCB</strong> seems to be doing better than the other two algorithms in this limited horizon as the way to read the graph is the lower the better (the y-axis represents regrets).</p>
+<p><strong>Section Conclusion:</strong> The cumulative expected regret plot from our experiment showed that all three different algorithms have converged (the cumulative expected regret gradually decreases to a steady level). And the <strong>UCB</strong> seems to be doing better than the other two algorithms in this limited horizon as the way to read the graph is the lower the better (the y-axis represents regrets).</p>
 
 </div>
 </div>
@@ -14225,7 +14225,7 @@ height=446
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next, we'll introduce a Bayesian method called <strong>Thompson Sampling</strong>. Recall that the the problem we want to solve is the following. We came up with $K$ different variations of the webpage (e.g. different layout) and we wish to find the ones with the best click through rate (CTR), e.g. clicking to sign-up for the newsletter. Let's represent each CTR by $\theta_i$ - i.e., $\theta_i$ is the true probability that an individual user will click when they were shown with the $i_{th}$ webpage. It is important to note that we don't actually know what $\theta_i$ is - if we did, we could simply choose $i$ for which $\theta_i$ was largest and move on. We're simply pretending that we know in order to simulate the performance of the algorithm.</p>
+<p>Next, we'll introduce a Bayesian method called <strong>Thompson Sampling</strong>. Recall that the problem we want to solve is the following. We came up with $K$ different variations of the webpage (e.g. different layout) and we wish to find the ones with the best click through rate (CTR), e.g. clicking to sign-up for the newsletter. Let's represent each CTR by $\theta_i$ - i.e., $\theta_i$ is the true probability that an individual user will click when they were shown with the $i_{th}$ webpage. It is important to note that we don't actually know what $\theta_i$ is - if we did, we could simply choose $i$ for which $\theta_i$ was largest and move on. We're simply pretending that we know in order to simulate the performance of the algorithm.</p>
 <p>Using the Bayesian approach we will construct a prior probability distribution which represents our original belief about what the actual value of $\theta_i$, our ctr for the $i_{th}$ webpage is. The prior we'll use is the Beta distribution. Here's a quick recap of the distribution:</p>
 
 </div>
