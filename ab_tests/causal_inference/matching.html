@@ -13093,6 +13093,7 @@ div#notebook {
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+
 <span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -13439,8 +13440,8 @@ E(Y^1 - Y^0)
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In the previous section, we flashed the idea that with causal inferencing, we're interesting in estimating $E(Y^1 - Y^0)$. This notation denotes <strong>average causal effect</strong>. What this means is:</p>
-<p>Imagine a hypothetical world where our entire population, every single person, got treatment $A=0$. Versus, some other hypothetical world where everyone received the other treatment, $A=1$. The most important thing here is the two hypothetical world have the exact same people, it's the same population of people. But in one case, we do one thing to them, and in another case, we do another. And then, if we were able to observe both of these worlds simultaneously, we could collect the outcome data from everyone in the populations, and then compute average difference.</p>
-<p>This is what we mean by an average causal effect. It's computed over the whole population and we're saying, what would the average outcome be if everybody got one treatment, versus if everybody got another treatment? Of course, in reality, we're not going to see both of these worlds. But this is what we're hoping to estimate.</p>
+<p>Imagine a hypothetical world where our entire population received treatment $A=0$. Versus, some other hypothetical world where everyone received the other treatment, $A=1$. The most important thing here is the two hypothetical world should have the exact same population. The only difference is the difference in our treatment. If we were able to observe both of these worlds simultaneously, we could collect the outcome data from everyone in the populations, and then compute average difference.</p>
+<p>This is what we mean by an average causal effect. It's computed over the whole population and we're saying, what would the average outcome be if everybody received one treatment, versus if everybody received another treatment. Of course, in reality, we're not going to see both of these worlds, but this is what we're hoping to estimate.</p>
 <p>In reality, what we get from an experiment is $E(Y|A=1)$. Here, we are saying what is the expected value of $Y$ given $A=1$. An equivalent way of reading this is the expected value of $Y$ restricting to the sub-population who actually had $A=1$. The main point that we're getting at is:</p>
 \begin{align}
 E(Y^1 - Y^0) \neq E(Y|A=1) - E(Y|A=0)
@@ -15126,7 +15127,7 @@ C(u_t) = \{ u_c \in {\text control} : |\pi_{u_c} - \pi_{u_t}| \leq \delta \}
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This result tells us after using matching adjustment to ensure comparability between the treatment and control group, we find that receiving Right Heart Catheterization does have an effect on a patient's change of dying.</p>
+<p>This result tells us after using matching adjustment to ensure comparability between the treatment and control group, we find that receiving Right Heart Catheterization does have an effect on a patient's chance of dying.</p>
 
 </div>
 </div>
