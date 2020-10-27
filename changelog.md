@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2020-10]
+
+### Added
+
+- Deep Learning for Tabular Data - PyTorch, PyTorch Lightning, ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/tabular.html)]
+
 ## [2020-09]
 
 ### Changed
@@ -10,13 +16,6 @@ The changelog will record what content was **changed** (e.g. changed an existing
     + Massive overhaul to the content. e.g. introducing two additional calibration methods, histogram binning and Plat Scaling Binning. Bundling all helper utility function in a package structure for ease of re-use.
 - MultiLabel Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
     + Update Huggingface Tokenizers to 0.8.1 API.
-
-## [2020-08]
-
-### Changed
-
-- Probability Calibration for classification models. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html)]
-    + Fixed an error in the calibration graph.
 
 ## [2020-06]
 

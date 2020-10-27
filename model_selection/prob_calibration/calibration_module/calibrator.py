@@ -117,13 +117,13 @@ class PlattCalibrator(BaseEstimator):
         return self
 
     @staticmethod
-    def _convert_to_log_odds(y_prob: np.ndarray):
+    def _convert_to_log_odds(y_prob: np.ndarray) -> np.ndarray:
         eps = 1e-12
         y_prob = np.clip(y_prob, eps, 1 - eps)
         y_prob = np.log(y_prob / (1 - y_prob))
         return y_prob
 
-    def predict(self, y_prob: np.ndarray):
+    def predict(self, y_prob: np.ndarray) -> np.ndarray:
         """
         Predicts the calibrated probability.
 
@@ -143,7 +143,7 @@ class PlattCalibrator(BaseEstimator):
         output = self._transform(y_prob)
         return output
 
-    def _transform(self, y_prob: np.ndarray):
+    def _transform(self, y_prob: np.ndarray) -> np.ndarray:
         output = y_prob * self.coef_[0] + self.intercept_
         output = 1 / (1 + np.exp(-output))
         return output
