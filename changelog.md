@@ -8,6 +8,14 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 - Deep Learning for Tabular Data - PyTorch, PyTorch Lightning, ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/tabular.html)]
 
+### Changed
+
+- Removed mlutils: Machine learning utility function package. A lot of its contents are not well-maintained, as a result, are already out-dated.
+- LightGBM API walkthrough and a discussion about categorical features in tree-based models. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/lightgbm.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/lightgbm.html)]
+    - Upgrade LightGBM to 3.0.0, and deprecate out-dated content.
+- Xgboost API walkthrough (includes hyperparameter tuning via scikit-learn like API). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/xgboost.ipynb)][[html](http://ethen8181.github.io/machine-learning/trees/xgboost.html)]
+    - Upgrade XGBoost to 1.2.1, and deprecate out-dated content.
+
 ## [2020-09]
 
 ### Changed
@@ -294,12 +302,6 @@ Hosted html-version of all jupyter notebook on github pages.
 - TF-IDF (text frequency - inverse document frequency) from scratch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/clustering/tfidf/tfidf.ipynb)]
     - Moved to its own tfidf folder.
     - Included the full tfidf implementation from scratch.
-
-## [2017-09]
-
-### Added
-
-- [Kaggle challenge](https://www.kaggle.com/c/DontGetKicked): Predict if a car purchased at auction is a unfortunate purchase. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/data_challenge/)]
 
 ### Changed
 

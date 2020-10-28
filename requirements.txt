@@ -6,6 +6,7 @@ jupyter_contrib_nbextensions>=0.4.0
 jupyterthemes
 keras>=2.2.2
 knowledge-repo>=0.7.6
+lightgbm==3.0.0
 logzero>=1.3.1
 matplotlib>=3.1.1
 nbdime>=0.4.1
@@ -30,3 +31,4 @@ torch>=1.3.1
 torchtext>=0.4.0
 tqdm>=4.41.1
 watermark>=1.6.0
+xgboost==1.2.1
