@@ -76,7 +76,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- [Kaggle: Quora Insincere Questions Classification](https://www.kaggle.com/c/quora-insincere-questions-classification/): Predicting insincere questions. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_quora_insincere/)]
+- [Kaggle: Quora Insincere Questions Classification](https://www.kaggle.com/c/quora-insincere-questions-classification/) Predicting insincere questions. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_quora_insincere/)]
 
 ### Changed
 
@@ -120,7 +120,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- [Kaggle: Rossman Store Sales](https://www.kaggle.com/c/rossmann-store-sales/): Predicting daily store sales. Also introduces deep learning for tabular data. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_rossman_store_sales/)]
+- [Kaggle: Rossman Store Sales](https://www.kaggle.com/c/rossmann-store-sales/) Predicting daily store sales. Also introduces deep learning for tabular data. [[folder](https://github.com/ethen8181/machine-learning/blob/master/projects/kaggle_rossman_store_sales/)]
 
 ### Changed
 
