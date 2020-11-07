@@ -77,6 +77,7 @@ A/B testing, a.k.a experimental design. Includes: Quick review of necessary stat
     - Quantile Regression's application in A/B testing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/quantile_regression/ab_test_regression.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/quantile_regression/ab_test_regression.html)]
 - Casual Inference
     - Propensity Score Matching. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/matching.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/matching.html)]
+    - Inverse Propensity Weighting. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/inverse_propensity_weighting.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/inverse_propensity_weighting.html)]
 
 ### model selection
 
