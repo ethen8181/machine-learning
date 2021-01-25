@@ -218,7 +218,7 @@ def compute_calibration_summary(
         Number of bins to discretize the calibration curve plot and calibration error statistics.
         A bigger number requires more data, but will be closer to the true calibration error.
 
-    strategy {'uniform', 'quantile'}, default 'quantile'
+    strategy : {'uniform', 'quantile'}, default 'quantile'
         Strategy used to define the boundary of the bins.
 
         - uniform: The bins have identical widths.

@@ -88,7 +88,7 @@ class PlattCalibrator(BaseEstimator):
     Attributes
     ----------
     coef_ : ndarray of shape (1,)
-        Binary logistic regresion's coefficient.
+        Binary logistic regression's coefficient.
 
     intercept_ : ndarray of shape (1,)
         Binary logistic regression's intercept.
