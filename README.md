@@ -41,6 +41,7 @@ This is a continuously updated repository that documents personal journey on lea
 ### model deployment
 
 - FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes)]
+- Quick Intro to Gradient Boosted Tree Inferencing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/gbt_inference/gbt_inference.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/gbt_inference/gbt_inference.html)]
 
 ### bandits
 

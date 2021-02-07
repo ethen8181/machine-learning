@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>max_inner_product</title>
+<title>gbt_inference</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13078,7 +13078,7 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Maximum-Inner-Product" data-toc-modified-id="Maximum-Inner-Product-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Maximum Inner Product</a></span><ul class="toc-item"><li><span><a href="#Order-Preserving-Transformations" data-toc-modified-id="Order-Preserving-Transformations-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Order Preserving Transformations</a></span></li><li><span><a href="#Matrix-Factorization" data-toc-modified-id="Matrix-Factorization-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Matrix Factorization</a></span></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Benchmark" data-toc-modified-id="Benchmark-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Benchmark</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Gradient-Boosted-Tree-Inferencing" data-toc-modified-id="Gradient-Boosted-Tree-Inferencing-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Gradient Boosted Tree Inferencing</a></span><ul class="toc-item"><li><span><a href="#Preparation" data-toc-modified-id="Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Preparation</a></span><ul class="toc-item"><li><span><a href="#Regression" data-toc-modified-id="Regression-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>Regression</a></span></li><li><span><a href="#Binary-Classification" data-toc-modified-id="Binary-Classification-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>Binary Classification</a></span></li><li><span><a href="#Multiclass-Classification" data-toc-modified-id="Multiclass-Classification-1.1.3"><span class="toc-item-num">1.1.3&nbsp;&nbsp;</span>Multiclass Classification</a></span></li></ul></li><li><span><a href="#C++-Implementation" data-toc-modified-id="C++-Implementation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>C++ Implementation</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
@@ -13087,15 +13087,24 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># code for loading the format for the notebook</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1. magic to print version</span>
+<span class="c1"># 2. magic so that the notebook will reload external python modules</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> watermark
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">m2cgen</span> <span class="k">as</span> <span class="nn">m2c</span>
+<span class="kn">import</span> <span class="nn">sklearn.datasets</span> <span class="k">as</span> <span class="nn">datasets</span>
+<span class="kn">from</span> <span class="nn">xgboost</span> <span class="kn">import</span> <span class="n">XGBClassifier</span><span class="p">,</span> <span class="n">XGBRegressor</span>
 
-<span class="c1"># path : store the current path to convert back to it later</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+<span class="c1"># prevent scientific notations</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span><span class="o">=</span><span class="s1">&#39;custom2.css&#39;</span><span class="p">,</span> <span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,m2cgen,xgboost
 </pre></div>
 
     </div>
@@ -13108,385 +13117,119 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[1]:</div>
+    <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ethen 2021-02-07 10:25:19 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
+CPython 3.6.4
+IPython 7.15.0
 
-<style>
-    html {
-        font-size: 18px !important;
-    }
-
-    body {
-        background-color: #FFF !important;
-        font-weight: 1rem;
-        font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    body .notebook-app {
-        background-color: #FFF !important;
-    }
-
-    #header {
-        box-shadow: none !important;
-    }
-
-    #notebook {
-        padding-top: 0px;
-    }
-
-    #notebook-container {
-        box-shadow: none;
-        -webkit-box-shadow: none;
-        padding: 10px;
-    }
-
-    div.cell {
-        width: 1000px;
-        margin-left: 0% !important;
-        margin-right: auto;
-    }
-
-    div.cell.selected {
-        border: 1px dashed #CCCCCC;
-    }
-
-    .edit_mode div.cell.selected {
-        border: 1px dashed #828282;
-    }
-
-    div.output_wrapper {
-        margin-top: 8px;
-    }
-
-    a {
-        color: #383838;
-    }
-
-    code,
-    kbd,
-    pre,
-    samp {
-        font-family: 'Menlo', monospace !important;
-        font-size: 0.75rem !important;
-    }
-
-    h1 {
-        font-size: 2rem !important;
-        font-weight: 500 !important;
-        letter-spacing: 3px !important;
-        text-transform: uppercase !important;
-    }
-
-    h2 {
-        font-size: 1.8rem !important;
-        font-weight: 400 !important;
-        letter-spacing: 3px !important;
-        text-transform: none !important;
-    }
-
-    h3 {
-        font-size: 1.5rem !important;
-        font-weight: 400 !important;
-        font-style: italic !important;
-        display: block !important;
-    }
-
-    h4,
-    h5,
-    h6 {
-        font-size: 1rem !important;
-        font-weight: 400 !important;
-        display: block !important;
-    }
-
-    .prompt {
-        font-family: 'Menlo', monospace !important;
-        font-size: 0.75rem;
-        text-align: right;
-        line-height: 1.21429rem;
-    }
-
-    /* INTRO PAGE */
-
-    .toolbar_info,
-    .list-container {
-        ;
-    }
-    /* NOTEBOOK */
-
-    div#header-container {
-        display: none !important;
-    }
-
-    div#notebook {
-        border-top: none;
-        font-size: 1rem;
-    }
-
-    div.input_prompt {
-        color: #C74483;
-    }
-
-    .code_cell div.input_prompt:after,
-    div.output_prompt:after {
-        content: '\25b6';
-    }
-
-    div.output_prompt {
-        color: #2B88D9;
-    }
-
-    div.input_area {
-        border-radius: 0px;
-        border: 1px solid #d8d8d8;
-    }
-
-    div.output_area pre {
-        font-weight: normal;
-    }
-
-    div.output_subarea {
-        font-weight: normal;
-    }
-
-    .rendered_html pre,
-    .rendered_html table,
-    .rendered_html th,
-    .rendered_html tr,
-    .rendered_html td {
-        border: 1px #828282 solid;
-        font-size: 0.75rem;
-        font-family: 'Menlo', monospace;
-    }
-
-    .rendered_html th,
-    .rendered_html tr,
-    .rendered_html td {
-        padding: 5px 10px;
-    }
-
-    .rendered_html th {
-        font-weight: normal;
-        background: #f8f8f8;
-    }
-
-    a:link{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:visited{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:hover{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:focus{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:active{
-       font-weight: bold;
-       color:#447adb;
-    }
-    .rendered_html :link {
-       text-decoration: underline; 
-    }
-
-    div.output_html {
-        font-weight: 1rem;
-        font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    table.dataframe tr {
-        border: 1px #CCCCCC;
-    }
-
-    div.cell.selected {
-        border-radius: 0px;
-    }
-
-    div.cell.edit_mode {
-        border-radius: 0px;
-        border: thin solid #CF5804;
-    }
-
-    span.ansiblue {
-        color: #00A397;
-    }
-
-    span.ansigray {
-        color: #d8d8d8;
-    }
-
-    span.ansigreen {
-        color: #688A0A;
-    }
-
-    span.ansipurple {
-        color: #975DDE;
-    }
-
-    span.ansired {
-        color: #D43132;
-    }
-
-    span.ansiyellow {
-        color: #D9AA00;
-    }
-
-    div.output_stderr {
-        background-color: #D43132;
-    }
-
-    div.output_stderr pre {
-        color: #e8e8e8;
-    }
-
-    .cm-s-ipython.CodeMirror {
-        background: #F8F8F8;
-    }
-
-    .cm-s-ipython div.CodeMirror-selected {
-        background: #e8e8e8 !important;
-    }
-
-    .cm-s-ipython .CodeMirror-gutters {
-        background: #F8F8F8;
-        border-right: 0px;
-    }
-
-    .cm-s-ipython .CodeMirror-linenumber {
-        color: #b8b8b8;
-    }
-
-    .cm-s-ipython .CodeMirror-cursor {
-        border-left: 1px solid #585858 !important;
-    }
-
-    .cm-s-ipython span.cm-atom {
-        color: #C74483;
-    }
-
-    .cm-s-ipython span.cm-number {
-        color: #C74483;
-    }
-
-    .cm-s-ipython span.cm-property,
-    .cm-s-ipython span.cm-attribute {
-        color: #688A0A;
-    }
-
-    .cm-s-ipython span.cm-keyword {
-        font-weight: normal;
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-string {
-        color: #D9AA00;
-    }
-
-    .cm-s-ipython span.cm-operator {
-        font-weight: normal;
-    }
-
-    .cm-s-ipython span.cm-builtin {
-        color: #2B88D9;
-    }
-
-    .cm-s-ipython span.cm-variable {
-        color: #00A397;
-    }
-
-    .cm-s-ipython span.cm-variable-2 {
-        color: #2B88D9;
-    }
-
-    .cm-s-ipython span.cm-def {
-        color: #00A397;
-    }
-
-    .cm-s-ipython span.cm-error {
-        background: #FFBDBD;
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-tag {
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-link {
-        color: #975DDE;
-    }
-
-    .cm-s-ipython .CodeMirror-matchingbracket {
-        text-decoration: underline;
-         !important;
-    }
-</style>
-
-<script>
-    MathJax.Hub.Config({
-                        TeX: {
-                           extensions: ["AMSmath.js"]
-                           },
-                tex2jax: {
-                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-                },
-                displayAlign: 'center', // Change this to 'center' to center equations.
-                "HTML-CSS": {
-                    scale:100,
-                        availableFonts: [],
-                        preferredFont:null,
-                        webFont: "TeX",
-                    styles: {'.MathJax_Display': {"margin": 4}}
-                }
-        });
-</script>
+numpy 1.18.5
+pandas 1.0.5
+sklearn 0.23.1
+m2cgen 0.9.0
+xgboost 1.2.1
+</pre>
 </div>
-
 </div>
 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Gradient-Boosted-Tree-Inferencing">Gradient Boosted Tree Inferencing<a class="anchor-link" href="#Gradient-Boosted-Tree-Inferencing">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It's very common in industry setting to prototype a machine learning model in Python and translate it into other languages such as C++, Java, etc. when it comes to deploying. This usually happens where the core application is written in other languages such as C++, Java, etc. and it is an extremely time sensitive application where we can't afford the cost of calling an external API to fetch the model prediction.</p>
+<p>In this article, we'll looking at how we can achieve this with Gradient Boosted Trees, specifically XGBoost. Different library might have different ways to doing this, but the concept should be similar.</p>
+<p><strong>Tree Structure</strong></p>
+<p>A typical model dump from XGBoost looks like the following:</p>
+
+<pre><code>booster[0]:
+0:[bmi&lt;0.00942232087] yes=1,no=2,missing=1
+    1:[bmi&lt;-0.0218342301] yes=3,no=4,missing=3
+        3:[bmi&lt;-0.0584798381] yes=7,no=8,missing=7
+            7:leaf=25.84091
+            8:leaf=33.0292702
+        4:[bp&lt;0.0270366594] yes=9,no=10,missing=9
+            9:leaf=38.7487526
+            10:leaf=51.0882378
+    2:[bp&lt;0.0235937908] yes=5,no=6,missing=5
+        5:leaf=53.0696678
+        6:leaf=69.4000015
+booster[1]:
+0:[bmi&lt;0.00511107268] yes=1,no=2,missing=1
+    1:[bp&lt;0.0390867069] yes=3,no=4,missing=3
+        3:[bmi&lt;-0.0207564179] yes=7,no=8,missing=7
+            7:leaf=21.0474758
+            8:leaf=27.7326946
+        4:[bmi&lt;0.000799824367] yes=9,no=10,missing=9
+            9:leaf=36.1850548
+            10:leaf=14.9188232
+    2:[bmi&lt;0.0730132312] yes=5,no=6,missing=5
+        5:[bp&lt;6.75072661e-05] yes=11,no=12,missing=11
+            11:leaf=31.3889732
+            12:leaf=43.4056664
+        6:[bp&lt;-0.0498541184] yes=13,no=14,missing=13
+            13:leaf=13.0395498
+            14:leaf=59.377037</code></pre>
+<p>There are 3 distinct information:</p>
+<ul>
+<li><code>booster</code> Gradient Boosting Tree is an ensemble tree method, each new booster indicates the start of a new tree. The number of trees we have will be equivalent to the number of trees we specified for the model (e.g. for the sklearn XGBoost API, <code>n_estimators</code> controls this) multiplied by the number of distinct classes. For regression model or binary classification model, the number of booster in the model dump will be exactly equal to the number of trees we've specified. Whereas for multi class classification, say we have 3 classes, then tree 0 will contribute to the raw prediction of class 0, tree 1 to class 1, tree 2 to class 2, tree 3 to class 0 and so on.</li>
+<li><code>node</code> Following the booster is each tree's if-else structure. e.g. for node 0, if the feature <code>bmi</code> is less than a threshold, then it will branch to node 1 else it will branch to node 2.</li>
+<li><code>leaf</code> Once we reach the leaf, we can accumulate the response prediction. e.g. node 7 is a leaf, and the prediction for this node is 25.84091.</li>
+</ul>
+<p><strong>Raw Prediction</strong></p>
+<p>We mentioned that to get the prediction for a given input, we sum up the response prediction associated from each tree's leaf node. The holds true for regression models, but for other models, we will need to perform a transformation on top the raw prediction to get to the probabilities. e.g. for when building a binary classification, a logistic transformation will be needed on top of the raw prediction, whereas for the multi-class classification, a softmax transformation is needed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preparation">Preparation<a class="anchor-link" href="#Preparation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All the examples below, be it regression, binary classification or multi class classification all follow the same structure.</p>
+<ul>
+<li>We load some pre-processed data.</li>
+<li>Train a quick XGBoost model.</li>
+<li>Dump the raw model to disk.</li>
+<li>Generate a sample prediction so we can later verify whether the prediction matches with the model converted to cpp.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Regression">Regression<a class="anchor-link" href="#Regression">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-<span class="c1"># 1. magic for inline plot</span>
-<span class="c1"># 2. magic to print version</span>
-<span class="c1"># 3. magic so that the notebook will reload external python modules</span>
-<span class="c1"># 4. magic to enable retina (high resolution) plots</span>
-<span class="c1"># https://gist.github.com/minrk/3301035</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">load_ext</span> autoreload
-<span class="o">%</span><span class="k">autoreload</span> 2
-<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format=&#39;retina&#39;
-
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">hnswlib</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">call</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span>
-<span class="kn">from</span> <span class="nn">implicit.bpr</span> <span class="kn">import</span> <span class="n">BayesianPersonalizedRanking</span>
-
-<span class="c1"># prevent scientific notations</span>
-<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
-
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,scipy,implicit,hnswlib
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_diabetes</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="s2">&quot;bmi&quot;</span><span class="p">,</span> <span class="s2">&quot;bp&quot;</span><span class="p">]]</span>
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13499,141 +13242,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2020-05-11 09:57:24 
-
-CPython 3.6.4
-IPython 7.9.0
-
-numpy 1.18.4
-pandas 0.25.0
-scipy 1.4.1
-implicit 0.4.2
-hnswlib n
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Maximum-Inner-Product">Maximum Inner Product<a class="anchor-link" href="#Maximum-Inner-Product">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Matrix factorization are potent techniques in solving the collaborative filtering problem. It mainly involves building up the user-item interaction matrix, then decomposing it into a user latent factor (a.k.a embedding) and item latent factor each with some user specified dimension (a hyperparameter that we get to tweak).</p>
-<p><img src="img/matrix_factorization.png" width="60%" height="60%"></p>
-<p>To generate the items recommended for each user, we would perform a dot product between the two matrices and retrieve the top-k items that have the highest "scores". This process, however, can often times becomes a large bottleneck for these type of algorithms when the number of users and items becomes fairly large. As exhaustive computation of the dot product is extremely expensive. This document's focus is to demonstrate a order preserving transformation that converts the maximum inner product into a nearest neighborhood search problem to significantly speed up the process for generating the top-k recommendations.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Order-Preserving-Transformations">Order Preserving Transformations<a class="anchor-link" href="#Order-Preserving-Transformations">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll first describe the notation we'll be using. Lower case is for scalars, $x$, bold lower case for vectors, $\mathbf{x}$, and bold upper case for matrices, $\mathbf{X}$.</p>
-<p>Given a vector, $\mathbf{x}$. The norm is denoted by $\Vert \mathbf{x} \Vert = \sqrt{\sum^d_{i=1} x_i^2}$. The inner product is represented as $\mathbf{x} \cdot \mathbf{y}$. Last but not least, $(a, \mathbf{x}^T)^T$ is for denoting a concatenation of a scalar $a$ with a vector $\mathbf{x}$.</p>
-<p>On one hand, we have a matrix of $n$ vectors $\mathbf{Y} = [\mathbf{y}_1, \mathbf{y}_2, ..., \mathbf{y}_n]$, such that $\mathbf{y}_i \in \mathbb{R}^d$. Where $d$ is the number of dimensions we set for the latent factor. Whereas, our query vector $\mathbf{x} \in \mathbb{R}^d$.</p>
-<p>Our objective is to retrieve an index according to the maximum inner product.</p>
-$$
-\begin{align}
-f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmax}} \space \mathbf{x} \cdot \mathbf{y}_i
-\end{align}
-$$<p>The idea behind speeding up the workload for maximum inner product operations is to transform the problem into a distance minimization problem or nearest neighborhood search.</p>
-\begin{align}
-f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x} - \mathbf{y}_i \Vert}^2
-\end{align}<p>Once we transform the problem into a euclidean distance problem, there are plethora of algorithms/packages available for doing fast similarity search. To do so, we are going to apply a transformation function on our matrix, $\mathbf{Y}$and our query vector, $\mathbf{x}$. Note that the idea here is only to perform transformation on top of the existing $\mathbf{x}$ and $\mathbf{y}$, not to design a whole new algorithm in itself to learn embeddings/latent factors that directly uses distance minimization to generate the prediction, as this prevents us from using the existing matrix factorization algorithms.</p>
-<p>The order transformation is to add an additional dimension to each of the latent factors:</p>
-\begin{align}
-\mathbf{y}_i^* &amp;= \big(\sqrt{\phi^2 - {\Vert \mathbf{y_i} \Vert}^2 }, \mathbf{y_i}^T\big)^T, \text{where } \phi = \underset{i}{\text{max}} \Vert \mathbf{y}_i \Vert \\
-\mathbf{x}^* &amp;= (0, \mathbf{x}^T)^T
-\end{align}<p>As</p>
-\begin{align}
-{\Vert \mathbf{x}^* \Vert}^2 &amp;= {\Vert \mathbf{x} \Vert}^2 \\
-{\Vert \mathbf{y}_i^* \Vert}^2 &amp;= \phi^2 - {\Vert \mathbf{y}_i \Vert}^2 + {\Vert \mathbf{y}_i \Vert}^2 = \phi^2 \\
-\mathbf{x}^* \cdot \mathbf{y}^*_i &amp;= \sqrt{\phi^2 - {\Vert \mathbf{y}_i \Vert}^2 } \cdot 0 + \mathbf{x} \cdot \mathbf{y}_i = \mathbf{x} \cdot \mathbf{y}_i
-\end{align}<p>To link the maximum inner product to the distance minimization problem, we would then have:</p>
-\begin{align}
-{\Vert \mathbf{x}^* - \mathbf{y}_i^* \Vert}^2 = {\Vert \mathbf{x}^* \Vert}^2 + {\Vert \mathbf{y}_i^* \Vert}^2 - 2 \cdot \mathbf{x}^* \cdot \mathbf{y}^*_i = {\Vert \mathbf{x} \Vert}^2 + \phi^2 - 2 \cdot \mathbf{x} \cdot \mathbf{y}_i
-\end{align}<p>Since both $\mathbf{x}$ and $\phi$ are independent of the term $i$, that concludes our order preserving transformation.</p>
-<p>Upon building the transformation, our original matrices would have 1 extra dimension. Then the next step is to pick our favorite nearest neighborhood algorithm and use it to generate the predictions. Popular options at the time of writing this includes, <a href="https://github.com/facebookresearch/faiss">faiss</a>, <a href="https://github.com/nmslib/nmslib">nmslib</a>, or <a href="https://github.com/nmslib/hnswlib">hnswlib</a>. The <a href="https://github.com/erikbern/ann-benchmarks">ann-benchmarks</a> also lists down the comparison between different open-source nearest neighborhood search algorithms/packages.</p>
-<p>Let's now take a look at these concepts in practice.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Matrix-Factorization">Matrix Factorization<a class="anchor-link" href="#Matrix-Factorization">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll be using the movielens data to illustrate to concept.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">file_dir</span> <span class="o">=</span> <span class="s1">&#39;ml-100k&#39;</span>
-<span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="s1">&#39;u.data&#39;</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">file_dir</span><span class="p">):</span>
-    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;curl&#39;</span><span class="p">,</span> <span class="s1">&#39;-O&#39;</span><span class="p">,</span> <span class="s1">&#39;http://files.grouplens.org/datasets/movielens/&#39;</span> <span class="o">+</span> <span class="n">file_dir</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">])</span>
-    <span class="n">call</span><span class="p">([</span><span class="s1">&#39;unzip&#39;</span><span class="p">,</span> <span class="n">file_dir</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span><span class="p">])</span>
-
-<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data dimension: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>data dimension: 
- (100000, 4)
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
+    <div class="prompt output_prompt">Out[2]:</div>
 
 
 
@@ -13656,47 +13265,47 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>user_id</th>
-      <th>item_id</th>
-      <th>rating</th>
-      <th>timestamp</th>
+      <th>age</th>
+      <th>sex</th>
+      <th>bmi</th>
+      <th>bp</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>196</td>
-      <td>242</td>
-      <td>3</td>
-      <td>881250949</td>
+      <td>0.038</td>
+      <td>0.051</td>
+      <td>0.062</td>
+      <td>0.022</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>186</td>
-      <td>302</td>
-      <td>3</td>
-      <td>891717742</td>
+      <td>-0.002</td>
+      <td>-0.045</td>
+      <td>-0.051</td>
+      <td>-0.026</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>22</td>
-      <td>377</td>
-      <td>1</td>
-      <td>878887116</td>
+      <td>0.085</td>
+      <td>0.051</td>
+      <td>0.044</td>
+      <td>-0.006</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>244</td>
-      <td>51</td>
-      <td>2</td>
-      <td>880606923</td>
+      <td>-0.089</td>
+      <td>-0.045</td>
+      <td>-0.012</td>
+      <td>-0.037</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>166</td>
-      <td>346</td>
-      <td>1</td>
-      <td>886397596</td>
+      <td>0.005</td>
+      <td>-0.045</td>
+      <td>-0.036</td>
+      <td>0.022</td>
     </tr>
   </tbody>
 </table>
@@ -13711,13 +13320,56 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">regression_model_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;base_score&#39;</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="p">}</span>
+<span class="n">regression_model</span> <span class="o">=</span> <span class="n">XGBRegressor</span><span class="p">(</span><span class="o">**</span><span class="n">regression_model_params</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">regression_model</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>XGBRegressor(base_score=0.0, booster=&#39;gbtree&#39;, colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+             importance_type=&#39;gain&#39;, interaction_constraints=&#39;&#39;,
+             learning_rate=0.300000012, max_delta_step=0, max_depth=3,
+             min_child_weight=1, missing=nan, monotone_constraints=&#39;()&#39;,
+             n_estimators=2, n_jobs=0, num_parallel_tree=1, random_state=0,
+             reg_alpha=0, reg_lambda=1, scale_pos_weight=1, subsample=1,
+             tree_method=&#39;exact&#39;, validate_parameters=1, verbosity=None)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">users_col</span> <span class="o">=</span> <span class="s1">&#39;user_id&#39;</span>
-<span class="n">items_col</span> <span class="o">=</span> <span class="s1">&#39;item_id&#39;</span>
-<span class="n">value_col</span> <span class="o">=</span> <span class="s1">&#39;rating&#39;</span>
-<span class="n">time_col</span> <span class="o">=</span> <span class="s1">&#39;timestamp&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">regression_model</span><span class="o">.</span><span class="n">get_booster</span><span class="p">()</span><span class="o">.</span><span class="n">dump_model</span><span class="p">(</span><span class="s2">&quot;regression.txt&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13730,11 +13382,30 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">users_col</span><span class="p">,</span> <span class="n">items_col</span><span class="p">):</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">regression_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([96.475334], dtype=float32)</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13742,8 +13413,7 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For the train/test split, the process is to split each user's behavior based on chronological order. e.g. If an user interacted with 10 items, and we specify a test set of size, 0.2. Then the first 8 items that the user first interacted with will fall in the training set, and the last 2 items will belong to the test set.</p>
-
+<h3 id="Binary-Classification">Binary Classification<a class="anchor-link" href="#Binary-Classification">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13752,25 +13422,37 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">train_test_user_time_split</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">test_size</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
-    <span class="n">train_size</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">test_size</span>
-
-    <span class="n">df_train_user</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">df_test_user</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">df_grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">time_col</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">users_col</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df_group</span> <span class="ow">in</span> <span class="n">df_grouped</span><span class="p">:</span>
-        <span class="n">n_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_group</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">train_size</span><span class="p">)</span>
-        <span class="n">df_group_train</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">n_train</span><span class="p">]</span>
-        <span class="n">df_group_test</span> <span class="o">=</span> <span class="n">df_group</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">n_train</span><span class="p">:]</span>
-        <span class="n">df_train_user</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_group_train</span><span class="p">)</span>
-        <span class="n">df_test_user</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_group_test</span><span class="p">)</span>
-
-    <span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_train_user</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_test_user</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_classification</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">X</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-2.24456934, -1.36232827,  1.55433334, -2.0869092 , -1.27760482],
+       [-0.46503462, -0.57657929, -0.2033143 ,  0.43042571,  1.98019634],
+       [ 1.0967453 ,  1.31568265,  0.40073014, -0.88575625,  0.72711376],
+       ...,
+       [-3.17646599, -2.97878542,  0.32401442,  0.12710402, -0.63318634],
+       [-0.41224819,  0.17380558,  1.04229889, -1.62625451, -1.24718999],
+       [-1.02487223, -0.70828082,  0.55578021, -0.70007904, -0.43269446]])</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13780,11 +13462,14 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span>
-<span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_user_time_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;train size: &#39;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test size: &#39;</span><span class="p">,</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_model_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;tree_method&#39;</span><span class="p">:</span> <span class="s1">&#39;hist&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;grow_policy&#39;</span><span class="p">:</span> <span class="s1">&#39;lossguide&#39;</span>
+<span class="p">}</span>
+<span class="n">binary_model</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="o">**</span><span class="n">binary_model_params</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">binary_model</span>
 </pre></div>
 
     </div>
@@ -13797,67 +13482,38 @@ f(\mathbf{Y}, \mathbf{x}) = \underset{i}{\text{argmin}} \space {\Vert \mathbf{x}
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>train size:  79619
-test size:  20381
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, colsample_bylevel=1,
+              colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+              grow_policy=&#39;lossguide&#39;, importance_type=&#39;gain&#39;,
+              interaction_constraints=&#39;&#39;, learning_rate=0.300000012,
+              max_delta_step=0, max_depth=3, min_child_weight=1, missing=nan,
+              monotone_constraints=&#39;()&#39;, n_estimators=3, n_jobs=0,
+              num_parallel_tree=1, random_state=0, reg_alpha=0, reg_lambda=1,
+              scale_pos_weight=1, subsample=1, tree_method=&#39;hist&#39;,
+              validate_parameters=1, verbosity=None)</pre>
 </div>
+
 </div>
 
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The model we'll be using is Bayesian Personalized Ranking from the <a href="https://github.com/benfred/implicit">implicit</a> library.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_users</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">users_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">n_items</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">items_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># implicit library expects items to be rows</span>
-<span class="c1"># and users to be columns of the sparse matrix</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">items_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span>
-<span class="n">cols</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">users_col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">codes</span><span class="o">.</span><span class="n">values</span>
-<span class="n">values</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">value_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="n">item_user</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">n_users</span><span class="p">))</span>
-<span class="n">item_user</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">binary_model</span><span class="o">.</span><span class="n">get_booster</span><span class="p">()</span><span class="o">.</span><span class="n">dump_model</span><span class="p">(</span><span class="s2">&quot;binary_class.txt&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[8]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;1682x943 sparse matrix of type &#39;&lt;class &#39;numpy.float32&#39;&gt;&#39;
-	with 79619 stored elements in Compressed Sparse Row format&gt;</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13867,10 +13523,8 @@ test size:  20381
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we won&#39;t be doing any hyperparameter tuning</span>
-<span class="c1"># as training the &quot;best&quot; model is not the main purpose here</span>
-<span class="n">bpr</span> <span class="o">=</span> <span class="n">BayesianPersonalizedRanking</span><span class="p">()</span>
-<span class="n">bpr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">item_user</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]])</span>
+<span class="n">binary_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13883,35 +13537,15 @@ test size:  20381
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
 
-
- 
- 
-<div id="882f7de9-bb7f-4c35-a213-d6e5290557d3"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "ee67ea977e554f999a756d4c669d3d6b", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.2894203, 0.7105797]], dtype=float32)</pre>
 </div>
 
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-</pre>
-</div>
 </div>
 
 </div>
@@ -13921,8 +13555,7 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The model object also provides a <code>.recommend</code> method that generates the recommendation for a user.</p>
-
+<h3 id="Multiclass-Classification">Multiclass Classification<a class="anchor-link" href="#Multiclass-Classification">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13931,12 +13564,8 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">user_id</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">topn</span> <span class="o">=</span> <span class="mi">5</span>
-
-<span class="n">user_item</span> <span class="o">=</span> <span class="n">item_user</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
-<span class="n">recommendations</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user_item</span><span class="p">,</span> <span class="n">topn</span><span class="p">,</span> <span class="n">filter_already_liked_items</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">recommendations</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13953,13 +13582,70 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 
 
 
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<div class="output_text output_subarea output_execute_result">
-<pre>[(174, 3.0052617),
- (180, 2.8591871),
- (143, 2.6832802),
- (49, 2.6188507),
- (213, 2.6169426)]</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal length (cm)</th>
+      <th>sepal width (cm)</th>
+      <th>petal length (cm)</th>
+      <th>petal width (cm)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.100</td>
+      <td>3.500</td>
+      <td>1.400</td>
+      <td>0.200</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.900</td>
+      <td>3.000</td>
+      <td>1.400</td>
+      <td>0.200</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.700</td>
+      <td>3.200</td>
+      <td>1.300</td>
+      <td>0.200</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.600</td>
+      <td>3.100</td>
+      <td>1.500</td>
+      <td>0.200</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.000</td>
+      <td>3.600</td>
+      <td>1.400</td>
+      <td>0.200</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -13967,53 +13653,18 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can also generate the recommendations ourselves. We'll first confirm that the <code>recommend</code> function that we've implemented matches the one provided by the library, also implement a <code>recommend_all</code> function that generates the recommendation for all the user, this will be used to compare against the nearest neighborhood search on the order transformed matrix later.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">query_factors</span><span class="p">[</span><span class="n">query_id</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">index_factors</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">argpartition_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">-</span><span class="n">topn</span><span class="p">)[</span><span class="o">-</span><span class="n">topn</span><span class="p">:]</span>
-    <span class="n">sort_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">argpartition_indices</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="p">[</span><span class="n">sort_indices</span><span class="p">]</span>
-    <span class="n">distances</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">labels</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">distances</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Different model/library have different ways of extracting the item and user factors/embeddings, we assign it to <code>index_factors</code> and <code>query_factors</code> to make all downstream code agnostic of libraries' implementation.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">index_factors</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">item_factors</span>
-<span class="n">query_factors</span> <span class="o">=</span> <span class="n">bpr</span><span class="o">.</span><span class="n">user_factors</span>
-<span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">multi_class_model_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+<span class="n">multi_class_model</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span><span class="o">**</span><span class="n">multi_class_model_params</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">multi_class_model</span>
 </pre></div>
 
     </div>
@@ -14026,16 +13677,38 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[174 180 143  49 213]
-[3.0052617 2.8591871 2.6832802 2.6188507 2.6169426]
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, colsample_bylevel=1,
+              colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+              importance_type=&#39;gain&#39;, interaction_constraints=&#39;&#39;,
+              learning_rate=0.300000012, max_delta_step=0, max_depth=3,
+              min_child_weight=1, missing=nan, monotone_constraints=&#39;()&#39;,
+              n_estimators=2, n_jobs=0, num_parallel_tree=1,
+              objective=&#39;multi:softprob&#39;, random_state=0, reg_alpha=0,
+              reg_lambda=1, scale_pos_weight=None, subsample=1,
+              tree_method=&#39;exact&#39;, validate_parameters=1, verbosity=None)</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">multi_class_model</span><span class="o">.</span><span class="n">get_booster</span><span class="p">()</span><span class="o">.</span><span class="n">dump_model</span><span class="p">(</span><span class="s2">&quot;multi_class.txt&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 
@@ -14045,35 +13718,57 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">query_factors</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">index_factors</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">argpartition_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argpartition</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="o">-</span><span class="n">topn</span><span class="p">)[:,</span> <span class="o">-</span><span class="n">topn</span><span class="p">:]</span>
-
-    <span class="n">x_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">topn</span><span class="p">)</span>
-    <span class="n">y_indices</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="n">top_value</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">topn</span><span class="p">)</span>
-    <span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">top_value</span><span class="p">)[:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="n">y_indices</span> <span class="o">=</span> <span class="n">top_indices</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-    <span class="n">top_indices</span> <span class="o">=</span> <span class="n">argpartition_indices</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">y_indices</span><span class="p">]</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">top_indices</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
-    <span class="n">distances</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">x_indices</span><span class="p">,</span> <span class="n">top_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">topn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">labels</span><span class="p">,</span> <span class="n">distances</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">5.1</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]])</span>
+<span class="n">multi_class_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.6092037 , 0.19627656, 0.19451974]], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="C++-Implementation">C++ Implementation<a class="anchor-link" href="#C++-Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The rest of the content is about implementing the boosted tree inferencing logic in C++, all the code resides in the <code>gbt_inference</code> folder for those interested. In practice, we don't always have to rely on naive code that we've implemented to solidify our understanding. e.g. the <a href="https://github.com/BayesWitnesses/m2cgen">m2cgen (Model 2 Code Generator)</a> project is one of the many projects out there that focuses on converting a trained model into native code. If we export our regression model, we can see that the inferencing logic is indeed a bunch of if else statements followed by a summation at the very end.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">code</span> <span class="o">=</span> <span class="n">m2c</span><span class="o">.</span><span class="n">export_to_c</span><span class="p">(</span><span class="n">regression_model</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14090,471 +13785,64 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>[[174 180 143  49 213]
- [285  13 274 125 284]
- [299 330 332 331 287]
- ...
- [256 287   6   0 221]
- [312 299 315 271 314]
- [ 68  55 203 469 567]]
-[[3.0052621 2.8591871 2.6832805 2.6188507 2.6169431]
- [4.053235  3.6379702 3.6113174 3.5244005 3.5000963]
- [4.46495   4.380792  4.2894416 4.280343  4.2222657]
- ...
- [2.9497485 2.9439096 2.942726  2.8972204 2.8738377]
- [3.186943  3.1394417 3.1009166 2.9625754 2.9234204]
- [3.7362995 3.5745556 3.5423145 3.4201126 3.3898365]]
+<pre>double score(double * input) {
+    double var0;
+    if ((input[2]) &gt;= (0.009422321)) {
+        if ((input[3]) &gt;= (0.02359379)) {
+            var0 = 69.4;
+        } else {
+            var0 = 53.069668;
+        }
+    } else {
+        if ((input[2]) &gt;= (-0.02183423)) {
+            if ((input[3]) &gt;= (0.02703666)) {
+                var0 = 51.088238;
+            } else {
+                var0 = 38.748753;
+            }
+        } else {
+            if ((input[2]) &gt;= (-0.058479838)) {
+                var0 = 33.02927;
+            } else {
+                var0 = 25.84091;
+            }
+        }
+    }
+    double var1;
+    if ((input[2]) &gt;= (0.0051110727)) {
+        if ((input[2]) &gt;= (0.07301323)) {
+            if ((input[3]) &gt;= (-0.04985412)) {
+                var1 = 59.377037;
+            } else {
+                var1 = 13.03955;
+            }
+        } else {
+            if ((input[3]) &gt;= (0.000067507266)) {
+                var1 = 43.405666;
+            } else {
+                var1 = 31.388973;
+            }
+        }
+    } else {
+        if ((input[3]) &gt;= (0.039086707)) {
+            if ((input[2]) &gt;= (0.00079982437)) {
+                var1 = 14.918823;
+            } else {
+                var1 = 36.185055;
+            }
+        } else {
+            if ((input[2]) &gt;= (-0.020756418)) {
+                var1 = 27.732695;
+            } else {
+                var1 = 21.047476;
+            }
+        }
+    }
+    return (var0) + (var1);
+}
+
 </pre>
 </div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To implement our order preserving transformation, we first apply the transformation on our index factors. Recall that the formula is: Let $\phi = \underset{i}{\text{max}} \Vert \mathbf{y}_i \Vert$. $\mathbf{y}_i^* = g(\mathbf{y}_i) = \big(\sqrt{\phi^2 - {\Vert \mathbf{y_i} \Vert}^2 }, \mathbf{y_i}^T\big)^T$.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">augment_inner_product</span><span class="p">(</span><span class="n">factors</span><span class="p">):</span>
-    <span class="n">normed_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">max_norm</span> <span class="o">=</span> <span class="n">normed_factors</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    
-    <span class="n">extra_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">max_norm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">normed_factors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">augmented_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">extra_dim</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">max_norm</span><span class="p">,</span> <span class="n">augmented_factors</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pre shape: &#39;</span><span class="p">,</span> <span class="n">index_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">max_norm</span><span class="p">,</span> <span class="n">augmented_index_factors</span> <span class="o">=</span> <span class="n">augment_inner_product</span><span class="p">(</span><span class="n">index_factors</span><span class="p">)</span>
-<span class="n">augmented_index_factors</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>pre shape:  (1682, 101)
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(1682, 102)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Our next step is to use our favorite nearest neighborhood search algorithm/library to conduct the search. We'll be leveraging <a href="https://github.com/nmslib/hnswlib">hnswlib</a> in this example, explaining the details behind the this nearest neighborhood search algorithm is beyond the scope of this document.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">build_hnsw</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
-    <span class="c1"># Declaring index</span>
-    <span class="n">max_elements</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">factors</span><span class="o">.</span><span class="n">shape</span>
-    <span class="n">hnsw</span> <span class="o">=</span> <span class="n">hnswlib</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="c1"># possible options for space are l2, cosine or ip</span>
-
-    <span class="c1"># Initing index - the maximum number of elements should be known beforehand</span>
-    <span class="n">hnsw</span><span class="o">.</span><span class="n">init_index</span><span class="p">(</span><span class="n">max_elements</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">)</span>
-
-    <span class="c1"># Element insertion (can be called several times)</span>
-    <span class="n">hnsw</span><span class="o">.</span><span class="n">add_items</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">hnsw</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># the library directly supports inner product,</span>
-<span class="c1"># this might not be the case for all the nearest neighborhood search library</span>
-<span class="n">space</span> <span class="o">=</span> <span class="s1">&#39;ip&#39;</span>
-<span class="n">ef_construction</span> <span class="o">=</span> <span class="mi">400</span>
-<span class="n">M</span> <span class="o">=</span> <span class="mi">24</span>
-
-<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">hnsw</span> <span class="o">=</span> <span class="n">build_hnsw</span><span class="p">(</span><span class="n">augmented_index_factors</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="n">ef_construction</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
-<span class="n">build_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-<span class="n">build_time</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.09450387954711914</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To generate the the prediction, we first transform the incoming "queries". $\mathbf{x}^* = h(\mathbf{x}) = (0, \mathbf{x}^T)^T$.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">extra_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">query_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">augmented_query_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">extra_zero</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">augmented_query_factors</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(943, 102)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">5</span>
-
-<span class="c1"># Controlling the recall by setting ef, should always be &gt; k</span>
-<span class="n">hnsw</span><span class="o">.</span><span class="n">set_ef</span><span class="p">(</span><span class="mi">70</span><span class="p">)</span>
-
-<span class="c1"># retrieve the top-n search neighbors</span>
-<span class="n">label</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">augmented_query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-
-<span class="c1"># the distance returned by hnsw is 1 - inner product, hence</span>
-<span class="c1"># we convert it back to just inner product</span>
-<span class="nb">print</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[[174 180 143  49 213]
- [285  13 274 125 284]
- [299 330 332 331 287]
- ...
- [256 287   6   0 221]
- [312 299 315 271 314]
- [ 68  55 203 469 567]]
-[[3.0052621 2.859187  2.6832802 2.6188505 2.6169431]
- [4.053235  3.63797   3.6113174 3.5244007 3.5000958]
- [4.4649506 4.380792  4.2894416 4.2803426 4.2222657]
- ...
- [2.9497485 2.9439096 2.942726  2.8972206 2.8738375]
- [3.1869428 3.139442  3.1009169 2.9625754 2.9234204]
- [3.7362995 3.5745554 3.5423145 3.4201126 3.3898368]]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Benchmark">Benchmark<a class="anchor-link" href="#Benchmark">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can time the original recommend method using maximum inner product versus the new method of using the order preserving transformed matrices with nearest neighborhood search.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
-<span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>16.4 ms ± 280 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
-<span class="n">extra_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">query_factors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">augmented_query_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">extra_zero</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>11 ms ± 537 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the timing is highly dependent on the dataset. We'll observe a much larger speedup if the number of items/labels in the output/index factor is larger. In the movielens dataset, we only had to rank the top items for each user among 1.6K items, in a much larger dataset, the number of items could easily go up to 100K or even million, that's when we'll see the real potential of this method.</p>
-<p>Another thing worth checking is the quality of the prediction using the new method. Here we're using hnswlib library to generate the nearest neighborhood items, as hnswlib is technically an approximate nearest neighborhood algorithm. We can measure how much overlap the approximate top recommendations are to the original top recommendations to make sure we are using the right parameters for the nearest neighborhood search algorithm. Notation-wise:</p>
-\begin{align}
-\text{overlap@k} = \frac{|L_{rec} \cap L_{opt}|}{k}
-\end{align}<p>Where $L_{rec}$ and $L_{opt}$ are the lists of top k approximate recommendations and top k optimal/original recommendations respectively.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">labels</span><span class="p">,</span> <span class="n">distances</span> <span class="o">=</span> <span class="n">recommend_all</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">index_factors</span><span class="p">,</span> <span class="n">topn</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-<span class="n">hnsw_labels</span><span class="p">,</span> <span class="n">hnsw_distances</span> <span class="o">=</span> <span class="n">hnsw</span><span class="o">.</span><span class="n">knn_query</span><span class="p">(</span><span class="n">query_factors</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_label_precision</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">,</span> <span class="n">reco_labels</span><span class="p">):</span>
-    <span class="n">n_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">)</span>
-    <span class="n">label_precision</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">for</span> <span class="n">optimal_label</span><span class="p">,</span> <span class="n">reco_label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimal_labels</span><span class="p">,</span> <span class="n">reco_labels</span><span class="p">):</span>
-        <span class="n">topn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reco_label</span><span class="p">)</span>
-        <span class="n">precision</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">optimal_label</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">reco_label</span><span class="p">))</span> <span class="o">/</span> <span class="n">topn</span>
-        <span class="n">label_precision</span> <span class="o">+=</span> <span class="p">(</span><span class="n">precision</span> <span class="o">/</span> <span class="n">n_labels</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">label_precision</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># as expected, the precision between itself should be 1</span>
-<span class="n">label_precision</span> <span class="o">=</span> <span class="n">compute_label_precision</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-<span class="n">label_precision</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[25]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>1.0</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ensure the approximate neighborhood search is of good quality</span>
-<span class="n">label_precision</span> <span class="o">=</span> <span class="n">compute_label_precision</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">hnsw_labels</span><span class="p">)</span>
-<span class="n">label_precision</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[26]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.909</pre>
-</div>
-
 </div>
 
 </div>
@@ -14572,9 +13860,7 @@ var element = $('#882f7de9-bb7f-4c35-a213-d6e5290557d3');
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://github.com/nmslib/hnswlib">Github: Hnswlib - fast approximate nearest neighbor search</a></li>
-<li><a href="http://www.benfrederickson.com/approximate-nearest-neighbours-for-recommender-systems/">Blog: Approximate Nearest Neighbours for Recommender Systems</a></li>
-<li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/XboxInnerProduct.pdf">Paper: Y. Bachrach, Y. Finkelstein, R. Gilad-Bachrach, L. Katzir, N. Koenigstein, N. Nice, U. Paquet - Speeding Up the Xbox Recommender System Using a Euclidean Transformation for Inner-Product Spaces (2016)</a></li>
+<li><a href="https://medium.com/swlh/roll-your-own-xgboost-model-7490106b9523">Blog: Roll your own XGBoost model</a></li>
 </ul>
 
 </div>
