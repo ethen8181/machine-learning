@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2021-05]
+
+### Added
+
+- Machine Translation with Huggingface Transformers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/huggingface_torch_transformer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/seq2seq/huggingface_torch_transformer.html)]
+
 ## [2021-02]
 
 ### Added
