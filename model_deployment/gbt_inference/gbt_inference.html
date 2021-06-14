@@ -13149,8 +13149,8 @@ xgboost 1.2.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It's very common in industry setting to prototype a machine learning model in Python and translate it into other languages such as C++, Java, etc. when it comes to deploying. This usually happens where the core application is written in other languages such as C++, Java, etc. and it is an extremely time sensitive application where we can't afford the cost of calling an external API to fetch the model prediction.</p>
-<p>In this article, we'll looking at how we can achieve this with Gradient Boosted Trees, specifically XGBoost. Different library might have different ways to doing this, but the concept should be similar.</p>
+<p>It's very common in industry setting to prototype a machine learning model in Python and translate it into other languages such as C++, Java, etc, when it comes to deploying. This usually happens where the core application is written in other languages such as C++, Java, etc. and it is an extremely time sensitive application where we can't afford the cost of calling an external API to fetch the model prediction.</p>
+<p>In this article, we'll be looking at how we can achieve this with Gradient Boosted Trees, specifically XGBoost. Different library might have different ways to doing this, but the concept should be similar.</p>
 <p><strong>Tree Structure</strong></p>
 <p>A typical model dump from XGBoost looks like the following:</p>
 
@@ -13757,7 +13757,7 @@ booster[1]:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The rest of the content is about implementing the boosted tree inferencing logic in C++, all the code resides in the <code>gbt_inference</code> folder for those interested. In practice, we don't always have to rely on naive code that we've implemented to solidify our understanding. e.g. the <a href="https://github.com/BayesWitnesses/m2cgen">m2cgen (Model 2 Code Generator)</a> project is one of the many projects out there that focuses on converting a trained model into native code. If we export our regression model, we can see that the inferencing logic is indeed a bunch of if else statements followed by a summation at the very end.</p>
+<p>The rest of the content is about implementing the boosted tree inferencing logic in C++, all the code resides in the <a href="https://github.com/ethen8181/machine-learning/tree/master/model_deployment/gbt_inference/gbt_inference"><code>gbt_inference</code></a> folder for those interested. In practice, we don't always have to rely on naive code that we've implemented to solidify our understanding. e.g. the <a href="https://github.com/BayesWitnesses/m2cgen">m2cgen (Model 2 Code Generator)</a> project is one of the many projects out there that focuses on converting a trained model into native code. If we export our regression model, we can see that the inferencing logic is indeed a bunch of if else statements followed by a summation at the very end.</p>
 
 </div>
 </div>
