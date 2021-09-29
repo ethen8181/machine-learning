@@ -12947,8 +12947,13 @@ ul.typeahead-list  > li > a.pull-right {
 /*# sourceMappingURL=style.min.css.map */
     </style>
 <style type="text/css">
-    .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
@@ -15719,9 +15724,9 @@ height=361
     <span class="sd">&quot;&quot;&quot;Example of collinear features existing within the data&quot;&quot;&quot;</span>
     <span class="n">rstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">X_seed</span> <span class="o">=</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-    <span class="n">X1</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-    <span class="n">X2</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-    <span class="n">X3</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">X1</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">X2</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">X3</span> <span class="o">=</span> <span class="n">X_seed</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">X1</span> <span class="o">+</span> <span class="n">X2</span> <span class="o">+</span> <span class="n">X3</span> <span class="o">+</span> <span class="n">rstate</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">X3</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>

@@ -12947,8 +12947,13 @@ ul.typeahead-list  > li > a.pull-right {
 /*# sourceMappingURL=style.min.css.map */
     </style>
 <style type="text/css">
-    .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
@@ -13693,7 +13698,7 @@ Reusing dataset quora (/home/mingyuliu/.cache/huggingface/datasets/quora/default
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We won't be going over the details of the pre-trained tokenizer or model.</p>
+<p>We won't be going over the details of the pre-trained tokenizer or model and only load a pre-trained one available from the huggingface model repository.</p>
 
 </div>
 </div>
@@ -13705,6 +13710,7 @@ Reusing dataset quora (/home/mingyuliu/.cache/huggingface/datasets/quora/default
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span>
 
+<span class="c1"># https://huggingface.co/transformers/model_doc/distilbert.html</span>
 <span class="n">pretrained_model_name_or_path</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased&quot;</span>
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">pretrained_model_name_or_path</span><span class="p">)</span>
 <span class="n">tokenizer</span>
@@ -13891,10 +13897,10 @@ Reusing dataset quora (/home/mingyuliu/.cache/huggingface/datasets/quora/default
 
  
  
-<div id="398d713f-87e5-479e-96bc-d26aa13e8344"></div>
+<div id="6e025f6a-6ef1-4899-b007-4aa5a05166c1"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#398d713f-87e5-479e-96bc-d26aa13e8344');
+var element = $('#6e025f6a-6ef1-4899-b007-4aa5a05166c1');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "ec38116737ba471e8b50d01daa21f3f0", "version_major": 2, "version_minor": 0}
@@ -13923,10 +13929,10 @@ var element = $('#398d713f-87e5-479e-96bc-d26aa13e8344');
 
  
  
-<div id="aadd8aba-a75f-4e1c-b40a-8587ade40ca1"></div>
+<div id="351923f4-5b12-4215-8a7f-a7226a7eb3a6"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#aadd8aba-a75f-4e1c-b40a-8587ade40ca1');
+var element = $('#351923f4-5b12-4215-8a7f-a7226a7eb3a6');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "04b9055a401248c3a61eab18af15fad1", "version_major": 2, "version_minor": 0}
@@ -13955,10 +13961,10 @@ var element = $('#aadd8aba-a75f-4e1c-b40a-8587ade40ca1');
 
  
  
-<div id="4d440abb-aa12-4607-b3a8-da9b15dfb41c"></div>
+<div id="89fa7613-5a05-4b86-bf56-c22459603762"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#4d440abb-aa12-4607-b3a8-da9b15dfb41c');
+var element = $('#89fa7613-5a05-4b86-bf56-c22459603762');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "6349e7dd29c3441997ad7458efc2dc07", "version_major": 2, "version_minor": 0}
@@ -13987,10 +13993,10 @@ var element = $('#4d440abb-aa12-4607-b3a8-da9b15dfb41c');
 
  
  
-<div id="73afc8c2-a95c-4f4f-a790-d0ae6aa67f36"></div>
+<div id="9d42449e-215b-4c52-81ae-dc937df8f9c1"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#73afc8c2-a95c-4f4f-a790-d0ae6aa67f36');
+var element = $('#9d42449e-215b-4c52-81ae-dc937df8f9c1');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "d22a489f869b441289b778154311e239", "version_major": 2, "version_minor": 0}
@@ -14019,10 +14025,10 @@ var element = $('#73afc8c2-a95c-4f4f-a790-d0ae6aa67f36');
 
  
  
-<div id="51ee1735-d05b-4618-a11e-4b2917531e7c"></div>
+<div id="a57affb6-6bce-42cc-b352-cec907404e3c"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#51ee1735-d05b-4618-a11e-4b2917531e7c');
+var element = $('#a57affb6-6bce-42cc-b352-cec907404e3c');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "9e283bd80f064573872a70b6bb882b5a", "version_major": 2, "version_minor": 0}
@@ -14051,10 +14057,10 @@ var element = $('#51ee1735-d05b-4618-a11e-4b2917531e7c');
 
  
  
-<div id="71313c74-4060-4296-b022-2923b6de63bc"></div>
+<div id="38d04847-ea7e-4dd7-8cbf-ea14175f3068"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#71313c74-4060-4296-b022-2923b6de63bc');
+var element = $('#38d04847-ea7e-4dd7-8cbf-ea14175f3068');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "3ce9603c52684fb48dedbb18d8e1e419", "version_major": 2, "version_minor": 0}
@@ -14083,10 +14089,10 @@ var element = $('#71313c74-4060-4296-b022-2923b6de63bc');
 
  
  
-<div id="5050ded9-d23f-4c32-bb6e-76815517b319"></div>
+<div id="d90061b7-b6bb-4563-95b8-618744fd2ab0"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#5050ded9-d23f-4c32-bb6e-76815517b319');
+var element = $('#d90061b7-b6bb-4563-95b8-618744fd2ab0');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "be5e2df2fc064c0d8b8861830a65c236", "version_major": 2, "version_minor": 0}
@@ -14115,10 +14121,10 @@ var element = $('#5050ded9-d23f-4c32-bb6e-76815517b319');
 
  
  
-<div id="154fd7c3-632d-4126-8744-f3566943a76e"></div>
+<div id="6bc6bdd1-b8c4-4640-a9b3-435926425d31"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#154fd7c3-632d-4126-8744-f3566943a76e');
+var element = $('#6bc6bdd1-b8c4-4640-a9b3-435926425d31');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "42db59635fda46b4bcbdd1ca1c1e33ba", "version_major": 2, "version_minor": 0}
@@ -14155,10 +14161,10 @@ var element = $('#154fd7c3-632d-4126-8744-f3566943a76e');
 
  
  
-<div id="347bdc2f-85c8-42cb-aa35-b53dec5c039f"></div>
+<div id="9cd639fc-7120-4d78-93fa-1b0b5074cc23"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#347bdc2f-85c8-42cb-aa35-b53dec5c039f');
+var element = $('#9cd639fc-7120-4d78-93fa-1b0b5074cc23');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "1fd248c6c67e49ad88f919544330a8a7", "version_major": 2, "version_minor": 0}
@@ -14187,10 +14193,10 @@ var element = $('#347bdc2f-85c8-42cb-aa35-b53dec5c039f');
 
  
  
-<div id="2e25ec57-5e32-4572-b0e6-035a0d9a80ee"></div>
+<div id="353d65b4-f0c8-4ada-be70-55e755de5847"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#2e25ec57-5e32-4572-b0e6-035a0d9a80ee');
+var element = $('#353d65b4-f0c8-4ada-be70-55e755de5847');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "b69c3002a4a847098a66a9e02cdddfdc", "version_major": 2, "version_minor": 0}
@@ -14219,10 +14225,10 @@ var element = $('#2e25ec57-5e32-4572-b0e6-035a0d9a80ee');
 
  
  
-<div id="6c9023f5-feb1-4f51-8f22-261cb9c5aad3"></div>
+<div id="a455e0ea-76f9-4bea-a5cd-e393b1e373b4"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#6c9023f5-feb1-4f51-8f22-261cb9c5aad3');
+var element = $('#a455e0ea-76f9-4bea-a5cd-e393b1e373b4');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "175195e253d14a52921964157a6e46c4", "version_major": 2, "version_minor": 0}
@@ -14251,10 +14257,10 @@ var element = $('#6c9023f5-feb1-4f51-8f22-261cb9c5aad3');
 
  
  
-<div id="d634d07d-61dc-47d0-839e-fa29d0f99cbd"></div>
+<div id="40244815-327f-4d86-abaf-413a5d8ef244"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#d634d07d-61dc-47d0-839e-fa29d0f99cbd');
+var element = $('#40244815-327f-4d86-abaf-413a5d8ef244');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "d1ed100baabf4703a849394e478e5a04", "version_major": 2, "version_minor": 0}
@@ -14283,10 +14289,10 @@ var element = $('#d634d07d-61dc-47d0-839e-fa29d0f99cbd');
 
  
  
-<div id="106168fb-ba0d-4a9b-9d0d-d4dd034e6d9d"></div>
+<div id="4f555752-caf4-4488-8791-883a96959b07"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#106168fb-ba0d-4a9b-9d0d-d4dd034e6d9d');
+var element = $('#4f555752-caf4-4488-8791-883a96959b07');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "9a9563ca0ca94e0eb7b3a0a4e725e098", "version_major": 2, "version_minor": 0}
@@ -14315,10 +14321,10 @@ var element = $('#106168fb-ba0d-4a9b-9d0d-d4dd034e6d9d');
 
  
  
-<div id="6cc3dcf5-ae66-468d-be72-89b250ca85b7"></div>
+<div id="0dd2c777-d887-4d26-a50e-ed3c49792d56"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#6cc3dcf5-ae66-468d-be72-89b250ca85b7');
+var element = $('#0dd2c777-d887-4d26-a50e-ed3c49792d56');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "2036253b259245c49c26408cf74f89a6", "version_major": 2, "version_minor": 0}
@@ -14348,10 +14354,10 @@ var element = $('#6cc3dcf5-ae66-468d-be72-89b250ca85b7');
 
  
  
-<div id="2b4e23bb-0d10-4b52-ba90-c35f094ba15f"></div>
+<div id="0298e02d-90ab-44a5-bb34-ca7f44d2f986"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#2b4e23bb-0d10-4b52-ba90-c35f094ba15f');
+var element = $('#0298e02d-90ab-44a5-bb34-ca7f44d2f986');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "05f49979eefd4432a82fa8ac8d4f2fb1", "version_major": 2, "version_minor": 0}
@@ -14382,10 +14388,10 @@ var element = $('#2b4e23bb-0d10-4b52-ba90-c35f094ba15f');
 
  
  
-<div id="14293662-6dce-456b-9c4e-38a1c663908d"></div>
+<div id="81e4e7d2-7516-4113-bca2-78e0373ff82b"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#14293662-6dce-456b-9c4e-38a1c663908d');
+var element = $('#81e4e7d2-7516-4113-bca2-78e0373ff82b');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "7f70da381a554b9aa37c0bdd44a18a0a", "version_major": 2, "version_minor": 0}
@@ -14419,10 +14425,10 @@ var element = $('#14293662-6dce-456b-9c4e-38a1c663908d');
 
  
  
-<div id="12514968-110e-431f-8a7a-ced1b249e0e5"></div>
+<div id="af51314b-98ce-4416-87ef-bb6595f668fa"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#12514968-110e-431f-8a7a-ced1b249e0e5');
+var element = $('#af51314b-98ce-4416-87ef-bb6595f668fa');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "ef37e65e6aff45639fc7bf9c20678fcc", "version_major": 2, "version_minor": 0}
@@ -14451,10 +14457,10 @@ var element = $('#12514968-110e-431f-8a7a-ced1b249e0e5');
 
  
  
-<div id="7359bd34-4c2d-444d-abfa-94859bddd10f"></div>
+<div id="5d8ca9de-f622-4964-99d0-44c1439aac38"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#7359bd34-4c2d-444d-abfa-94859bddd10f');
+var element = $('#5d8ca9de-f622-4964-99d0-44c1439aac38');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "6967c91066db4b6f9feeff16b2d683cd", "version_major": 2, "version_minor": 0}
@@ -14483,10 +14489,10 @@ var element = $('#7359bd34-4c2d-444d-abfa-94859bddd10f');
 
  
  
-<div id="6230c4b3-4532-4800-a240-893b4f4dcb69"></div>
+<div id="cc7f3629-c144-4dcf-b229-f45b5810a20b"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#6230c4b3-4532-4800-a240-893b4f4dcb69');
+var element = $('#cc7f3629-c144-4dcf-b229-f45b5810a20b');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "caaaa6b5c21b492294825bb64d136134", "version_major": 2, "version_minor": 0}
@@ -14515,10 +14521,10 @@ var element = $('#6230c4b3-4532-4800-a240-893b4f4dcb69');
 
  
  
-<div id="0f1482f6-033f-4061-9986-70a5f68f9cb2"></div>
+<div id="01ec5f42-b594-49d0-abbf-2aed437a65ad"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#0f1482f6-033f-4061-9986-70a5f68f9cb2');
+var element = $('#01ec5f42-b594-49d0-abbf-2aed437a65ad');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "ad3ebc9d8a7a4d389bf32c498c7d161c", "version_major": 2, "version_minor": 0}
@@ -14547,10 +14553,10 @@ var element = $('#0f1482f6-033f-4061-9986-70a5f68f9cb2');
 
  
  
-<div id="1d43f481-b6d9-40fa-ad27-48e1ecb81159"></div>
+<div id="5425e2a8-8652-4f73-9662-be837948a2af"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#1d43f481-b6d9-40fa-ad27-48e1ecb81159');
+var element = $('#5425e2a8-8652-4f73-9662-be837948a2af');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "8de269f1029d46f59e53f9ace4e79a7e", "version_major": 2, "version_minor": 0}
@@ -14579,10 +14585,10 @@ var element = $('#1d43f481-b6d9-40fa-ad27-48e1ecb81159');
 
  
  
-<div id="0800c8df-7857-425a-887f-cc0b9bbc6715"></div>
+<div id="222c1809-578c-45cb-8254-689a7dcda058"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#0800c8df-7857-425a-887f-cc0b9bbc6715');
+var element = $('#222c1809-578c-45cb-8254-689a7dcda058');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "b85cd7f8907d41438264a03c59034055", "version_major": 2, "version_minor": 0}
@@ -14612,10 +14618,10 @@ var element = $('#0800c8df-7857-425a-887f-cc0b9bbc6715');
 
  
  
-<div id="3261f412-c0dc-4d02-bad5-594b51995723"></div>
+<div id="3e2505e8-ed0e-4d16-9b7c-6f931b24465a"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#3261f412-c0dc-4d02-bad5-594b51995723');
+var element = $('#3e2505e8-ed0e-4d16-9b7c-6f931b24465a');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "0e975f8a873245c28101f91d8d2804fd", "version_major": 2, "version_minor": 0}
@@ -14645,10 +14651,10 @@ var element = $('#3261f412-c0dc-4d02-bad5-594b51995723');
 
  
  
-<div id="f2df9579-cd8c-4690-b3c4-59015e3bbc14"></div>
+<div id="8f5b8f9b-03a9-4a42-8752-4c6113409112"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#f2df9579-cd8c-4690-b3c4-59015e3bbc14');
+var element = $('#8f5b8f9b-03a9-4a42-8752-4c6113409112');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
 {"model_id": "b8bbfa39e9564aa99cd2d0e706302f15", "version_major": 2, "version_minor": 0}

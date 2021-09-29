@@ -12947,8 +12947,13 @@ ul.typeahead-list  > li > a.pull-right {
 /*# sourceMappingURL=style.min.css.map */
     </style>
 <style type="text/css">
-    .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
@@ -13513,7 +13518,7 @@ $$<p>The mean vector, containing elements $\mu_1$ and $\mu_1$ centers the distri
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># revised from</span>
 <span class="c1"># http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.multivariate_normal.html</span>
-<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="o">.</span><span class="mi">01</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="o">.</span><span class="mi">01</span><span class="p">]</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="mf">.01</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="mf">.01</span><span class="p">]</span>
 <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
 <span class="n">position</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
 <span class="n">position</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
@@ -13833,9 +13838,9 @@ $$<p>Given this formula, we can use it and say: If the log likelihood of the dat
 <span class="p">])</span>
 
 <span class="n">init_covariances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-    <span class="p">[[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">]],</span>
-    <span class="p">[[</span><span class="o">.</span><span class="mi">92</span><span class="p">,</span> <span class="o">.</span><span class="mi">38</span><span class="p">],</span> <span class="p">[</span><span class="o">.</span><span class="mi">38</span><span class="p">,</span> <span class="o">.</span><span class="mi">91</span><span class="p">]],</span>
-    <span class="p">[[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">]]</span>
+    <span class="p">[[</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">]],</span>
+    <span class="p">[[</span><span class="mf">.92</span><span class="p">,</span> <span class="mf">.38</span><span class="p">],</span> <span class="p">[</span><span class="mf">.38</span><span class="p">,</span> <span class="mf">.91</span><span class="p">]],</span>
+    <span class="p">[[</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">]]</span>
 <span class="p">])</span>
 
 <span class="n">init_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">]</span>

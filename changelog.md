@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2021-09]
+
+### Added
+
+- Probability Calibration for deep learning classification models with Temperature Scaling. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/deeplearning_prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/deeplearning_prob_calibration.html)]
+
 ## [2021-06]
 
 ### Added

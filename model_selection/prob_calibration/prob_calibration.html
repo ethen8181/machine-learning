@@ -12947,8 +12947,13 @@ ul.typeahead-list  > li > a.pull-right {
 /*# sourceMappingURL=style.min.css.map */
     </style>
 <style type="text/css">
-    .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
@@ -13534,7 +13539,7 @@ xgboost 1.0.0
 <p>Obtaining a well calibrated probability becomes important when:</p>
 <ul>
 <li>We wish to use the probability threshold to inform some action. e.g. We'll reject the loan approval if the default rate is higher than 50% or we'll defer the judgment to humans if the probability is lower than some threshold.</li>
-<li>If our ranking formula is not solely based on the original model's score. In some cases, we may wish to use the score/probability along with some additional factors for ranking purpose. e.g. In the <a href="https://turi.com/learn/gallery/notebooks/click_through_rate_prediction_intro.html">advertising cost per click model</a>, we're going to rank the ads by its expected value (the probability of clicking on the ad multiplied by the ad fee for the click).</li>
+<li>If our ranking formula is not solely based on the original model's score. In some cases, we may wish to use the score/probability along with some additional factors for ranking purpose. e.g. In the advertising cost per click model, we're going to rank the ads by its expected value (the probability of clicking on the ad multiplied by the ad fee for the click).</li>
 </ul>
 
 </div>

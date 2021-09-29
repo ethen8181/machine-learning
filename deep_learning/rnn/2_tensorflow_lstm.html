@@ -12947,8 +12947,13 @@ ul.typeahead-list  > li > a.pull-right {
 /*# sourceMappingURL=style.min.css.map */
     </style>
 <style type="text/css">
-    .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #f8f8f8; }
+    pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
@@ -13809,9 +13814,9 @@ h_t &amp;= o_t * tanh(C_t)
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># output linear layer&#39;s weight and bias, V from the diagram</span>
 <span class="n">Wl</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
     <span class="p">[</span><span class="n">hidden_layer_size</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">],</span>
-    <span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stddev</span> <span class="o">=</span> <span class="o">.</span><span class="mi">01</span><span class="p">))</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stddev</span> <span class="o">=</span> <span class="mf">.01</span><span class="p">))</span>
 <span class="n">bl</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">num_classes</span><span class="p">],</span> <span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">stddev</span> <span class="o">=</span> <span class="o">.</span><span class="mi">01</span><span class="p">))</span>
+    <span class="p">[</span><span class="n">num_classes</span><span class="p">],</span> <span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">stddev</span> <span class="o">=</span> <span class="mf">.01</span><span class="p">))</span>
 
 <span class="c1"># apply linear layer to state vector;</span>
 <span class="c1"># instead of calculating the output vector for every hidden state,</span>
