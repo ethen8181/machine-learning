@@ -1,6 +1,7 @@
 - [machine-learning](#machine-learning)
   - [Documentation Listings](#documentation-listings)
     - [model deployment](#model-deployment)
+    - [operation_research](#operation_research)
     - [bandits](#bandits)
     - [search](#search)
     - [time series](#time-series)
@@ -44,9 +45,13 @@ This is a continuously updated repository that documents personal journey on lea
 - Quick Intro to Gradient Boosted Tree Inferencing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/gbt_inference/gbt_inference.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/gbt_inference/gbt_inference.html)]
 - Finetuning Pre-trained BERT Model on Text Classification Task And Inferencing with ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/onnxruntime/text_classification_onnxruntime.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/onnxruntime/text_classification_onnxruntime.html)]
 
+### operation_research
+
+- Operation Research Quick Intro Via Ortools. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/operation_research/ortools.ipynb)][[html](http://ethen8181.github.io/machine-learning/operation_research/ortools.html)]
+
 ### bandits
 
-Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/bandits/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/bandits/multi_armed_bandits.html)]
+- Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/bandits/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/bandits/multi_armed_bandits.html)]
 
 ### search
 
