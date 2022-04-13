@@ -29,8 +29,10 @@ AccuracyCutoffInfo <- function( train, test, predict, actual )
 	accuracy <- lapply( cutoff, function(c)
 	{
 		# use the confusionMatrix from the caret package
-		cm_train <- confusionMatrix( as.numeric( train[[predict]] > c ), train[[actual]] )
-		cm_test  <- confusionMatrix( as.numeric( test[[predict]]  > c ), test[[actual]]  )
+	  data_train <- as.factor( as.numeric( train[[predict]] > c ) )
+		cm_train <- confusionMatrix(data_train, as.factor(train[[actual]]) )
+		data_test <- as.factor( as.numeric( test[[predict]] > c ) )
+		cm_test  <- confusionMatrix( data_test, as.factor(test[[actual]]) )
 			
 		dt <- data.table( cutoff = c,
 						  train  = cm_train$overall[["Accuracy"]],
@@ -76,7 +78,7 @@ ConfusionMatrixInfo <- function( data, predict, actual, cutoff )
 	
 	result <- data.table( actual = actual, predict = predict )
 
-	# caculating each pred falls into which category for the confusion matrix
+	# calculating each pred falls into which category for the confusion matrix
 	result[ , type := ifelse( predict >= cutoff & actual == 1, "TP",
 					  ifelse( predict >= cutoff & actual == 0, "FP", 
 					  ifelse( predict <  cutoff & actual == 1, "FN", "TN" ) ) ) %>% as.factor() ]

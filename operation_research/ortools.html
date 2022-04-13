@@ -13408,13 +13408,13 @@ ortools: 9.0.9048
 &amp;  \text{maximize}
 &amp;&amp; \text{value}_{\text{ice_cream}} \cdot \text{ice_cream} + \text{value}_{\text{boba}} \cdot \text{boba} \nonumber \\
 &amp;  \text{subject to}
-&amp;&amp; \text{cost}_{\text{ice_cream}} \cdot \text{ice_cream} + \text{cost}_{\text{boba}} \cdot \text{boba} &lt;= \text{budget}
+&amp;&amp; \text{cost}_{\text{ice_cream}} \cdot \text{ice_cream} + \text{cost}_{\text{boba}} \cdot \text{boba} \leq \text{budget}
 \end{align}<p>Say we are able to replace the value, cost, and budget part with actual numbers (in practice, assigning actual numbers to each of these coefficients is often times core pieces of the work).</p>
 \begin{align}
 &amp;  \text{maximize}
 &amp;&amp; 3 \cdot \text{ice_cream} + 2 \cdot \text{boba} \nonumber \\
 &amp;  \text{subject to}
-&amp;&amp; 2 \cdot \text{ice_cream} + 1 \cdot \text{boba} &lt;= 1
+&amp;&amp; 2 \cdot \text{ice_cream} + 1 \cdot \text{boba} \leq 1
 \end{align}<p>Given this toy problem, we can eye ball the solution, and see that we should use our limited budget to buy a boba tea for dessert. Operation research, a.k.a optimization techniques helps us algorithmically find solutions for these types of problems at a much larger scale.</p>
 <p>The following section, uses <code>ortools</code> library to solve this problem programmatically.</p>
 
@@ -13550,7 +13550,7 @@ boba 1.0
 \text{maximize}
 &amp; \sum_{u, c} R_{u, c} A_{u, c} \nonumber \\
 \text{subject to}
-&amp; \sum_{u, c} P_{u, c} A_{u, c} &lt;= B \\
+&amp; \sum_{u, c} P_{u, c} A_{u, c} \leq B \\
 &amp; \sum_{c} A_{u, c} = 1, \forall u \in U \\
 &amp; a_{u, c} \in \{0, 1\}
 \end{align}<p>Where:</p>

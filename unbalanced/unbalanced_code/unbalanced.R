@@ -13,7 +13,7 @@ library(ggthemr)
 library(ggthemes)
 library(gridExtra)
 library(data.table)
-setwd("/Users/ethen/machine-learning/logistic_regression")
+setwd("/Users/mingyuliu/personal/machine-learning/unbalanced")
 
 # read in HR dataset 
 data <- fread( list.files( "data", full.names = TRUE )[2] )
@@ -50,8 +50,8 @@ model_glm <- glm( left ~ . , data = data_train, family = binomial(logit) )
 summary_glm <- summary(model_glm)
 
 # p-value and pseudo r squared 
-list( model_glm_sum$coefficient, 
-	  1- ( model_glm_sum$deviance / model_glm_sum$null.deviance ) )
+list( summary_glm$coefficient, 
+	  1- ( summary_glm$deviance / summary_glm$null.deviance ) )
 # all the p value of the coefficients indicates significance 
 
 
@@ -103,7 +103,7 @@ theme_economist()
 
 # Here we'll use a function to loop through several cutoff values and 
 # compute the model's accuracy on both training and testing set
-source("logistic_regression_code/logistic_functions.R")
+source("unbalanced_code/unbalanced_functions.R")
 
 accuracy_info <- AccuracyCutoffInfo( train = data_train, test = data_test, 
 									 predict = "prediction", actual = "left" )

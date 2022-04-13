@@ -13706,7 +13706,7 @@ height=365
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A point estimate can give us a rough idea of a population parameter like the mean, but estimates are prone to error. A confidence interval is a range of values above and below a point estimate that captures the true population parameter at some predetermined confidence level. For example, if you want to have a 95% chance of capturing the true population parameter with a point estimate and a corresponding confidence interval, we'd set our confidence level to 95%. Higher confidence levels result in a wider confidence intervals.</p>
+<p>A point estimate can give us a rough idea of a population parameter like mean, but estimates are prone to error. A confidence interval is a range of values above and below a point estimate that captures the true population parameter at some predetermined confidence level. For example, if we want to have a 95% chance of capturing the true population parameter with a point estimate and a corresponding confidence interval, we'd set our confidence level to 95%. Higher confidence levels result in a wider confidence intervals.</p>
 <p>The interval is computed using the formula:</p>
 $$
 \begin{align}
@@ -13714,9 +13714,9 @@ $$
 \end{align}
 $$<p>Where</p>
 <ul>
-<li>$z$ is called the <strong>critical value</strong> and it corresponds to the <strong>confidence level</strong> that we chose. Critical value is the number of standard deviations we'd have to go from the mean of the normal distribution to capture the proportion of the data associated with the desired confidence level. For instance, we know that roughly 95% of the data in a normal distribution lies within 2 standard deviations from the mean, so we could use 2 as the z-critical value for a 95% confidence interval (although it is more exact to get z-critical values with <code>stats.norm.ppf()</code>)</li>
-<li>$SE$ represents the <strong>standard error</strong>. Generally the standard error for a point estimate is estimated from the data and computed using a formula. For example, the standard error for the sample mean is $\frac{s}{ \sqrt{n} }$, where $s$ is the standard deviation and $n$ is the number of samples.</li>
-<li>The value $z * SE$ is called the <strong>margin of error</strong>.</li>
+<li>$z$ is called <strong>critical value</strong> and it corresponds to the <strong>confidence level</strong> that we chose. Critical value is number of standard deviations we'd have to go from a normal distribution's mean to capture proportion of the data associated with our desired confidence level. For instance, we know that roughly 95% of the data in a normal distribution lies within 2 standard deviations from the mean, so we could use 2 as the z-critical value for a 95% confidence interval (although it is more exact to get z-critical values with <code>stats.norm.ppf()</code>)</li>
+<li>$SE$ represents <strong>standard error</strong>. Generally, standard error for a point estimate is estimated from our data and computed using a formula. For example, the sample mean's standard error is $\frac{s}{ \sqrt{n} }$, where $s$ is standard deviation and $n$ is number of samples.</li>
+<li>$z * SE$ is called the <strong>margin of error</strong>.</li>
 <li>Note that this constructing confidence intervals framework can be easily adapted for any estimator that has a nearly normal sampling distribution. e.g. sample mean, two sample mean, sample proportion and two sample proportion (we'll later see). All we have to do this is change the way that we're calculating the standard error.</li>
 </ul>
 
