@@ -2,7 +2,7 @@
   - [Documentation Listings](#documentation-listings)
     - [model deployment](#model-deployment)
     - [operation_research](#operation_research)
-    - [bandits](#bandits)
+    - [reinforcement learning](#reinforcement-learning)
     - [search](#search)
     - [time series](#time-series)
     - [projects](#projects)
@@ -49,9 +49,9 @@ This is a continuously updated repository that documents personal journey on lea
 
 - Operation Research Quick Intro Via Ortools. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/operation_research/ortools.ipynb)][[html](http://ethen8181.github.io/machine-learning/operation_research/ortools.html)]
 
-### bandits
+### reinforcement learning
 
-- Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/bandits/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/bandits/multi_armed_bandits.html)]
+- Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/reinforcement_learning/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/reinforcement_learning/multi_armed_bandits.html)]
 
 ### search
 
