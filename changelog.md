@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2022-04]
+
+### Added
+
+- Quick introduction to generalized second price auction. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ad/gsp_ad_auction.ipynb)][[html](http://ethen8181.github.io/machine-learning/ad/gsp_ad_auction.html)]
+
 ## [2021-10]
 
 ### Added

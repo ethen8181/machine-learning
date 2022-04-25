@@ -3,6 +3,7 @@
     - [model deployment](#model-deployment)
     - [operation_research](#operation_research)
     - [reinforcement learning](#reinforcement-learning)
+    - [ad](#ad)
     - [search](#search)
     - [time series](#time-series)
     - [projects](#projects)
@@ -51,7 +52,13 @@ This is a continuously updated repository that documents personal journey on lea
 
 ### reinforcement learning
 
-- Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/reinforcement_learning/multi_armed_bandits.ipynb)][[html](http://ethen8181.github.io/machine-learning/reinforcement_learning/multi_armed_bandits.html)]
+- Introduction to Multi-armed Bandits. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ad/gsp_ad_auction.ipynb)][[html](http://ethen8181.github.io/machine-learning/ad/gsp_ad_auction.html)]
+
+### ad
+
+Notes related to advertising domain.
+
+- Quick introduction to generalized second price auction. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ad/gsp_ad_auction.ipynb)][[html](http://ethen8181.github.io/machine-learning/ad/gsp_ad_auction.html)]
 
 ### search
 
