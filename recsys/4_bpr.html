@@ -13485,7 +13485,7 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
 <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">csr_matrix</span><span class="p">,</span> <span class="n">dok_matrix</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,scipy,sklearn,tqdm
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -t -v -p numpy,pandas,scipy,sklearn,tqdm
 </pre></div>
 
     </div>
@@ -13502,16 +13502,20 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2018-04-07 14:25:45 
+<pre>Author: Ethen
 
-CPython 3.6.4
-IPython 6.2.1
+Last updated: 2022-05-11 23:13:54
 
-numpy 1.14.2
-pandas 0.22.0
-scipy 1.0.0
-sklearn 0.19.1
-tqdm 4.19.8
+Python implementation: CPython
+Python version       : 3.7.11
+IPython version      : 7.27.0
+
+numpy  : 1.21.6
+pandas : 1.3.5
+scipy  : 1.7.1
+sklearn: 1.0.2
+tqdm   : 4.62.3
+
 </pre>
 </div>
 </div>
@@ -13707,6 +13711,7 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data dimension: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">70000</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -13738,17 +13743,17 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -13858,6 +13863,16 @@ $$<p>Where $\alpha$ is the learning rate.</p>
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">ratings_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">ratings_col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># this ensures each user has at least 2 records to construct a valid</span>
+    <span class="c1"># train and test split in downstream process, note we might purge</span>
+    <span class="c1"># some users completely during this process</span>
+    <span class="n">data_user_num_items</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span>
+                         <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;user_id&#39;</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;num_items&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">)})</span>
+                         <span class="o">.</span><span class="n">reset_index</span><span class="p">())</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">data_user_num_items</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
     
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">items_col</span><span class="p">,</span> <span class="n">users_col</span><span class="p">,</span> <span class="n">ratings_col</span><span class="p">):</span>
         <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
@@ -13902,8 +13917,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;943x1574 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
-	with 82520 stored elements in Compressed Sparse Row format&gt;</pre>
+<pre>&lt;941x1516 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
+	with 57835 stored elements in Compressed Sparse Row format&gt;</pre>
 </div>
 
 </div>
@@ -14001,8 +14016,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;943x1574 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
-	with 65641 stored elements in Compressed Sparse Row format&gt;</pre>
+<pre>&lt;941x1516 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
+	with 45883 stored elements in Compressed Sparse Row format&gt;</pre>
 </div>
 
 </div>
@@ -14335,7 +14350,7 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>BPR: 100%|██████████| 160/160 [00:01&lt;00:00, 82.94it/s]
+<pre>BPR: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 160/160 [00:05&lt;00:00, 29.65it/s]
 </pre>
 </div>
 </div>
@@ -14348,7 +14363,7 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;__main__.BPR at 0x1095763c8&gt;</pre>
+<pre>&lt;__main__.BPR at 0x7f8ee8f6efd0&gt;</pre>
 </div>
 
 </div>
@@ -14438,8 +14453,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>0.895754675889
-0.824883963053
+<pre>0.8981706614225912
+0.7828027870718938
 </pre>
 </div>
 </div>
@@ -14487,13 +14502,13 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[  49,  180,  120,   24,  116],
-       [ 695, 1184,  844,  213,  464],
-       [1519,  816,  225,  116, 1522],
-       ..., 
-       [ 447,  807,  957,   74, 1016],
-       [ 422, 1302,  779, 1086, 1036],
-       [ 697,  809, 1459, 1465,  815]], dtype=uint32)</pre>
+<pre>array([[ 170,  274,    4,   14,   97],
+       [1384,   82,  429,  247,  185],
+       [ 910, 1187,  366,  247, 1117],
+       ...,
+       [ 903,  602, 1347, 1402, 1317],
+       [1136, 1512, 1248, 1432,  761],
+       [ 982, 1006, 1410, 1414, 1395]], dtype=uint32)</pre>
 </div>
 
 </div>
@@ -14534,13 +14549,13 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[421, 256, 425, 490, 182],
-       [806, 317, 123,  14,   8],
-       [744, 285, 312, 331, 301],
-       ..., 
-       [210, 403, 621, 728, 654],
-       [293, 741, 403, 180, 744],
-       [233,   0, 234, 248, 264]], dtype=uint32)</pre>
+<pre>array([[ 172,  174,  214,   49,  166],
+       [ 286,  300,  312,  324,  284],
+       [ 256,  873,  674,  284,  309],
+       ...,
+       [ 427,  392,  174,  924,   63],
+       [1353, 1224,  971,  218,  571],
+       [   5,  524,  944,  698, 1486]], dtype=uint32)</pre>
 </div>
 
 </div>
