@@ -13504,7 +13504,7 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2022-05-11 23:13:54
+Last updated: 2022-05-11 23:19:12
 
 Python implementation: CPython
 Python version       : 3.7.11
@@ -13711,7 +13711,6 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;item_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data dimension: </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">70000</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -13917,8 +13916,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;941x1516 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
-	with 57835 stored elements in Compressed Sparse Row format&gt;</pre>
+<pre>&lt;943x1574 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
+	with 82520 stored elements in Compressed Sparse Row format&gt;</pre>
 </div>
 
 </div>
@@ -14016,8 +14015,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;941x1516 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
-	with 45883 stored elements in Compressed Sparse Row format&gt;</pre>
+<pre>&lt;943x1574 sparse matrix of type &#39;&lt;class &#39;numpy.int64&#39;&gt;&#39;
+	with 65641 stored elements in Compressed Sparse Row format&gt;</pre>
 </div>
 
 </div>
@@ -14326,12 +14325,13 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># parameters were randomly chosen</span>
-<span class="n">bpr_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;reg&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
-              <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-              <span class="s1">&#39;n_iters&#39;</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span>
-              <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-              <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
-
+<span class="n">bpr_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;reg&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;n_iters&#39;</span><span class="p">:</span> <span class="mi">160</span><span class="p">,</span>
+    <span class="s1">&#39;n_factors&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">100</span>
+<span class="p">}</span>
 <span class="n">bpr</span> <span class="o">=</span> <span class="n">BPR</span><span class="p">(</span><span class="o">**</span><span class="n">bpr_params</span><span class="p">)</span>
 <span class="n">bpr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
 </pre></div>
@@ -14350,7 +14350,7 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>BPR: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 160/160 [00:05&lt;00:00, 29.65it/s]
+<pre>BPR: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 160/160 [00:05&lt;00:00, 27.79it/s]
 </pre>
 </div>
 </div>
@@ -14363,7 +14363,7 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;__main__.BPR at 0x7f8ee8f6efd0&gt;</pre>
+<pre>&lt;__main__.BPR at 0x7f85683be0d0&gt;</pre>
 </div>
 
 </div>
@@ -14453,8 +14453,8 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>0.8981706614225912
-0.7828027870718938
+<pre>0.897227024734603
+0.8263226783060188
 </pre>
 </div>
 </div>
@@ -14502,13 +14502,13 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[ 170,  274,    4,   14,   97],
-       [1384,   82,  429,  247,  185],
-       [ 910, 1187,  366,  247, 1117],
+<pre>array([[   8,  236,  124,  221,  110],
+       [ 582,  176,   98,  425,  421],
+       [1034,  173, 1026,  176,   87],
        ...,
-       [ 903,  602, 1347, 1402, 1317],
-       [1136, 1512, 1248, 1432,  761],
-       [ 982, 1006, 1410, 1414, 1395]], dtype=uint32)</pre>
+       [ 422,  350, 1186, 1501, 1267],
+       [ 779,  114, 1141,  536,  949],
+       [ 750,  809, 1394,  551, 1465]], dtype=uint32)</pre>
 </div>
 
 </div>
@@ -14549,13 +14549,13 @@ $$<p>Where $\alpha$ is the learning rate.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[ 172,  174,  214,   49,  166],
-       [ 286,  300,  312,  324,  284],
-       [ 256,  873,  674,  284,  309],
+<pre>array([[477, 425, 273, 274, 251],
+       [293, 123, 319, 317, 924],
+       [301, 285, 312, 322, 867],
        ...,
-       [ 427,  392,  174,  924,   63],
-       [1353, 1224,  971,  218,  571],
-       [   5,  524,  944,  698, 1486]], dtype=uint32)</pre>
+       [285, 274,  99, 621, 300],
+       [541,   0, 287, 285, 744],
+       [ 88, 490, 237, 476, 185]], dtype=uint32)</pre>
 </div>
 
 </div>
