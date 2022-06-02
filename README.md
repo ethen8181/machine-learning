@@ -35,7 +35,7 @@
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
-**Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch using Python's scientific stack including numpy, numba, scipy, pandas, matplotlib, etc. and open-source library usage such as scikit-learn, pyspark, gensim, keras, pytorch, tensorflow, etc.
+**Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch using Python's scientific stack including numpy, numba, scipy, pandas, matplotlib, pyspark etc. and open-source library usage such as scikit-learn, fasttext, huggingface, onnx, xgboost, lightgbm, pytorch, keras, tensorflow, gensim, h2o, ortools etc.
 
 
 ## Documentation Listings

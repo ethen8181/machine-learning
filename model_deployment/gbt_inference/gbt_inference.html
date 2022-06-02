@@ -13083,13 +13083,13 @@ div#notebook {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Gradient-Boosted-Tree-Inferencing" data-toc-modified-id="Gradient-Boosted-Tree-Inferencing-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Gradient Boosted Tree Inferencing</a></span><ul class="toc-item"><li><span><a href="#Preparation" data-toc-modified-id="Preparation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Preparation</a></span><ul class="toc-item"><li><span><a href="#Regression" data-toc-modified-id="Regression-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>Regression</a></span></li><li><span><a href="#Binary-Classification" data-toc-modified-id="Binary-Classification-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>Binary Classification</a></span></li><li><span><a href="#Multiclass-Classification" data-toc-modified-id="Multiclass-Classification-1.1.3"><span class="toc-item-num">1.1.3&nbsp;&nbsp;</span>Multiclass Classification</a></span></li></ul></li><li><span><a href="#C++-Implementation" data-toc-modified-id="C++-Implementation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>C++ Implementation</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Gradient-Boosted-Tree-Inferencing" data-toc-modified-id="Gradient-Boosted-Tree-Inferencing-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Gradient Boosted Tree Inferencing</a></span><ul class="toc-item"><li><span><a href="#Translating-to-Production-Language" data-toc-modified-id="Translating-to-Production-Language-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Translating to Production Language</a></span><ul class="toc-item"><li><span><a href="#Preparation" data-toc-modified-id="Preparation-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>Preparation</a></span></li><li><span><a href="#Regression" data-toc-modified-id="Regression-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>Regression</a></span></li><li><span><a href="#Binary-Classification" data-toc-modified-id="Binary-Classification-1.1.3"><span class="toc-item-num">1.1.3&nbsp;&nbsp;</span>Binary Classification</a></span></li><li><span><a href="#Multiclass-Classification" data-toc-modified-id="Multiclass-Classification-1.1.4"><span class="toc-item-num">1.1.4&nbsp;&nbsp;</span>Multiclass Classification</a></span></li><li><span><a href="#C++-Implementation" data-toc-modified-id="C++-Implementation-1.1.5"><span class="toc-item-num">1.1.5&nbsp;&nbsp;</span>C++ Implementation</a></span></li></ul></li><li><span><a href="#ONNX" data-toc-modified-id="ONNX-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>ONNX</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1. magic to print version</span>
@@ -13106,10 +13106,16 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">sklearn.datasets</span> <span class="k">as</span> <span class="nn">datasets</span>
 <span class="kn">from</span> <span class="nn">xgboost</span> <span class="kn">import</span> <span class="n">XGBClassifier</span><span class="p">,</span> <span class="n">XGBRegressor</span>
 
+<span class="kn">import</span> <span class="nn">onnxruntime</span> <span class="k">as</span> <span class="nn">rt</span>
+<span class="kn">from</span> <span class="nn">skl2onnx</span> <span class="kn">import</span> <span class="n">convert_sklearn</span><span class="p">,</span> <span class="n">update_registered_converter</span>
+<span class="kn">from</span> <span class="nn">skl2onnx.common.data_types</span> <span class="kn">import</span> <span class="n">FloatTensorType</span>
+<span class="kn">from</span> <span class="nn">skl2onnx.common.shape_calculator</span> <span class="kn">import</span> <span class="n">calculate_linear_classifier_output_shapes</span>
+<span class="kn">from</span> <span class="nn">onnxmltools.convert.xgboost.operator_converters.XGBoost</span> <span class="kn">import</span> <span class="n">convert_xgboost</span>
+
 <span class="c1"># prevent scientific notations</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">x</span><span class="p">)</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,m2cgen,xgboost
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -u -d -v -p numpy,pandas,sklearn,m2cgen,xgboost
 </pre></div>
 
     </div>
@@ -13126,16 +13132,24 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2021-02-07 10:25:19 
+<pre>The watermark extension is already loaded. To reload it, use:
+  %reload_ext watermark
+The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+Author: Ethen
 
-CPython 3.6.4
-IPython 7.15.0
+Last updated: 2022-06-02
 
-numpy 1.18.5
-pandas 1.0.5
-sklearn 0.23.1
-m2cgen 0.9.0
-xgboost 1.2.1
+Python implementation: CPython
+Python version       : 3.7.11
+IPython version      : 7.27.0
+
+numpy  : 1.21.6
+pandas : 1.3.5
+sklearn: 1.0.2
+m2cgen : 0.10.0
+xgboost: 1.6.1
+
 </pre>
 </div>
 </div>
@@ -13154,8 +13168,28 @@ xgboost 1.2.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Once we train our machine learning model, depending on the use case, we may wish to operationize it by putting it behind a service for (near) real time inferencing. We can definitely generate predictions in batch offline, store them in some downstream tables or look up services, and pull out pre-computed predictions when needed. Although this batch prediction approach might sound easier to implement, and we might not have to worry about latency issues when it comes to real time services, this paradigm does come with its limitations. e.g.</p>
+<ul>
+<li>Cold start problem, if a new entity, whether it's users coming to the website or items being listed on a marketplace, there will be no precomputed recommendations available.</li>
+<li>Not having access to real time features. Dynamic features are features based on what’s happening right now – what a user is watching, what people just liked, knowing these will allow us to generate more accurate or relevant predictions based on latest information.</li>
+<li>Potentially wasted computation/storage. If we generate predictions for every possible user each day, and only 5% of them login to use our website, then the compute used to generate 95% of our predictions will be wasted.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Translating-to-Production-Language">Translating to Production Language<a class="anchor-link" href="#Translating-to-Production-Language">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>It's very common in industry setting to prototype a machine learning model in Python and translate it into other languages such as C++, Java, etc, when it comes to deploying. This usually happens where the core application is written in other languages such as C++, Java, etc. and it is an extremely time sensitive application where we can't afford the cost of calling an external API to fetch the model prediction.</p>
-<p>In this article, we'll be looking at how we can achieve this with Gradient Boosted Trees, specifically XGBoost. Different library might have different ways to doing this, but the concept should be similar.</p>
+<p>In this section, we'll be looking at how we can achieve this with Gradient Boosted Trees, specifically XGBoost. Different library might have different ways to doing this, but the concept should be similar.</p>
 <p><strong>Tree Structure</strong></p>
 <p>A typical model dump from XGBoost looks like the following:</p>
 
@@ -13202,7 +13236,7 @@ booster[1]:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Preparation">Preparation<a class="anchor-link" href="#Preparation">&#182;</a></h2>
+<h3 id="Preparation">Preparation<a class="anchor-link" href="#Preparation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13353,14 +13387,16 @@ booster[1]:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>XGBRegressor(base_score=0.0, booster=&#39;gbtree&#39;, colsample_bylevel=1,
-             colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
-             importance_type=&#39;gain&#39;, interaction_constraints=&#39;&#39;,
-             learning_rate=0.300000012, max_delta_step=0, max_depth=3,
-             min_child_weight=1, missing=nan, monotone_constraints=&#39;()&#39;,
-             n_estimators=2, n_jobs=0, num_parallel_tree=1, random_state=0,
-             reg_alpha=0, reg_lambda=1, scale_pos_weight=1, subsample=1,
-             tree_method=&#39;exact&#39;, validate_parameters=1, verbosity=None)</pre>
+<pre>XGBRegressor(base_score=0.0, booster=&#39;gbtree&#39;, callbacks=None,
+             colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+             early_stopping_rounds=None, enable_categorical=False,
+             eval_metric=None, gamma=0, gpu_id=-1, grow_policy=&#39;depthwise&#39;,
+             importance_type=None, interaction_constraints=&#39;&#39;,
+             learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+             max_delta_step=0, max_depth=3, max_leaves=0, min_child_weight=1,
+             missing=nan, monotone_constraints=&#39;()&#39;, n_estimators=2, n_jobs=0,
+             num_parallel_tree=1, predictor=&#39;auto&#39;, random_state=0, reg_alpha=0,
+             reg_lambda=1, ...)</pre>
 </div>
 
 </div>
@@ -13493,15 +13529,16 @@ booster[1]:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, colsample_bylevel=1,
-              colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
-              grow_policy=&#39;lossguide&#39;, importance_type=&#39;gain&#39;,
-              interaction_constraints=&#39;&#39;, learning_rate=0.300000012,
-              max_delta_step=0, max_depth=3, min_child_weight=1, missing=nan,
-              monotone_constraints=&#39;()&#39;, n_estimators=3, n_jobs=0,
-              num_parallel_tree=1, random_state=0, reg_alpha=0, reg_lambda=1,
-              scale_pos_weight=1, subsample=1, tree_method=&#39;hist&#39;,
-              validate_parameters=1, verbosity=None)</pre>
+<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, callbacks=None,
+              colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+              early_stopping_rounds=None, enable_categorical=False,
+              eval_metric=None, gamma=0, gpu_id=-1, grow_policy=&#39;lossguide&#39;,
+              importance_type=None, interaction_constraints=&#39;&#39;,
+              learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+              max_delta_step=0, max_depth=3, max_leaves=0, min_child_weight=1,
+              missing=nan, monotone_constraints=&#39;()&#39;, n_estimators=3, n_jobs=0,
+              num_parallel_tree=1, predictor=&#39;auto&#39;, random_state=0,
+              reg_alpha=0, reg_lambda=1, ...)</pre>
 </div>
 
 </div>
@@ -13688,15 +13725,16 @@ booster[1]:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, colsample_bylevel=1,
-              colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
-              importance_type=&#39;gain&#39;, interaction_constraints=&#39;&#39;,
-              learning_rate=0.300000012, max_delta_step=0, max_depth=3,
-              min_child_weight=1, missing=nan, monotone_constraints=&#39;()&#39;,
-              n_estimators=2, n_jobs=0, num_parallel_tree=1,
-              objective=&#39;multi:softprob&#39;, random_state=0, reg_alpha=0,
-              reg_lambda=1, scale_pos_weight=None, subsample=1,
-              tree_method=&#39;exact&#39;, validate_parameters=1, verbosity=None)</pre>
+<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, callbacks=None,
+              colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+              early_stopping_rounds=None, enable_categorical=False,
+              eval_metric=None, gamma=0, gpu_id=-1, grow_policy=&#39;depthwise&#39;,
+              importance_type=None, interaction_constraints=&#39;&#39;,
+              learning_rate=0.300000012, max_bin=256, max_cat_to_onehot=4,
+              max_delta_step=0, max_depth=3, max_leaves=0, min_child_weight=1,
+              missing=nan, monotone_constraints=&#39;()&#39;, n_estimators=2, n_jobs=0,
+              num_parallel_tree=1, objective=&#39;multi:softprob&#39;, predictor=&#39;auto&#39;,
+              random_state=0, reg_alpha=0, ...)</pre>
 </div>
 
 </div>
@@ -13743,7 +13781,7 @@ booster[1]:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[0.6092037 , 0.19627656, 0.19451974]], dtype=float32)</pre>
+<pre>array([[0.6092037 , 0.19627655, 0.19451974]], dtype=float32)</pre>
 </div>
 
 </div>
@@ -13755,7 +13793,7 @@ booster[1]:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="C++-Implementation">C++ Implementation<a class="anchor-link" href="#C++-Implementation">&#182;</a></h2>
+<h3 id="C++-Implementation">C++ Implementation<a class="anchor-link" href="#C++-Implementation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13792,21 +13830,21 @@ booster[1]:
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>double score(double * input) {
     double var0;
-    if ((input[2]) &gt;= (0.009422321)) {
-        if ((input[3]) &gt;= (0.02359379)) {
+    if (input[2] &gt;= 0.009422321) {
+        if (input[3] &gt;= 0.02359379) {
             var0 = 69.4;
         } else {
             var0 = 53.069668;
         }
     } else {
-        if ((input[2]) &gt;= (-0.02183423)) {
-            if ((input[3]) &gt;= (0.02703666)) {
+        if (input[2] &gt;= -0.02183423) {
+            if (input[3] &gt;= 0.02703666) {
                 var0 = 51.088238;
             } else {
                 var0 = 38.748753;
             }
         } else {
-            if ((input[2]) &gt;= (-0.058479838)) {
+            if (input[2] &gt;= -0.058479838) {
                 var0 = 33.02927;
             } else {
                 var0 = 25.84091;
@@ -13814,36 +13852,36 @@ booster[1]:
         }
     }
     double var1;
-    if ((input[2]) &gt;= (0.0051110727)) {
-        if ((input[2]) &gt;= (0.07301323)) {
-            if ((input[3]) &gt;= (-0.04985412)) {
+    if (input[2] &gt;= 0.0051110727) {
+        if (input[2] &gt;= 0.07301323) {
+            if (input[3] &gt;= -0.04985412) {
                 var1 = 59.377037;
             } else {
                 var1 = 13.03955;
             }
         } else {
-            if ((input[3]) &gt;= (0.000067507266)) {
+            if (input[3] &gt;= 0.000067507266) {
                 var1 = 43.405666;
             } else {
                 var1 = 31.388973;
             }
         }
     } else {
-        if ((input[3]) &gt;= (0.039086707)) {
-            if ((input[2]) &gt;= (0.00079982437)) {
+        if (input[3] &gt;= 0.039086707) {
+            if (input[2] &gt;= 0.00079982437) {
                 var1 = 14.918823;
             } else {
                 var1 = 36.185055;
             }
         } else {
-            if ((input[2]) &gt;= (-0.020756418)) {
+            if (input[2] &gt;= -0.020756418) {
                 var1 = 27.732695;
             } else {
                 var1 = 21.047476;
             }
         }
     }
-    return (var0) + (var1);
+    return var0 + var1;
 }
 
 </pre>
@@ -13857,6 +13895,455 @@ booster[1]:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ONNX">ONNX<a class="anchor-link" href="#ONNX">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another way to achieving this is through ONNX, directly quoting from its documentation.</p>
+<blockquote><p>ONNX Runtime provides an easy way to run machine learned models with high performance on CPU or GPU without dependencies on the training framework. Machine learning frameworks are usually optimized for batch training rather than for prediction, which is a more common scenario in applications, sites, and services</p>
+</blockquote>
+<p>We'll walk through the process of converting our boosted tree model into ONNX format, and benchmark the inference runtime. Here, we are doing it for classification model, but the process should be similar for regression based models.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_features</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_classification</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="n">n_features</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">n_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;f</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;num rows: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">, num cols: </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">X</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>num rows: 10000, num cols: 5
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-2.24456934, -1.36232827,  1.55433334, -2.0869092 , -1.27760482],
+       [-0.46503462, -0.57657929, -0.2033143 ,  0.43042571,  1.98019634],
+       [ 1.0967453 ,  1.31568265,  0.40073014, -0.88575625,  0.72711376],
+       ...,
+       [-3.17646599, -2.97878542,  0.32401442,  0.12710402, -0.63318634],
+       [-0.41224819,  0.17380558,  1.04229889, -1.62625451, -1.24718999],
+       [-1.02487223, -0.70828082,  0.55578021, -0.70007904, -0.43269446]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tree</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">(</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">tree_method</span><span class="o">=</span><span class="s1">&#39;hist&#39;</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">eval_set</span><span class="o">=</span><span class="p">[(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0]	validation_0-logloss:0.57050
+[1]	validation_0-logloss:0.48945
+[2]	validation_0-logloss:0.42726
+[3]	validation_0-logloss:0.38211
+[4]	validation_0-logloss:0.34932
+[5]	validation_0-logloss:0.32240
+[6]	validation_0-logloss:0.29620
+[7]	validation_0-logloss:0.27869
+[8]	validation_0-logloss:0.26133
+[9]	validation_0-logloss:0.25024
+[10]	validation_0-logloss:0.24013
+[11]	validation_0-logloss:0.23271
+[12]	validation_0-logloss:0.22679
+[13]	validation_0-logloss:0.22081
+[14]	validation_0-logloss:0.21672
+[15]	validation_0-logloss:0.21081
+[16]	validation_0-logloss:0.20629
+[17]	validation_0-logloss:0.20226
+[18]	validation_0-logloss:0.19999
+[19]	validation_0-logloss:0.19766
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>XGBClassifier(base_score=0.5, booster=&#39;gbtree&#39;, callbacks=None,
+              colsample_bylevel=1, colsample_bynode=1, colsample_bytree=1,
+              early_stopping_rounds=None, enable_categorical=False,
+              eval_metric=None, gamma=0, gpu_id=-1, grow_policy=&#39;depthwise&#39;,
+              importance_type=None, interaction_constraints=&#39;&#39;,
+              learning_rate=0.2, max_bin=256, max_cat_to_onehot=4,
+              max_delta_step=0, max_depth=3, max_leaves=0, min_child_weight=1,
+              missing=nan, monotone_constraints=&#39;()&#39;, n_estimators=20, n_jobs=0,
+              num_parallel_tree=1, predictor=&#39;auto&#39;, random_state=0,
+              reg_alpha=0, reg_lambda=1, ...)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tree</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.9862067, 0.0137933]], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">xgboost_checkpoint</span> <span class="o">=</span> <span class="s1">&#39;model.json&#39;</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">xgboost_checkpoint</span><span class="p">)</span>
+<span class="n">tree_loaded</span> <span class="o">=</span> <span class="n">XGBClassifier</span><span class="p">()</span>
+<span class="n">tree_loaded</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">xgboost_checkpoint</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">1</span><span class="p">]),</span> <span class="n">tree_loaded</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_payloads</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;f0&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.24456934</span><span class="p">,</span>
+        <span class="s1">&#39;f1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.36232827</span><span class="p">,</span>
+        <span class="s1">&#39;f2&#39;</span><span class="p">:</span> <span class="mf">1.55433334</span><span class="p">,</span>
+        <span class="s1">&#39;f3&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">2.0869092</span><span class="p">,</span>
+        <span class="s1">&#39;f4&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.27760482</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">input_payload</span> <span class="ow">in</span> <span class="n">input_payloads</span><span class="p">:</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_payload</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">]</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="n">np_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">np_rows</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([0.0137933], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">input_payload</span> <span class="ow">in</span> <span class="n">input_payloads</span><span class="p">:</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_payload</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">]</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="n">np_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">tree</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">np_rows</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>853 µs ± 19.1 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">convert_xgboost_to_onnx</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    
+    <span class="c1"># boiler plate code for registering the xgboost converter</span>
+    <span class="n">update_registered_converter</span><span class="p">(</span>
+        <span class="n">XGBClassifier</span><span class="p">,</span> <span class="s1">&#39;XGBoostXGBClassifier&#39;</span><span class="p">,</span>
+        <span class="n">calculate_linear_classifier_output_shapes</span><span class="p">,</span> <span class="n">convert_xgboost</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nocl&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="s1">&#39;zipmap&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;columns&#39;</span><span class="p">]}</span>
+    <span class="p">)</span>
+    <span class="c1"># perform the actual conversion specifying the types of our inputs,</span>
+    <span class="c1"># at the time of writing this, it doesn&#39;t support categorical types</span>
+    <span class="c1"># that are common in boosted tree libraries such as xgboost or lightgbm</span>
+    <span class="n">model_onnx</span> <span class="o">=</span> <span class="n">convert_sklearn</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="s1">&#39;xgboost&#39;</span><span class="p">,</span>
+        <span class="p">[(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="n">FloatTensorType</span><span class="p">([</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_features</span><span class="p">]))],</span>
+        <span class="n">target_opset</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;ai.onnx.ml&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model_onnx</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">onnx_model_checkpoint</span> <span class="o">=</span> <span class="s1">&#39;xgboost.onnx&#39;</span>
+<span class="n">convert_xgboost_to_onnx</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">),</span> <span class="n">onnx_model_checkpoint</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Upon porting our model to onnx format, we can use it for inferencing. This section uses the Python API for benchmarking.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sess</span> <span class="o">=</span> <span class="n">rt</span><span class="o">.</span><span class="n">InferenceSession</span><span class="p">(</span><span class="n">onnx_model_checkpoint</span><span class="p">)</span>
+<span class="n">input_name</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+<span class="n">output_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">output</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">sess</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">()]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">np_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">onnx_predict_label</span><span class="p">,</span> <span class="n">onnx_predict_score</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">output_names</span><span class="p">,</span> <span class="p">{</span><span class="n">input_name</span><span class="p">:</span> <span class="n">np_rows</span><span class="p">})</span>
+<span class="n">onnx_predict_score</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[{0: 0.9862067103385925, 1: 0.01379328966140747}]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">input_payload</span> <span class="ow">in</span> <span class="n">input_payloads</span><span class="p">:</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_payload</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">]</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="n">np_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">onnx_predict_label</span><span class="p">,</span> <span class="n">onnx_predict_score</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">output_names</span><span class="p">,</span> <span class="p">{</span><span class="n">input_name</span><span class="p">:</span> <span class="n">np_rows</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>15.4 µs ± 297 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Note, at the time of writing this document, the onnx converter <a href="https://github.com/onnx/onnxmltools/issues/309">doesn't support categorical variables splits</a> from common boosted tree libraries such as <a href="https://xgboost.readthedocs.io/en/latest/tutorials/categorical.html">xgboost</a> or <a href="https://lightgbm.readthedocs.io/en/latest/Advanced-Topics.html#categorical-feature-support">lightgbm</a>, we will have to leverage other ways of dealing with categorical variables if we wish to leverage onnx for inferencing.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
@@ -13866,6 +14353,8 @@ booster[1]:
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><a href="https://medium.com/swlh/roll-your-own-xgboost-model-7490106b9523">Blog: Roll your own XGBoost model</a></li>
+<li><a href="https://onnx.ai/sklearn-onnx/auto_tutorial/plot_gexternal_xgboost.html">Doc: Sklearn-onnx Convert a pipeline with a XGBoost model</a></li>
+<li><a href="https://huyenchip.com/2022/01/02/real-time-machine-learning-challenges-and-solutions.html">Blog: Real-time machine learning: challenges and solutions</a></li>
 </ul>
 
 </div>
