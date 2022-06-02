@@ -13079,6 +13079,14 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Tree-Data-Structure" data-toc-modified-id="Tree-Data-Structure-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Tree Data Structure</a></span><ul class="toc-item"><li><span><a href="#Tree-Traversal" data-toc-modified-id="Tree-Traversal-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Tree Traversal</a></span><ul class="toc-item"><li><span><a href="#Summary" data-toc-modified-id="Summary-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>Summary</a></span></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>Implementation</a></span></li></ul></li><li><span><a href="#Binary-Seach-Tree" data-toc-modified-id="Binary-Seach-Tree-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Binary Seach Tree</a></span><ul class="toc-item"><li><span><a href="#Summary" data-toc-modified-id="Summary-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Heap" data-toc-modified-id="Heap-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Heap</a></span><ul class="toc-item"><li><span><a href="#Summary" data-toc-modified-id="Summary-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Summary</a></span></li></ul></li></ul></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -15074,18 +15082,60 @@ jupyterthemes 0.15.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Tree-Data-Structure">Tree Data Structure<a class="anchor-link" href="#Tree-Data-Structure">&#182;</a></h1><h2 id="Tree-Traversal">Tree Traversal<a class="anchor-link" href="#Tree-Traversal">&#182;</a></h2><p>Resources:</p>
+<h1 id="Tree-Data-Structure">Tree Data Structure<a class="anchor-link" href="#Tree-Data-Structure">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tree-Traversal">Tree Traversal<a class="anchor-link" href="#Tree-Traversal">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Resources:</p>
 <ul>
 <li><a href="https://medium.com/basecs/demystifying-depth-first-search-a7c14cccf056">Blog: Demystifying Depth-First Search</a></li>
 <li><a href="https://medium.com/basecs/breaking-down-breadth-first-search-cebe696709d9">Blog: Breaking Down Breadth-First Search</a></li>
 </ul>
-<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3><p>There are two main ways to traverse through a tree. By traversing, we essentially mean we try to walk through the tree without repeating ourselves.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are two main ways to traverse through a tree. By traversing, we essentially mean we try to walk through the tree without repeating ourselves.</p>
 <ul>
 <li>For <strong>depth first search (DFS)</strong>, we start down a path and we won't stop until we get to the end. In other words, we traverse through one branch of the tree until we get to a leaf and only then will we work back up to the trunk of the tree.</li>
 <li>In <strong>breadth first search (BFS)</strong>, we would search through the nodes from one level to the next, and traverse through all the children of a node before moving on to visit the grandchildren nodes</li>
 </ul>
 <p><img src="img/dfs-bfs.png" width="60%" height="60%"></p>
-<h3 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h3><p>Resources:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Resources:</p>
 <ul>
 <li><a href="https://pythoninwonderland.wordpress.com/2017/03/18/how-to-implement-breadth-first-search-in-python/">Blog: How to Implement Breadth-First Search in Python</a></li>
 <li><a href="http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/">Blog: Depth-First Search and Breadth-First Search in Python</a></li>
@@ -15271,12 +15321,33 @@ jupyterthemes 0.15.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Binary-Seach-Tree">Binary Seach Tree<a class="anchor-link" href="#Binary-Seach-Tree">&#182;</a></h2><p>Resources:</p>
+<h2 id="Binary-Seach-Tree">Binary Seach Tree<a class="anchor-link" href="#Binary-Seach-Tree">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Resources:</p>
 <ul>
 <li><a href="https://medium.com/basecs/leaf-it-up-to-binary-trees-11001aaf746d">Blog: Leaf It Up To Binary Trees</a></li>
 <li><a href="https://www.programiz.com/dsa/breadth-first-search-tree">Blog: Binary Search Tree(BST)</a></li>
 </ul>
-<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3><p>In order for a binary tree to be searchable, all of the nodes to the left of root node must be smaller than the value of the root node. On the other hand, all the value to the right of the root node must be bigger than the root node's value. This property also applies to every subtree.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Summary">Summary<a class="anchor-link" href="#Summary">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In order for a binary tree to be searchable, all of the nodes to the left of root node must be smaller than the value of the root node. On the other hand, all the value to the right of the root node must be bigger than the root node's value. This property also applies to every subtree.</p>
 <p><img src="img/binary-search-tree.png" width="70%" height="70%"></p>
 <p>One of the main use case for binary search tree is to search for the presence of a number in <code>O(log(n))</code> time. The rationale behind this is that if the value is below root, we can say for sure that the value is not in the right subtree then we only need to search in the left subtree and if the value is above root, we can say for sure that the value is not in the left subtree and we need to only search in the right subtree.</p>
 

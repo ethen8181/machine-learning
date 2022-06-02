@@ -13079,6 +13079,14 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Searching,-Hashing,-Sorting" data-toc-modified-id="Searching,-Hashing,-Sorting-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Searching, Hashing, Sorting</a></span><ul class="toc-item"><li><span><a href="#Searching" data-toc-modified-id="Searching-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Searching</a></span></li><li><span><a href="#Hashing" data-toc-modified-id="Hashing-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Hashing</a></span></li><li><span><a href="#Sorting" data-toc-modified-id="Sorting-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Sorting</a></span></li></ul></li></ul></div>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -15074,8 +15082,29 @@ jupyterthemes 0.13.9
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Searching,-Hashing,-Sorting">Searching, Hashing, Sorting<a class="anchor-link" href="#Searching,-Hashing,-Sorting">&#182;</a></h1><p>Following the online book, <a href="http://interactivepython.org/runestone/static/pythonds/index.html">Problem Solving with Algorithms and Data Structures</a>. Chapter 5 introduces methods for searching and sorting numbers.</p>
-<h2 id="Searching"><a href="http://interactivepython.org/runestone/static/pythonds/SortSearch/searching.html">Searching</a><a class="anchor-link" href="#Searching">&#182;</a></h2><p>We can take advantage of a ordered list by doing a binary search. We start by searching in the middle, if it is not the item that we're searching for, we can use the ordered nature of the list to eliminate half of the remaining items.</p>
+<h1 id="Searching,-Hashing,-Sorting">Searching, Hashing, Sorting<a class="anchor-link" href="#Searching,-Hashing,-Sorting">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Following the online book, <a href="https://runestone.academy/ns/books/published/pythonds3/SortSearch/toctree.html">Problem Solving with Algorithms and Data Structures</a>. Chapter 6 introduces methods for searching and sorting numbers.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Searching">Searching<a class="anchor-link" href="#Searching">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can take advantage of a ordered list by doing a binary search. We start by searching in the middle, if it is not the item that we're searching for, we can use the ordered nature of the list to eliminate half of the remaining items.</p>
 
 </div>
 </div>
@@ -15144,7 +15173,32 @@ False
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Keep in mind that this approach requires sorting the list, which may not be ideal if we're simply going to search for 1 number on the very large list (since we have to first sort the list, which is not a cheap operation).</p>
-<h2 id="Hashing">Hashing<a class="anchor-link" href="#Hashing">&#182;</a></h2><p>Implementing hash table. Source <a href="http://interactivepython.org/runestone/static/pythonds/SortSearch/Hashing.html">Hashing</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hashing">Hashing<a class="anchor-link" href="#Hashing">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Quick notes:</p>
+<p>Dictionary or map that let us stor key value pairs is typically implemented using hash table.</p>
+<ul>
+<li>An element that we wish to add is converted into an integer by using a hash function. <code>hash = hash_function(key)</code></li>
+<li>Th resulting hash is independent of the underlying array size, and it is then reduced to an index by using the modulo operator. <code>index = hash % array_size</code></li>
+</ul>
+<p>Python has a built in <code>hash</code> function that can calculate has hash values for arbitrarily large objects in a fast manner. Hash function that is used for dictionary or maps should be deterministic so we can look up the values afterwards, fast to compute, else the overhead of hashing would offset the benefit it brings for fast lookup, and uniform distributed, this one is related to avoiding hash collision.</p>
+<p>Hash collision happens when two different inputs produce the same hash value. To avoid this a well implemented hash table should be able to resolve hash collision, common techniques include linear probing and separate chaining. Also wehn our hash table is almost saturated (the number of elements is close to the array size we've defined), a.k.a the load factor is larger than some portion, then it should be able to dynamically resize the hash table to maintain our dictionary and map's performance.</p>
+<ul>
+<li><a href="https://realpython.com/python-hash-table/">Real Python: Build a Hash Table in Python With TDD</a> has a much in depth introduction to this topic.</li>
+</ul>
+<p>Implementing hash table. Source <a href="http://interactivepython.org/runestone/static/pythonds/SortSearch/Hashing.html">Hashing</a>.</p>
 
 </div>
 </div>
@@ -15311,7 +15365,14 @@ None
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Sorting">Sorting<a class="anchor-link" href="#Sorting">&#182;</a></h2><p><a href="http://interactivepython.org/runestone/static/pythonds/SortSearch/TheMergeSort.html">Merge Sort</a></p>
+<h2 id="Sorting">Sorting<a class="anchor-link" href="#Sorting">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Merge Sort</p>
 
 </div>
 </div>
@@ -15401,7 +15462,7 @@ None
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="http://interactivepython.org/runestone/static/pythonds/SortSearch/TheQuickSort.html">Quick Sort</a></p>
+<p>Quick Sort</p>
 
 </div>
 </div>

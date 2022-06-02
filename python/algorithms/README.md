@@ -3,7 +3,7 @@
 ## Resources
 
 - [Github: Tech Interview Handbook](https://github.com/yangshun/tech-interview-handbook) lists out curated content to help people ace their next technical interview.
-- [Online book: Problem Solving with Algorithms and Data Structures](http://interactivepython.org/runestone/static/pythonds/index.html) and [Blog: BaseCS](https://medium.com/basecs) are two wonderful free online tutorial that walks through the actual content.
+- [Online book: Problem Solving with Algorithms and Data Structures](https://runestone.academy/ns/books/published/pythonds3/index.html) and [Blog: BaseCS](https://medium.com/basecs) are two wonderful free online tutorial that walks through the actual content.
 - [Cheatsheet: data structure cheatsheet](http://bigocheatsheet.com/) is a quick reference of common data structure and algorithm's runtime that might come in handy.
 
 ## Implementation
