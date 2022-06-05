@@ -92,6 +92,7 @@ A/B testing, a.k.a experimental design. Includes: Quick review of necessary stat
 - Casual Inference
     - Propensity Score Matching. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/matching.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/matching.html)]
     - Inverse Propensity Weighting. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/inverse_propensity_weighting.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/inverse_propensity_weighting.html)]
+    - Quick introduction to difference in difference. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/ab_tests/causal_inference/diff_in_diff.ipynb)][[html](http://ethen8181.github.io/machine-learning/ab_tests/causal_inference/diff_in_diff.html)]
 
 ### model selection
 
