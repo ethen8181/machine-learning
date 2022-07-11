@@ -13100,7 +13100,7 @@ div#notebook {
 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">load_style</span><span class="p">(</span><span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13358,8 +13358,15 @@ div#notebook {
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p numpy,pandas,sklearn,scipy,joblib
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -u -d -v -p numpy,pandas,scipy,joblib,scikit-learn
 </pre></div>
 
     </div>
@@ -13376,16 +13383,20 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2018-09-17 17:58:04 
+<pre>Author: Ethen
 
-CPython 3.6.4
-IPython 6.4.0
+Last updated: 2022-07-11
 
-numpy 1.14.1
-pandas 0.23.0
-sklearn 0.19.1
-scipy 1.1.0
-joblib 0.11
+Python implementation: CPython
+Python version       : 3.7.11
+IPython version      : 7.27.0
+
+numpy       : 1.21.6
+pandas      : 1.3.5
+scipy       : 1.7.1
+joblib      : 1.1.0
+scikit-learn: 1.0.2
+
 </pre>
 </div>
 </div>
@@ -13404,9 +13415,7 @@ joblib 0.11
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A nice <a href="https://twitter.com/chrisalbon/status/877524257202253825">tweet</a> that gives a brief description of supervised machine learning:</p>
-<blockquote><p>In machine learning, we have a training set — comprised of features (a.k.a inputs, independent variables) and labels (a.k.a. response, target, dependent variables). We use an algorithm to train a set of models with varying hyperparameter values then select the model that best minimizes some cost (a.k.a. loss, objective) function. We then use this model to make prediction on an unseen test set and evaluate the model's final performance. This documentation focuses on methods to select hyperparamters.</p>
-</blockquote>
+<p>In supervised machine learning, given a training set — comprised of features (a.k.a inputs, independent variables) and labels (a.k.a. response, target, dependent variables), we use an algorithm to train a set of models with varying hyperparameter values then select the model that best minimizes some cost (a.k.a. loss, objective) function. We then use this model to make prediction on an unseen test set and evaluate the model's final performance.</p>
 <p>It is common practice when performing a (supervised) machine learning experiment to hold out part of the available data as a test set. This way, we can evaluate how well the model will generalize to a new set of data that were not seen during the training phase. In other words, this process tries avoid the overfitting phenomenon where the algorithm starts memorizing the training set's labels but fail to predict anything for the unseen test data. However, if we were just to perform a train/test split, the results can depend on a particular random choice for the pair of train/test sets. One solution to this problem is a procedure called cross-validation.</p>
 
 </div>
@@ -13510,16 +13519,15 @@ joblib 0.11
 <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 
-<span class="n">kf</span> <span class="o">=</span> <span class="n">KFolds</span><span class="p">(</span><span class="n">n_splits</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">4312</span><span class="p">)</span>
+<span class="n">kf</span> <span class="o">=</span> <span class="n">KFolds</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">4312</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TRAIN:&quot;</span><span class="p">,</span> <span class="n">train_index</span><span class="p">,</span> <span class="s2">&quot;TEST:&quot;</span><span class="p">,</span> <span class="n">test_index</span><span class="p">)</span>
     <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
     <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
     
 
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">confirm results with scikit-learn&#39;</span><span class="p">)</span>
-<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">4312</span><span class="p">)</span>
+<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TRAIN:&quot;</span><span class="p">,</span> <span class="n">train_index</span><span class="p">,</span> <span class="s2">&quot;TEST:&quot;</span><span class="p">,</span> <span class="n">test_index</span><span class="p">)</span>
     <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
@@ -13779,10 +13787,7 @@ grid search parameters
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
-
-<span class="k">class</span> <span class="nc">GridSearch</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">GridSearch</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exhaustive search over specified parameter values for an estimator</span>
 
@@ -13995,11 +14000,7 @@ grid search parameters
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_iris</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
-<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
-
-<span class="c1"># load a toy dataset,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load a toy dataset,</span>
 <span class="c1"># ideally we should also perform a train/test split</span>
 <span class="c1"># here, and use the test set as our final validation</span>
 <span class="c1"># of the model&#39;s performance</span>
@@ -14011,11 +14012,13 @@ grid search parameters
 <span class="n">cv</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">scorer</span> <span class="o">=</span> <span class="n">accuracy_score</span>
 <span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-              <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]}</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]</span>
+<span class="p">}</span>
 
 <span class="c1"># fit grid search</span>
-<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearch</span><span class="p">(</span><span class="n">estimator</span> <span class="o">=</span> <span class="n">clf</span><span class="p">,</span> <span class="n">scorer</span> <span class="o">=</span> <span class="n">scorer</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span><span class="p">,</span> <span class="n">param_grid</span> <span class="o">=</span> <span class="n">param_grid</span><span class="p">)</span>
+<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearch</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">clf</span><span class="p">,</span> <span class="n">scorer</span><span class="o">=</span><span class="n">scorer</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">param_grid</span><span class="p">)</span>
 <span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">grid_search</span><span class="o">.</span><span class="n">cv_results_</span>
 </pre></div>
@@ -14034,8 +14037,9 @@ grid search parameters
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>[Parallel(n_jobs=-1)]: Done  10 out of  12 | elapsed:    0.1s remaining:    0.0s
-[Parallel(n_jobs=-1)]: Done  12 out of  12 | elapsed:    0.1s finished
+<pre>[Parallel(n_jobs=-1)]: Using backend LokyBackend with 16 concurrent workers.
+[Parallel(n_jobs=-1)]: Done   7 out of  12 | elapsed:    2.9s remaining:    2.1s
+[Parallel(n_jobs=-1)]: Done  12 out of  12 | elapsed:    3.0s finished
 </pre>
 </div>
 </div>
@@ -14077,40 +14081,40 @@ grid search parameters
   <tbody>
     <tr>
       <th>0</th>
-      <td>1.000000</td>
-      <td>0.000000</td>
-      <td>0.953333</td>
-      <td>0.024944</td>
-      <td>gini</td>
-      <td>NaN</td>
-      <td>{'criterion': 'gini', 'max_depth': None}</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.983333</td>
-      <td>0.009428</td>
-      <td>0.953333</td>
-      <td>0.009428</td>
+      <td>0.976667</td>
+      <td>0.004714</td>
+      <td>0.960000</td>
+      <td>0.016330</td>
       <td>gini</td>
       <td>3.0</td>
       <td>{'criterion': 'gini', 'max_depth': 3}</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>0.970000</td>
-      <td>0.014142</td>
-      <td>0.953333</td>
-      <td>0.009428</td>
+      <th>1</th>
+      <td>0.973333</td>
+      <td>0.004714</td>
+      <td>0.960000</td>
+      <td>0.016330</td>
       <td>entropy</td>
       <td>3.0</td>
       <td>{'criterion': 'entropy', 'max_depth': 3}</td>
     </tr>
     <tr>
+      <th>2</th>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>0.953333</td>
+      <td>0.009428</td>
+      <td>gini</td>
+      <td>NaN</td>
+      <td>{'criterion': 'gini', 'max_depth': None}</td>
+    </tr>
+    <tr>
       <th>3</th>
       <td>1.000000</td>
       <td>0.000000</td>
-      <td>0.946667</td>
-      <td>0.033993</td>
+      <td>0.953333</td>
+      <td>0.009428</td>
       <td>entropy</td>
       <td>NaN</td>
       <td>{'criterion': 'entropy', 'max_depth': None}</td>
@@ -14149,14 +14153,12 @@ grid search parameters
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">randint</span>
-
-<span class="c1"># we can use distributions from the scipy.stats module</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we can use distributions from the scipy.stats module</span>
 <span class="c1"># or we can write our own distribution, but to use </span>
 <span class="c1"># scikit-learn, it has to have a .rvs method</span>
 <span class="c1"># that generates a random number from the distribution</span>
 <span class="c1"># e.g. a random uniform distribution</span>
-<span class="n">randint</span><span class="p">(</span><span class="n">low</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
+<span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -14228,7 +14230,7 @@ grid search parameters
 
 <span class="n">n_iters</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">random_state</span> <span class="o">=</span> <span class="mi">1234</span>
-<span class="n">param_distributions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]}</span>
+<span class="n">param_distributions</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]}</span>
 <span class="nb">list</span><span class="p">(</span><span class="n">_get_param_sampler</span><span class="p">(</span><span class="n">param_distributions</span><span class="p">,</span> <span class="n">n_iters</span><span class="p">,</span> <span class="n">random_state</span><span class="p">))</span>
 </pre></div>
 
@@ -14293,7 +14295,7 @@ grid search parameters
 <span class="n">y</span> <span class="o">=</span> <span class="n">digits</span><span class="o">.</span><span class="n">target</span>
 
 <span class="c1"># build a classifier</span>
-<span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;report best scores and corresponding parameters&quot;&quot;&quot;</span>
@@ -14304,16 +14306,18 @@ grid search parameters
 
 
 <span class="c1"># specify parameters and distributions to sample from</span>
-<span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="mi">11</span><span class="p">),</span>
-              <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="mi">11</span><span class="p">),</span>
-              <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]}</span>
+<span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">11</span><span class="p">),</span>
+    <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">11</span><span class="p">),</span>
+    <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]</span>
+<span class="p">}</span>
 
 <span class="c1"># run randomized search</span>
 <span class="c1"># set the number of samples to</span>
 <span class="c1"># be half of the grid search</span>
 <span class="n">n_iter_search</span> <span class="o">=</span> <span class="mi">24</span>
-<span class="n">random_search</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">param_distributions</span> <span class="o">=</span> <span class="n">param_dist</span><span class="p">,</span>
-                                   <span class="n">n_iter</span> <span class="o">=</span> <span class="n">n_iter_search</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">789</span><span class="p">)</span>
+<span class="n">random_search</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>
+                                   <span class="n">n_iter</span><span class="o">=</span><span class="n">n_iter_search</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">789</span><span class="p">)</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 <span class="n">random_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
@@ -14323,12 +14327,14 @@ grid search parameters
 <span class="nb">print</span><span class="p">()</span>
 
 <span class="c1"># use a full grid over all parameters</span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
-              <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
-              <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]}</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+    <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+    <span class="s1">&#39;criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">]</span>
+<span class="p">}</span>
 
 <span class="c1"># run grid search</span>
-<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">param_grid</span> <span class="o">=</span> <span class="n">param_grid</span><span class="p">)</span>
+<span class="n">grid_search</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">param_grid</span><span class="p">)</span>
 <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 <span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">elapse</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
@@ -14352,19 +14358,19 @@ grid search parameters
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>RandomizedSearchCV took 3.09 seconds for 24 parameter settings
-Best score obtained: 0.9287701725097385
+<pre>RandomizedSearchCV took 5.20 seconds for 24 parameter settings
+Best score obtained: 0.9293345713401425
+Parameters:
+	criterion: gini
+	max_depth: 10
+	max_features: 4
+
+GridSearchCV took 9.25 seconds for 48 parameter settings
+Best score obtained: 0.9248839368616528
 Parameters:
 	criterion: entropy
 	max_depth: 10
-	max_features: 7
-
-GridSearchCV took 5.67 seconds for 48 parameter settings
-Best score obtained: 0.9248747913188647
-Parameters:
-	criterion: gini
-	max_depth: 7
-	max_features: 11
+	max_features: 3
 </pre>
 </div>
 </div>
