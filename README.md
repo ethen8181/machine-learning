@@ -35,7 +35,7 @@
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
 
-**Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch using Python's scientific stack including numpy, numba, scipy, pandas, matplotlib, pyspark etc. and open-source library usage such as scikit-learn, fasttext, huggingface, onnx, xgboost, lightgbm, pytorch, keras, tensorflow, gensim, h2o, ortools etc.
+**Goal:** Introduce machine learning contents in Jupyter Notebook format. The content aims to strike a good balance between mathematical notations, educational implementation from scratch using Python's scientific stack including numpy, numba, scipy, pandas, matplotlib, pyspark etc. and open-source library usage such as scikit-learn, fasttext, huggingface, onnx, xgboost, lightgbm, pytorch, keras, tensorflow, gensim, h2o, ortools, ray tune etc.
 
 
 ## Documentation Listings
@@ -107,6 +107,7 @@ Methods for selecting, improving, evaluating models/algorithms.
 - Kullback-Leibler (KL) Divergence. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/kl_divergence.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/kl_divergence.html)]
 - Probability Calibration for classification models with Platt Scaling, Histogram Binning, Isotonic Regression. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html)]
 - Probability Calibration for deep learning classification models with Temperature Scaling. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/deeplearning_prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/deeplearning_prob_calibration.html)]
+- HyperParameter Tuning with Ray Tune and Hyperband. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/ray_tune_hyperband.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/ray_tune_hyperband.html)]
 
 ### big data
 
