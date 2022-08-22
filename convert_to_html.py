@@ -33,5 +33,6 @@ def main(base_dir):
 
 
 if __name__ == '__main__':
+    # we can modify this argument to only scan some sub-folders
     base_dir = '.'
     main(base_dir)

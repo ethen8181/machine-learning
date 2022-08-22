@@ -44,7 +44,7 @@ This is a continuously updated repository that documents personal journey on lea
 
 - FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes)]
 - Quick Intro to Gradient Boosted Tree Inferencing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/gbt_inference/gbt_inference.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/gbt_inference/gbt_inference.html)]
-- Finetuning Pre-trained BERT Model on Text Classification Task And Inferencing with ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/onnxruntime/text_classification_onnxruntime.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/onnxruntime/text_classification_onnxruntime.html)]
+- Speeding Up Transformers Inferencing. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/transformers)]
 
 ### operation_research
 
