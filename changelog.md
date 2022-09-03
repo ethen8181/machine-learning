@@ -2,6 +2,10 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2020-09]
+
+- Response Knowledge Distillation for Training Student Model. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/response_knowledge_distillation.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/response_knowledge_distillation.html)]
+
 ## [2022-07]
 
 - HyperParameter Tuning with Ray Tune and Hyperband. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/ray_tune_hyperband.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/ray_tune_hyperband.html)]
@@ -39,7 +43,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- Speeding Up Transformers Inferencing. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/transformers)]
+- Finetuning Pre-trained BERT Model on Text Classification Task And Inferencing with ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/text_classification_onnxruntime.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/text_classification_onnxruntime.html)]
 
 ## [2021-05]
 
