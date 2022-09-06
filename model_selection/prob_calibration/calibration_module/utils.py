@@ -63,9 +63,9 @@ def compute_calibration_error(
         avg_y_true = np.mean(bin_y_true)
         avg_y_score = np.mean(bin_y_prob)
         bin_error = (avg_y_score - avg_y_true) ** 2
-        bin_errors += bin_error
+        bin_errors += bin_error * len(bin_y_true)
 
-    calibration_error = math.sqrt(bin_errors / n_bins)
+    calibration_error = math.sqrt(bin_errors / len(y_true))
     return round(calibration_error, round_digits)
 
 
