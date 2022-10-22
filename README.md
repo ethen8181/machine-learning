@@ -191,9 +191,11 @@ Curated notes on deep learning.
 - Subword Tokenization.
     - Byte Pair Encoding (BPE) from scratch and quick walkthrough of sentencepiece. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/subword/bpe.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/subword/bpe.html)]
 - Fasttext.
-    - MultiLabel Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
+    - Multi-Label Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
     - Product Quantization for Model Compression. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/product_quantization.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/product_quantization.html)]
     - Approximate Nearest Neighborhood Search with Navigable Small World. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/nsw.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/nsw.html)]
+- Graph Neural Network (GNN).
+    - - Quick Introduction to Graph Neural Network Node Classification Task (DGL, GraphSAGE). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/gnn/gnn_node_classificaction_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/gnn/gnn_node_classificaction_intro.html)]
 - Deep Learning for Tabular Data - PyTorch, PyTorch Lightning, ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/tabular.html)]
 
 ### keras

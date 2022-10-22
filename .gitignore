@@ -7,3 +7,5 @@
 
 # various IDE files
 **/.vscode
+
+**/__pycache__

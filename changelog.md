@@ -2,7 +2,11 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
-## [2020-09]
+## [2022-10]
+
+- Quick Introduction to Graph Neural Network Node Classification Task (DGL, GraphSAGE). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/gnn/gnn_node_classificaction_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/gnn/gnn_node_classificaction_intro.html)]
+
+## [2022-09]
 
 - Response Knowledge Distillation for Training Student Model. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/response_knowledge_distillation.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/response_knowledge_distillation.html)]
 
@@ -89,7 +93,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 - Probability Calibration for classification models. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html)]
     + Massive overhaul to the content. e.g. introducing two additional calibration methods, histogram binning and Plat Scaling Binning. Bundling all helper utility function in a package structure for ease of re-use.
-- MultiLabel Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
+- Multi-Label Text Classification with Fasttext and Huggingface Tokenizers. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/fasttext.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/fasttext.html)]
     + Update Huggingface Tokenizers to 0.8.1 API.
 
 ## [2020-06]
