@@ -4,7 +4,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## [2022-10]
 
-- Quick Introduction to Graph Neural Network Node Classification Task (DGL, GraphSAGE). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/gnn/gnn_node_classificaction_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/gnn/gnn_node_classificaction_intro.html)]
+- Quick Introduction to Graph Neural Network Node Classification Task (DGL, GraphSAGE). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/gnn/gnn_node_classification_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/gnn/gnn_node_classification_intro.html)]
 
 ## [2022-09]
 
