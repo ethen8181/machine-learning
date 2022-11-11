@@ -9,7 +9,7 @@ nmslib>=1.7.3.2
 numba>=0.37.0
 pillow>=5.0.0
 pybind11>=2.2.3
-pyspark==2.2.2
+pyspark==3.2.2
 python-dotenv
 requests>=2.13.0
 seaborn>=0.8.0
