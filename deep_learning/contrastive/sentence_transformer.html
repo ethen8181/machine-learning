@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>gnn_node_classification_intro</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>sentence_transformer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13460,33 +13460,52 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-<span class="c1"># 1. magic to print version</span>
-<span class="c1"># 2. magic so that the notebook will reload external python modules</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1. magic for inline plot</span>
+<span class="c1"># 2. magic to print version</span>
+<span class="c1"># 3. magic so that the notebook will reload external python modules</span>
+<span class="c1"># 4. magic to enable retina (high resolution) plots</span>
+<span class="c1"># https://gist.github.com/minrk/3301035</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 
-<span class="kn">import</span> <span class="nn">dgl</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">dgl.data</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">datasets</span>
+<span class="kn">import</span> <span class="nn">transformers</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
-<span class="kn">import</span> <span class="nn">torchmetrics.functional</span> <span class="k">as</span> <span class="nn">MF</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span>
-<span class="kn">from</span> <span class="nn">torchmetrics</span> <span class="kn">import</span> <span class="n">Accuracy</span>
-<span class="kn">from</span> <span class="nn">ogb.nodeproppred</span> <span class="kn">import</span> <span class="n">DglNodePropPredDataset</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningDataModule</span><span class="p">,</span> <span class="n">LightningModule</span><span class="p">,</span> <span class="n">Trainer</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">ModelCheckpoint</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_dataset</span><span class="p">,</span>
+    <span class="n">concatenate_datasets</span><span class="p">,</span>
+    <span class="n">set_progress_bar_enabled</span><span class="p">,</span>
+    <span class="n">DatasetDict</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Trainer</span><span class="p">,</span>
+    <span class="n">TrainingArguments</span><span class="p">,</span>
+    <span class="n">AutoModel</span><span class="p">,</span>
+    <span class="n">AutoTokenizer</span><span class="p">,</span>
+    <span class="n">DataCollatorWithPadding</span><span class="p">,</span>
+    <span class="n">EarlyStoppingCallback</span><span class="p">,</span>
+    <span class="n">IntervalStrategy</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">pearsonr</span><span class="p">,</span> <span class="n">spearmanr</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">paired_cosine_distances</span>
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># &quot;/fsx-dev/FSxLustre20201016T182138Z/ethenliu/home/huggingface&quot;</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &quot;Ethen&quot; -d -u -v -iv
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -iv
 </pre></div>
 
     </div>
@@ -13517,15 +13536,14 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2022-10-22
-
-Python implementation: CPython
-Python version       : 3.8.10
-IPython version      : 8.4.0
+Last updated: 2022-11-24
 
 torch       : 1.10.0a0+git36449ea
-dgl         : 0.9.1
-torchmetrics: 0.10.0
+pandas      : 1.4.3
+numpy       : 1.23.2
+transformers: 4.21.3
+scipy       : 1.9.0
+datasets    : 1.18.4
 
 </pre>
 </div>
@@ -13538,19 +13556,20 @@ torchmetrics: 0.10.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Graph-Neural-Networks-Node-Classification-Quick-Introduction">Graph Neural Networks Node Classification Quick Introduction<a class="anchor-link" href="#Graph-Neural-Networks-Node-Classification-Quick-Introduction">&#182;</a></h1>
+<h1 id="Sentence-Transformer-Training-Bi-Encoder-via-Contrastive-Loss">Sentence Transformer Training Bi-Encoder via Contrastive Loss<a class="anchor-link" href="#Sentence-Transformer-Training-Bi-Encoder-via-Contrastive-Loss">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this particular notebook, we'll be:</p>
-<ul>
-<li>Giving a quick introduction to Graph Neural Network.</li>
-<li>Implement one particular algorithm GraphSAGE using <a href="https://www.dgl.ai/">DGL</a>, deep graph library. We'll be introducing how to work with DGL library on the graph node classification task.</li>
-<li>Use Pytorch Lightning for organizing our building blocks and training our model. This isn't a PyTorch lightning tutorial, readers are expected to understand its concept such as <code>LightningDataModule</code>, <code>LightningModule</code> as well as <code>Trainer</code>.</li>
-</ul>
+<p>In modern recommendation system, it is common to have two major distinct stages, a recall/retrieval stage, and a ranking stage, it can get more sophisticated than this, but that's out of scope for this discussion. We'll be discussing these two stages in the context of a pre-trained encoder model, where different types of architectures are commonly used at different stages to reflect their own strength.</p>
+<p><img src="imgs/stages.png"></p>
+<p>Recall/Retrieval focuses on candidate generation, given we have a million things be it inventories, passages, etc. stored in our database, we need a way to efficiently retrieve a subset of them that are more relevant for the given context. In encoder model's paradigm, this means we need a way to represent our incoming context be it query, questions, etc. in a vector representation, often times referred to as sentence embedding and perform a similarity search between that with entities that are also already represented in a sentence embedding. This step is often done using the bi-encoder architecture, where we can pass individual sentences/entities through our encoder and then perform similarity search using metrics such as cosine similarity. Being able to input individual entities through our encoder is the key to an effient retrieval stage, where we need to quickly scan through our database, as it means we can often times pre-compute these results apriori.</p>
+<p><img src="imgs/bi_encoder.png"></p>
+<p>These subsets are then passed to the ranker, where given we now have our pairs, we need to score these pairs so the system can assign a score to rank these retrieved inventories in a sorted order. This step is often done using cross encoder, a.k.a. cross attention architectures. Cross encoder doesn't produce sentence embeddings for our data but instead relies on classification mechansim for out input pairs, hence whenever we have a fixed set of data pairs we wish to score, cross encoder often times achieves better performance than their bi encoder counterparts even when using less training data.</p>
+<p><img src="imgs/cross_encoder.png"></p>
+<p>In this document, we'll be focusing on how to train bi-encoder style architecture using contrastive loss.</p>
 
 </div>
 </div>
@@ -13558,38 +13577,19 @@ torchmetrics: 0.10.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A graph $\mathcal{G}(V, E)$ is a data structure containing a set of nodes (a.k.a vertices) $i \in V$ and a set of edges $e_{ij} \in E$ connecting vertices $i$ and $j$. Each node $i$ has an associated node features $x_i \in \mathbb{R}^d$ and labels $y_i$</p>
-<p>A single Graph neural network (GNN) layer has three main steps that are performed on every node in the graph.</p>
-<ol>
-<li>Message Passing</li>
-<li>Aggregation</li>
-<li>Update</li>
-</ol>
-<p><strong>Message Passing:</strong></p>
-<p>GNN learns a node $i$ by examining nodes in its neighborhood $N_i$, where $N_i$ is defined as the set of nodes $j$ connected to the source node $i$ by an edge, more formally, $N_i = {j : e_{ij} \in E}$. When examining a node, we can use any arbitrary function, $F$, either a neural network like, MLP, or here, let's assume it will be a affine transformation:</p>
+<h2 id="Contrastive-Loss">Contrastive Loss<a class="anchor-link" href="#Contrastive-Loss">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For Bi-encoder our input data at the bare minimum needs to contain positive pairs, where we need to define what's the definition for positive pairs based on our use case. These pairs are often referred to as anchors $a$ and positives, $p$.</p>
+<p>A standard architecture for this is a siamese network. Each base arm involves using a pre-trained encoder followed by a pooling operator for deriving a fix sized sentence embedding vector. During each step we feed both our anchor and positive one at time through the same encoder plus pooling arm. This encoder plus pooling arm's weights are often tied for our pairs. Tying weights ensure similar entities are mapped to similar locations in the representation space.</p>
+<p>For training this network, what we wish to accomplish is have our anchor and positive pairs $a_i$ and $p_i$ become closer in the vector space, whereas $a_i$ and some random negative examples $p_j$ becomes distant in vector space.</p>
 \begin{align}
-\begin{aligned}
-F(x_j) = \mathbf{W}_j \cdot x_j + b
-\end{aligned}
-\end{align}<p>Here, $\cdot$ represents matrix multiplication.</p>
-<p><strong>Aggregation:</strong></p>
-<p>Now that we have the messages from neighborhood node, we have to aggregate them somehow. Popular aggregation function includes sum/mean/max/min. The aggregation function, $G$, can be denoted as:</p>
-\begin{align}
-\begin{aligned}
-\bar{m}_i = G(\{F(x_j) : j \in \mathcal{N}_i\})
-\end{aligned}
-\end{align}<p><strong>Update:</strong></p>
-<p>The GNN layer now has to update our source node $i$'s features and combine it with the incoming aggregated messages. For example, using addition.</p>
-\begin{align}
-\begin{aligned}
-h_i = \sigma(K(T(x_i) + \bar{m}_i)))
-\end{aligned}
-\end{align}<p>Here, $T$, denotes a function that's applied to the source node $i$'s feature, $K$ denotes another transformation to project the blended features into another dimension, $\sigma$ denotes an activation function such as Relu. Notation-wise, the initial node features are called $x_i$, after a forward pass through a GNN layer, we denote the node features as $h_i$. If we were to have multiple GNN layers, then we denote node features as $h_i^l$, where $l$ is the current GNN layer index.</p>
-<p>Note:</p>
-<ul>
-<li>GNN aims to learn a function that generates embeddings via sampling and aggregation features from nodes' neighborhood. Innovations in GNN mainly involves changings to these three steps.</li>
-<li>Number of layers in GNN is a hyperparameter that can be tweaked, the intuition is that $l^{th}$ GNN layer aggregate features from the $l^{th}$ hop neighborhood of node $i$. i.e. initially, the node sees its immediate neighbors and deeper into the network, it interacts with neighbors' neighbors and so on. Most GNN papers uses less than 4 layers to prevent the network from dying, where node embeddings all converge to similar representation after seeing nodes many hops away. This phenomenon becomes more prevalent for small and sparse graphs.</li>
-</ul>
+L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i))}{\sum_j exp(sim(a_i, p_j))}
+\end{align}<p>Where $sim$ is a similarity function such as cosine similarity or dot product. This can then be treated as a classification task using cross entropy loss. $p_j$ is often times sampled using in batch negatives, meaning for each example in a batch, other examples' positives will be taken as its negatives, this effectively re-uses the already sampled data in our current batch without the need to implement additional negative sampling logic.</p>
 
 </div>
 </div>
@@ -13597,30 +13597,94 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+<h2 id="Dataset">Dataset<a class="anchor-link" href="#Dataset">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This code is largely ported from <a href="https://github.com/dmlc/dgl/blob/master/examples/pytorch/graphsage/lightning/node_classification.py">DGL's Pytorch lightning node classification example</a> with additional explanations in between each section.</p>
-<p>We will be using the <a href="https://ogb.stanford.edu/docs/nodeprop/#ogbn-products">ogbn-products</a> dataset. Directly copying this dataset's description from its description page.</p>
-<blockquote><p>ogbn-products dataset is an undirected and unweighted graph, representing an Amazon product co-purchasing network. Nodes represent products sold in Amazon, and edges between two products indicate that the products are purchased together. Node features are generated by extracting bag-of-words features from the product descriptions followed by a Principal Component Analysis to reduce the dimension to 100.</p>
-<p>The task is to predict the category of a product in a multi-class classification setup, where the 47 top-level categories are used for target labels.</p>
-</blockquote>
+<p>For our dataset, we'll be using <a href="https://nlp.stanford.edu/projects/snli/">Stanford Natural Language Inference (SNLI)</a> and <a href="https://cims.nyu.edu/~sbowman/multinli/">Multi-Genre NLI (MNLI)</a>, refer to its link for more details on these two datasets. For constrastive loss, we will filter out premise and hypothesis pairs that has a label 0 assigned to it. These are positive samples where the premise suggests the hypothesis.</p>
+<p>We'll also use the <a href="https://arxiv.org/abs/1708.00055">Semantic Textual Similarity Benchmark (stsb)</a> dataset each contains sentence pairs with human annotated similarity score from 1 to 5 for evaluating our model's performance</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stsb</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;stsb&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+
+<span class="c1"># we normalize the score to a range of 0 ~ 1</span>
+<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">})</span>
+<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;sentence1&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor_text&quot;</span><span class="p">)</span>
+<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;sentence2&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">)</span>
+<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s2">&quot;idx&quot;</span><span class="p">])</span>
+<span class="n">stsb</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Reusing dataset glue (/root/.cache/huggingface/datasets/glue/stsb/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 806.55it/s]
+Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; of the transform datasets.arrow_dataset.Dataset._map_single couldn&#39;t be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won&#39;t be showed.
+5749ex [00:00, 10941.77ex/s]
+1500ex [00:00, 11010.17ex/s]
+1379ex [00:00, 10766.22ex/s]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>DatasetDict({
+    train: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 5749
+    })
+    validation: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 1500
+    })
+    test: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 1379
+    })
+})</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">DglNodePropPredDataset</span><span class="p">(</span><span class="s2">&quot;ogbn-products&quot;</span><span class="p">)</span>
-<span class="n">graph</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">graph</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13639,9 +13703,9 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Graph(num_nodes=2449029, num_edges=123718280,
-      ndata_schemes={&#39;feat&#39;: Scheme(shape=(100,), dtype=torch.float32)}
-      edata_schemes={})</pre>
+<pre>{&#39;anchor_text&#39;: &#39;A young child is riding a horse.&#39;,
+ &#39;positive_text&#39;: &#39;A child is riding a horse.&#39;,
+ &#39;label&#39;: 0.949999988079071}</pre>
 </div>
 
 </div>
@@ -13649,22 +13713,30 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For DGL graph, we can assign or extract node's features via our graph's <code>ndata</code> attribute. Here, we assign dataset's label to our graph.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-<span class="n">graph</span><span class="o">.</span><span class="n">ndata</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">snli</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;snli&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">mnli</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;mnli&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">mnli</span> <span class="o">=</span> <span class="n">mnli</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s1">&#39;idx&#39;</span><span class="p">])</span>
+<span class="n">snli</span> <span class="o">=</span> <span class="n">snli</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mnli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+
+<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">concatenate_datasets</span><span class="p">([</span><span class="n">snli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">mnli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]])</span>
+<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;premise&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor_text&quot;</span><span class="p">)</span>
+<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;hypothesis&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">)</span>
+
+<span class="c1"># note that we are evaluating the performance of our sentence embedding on</span>
+<span class="c1"># stsb dataset without using any stsb samples in our training dataset</span>
+<span class="n">dataset_dict</span> <span class="o">=</span> <span class="n">DatasetDict</span><span class="p">({</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset_train</span><span class="p">,</span>
+    <span class="s2">&quot;validation&quot;</span><span class="p">:</span> <span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="n">dataset_dict</span>
 </pre></div>
 
     </div>
@@ -13677,19 +13749,44 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 
 <div class="output_area">
 
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Reusing dataset snli (/root/.cache/huggingface/datasets/snli/plain_text/1.0.0/1f60b67533b65ae0275561ff7828aad5ee4282d0e6f844fd148d05d3c6ea251b)
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 857.44it/s]
+Reusing dataset glue (/root/.cache/huggingface/datasets/glue/mnli/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 783.45it/s]
+Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 39.17ba/s]
+Casting the dataset: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 56/56 [00:01&lt;00:00, 42.98ba/s]
+Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 41.09ba/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 943/943 [00:04&lt;00:00, 194.00ba/s]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
     <div class="prompt output_prompt">Out[4]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;feat&#39;: tensor([[ 0.0319, -0.1959,  0.0520,  ...,  0.0767, -0.3930, -0.0648],
-        [-0.0241,  0.6303,  1.0606,  ..., -1.6875,  3.5867,  0.8182],
-        [ 0.3327, -0.5586, -0.2886,  ..., -0.3716,  0.2521,  0.0415],
-        ...,
-        [ 0.1066,  0.2655, -0.0057,  ...,  1.0867,  0.0759, -1.1737],
-        [ 0.2497, -0.2574,  0.4123,  ...,  1.5466,  1.0310, -0.2966],
-        [ 0.7175, -0.2393,  0.0443,  ..., -1.0132, -0.4141, -0.0823]]), &#39;label&#39;: tensor([0, 1, 2,  ..., 8, 2, 4])}</pre>
+<pre>DatasetDict({
+    train: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 314315
+    })
+    validation: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 5749
+    })
+    test: Dataset({
+        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
+        num_rows: 1500
+    })
+})</pre>
 </div>
 
 </div>
@@ -13703,114 +13800,7 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># extract the train, validation and test split provided via the dataset</span>
-<span class="n">split_idx</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_idx_split</span><span class="p">()</span>
-<span class="n">train_idx</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">test_idx</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">split_idx</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
-    <span class="n">split_idx</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">],</span>
-    <span class="n">split_idx</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Data-Module">Data Module<a class="anchor-link" href="#Data-Module">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Given a graph as well as data splits, we can get our hands dirty and implement our data module.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">DataModule</span><span class="p">(</span><span class="n">LightningDataModule</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">fanouts</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">,</span> <span class="n">device</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-        <span class="n">sampler</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">dataloading</span><span class="o">.</span><span class="n">NeighborSampler</span><span class="p">(</span>
-            <span class="n">fanouts</span><span class="p">,</span> <span class="n">prefetch_node_feats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">],</span> <span class="n">prefetch_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_idx</span> <span class="o">=</span> <span class="n">train_idx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_idx</span> <span class="o">=</span> <span class="n">val_idx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_feats</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="n">n_classes</span>
-
-    <span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dgl</span><span class="o">.</span><span class="n">dataloading</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_idx</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">,</span>
-            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">use_uva</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dgl</span><span class="o">.</span><span class="n">dataloading</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_idx</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">,</span>
-            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
-            <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">use_uva</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Similar to general neural networks, we need a <code>DataLoader</code> to sample batches of inputs. A data loader by default returns 3 elements: <code>input_nodes</code>, <code>output_nodes</code>, <code>blocks</code>.</p>
-<p><code>input_nodes</code> describe the nodes needed to compute the representation of <code>output_nodes</code>. Whereas <code>blocks</code> describe for each GNN layer, which node representations are to be computed as output, which node representations are needed as input, and how does representation from the input nodes propagate to the output nodes.</p>
-<p>Each data loader also accepts an sampler, here we are using one called <code>NeighborSampler</code>, which will make every node gather mesages from a fixed number of neighbors. We get to define the <code>fanouts</code> parameter for the sampler which represents number of neighbors to sample for each GNN layer.</p>
-<p>It also supports PyTorch concepts such as prefetching so model computation and data movement can happen in parallel, as well as a concept called <a href="https://docs.dgl.ai/en/0.8.x/guide/minibatch-gpu-sampling.html#using-cuda-uva-based-neighborhood-sampling-in-dgl-data-loaders">UVA (unified virtual addressing)</a>, directly quoting from its documentation: This is when our graph is too large to fit onto GPU memory, and we let GPU perform sampling on graph that will be pinned on CPU memory.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">fanouts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">data_module</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">fanouts</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
-
-<span class="c1"># sample output from the data loader</span>
-<span class="n">input_nodes</span><span class="p">,</span> <span class="n">output_nodes</span><span class="p">,</span> <span class="n">blocks</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_module</span><span class="o">.</span><span class="n">train_dataloader</span><span class="p">()))</span>
-<span class="n">input_nodes</span><span class="p">,</span> <span class="n">output_nodes</span><span class="p">,</span> <span class="n">blocks</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13823,19 +13813,53 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(tensor([106546,  74635, 187662,  ..., 232149, 215355,  80118], device=&#39;cuda:0&#39;),
- tensor([106546,  74635], device=&#39;cuda:0&#39;),
- [Block(num_src_nodes=1428, num_dst_nodes=126, num_edges=1847),
-  Block(num_src_nodes=126, num_dst_nodes=12, num_edges=120),
-  Block(num_src_nodes=12, num_dst_nodes=2, num_edges=10)])</pre>
+<pre>{&#39;anchor_text&#39;: &#39;A person on a horse jumps over a broken down airplane.&#39;,
+ &#39;positive_text&#39;: &#39;A person is outdoors, on a horse.&#39;,
+ &#39;label&#39;: 0}</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we can experiment with different pre-trained model checkpoint, e.g. &quot;roberta-base&quot;</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased&quot;</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
+- This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+</pre>
+</div>
 </div>
 
 </div>
@@ -13845,44 +13869,46 @@ h_i = \sigma(K(T(x_i) + \bar{m}_i)))
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="GraphSAGE-Model">GraphSAGE Model<a class="anchor-link" href="#GraphSAGE-Model">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="https://arxiv.org/abs/1706.02216">GraphSAGE</a> stands for Graph SAmple and AggreGatE, its forward pass can be described with the following notation:</p>
-\begin{align}
-\begin{aligned}
-h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
-\left(\{h_{j}^{l}, \forall j \in N_i \}\right)\\h_{i}^{(l+1)} &amp;= \sigma \left(W^{(l+1)} \cdot \mathrm{concat}
-(h_{i}^{l}, h_{N_i}^{l+1}) \right)\\h_{i}^{(l+1)} &amp;= \mathrm{norm}(h_{i}^{(l+1)})
-\end{aligned}
-\end{align}<p>Hopefully each of these steps won't look that alien after covering the general pattern of GNN.</p>
-<ul>
-<li>For each node, it aggregates feature representation from its immediate neighborhood, which can be uniformly sampled. The original paper uses aggregation function such as mean, pooling, LSTM.</li>
-<li>After aggregating neighboring feature representations, it then concatenates it with the node's current representation. This concatenation is then fed through a fully connected layer with nonlinear activation function.</li>
-<li>The last step is normalizing learned embedding to unit length.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The way this works in DGL is if our features are stored in a graph object's <code>ndata</code>, then from a sampled block object we can access source nodes' feature via <code>srcdata</code> and destination nodes' feature via <code>dstdata</code>. In the next few code chunks, we first perform a small demo where we access source node's features, feed it through a GNN layer, and check whether its shape matches output nodes' label size. After that we'll proceed with implementing our main model/module.</p>
+<p>As usual, we tokenize our anchor and positive text.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">tokenize_fn</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
+    <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_text&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
+
+    <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_text&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">examples</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prevents progress bar from flooding our document</span>
+<span class="n">set_progress_bar_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">dataset_dict_tokenized</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">tokenize_fn</span><span class="p">,</span>
+    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">remove_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;anchor_text&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">dataset_dict_tokenized</span>
 </pre></div>
 
     </div>
@@ -13901,7 +13927,20 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>torch.Size([1428, 100])</pre>
+<pre>DatasetDict({
+    train: Dataset({
+        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
+        num_rows: 314315
+    })
+    validation: Dataset({
+        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
+        num_rows: 5749
+    })
+    test: Dataset({
+        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
+        num_rows: 1500
+    })
+})</pre>
 </div>
 
 </div>
@@ -13915,14 +13954,7 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># out_feats is configurable, analogous to hidden layer&#39;s dimension size</span>
-<span class="n">sage_conv</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SAGEConv</span><span class="p">(</span>
-    <span class="n">in_feats</span><span class="o">=</span><span class="n">data_module</span><span class="o">.</span><span class="n">in_feats</span><span class="p">,</span>
-    <span class="n">out_feats</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-    <span class="n">aggregator_type</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">output</span> <span class="o">=</span> <span class="n">sage_conv</span><span class="p">(</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">])</span>
-<span class="n">output</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13941,7 +13973,34 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>torch.Size([126, 256])</pre>
+<pre>{&#39;label&#39;: 0,
+ &#39;anchor_input_ids&#39;: [101,
+  1037,
+  2711,
+  2006,
+  1037,
+  3586,
+  14523,
+  2058,
+  1037,
+  3714,
+  2091,
+  13297,
+  1012,
+  102],
+ &#39;anchor_attention_mask&#39;: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+ &#39;positive_input_ids&#39;: [101,
+  1037,
+  2711,
+  2003,
+  19350,
+  1010,
+  2006,
+  1037,
+  3586,
+  1012,
+  102],
+ &#39;positive_attention_mask&#39;: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}</pre>
 </div>
 
 </div>
@@ -13949,36 +14008,78 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we also define a customize collate function for batching our dataset.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dstdata</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">transformers.tokenization_utils_base</span> <span class="kn">import</span> <span class="n">PreTrainedTokenizerBase</span>
+<span class="kn">from</span> <span class="nn">transformers.file_utils</span> <span class="kn">import</span> <span class="n">PaddingStrategy</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DataCollatorForSiamese</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Huggingface&#39;s DataCollatorWithPadding is for a single input, here we extend it</span>
+<span class="sd">    to take paired inputs.</span>
+<span class="sd">    </span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://huggingface.co/docs/transformers/main_classes/data_collator#transformers.DataCollatorWithPadding</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenizer</span><span class="p">:</span> <span class="n">PreTrainedTokenizerBase</span>
+    <span class="n">padding</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">PaddingStrategy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pad_to_multiple_of</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">return_tensors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="n">anchor_features</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
+            <span class="s2">&quot;attention_mask&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">pos_features</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;positive_input_ids&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
+            <span class="s2">&quot;attention_mask&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">anchor_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">anchor_features</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">,</span>
+            <span class="n">pad_to_multiple_of</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_to_multiple_of</span><span class="p">,</span>
+            <span class="n">return_tensors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_tensors</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">pos_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">pos_features</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">,</span>
+            <span class="n">pad_to_multiple_of</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_to_multiple_of</span><span class="p">,</span>
+            <span class="n">return_tensors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_tensors</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;positive_input_ids&quot;</span><span class="p">:</span> <span class="n">pos_batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">:</span> <span class="n">pos_batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">batch</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[10]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>torch.Size([126])</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13988,93 +14089,12 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SAGE</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Multi-layer GraphSAGE lightning module for node classification task.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_feats</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_hidden</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">aggregator_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dgl</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SAGEConv</span><span class="p">(</span><span class="n">in_feats</span><span class="p">,</span> <span class="n">n_hidden</span><span class="p">,</span> <span class="n">aggregator_type</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dgl</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SAGEConv</span><span class="p">(</span><span class="n">n_hidden</span><span class="p">,</span> <span class="n">n_hidden</span><span class="p">,</span> <span class="n">aggregator_type</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dgl</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SAGEConv</span><span class="p">(</span><span class="n">n_hidden</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">,</span> <span class="n">aggregator_type</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_hidden</span> <span class="o">=</span> <span class="n">n_hidden</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="n">n_classes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_acc</span> <span class="o">=</span> <span class="n">Accuracy</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_acc</span> <span class="o">=</span> <span class="n">Accuracy</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)):</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">l</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">h</span>
-        
-    <span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-        <span class="n">input_nodes</span><span class="p">,</span> <span class="n">output_nodes</span><span class="p">,</span> <span class="n">blocks</span> <span class="o">=</span> <span class="n">batch</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">]</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dstdata</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train_acc</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="s2">&quot;train_acc&quot;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">train_acc</span><span class="p">,</span>
-            <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span>
-
-    <span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">):</span>
-        <span class="n">input_nodes</span><span class="p">,</span> <span class="n">output_nodes</span><span class="p">,</span> <span class="n">blocks</span> <span class="o">=</span> <span class="n">batch</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">]</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dstdata</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val_acc</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="s2">&quot;val_acc&quot;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">val_acc</span><span class="p">,</span>
-            <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">sync_dist</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
-            <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-            <span class="n">weight_decay</span><span class="o">=</span><span class="mf">5e-4</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">optimizer</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SAGE</span><span class="p">(</span>
-    <span class="n">in_feats</span><span class="o">=</span><span class="n">data_module</span><span class="o">.</span><span class="n">in_feats</span><span class="p">,</span>
-    <span class="n">n_layers</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">fanouts</span><span class="p">),</span>
-    <span class="n">n_hidden</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-    <span class="n">n_classes</span><span class="o">=</span><span class="n">data_module</span><span class="o">.</span><span class="n">n_classes</span><span class="p">,</span>
-    <span class="n">aggregator_type</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span>
-<span class="p">)</span>
-<span class="n">model</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample output from a data loader</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorForSiamese</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">))</span>
+<span class="n">batch</span>
 </pre></div>
 
     </div>
@@ -14087,34 +14107,25 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[12]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>SAGE(
-  (layers): ModuleList(
-    (0): SAGEConv(
-      (feat_drop): Dropout(p=0.0, inplace=False)
-      (fc_self): Linear(in_features=100, out_features=256, bias=False)
-      (fc_neigh): Linear(in_features=100, out_features=256, bias=False)
-    )
-    (1): SAGEConv(
-      (feat_drop): Dropout(p=0.0, inplace=False)
-      (fc_self): Linear(in_features=256, out_features=256, bias=False)
-      (fc_neigh): Linear(in_features=256, out_features=256, bias=False)
-    )
-    (2): SAGEConv(
-      (feat_drop): Dropout(p=0.0, inplace=False)
-      (fc_self): Linear(in_features=256, out_features=47, bias=False)
-      (fc_neigh): Linear(in_features=256, out_features=47, bias=False)
-    )
-  )
-  (dropout): Dropout(p=0.5, inplace=False)
-  (train_acc): Accuracy()
-  (val_acc): Accuracy()
-)</pre>
+<pre>{&#39;anchor_input_ids&#39;: tensor([[  101,  1037,  2711,  2006,  1037,  3586, 14523,  2058,  1037,  3714,
+           2091, 13297,  1012,   102],
+         [  101,  2336,  5629,  1998, 12015,  2012,  4950,   102,     0,     0,
+              0,     0,     0,     0]]),
+ &#39;anchor_attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]]),
+ &#39;positive_input_ids&#39;: tensor([[  101,  1037,  2711,  2003, 19350,  1010,  2006,  1037,  3586,  1012,
+            102],
+         [  101,  2045,  2024,  2336,  2556,   102,     0,     0,     0,     0,
+              0]]),
+ &#39;positive_attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]]),
+ &#39;labels&#39;: tensor([0, 0])}</pre>
 </div>
 
 </div>
@@ -14126,53 +14137,118 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Trainer">Trainer<a class="anchor-link" href="#Trainer">&#182;</a></h3>
+<h2 id="Model">Model<a class="anchor-link" href="#Model">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The node chunk initiatizes the data as well as model module and kicks off model training through Trainer class .</p>
+<p>This section defines our transformer followed by pooling encoder, siamese network, evaluation metric, then proceed with using transformer library's Trainer class for training our network.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_hidden</span> <span class="o">=</span> <span class="mi">256</span>
-<span class="n">fanouts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-<span class="n">aggregator_type</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1024</span>
-<span class="n">n_layers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fanouts</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TransformerPoolingEncoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 
-<span class="n">data_module</span> <span class="o">=</span> <span class="n">DataModule</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">val_idx</span><span class="p">,</span> <span class="n">fanouts</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">SAGE</span><span class="p">(</span>
-    <span class="n">in_feats</span><span class="o">=</span><span class="n">data_module</span><span class="o">.</span><span class="n">in_feats</span><span class="p">,</span>
-    <span class="n">n_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">,</span>
-    <span class="n">n_hidden</span><span class="o">=</span><span class="n">n_hidden</span><span class="p">,</span>
-    <span class="n">n_classes</span><span class="o">=</span><span class="n">data_module</span><span class="o">.</span><span class="n">n_classes</span><span class="p">,</span>
-    <span class="n">aggregator_type</span><span class="o">=</span><span class="n">aggregator_type</span>
-<span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pooling_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="s2">&quot;cls&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pooling_mode</span><span class="si">}</span><span class="s2"> needs to one of avg, cls&quot;</span><span class="p">)</span>
 
-<span class="n">checkpoint_callback</span> <span class="o">=</span> <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;val_acc&quot;</span><span class="p">,</span> <span class="n">save_top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
-    <span class="n">accelerator</span><span class="o">=</span><span class="s1">&#39;gpu&#39;</span><span class="p">,</span>
-    <span class="n">devices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="c1"># note, we purpose-fully disabled the progress bar to prevent flooding our notebook&#39;s console</span>
-    <span class="c1"># in normal settings, we can/should definitely turn it on</span>
-    <span class="n">enable_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">log_every_n_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">checkpoint_callback</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">t1_start</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">datamodule</span><span class="o">=</span><span class="n">data_module</span><span class="p">)</span>
-<span class="n">t1_stop</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Elapsed time:&quot;</span><span class="p">,</span> <span class="n">t1_stop</span> <span class="o">-</span> <span class="n">t1_start</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">=</span> <span class="n">pooling_mode</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="p">(</span><span class="n">input_ids</span><span class="o">=</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">attention_mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">==</span> <span class="s2">&quot;avg&quot;</span><span class="p">:</span>
+            <span class="c1"># reshape attention mask to cover all hidden dimension</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">attention_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span><span class="p">)</span>
+            <span class="c1"># perform mean pooling, but excluding attention mask</span>
+            <span class="n">pooled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span> <span class="o">*</span> <span class="n">mask</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span>
+                <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-9</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">==</span> <span class="s2">&quot;cls&quot;</span><span class="p">:</span>
+            <span class="n">pooled</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">pooled</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SiameseModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The loss function we are using is similar to Multiple Negative Ranking Loss that&#39;s mentioned</span>
+<span class="sd">    in the sentence bert package.</span>
+<span class="sd">    </span>
+<span class="sd">    The similarity function implemented here is cosine similarity, with cosine similarity, we often</span>
+<span class="sd">    times add a scaling multiplier. As cosine similarity&#39;s range is between -1 and 1, this scaling</span>
+<span class="sd">    factor ensures our loss are large enough between positive and negative samples for the network</span>
+<span class="sd">    to train.</span>
+<span class="sd">    </span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">TransformerPoolingEncoder</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">anchor_input_ids</span><span class="p">,</span>
+        <span class="n">anchor_attention_mask</span><span class="p">,</span>
+        <span class="n">positive_input_ids</span><span class="p">,</span>
+        <span class="n">positive_attention_mask</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="c1"># [batch size, hidden dim]</span>
+        <span class="n">anchor_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span>
+            <span class="n">input_ids</span><span class="o">=</span><span class="n">anchor_input_ids</span><span class="p">,</span>
+            <span class="n">attention_mask</span><span class="o">=</span><span class="n">anchor_attention_mask</span>
+        <span class="p">)</span>
+        <span class="n">positive_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span>
+            <span class="n">input_ids</span><span class="o">=</span><span class="n">positive_input_ids</span><span class="p">,</span>
+            <span class="n">attention_mask</span><span class="o">=</span><span class="n">positive_attention_mask</span>
+        <span class="p">)</span>
+
+        <span class="c1"># cosine similarity</span>
+        <span class="n">anchor_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">positive_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">positive_embedding</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">anchor_norm</span><span class="p">,</span> <span class="n">positive_norm</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+
+        <span class="c1"># Example a[i] should match with p[i]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">scores</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SiameseModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14189,24 +14265,181 @@ h_{N_i}^{(l+1)} &amp;= \mathrm{aggregate}^{(l+1)}
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
+- This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+</pre>
+</div>
+</div>
 
-  | Name      | Type       | Params
------------------------------------------
-0 | layers    | ModuleList | 206 K 
-1 | dropout   | Dropout    | 0     
-2 | train_acc | Accuracy   | 0     
-3 | val_acc   | Accuracy   | 0     
------------------------------------------
-206 K     Trainable params
-0         Non-trainable params
-206 K     Total params
-0.828     Total estimated model params size (MB)
-`Trainer.fit` stopped: `max_epochs=10` reached.
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample forward output from the model given our input batch</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">batch</span><span class="p">)</span>
+    
+<span class="n">output</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(tensor(0.4709, device=&#39;cuda:0&#39;),
+ tensor([[-0.1386, -0.0835, -0.2738,  ..., -0.3862,  0.0325, -0.0017],
+         [ 0.3649,  0.3073,  0.0864,  ..., -0.2507,  0.2876, -0.0527]],
+        device=&#39;cuda:0&#39;),
+ tensor([[-0.0968, -0.2067, -0.0868,  ..., -0.4490, -0.0050,  0.0568],
+         [-0.0548,  0.0111,  0.1266,  ..., -0.1976,  0.2901, -0.1404]],
+        device=&#39;cuda:0&#39;))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For our evaluation metric, we will first compute the cosine similarity of our pairs' embedding, then calculate pearson and spearman correlation with our ground truth similarity score.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">eval_prediction</span><span class="p">):</span>
+    <span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">predictions</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">label_ids</span>
+
+    <span class="n">cosine_sim</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">paired_cosine_distances</span><span class="p">(</span><span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span><span class="p">)</span>
+    <span class="n">pearson</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">)</span>
+    <span class="n">spearman</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pearson&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">pearson</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;spearman&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">spearman</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;DISABLE_MLFLOW_INTEGRATION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+
+<span class="n">finetuned_checkpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">-siamese&quot;</span>
+<span class="n">training_args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="n">finetuned_checkpoint</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">fp16</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">STEPS</span><span class="p">,</span>
+    <span class="n">save_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">STEPS</span><span class="p">,</span>
+    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">save_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s2">&quot;spearman&quot;</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span> 
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">],</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span><span class="p">,</span>
+    <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">EarlyStoppingCallback</span><span class="p">(</span><span class="n">early_stopping_patience</span><span class="o">=</span><span class="mi">3</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using cuda_amp half precision backend
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/root/.local/lib/python3.8/site-packages/transformers/optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+***** Running training *****
+  Num examples = 314315
+  Num Epochs = 2
+  Instantaneous batch size per device = 64
+  Total train batch size (w. parallel, distributed &amp; accumulation) = 64
+  Gradient Accumulation steps = 1
+  Total optimization steps = 9824
 </pre>
 </div>
 </div>
@@ -14216,10 +14449,202 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Elapsed time: 117.55090914410539
+
+<div class="output_html rendered_html output_subarea ">
+    <div>
+      
+      <progress value='3500' max='9824' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [3500/9824 05:36 < 10:07, 10.41 it/s, Epoch 0/2]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+ <tr style="text-align: left;">
+      <th>Step</th>
+      <th>Training Loss</th>
+      <th>Validation Loss</th>
+      <th>Pearson</th>
+      <th>Spearman</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>500</td>
+      <td>0.300600</td>
+      <td>2.117372</td>
+      <td>0.783000</td>
+      <td>0.757000</td>
+    </tr>
+    <tr>
+      <td>1000</td>
+      <td>0.234000</td>
+      <td>2.185063</td>
+      <td>0.792000</td>
+      <td>0.765000</td>
+    </tr>
+    <tr>
+      <td>1500</td>
+      <td>0.215600</td>
+      <td>2.248563</td>
+      <td>0.789000</td>
+      <td>0.760000</td>
+    </tr>
+    <tr>
+      <td>2000</td>
+      <td>0.200300</td>
+      <td>2.208026</td>
+      <td>0.805000</td>
+      <td>0.777000</td>
+    </tr>
+    <tr>
+      <td>2500</td>
+      <td>0.183800</td>
+      <td>2.221604</td>
+      <td>0.797000</td>
+      <td>0.768000</td>
+    </tr>
+    <tr>
+      <td>3000</td>
+      <td>0.182500</td>
+      <td>2.224505</td>
+      <td>0.800000</td>
+      <td>0.769000</td>
+    </tr>
+    <tr>
+      <td>3500</td>
+      <td>0.172100</td>
+      <td>2.226413</td>
+      <td>0.803000</td>
+      <td>0.774000</td>
+    </tr>
+  </tbody>
+</table><p></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-500
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2000] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1000
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3500] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1500
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-500] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2000
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1000] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2500
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1500] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3000
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2500] due to args.save_total_limit
+***** Running Evaluation *****
+  Num examples = 5749
+  Batch size = 256
+Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3500
+Trainer.model is not a `PreTrainedModel`, only saving its state dict.
+Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3000] due to args.save_total_limit
+
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 0.777).
 </pre>
 </div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>***** Running Evaluation *****
+  Num examples = 1500
+  Batch size = 256
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+    <div>
+      
+      <progress value='6' max='6' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [6/6 00:00]
+    </div>
+    </div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;eval_loss&#39;: 2.7090277671813965,
+ &#39;eval_pearson&#39;: 0.832,
+ &#39;eval_spearman&#39;: 0.832,
+ &#39;eval_runtime&#39;: 0.5742,
+ &#39;eval_samples_per_second&#39;: 2612.205,
+ &#39;eval_steps_per_second&#39;: 10.449,
+ &#39;epoch&#39;: 0.71}</pre>
+</div>
+
 </div>
 
 </div>
@@ -14236,74 +14661,180 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The prediction/evaluation is also a bit interesting. As explained clearly by <a href="https://docs.dgl.ai/en/0.8.x/guide/minibatch-inference.html">DGL Tutorial - Exact Offline Inference on Large Graphs</a> While training our GNN, we often times perform neighborhood sampling for reducing memory. But while performing inferencing, it's better to truly aggregate over all neighbors.</p>
-<p>The result of this is that our inference implemention will be slightly different compared to training. During training, we have an outer loop that's iterating over mini-batches of nodes (this is coming from our DataLoader), and an inner loop that's iterating over all our GNN's layer. During inferencing, what will happen is, we instead will have an outer loop that's iterating over the GNN layers, and an inner loop that's iterating over our mini-batches of nodes.</p>
+<p>Quantitative benchmark on our test set shows we are capable of achieving a 80+% spearman correlation. This section performs a manual inspection on some sample input sentences, where some are more similar compared to others.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;feat&quot;</span><span class="p">]</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">dataloading</span><span class="o">.</span><span class="n">MultiLayerFullNeighborSampler</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">data_loader</span> <span class="o">=</span> <span class="n">dgl</span><span class="o">.</span><span class="n">dataloading</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span>
-        <span class="n">graph</span><span class="p">,</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
-        <span class="n">sampler</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">use_uva</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
-    
-    <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">(),</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">n_hidden</span> <span class="k">if</span> <span class="n">l</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">model</span><span class="o">.</span><span class="n">n_classes</span><span class="p">,</span>
-            <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">input_nodes</span><span class="p">,</span> <span class="n">output_nodes</span><span class="p">,</span> <span class="n">blocks</span> <span class="ow">in</span> <span class="n">data_loader</span><span class="p">:</span>
-            <span class="n">block</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">srcdata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">l</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-
-            <span class="n">y</span><span class="p">[</span><span class="n">output_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
-
-        <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
-
-    <span class="k">del</span> <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">y</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># tokenize our input sentences</span>
+<span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;it caught him off guard that space smelled of seared steak&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;she could not decide between painting her teeth or brushing her nails&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;he thought there&#39;d be sufficient time is he hid his watch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;the bees decided to have a mutiny against their queen&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;the sign said there was road work ahead so she decided to speed up&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;on a scale of one to ten, what&#39;s your favorite flavor of color?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flying stinging insects rebelled in opposition to the matriarch&quot;</span>
+<span class="p">]</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
+<span class="n">batch</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;input_ids&#39;: tensor([[  101,  2009,  3236,  2032,  2125,  3457,  2008,  2686,  9557,  1997,
+          2712,  5596, 21475,   102,     0,     0,     0,     0,     0],
+        [  101,  2016,  2071,  2025,  5630,  2090,  4169,  2014,  4091,  2030,
+         12766,  2014, 10063,   102,     0,     0,     0,     0,     0],
+        [  101,  2002,  2245,  2045,  1005,  1040,  2022,  7182,  2051,  2003,
+          2002, 11041,  2010,  3422,   102,     0,     0,     0,     0],
+        [  101,  1996, 13734,  2787,  2000,  2031,  1037, 19306,  2114,  2037,
+          3035,   102,     0,     0,     0,     0,     0,     0,     0],
+        [  101,  1996,  3696,  2056,  2045,  2001,  2346,  2147,  3805,  2061,
+          2016,  2787,  2000,  3177,  2039,   102,     0,     0,     0],
+        [  101,  2006,  1037,  4094,  1997,  2028,  2000,  2702,  1010,  2054,
+          1005,  1055,  2115,  5440, 14894,  1997,  3609,  1029,   102],
+        [  101,  3909, 22748,  9728, 25183,  1999,  4559,  2000,  1996, 13523,
+          4360, 11140,   102,     0,     0,     0,     0,     0,     0]]), &#39;attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]])}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predict_batch_size</span> <span class="o">=</span> <span class="mi">4096</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># feed it through our siamese network&#39;s encoder</span>
 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">pred</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">predict_batch_size</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
-    <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">test_idx</span><span class="p">]</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">ndata</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">][</span><span class="n">test_idx</span><span class="p">]</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">MF</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">accuracy</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test accuracy:&quot;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="n">embeddings</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 0.21393271,  0.33937266, -0.35428116, ...,  0.13894947,
+         0.36403698, -0.09026248],
+       [ 0.5465353 , -0.6560232 , -0.86056316, ..., -0.28352353,
+         0.06771367,  0.32315105],
+       [-0.05830259,  0.1330159 ,  0.06023514, ...,  0.1857918 ,
+        -0.7235887 , -0.7109812 ],
+       ...,
+       [ 0.40011722, -0.43589538,  0.3119559 , ...,  0.23818746,
+        -0.40150076,  0.33471447],
+       [-0.600745  ,  0.1105762 ,  0.26701927, ...,  0.14820881,
+         0.16505945, -0.00796631],
+       [-1.0210578 , -0.22127706, -0.3994902 , ..., -0.19572051,
+        -0.2220803 ,  0.32416752]], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Given our sentence embedding, we then perform a cosine similarity for finding semantically similar sentences. Notice our trained model was able to capture sentences that have very few matching words but are semantically similar.</p>
+<p>The step is not done here, but we can compare this with results from out of the box pre-trained models and see that further training these networks with constrastive loss makes day and night differences. i.e. if we were to directly retrieve sentence embeddings by either pooling its last hidden output/layer or extracting first token ([CLS] token)'s embedding, it often times yield rather poor sentence embeddings.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_embedding</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">embeddings</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">candidate_embedding</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">paired_cosine_distances</span><span class="p">(</span><span class="n">input_embedding</span><span class="p">,</span> <span class="n">candidate_embedding</span><span class="p">)</span>
+<span class="n">scores</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([0.07516348, 0.21306509, 0.00834197, 0.62654173, 0.01274633,
+       0.0575071 ], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">sentences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">sentence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14320,7 +14851,13 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Test accuracy: 0.748
+<pre>flying stinging insects rebelled in opposition to the matriarch
+0.0752 | it caught him off guard that space smelled of seared steak
+0.2131 | she could not decide between painting her teeth or brushing her nails
+0.0083 | he thought there&#39;d be sufficient time is he hid his watch
+0.6265 | the bees decided to have a mutiny against their queen
+0.0127 | the sign said there was road work ahead so she decided to speed up
+0.0575 | on a scale of one to ten, what&#39;s your favorite flavor of color?
 </pre>
 </div>
 </div>
@@ -14332,7 +14869,7 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Hopefully, this served as a quick introduction to GNN's node classification task. Feel free to check the <a href="https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-products">leaderboard</a> for potential improvements to this baseline approach.</p>
+<p>In this document, we walked through a modern baseline approach for training sentence transformers. Modern in a sense that we are building on top of pre-trained language models instead of training from scratch, baseline meaning there're a lot more we can do to improve these models' performance, we'll take a look at those tricks in future documents.</p>
 
 </div>
 </div>
@@ -14340,7 +14877,7 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h2>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -14348,10 +14885,11 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://rish-16.github.io/posts/gnn-math/">Blog: Math Behind Graph Neural Networks</a></li>
-<li><a href="https://docs.dgl.ai/en/0.8.x/guide/minibatch-node.html#guide-minibatch-node-classification-sampler">DGL Tutorial - Training GNN for Node Classification with Neighborhood Sampling</a></li>
-<li><a href="https://docs.dgl.ai/en/0.8.x/guide/minibatch-inference.html">DGL Tutorial - Exact Offline Inference on Large Graphs</a></li>
-<li><a href="https://arxiv.org/abs/1706.02216">Paper - William L. Hamilton, Rex Ying, Jure Leskovec : Inductive Representation Learning on Large Graphs (2017)</a></li>
+<li><a href="https://www.pinecone.io/learn/fine-tune-sentence-transformers-mnr/">Blog: Next-Gen Sentence Embeddings with Multiple Negatives Ranking Loss</a></li>
+<li><a href="https://fennel.ai/blog/real-world-recommendation-system/">Blog: Real World Recommendation System – Part 1</a></li>
+<li><a href="https://www.sbert.net/examples/applications/retrieve_rerank/README.html">Sentence Transformers Documentation: Retrieve &amp; Re-Rank</a></li>
+<li><a href="https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli">Github: Sentence Transformers Training Natural Language Inference</a></li>
+<li><a href="https://arxiv.org/abs/1908.10084">Paper: Nils Reimers, Iryna Gurevych - Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks - 2019</a></li>
 </ul>
 
 </div>
