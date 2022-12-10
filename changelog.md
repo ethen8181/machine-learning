@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2022-12]
+
+### Added
+
+- Fine Tuning Pre-trained Encoder on Question Answer Task. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/question_answer/question_answer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/question_answer/question_answer.html)]
+
 ## [2022-11]
 
 ### Added

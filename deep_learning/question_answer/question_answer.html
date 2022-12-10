@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>sentence_transformer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>question_answer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13460,7 +13460,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -13477,32 +13477,31 @@ div#notebook {
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">evaluate</span>
 <span class="kn">import</span> <span class="nn">datasets</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">transformers</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_dataset</span><span class="p">,</span>
-    <span class="n">concatenate_datasets</span><span class="p">,</span>
-    <span class="n">set_progress_bar_enabled</span><span class="p">,</span>
-    <span class="n">DatasetDict</span><span class="p">,</span>
+    <span class="n">disable_progress_bar</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
     <span class="n">Trainer</span><span class="p">,</span>
     <span class="n">TrainingArguments</span><span class="p">,</span>
-    <span class="n">AutoModel</span><span class="p">,</span>
     <span class="n">AutoTokenizer</span><span class="p">,</span>
+    <span class="n">AutoModelForQuestionAnswering</span><span class="p">,</span>
     <span class="n">DataCollatorWithPadding</span><span class="p">,</span>
     <span class="n">EarlyStoppingCallback</span><span class="p">,</span>
     <span class="n">IntervalStrategy</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">pearsonr</span><span class="p">,</span> <span class="n">spearmanr</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">paired_cosine_distances</span>
 
 <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
 <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span>
@@ -13538,14 +13537,14 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2022-11-24
+Last updated: 2022-12-10
 
 torch       : 1.10.0a0+git36449ea
-pandas      : 1.4.3
-numpy       : 1.23.2
+datasets    : 2.7.1
 transformers: 4.21.3
-scipy       : 1.9.0
-datasets    : 1.18.4
+numpy       : 1.23.2
+evaluate    : 0.3.0
+pandas      : 1.4.3
 
 </pre>
 </div>
@@ -13558,159 +13557,39 @@ datasets    : 1.18.4
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Sentence-Transformer:-Training-Bi-Encoder-via-Contrastive-Loss">Sentence Transformer: Training Bi-Encoder via Contrastive Loss<a class="anchor-link" href="#Sentence-Transformer:-Training-Bi-Encoder-via-Contrastive-Loss">&#182;</a></h1>
+<h1 id="Fine-Tuning-Pre-trained-Encoder-on-Question-Answer-Task">Fine Tuning Pre-trained Encoder on Question Answer Task<a class="anchor-link" href="#Fine-Tuning-Pre-trained-Encoder-on-Question-Answer-Task">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In modern recommendation system, it is common to have two major distinct stages, a recall/retrieval stage, and a ranking stage, it can get more sophisticated than this, but that's out of scope for this discussion. We'll be discussing these two stages in the context of a pre-trained encoder model, where different types of architectures are commonly used at different stages to reflect their own strength.</p>
-<p><img src="imgs/stages.png"></p>
-<p>Recall/Retrieval focuses on candidate generation, given we have a million things be it inventories, passages, etc. stored in our database, we need a way to efficiently retrieve a subset of them that are more relevant for the given context. In encoder model's paradigm, this means we need a way to represent our incoming context be it query, questions, etc. in a vector representation, often times referred to as sentence embedding and perform a similarity search between that with entities that are also already represented in a sentence embedding. This step is often done using the bi-encoder architecture, where we can pass individual sentences/entities through our encoder and then perform similarity search using metrics such as cosine similarity. Being able to input individual entities through our encoder is the key to an effient retrieval stage, where we need to quickly scan through our database, as it means we can often times pre-compute these results apriori.</p>
-<p><img src="imgs/bi_encoder.png"></p>
-<p>These subsets are then passed to the ranker, where given we now have our pairs, we need to score these pairs so the system can assign a score to rank these retrieved inventories in a sorted order. This step is often done using cross encoder, a.k.a. cross attention architectures. Cross encoder doesn't produce sentence embeddings for our data but instead relies on classification mechansim for out input pairs, hence whenever we have a fixed set of data pairs we wish to score, cross encoder often times achieves better performance than their bi encoder counterparts even when using less training data.</p>
-<p><img src="imgs/cross_encoder.png"></p>
-<p>In this document, we'll be focusing on how to train bi-encoder style architecture using contrastive loss.</p>
+<p>In this document, we'll be going over how to train an extractive question and answer model using a pre-trained language encoder model via huggingface's transformers library. Throughout this process, we'll also:</p>
+<ul>
+<li>Introduce some advanced tokenizer functionalities that are needed for token level based tasks such as question answering.</li>
+<li>Explain some of the pre-processing and post-processing that are needed for question and answering task.</li>
+</ul>
+<p>There are many different forms of question answering, but the one we will be discussing today is termed open book extractive question answering. Open book allows our model to retrieve relevant information from some context, similar to open book exams where students can refer to their books for relevant information during an exam, in this setup, our model can look up information from external sources. Extractive means our model will extract the most relevant span of texts or snippets from these contexts to answer incoming question. Although span based answers are more constrained compared to free form answers, they come with the benefit of being easier to evaluate.</p>
+<p>Similar to a lot modern recommendation systems out there, there are three main components to these type of systems: a vector database for storing our data encoded in vector representation, a retrieval model for efficiently retrieving top-N context, lastly a reader model that identifies the span of text from a range of context. In this document, we'll be focusing on the reader model part.</p>
+<p>To piggyback on modern today's pre-trained language model for reader model fine-tuning. We need two inputs: question and context, as well as two labels identifying answer's start and end positions within that context. The following diagram depicts this notion very nicely <a href="https://www.pinecone.io/learn/reader-models/">[4]</a>.</p>
+<p><img src="imgs/finetune_question_answer.png" width="70%" height="70%"></p>
+<p>Slightly more formally, after feeding our input sentence through an encoder layer and obtaining the embedding vector $\mathbf{h}^{(i)}$ for every $i_{th}$ token, we learn two additional weights, one for start position, $\mathbf{W}_s$ and the other for end position, $\mathbf{W}_e$. These two weights will be used to define: for each token, the probability distribution of belonging to start and end position: $\text{softmax}(\mathbf{h}^{(i)}\mathbf{W}_s)$, $\text{softmax}(\mathbf{h}^{(i)}\mathbf{W}_e)$</p>
+<p>The dataset we'll be using is <a href="https://rajpurkar.github.io/SQuAD-explorer/">SQuAD</a> (Standford Question Answering Dataset). This data contains a question, a context, and potentially answer. Where the answer to every question is a segment of text, a.k.a span, from a corresponding context. We can decide whether to experiment with SQuAD or SQuAD 2.0. SQuAD version 2.0 is a superset of the existing dataset containing unanswerable questions. This nature makes it more challenging to do well on version 2.0, as not only does the model need to identify correct answers, but also need to determine when no answer is supported by a given context and abstain from spitting out unreliable guesses.</p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Contrastive-Loss">Contrastive Loss<a class="anchor-link" href="#Contrastive-Loss">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For Bi-encoder our input data at the bare minimum needs to contain positive pairs, where we need to define what's the definition for positive pairs based on our use case. These pairs are often referred to as anchors $a$ and positives, $p$. Given our dataset, the standard architecture for these type of task is a siamese network. Each base arm involves using a pre-trained encoder followed by a pooling operator for deriving a fix sized sentence embedding vector. During each step we feed both our anchor and positive one at time through the same encoder plus pooling arm. This encoder plus pooling arm's weights are often tied for our pairs. Tying weights ensure similar entities are mapped to similar locations in the representation space.</p>
-<p>For training this network, what we wish to accomplish is have our anchor and positive pairs $a_i$ and $p_i$ become closer in the vector space, whereas $a_i$ and some random negative examples $p_j$ becomes distant in vector space.</p>
-\begin{align}
-L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i))}{\sum_j exp(sim(a_i, p_j))}
-\end{align}<p>Where $sim$ is a similarity function such as cosine similarity or dot product. This can then be treated as a classification task using cross entropy loss. $p_j$ is often times sampled using in batch negatives, meaning for each example in a batch, other examples' positives will be taken as its negatives, this effectively re-uses the already sampled data in our current batch without the need to implement additional negative sampling logic.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dataset">Dataset<a class="anchor-link" href="#Dataset">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For our dataset, we'll be using <a href="https://nlp.stanford.edu/projects/snli/">Stanford Natural Language Inference (SNLI)</a> and <a href="https://cims.nyu.edu/~sbowman/multinli/">Multi-Genre NLI (MNLI)</a>, refer to its link for more details on these two datasets. For constrastive loss, we will filter out premise and hypothesis pairs that has a label 0 assigned to it. These are positive samples where the premise suggests the hypothesis.</p>
-<p>We'll also use the <a href="https://arxiv.org/abs/1708.00055">Semantic Textual Similarity Benchmark (stsb)</a> dataset each contains sentence pairs with human annotated similarity score from 1 to 5 for evaluating our model's performance</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stsb</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;stsb&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-
-<span class="c1"># we normalize the score to a range of 0 ~ 1</span>
-<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">})</span>
-<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;sentence1&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor_text&quot;</span><span class="p">)</span>
-<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;sentence2&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">)</span>
-<span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s2">&quot;idx&quot;</span><span class="p">])</span>
-<span class="n">stsb</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Reusing dataset glue (/root/.cache/huggingface/datasets/glue/stsb/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 806.55it/s]
-Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; of the transform datasets.arrow_dataset.Dataset._map_single couldn&#39;t be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won&#39;t be showed.
-5749ex [00:00, 10941.77ex/s]
-1500ex [00:00, 11010.17ex/s]
-1379ex [00:00, 10766.22ex/s]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[2]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>DatasetDict({
-    train: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 5749
-    })
-    validation: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 1500
-    })
-    test: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 1379
-    })
-})</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># experiment with different public model checkpoints</span>
+<span class="n">model_checkpoint</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased&quot;</span>
+<span class="n">task_name</span> <span class="o">=</span> <span class="s2">&quot;squad&quot;</span> <span class="c1"># &quot;squad_v2&quot;</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;anchor_text&#39;: &#39;A young child is riding a horse.&#39;,
- &#39;positive_text&#39;: &#39;A child is riding a horse.&#39;,
- &#39;label&#39;: 0.949999988079071}</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13720,24 +13599,8 @@ Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; o
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">snli</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;snli&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-<span class="n">mnli</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;mnli&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-<span class="n">mnli</span> <span class="o">=</span> <span class="n">mnli</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s1">&#39;idx&#39;</span><span class="p">])</span>
-<span class="n">snli</span> <span class="o">=</span> <span class="n">snli</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mnli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
-
-<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">concatenate_datasets</span><span class="p">([</span><span class="n">snli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">mnli</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]])</span>
-<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;premise&quot;</span><span class="p">,</span> <span class="s2">&quot;anchor_text&quot;</span><span class="p">)</span>
-<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;hypothesis&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">)</span>
-
-<span class="c1"># note that we are evaluating the performance of our sentence embedding on</span>
-<span class="c1"># stsb dataset without using any stsb samples in our training dataset</span>
-<span class="n">dataset_dict</span> <span class="o">=</span> <span class="n">DatasetDict</span><span class="p">({</span>
-    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset_train</span><span class="p">,</span>
-    <span class="s2">&quot;validation&quot;</span><span class="p">:</span> <span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="n">stsb</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span>
-<span class="p">})</span>
-<span class="n">dataset_dict</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">datasets</span>
 </pre></div>
 
     </div>
@@ -13754,14 +13617,8 @@ Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; o
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Reusing dataset snli (/root/.cache/huggingface/datasets/snli/plain_text/1.0.0/1f60b67533b65ae0275561ff7828aad5ee4282d0e6f844fd148d05d3c6ea251b)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 857.44it/s]
-Reusing dataset glue (/root/.cache/huggingface/datasets/glue/mnli/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 783.45it/s]
-Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 39.17ba/s]
-Casting the dataset: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 56/56 [00:01&lt;00:00, 42.98ba/s]
-Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 41.09ba/s]
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 943/943 [00:04&lt;00:00, 194.00ba/s]
+<pre>Found cached dataset squad (/root/.cache/huggingface/datasets/squad/plain_text/1.0.0/d6ec3ceb99ca480ce37cdd35555d6cb2511d223b9150cce08a837ef62ffea453)
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00&lt;00:00, 377.80it/s]
 </pre>
 </div>
 </div>
@@ -13776,16 +13633,12 @@ Casting the dataset: 100%|██████████████████
 <div class="output_text output_subarea output_execute_result">
 <pre>DatasetDict({
     train: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 314315
+        features: [&#39;id&#39;, &#39;title&#39;, &#39;context&#39;, &#39;question&#39;, &#39;answers&#39;],
+        num_rows: 87599
     })
     validation: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 5749
-    })
-    test: Dataset({
-        features: [&#39;anchor_text&#39;, &#39;positive_text&#39;, &#39;label&#39;],
-        num_rows: 1500
+        features: [&#39;id&#39;, &#39;title&#39;, &#39;context&#39;, &#39;question&#39;, &#39;answers&#39;],
+        num_rows: 10570
     })
 })</pre>
 </div>
@@ -13796,12 +13649,20 @@ Casting the dataset: 100%|██████████████████
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Printing out a sample format, hopefully field names are all quite self explanatory. The one thing that's worth clarifying is <code>answer_start</code> field contains starting character index of each answer inside the corresponding context.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13820,9 +13681,74 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;anchor_text&#39;: &#39;A person on a horse jumps over a broken down airplane.&#39;,
- &#39;positive_text&#39;: &#39;A person is outdoors, on a horse.&#39;,
- &#39;label&#39;: 0}</pre>
+<pre>{&#39;id&#39;: &#39;5733be284776f41900661182&#39;,
+ &#39;title&#39;: &#39;University_of_Notre_Dame&#39;,
+ &#39;context&#39;: &#39;Architecturally, the school has a Catholic character. Atop the Main Building\&#39;s gold dome is a golden statue of the Virgin Mary. Immediately in front of the Main Building and facing it, is a copper statue of Christ with arms upraised with the legend &#34;Venite Ad Me Omnes&#34;. Next to the Main Building is the Basilica of the Sacred Heart. Immediately behind the basilica is the Grotto, a Marian place of prayer and reflection. It is a replica of the grotto at Lourdes, France where the Virgin Mary reputedly appeared to Saint Bernadette Soubirous in 1858. At the end of the main drive (and in a direct line that connects through 3 statues and the Gold Dome), is a simple, modern stone statue of Mary.&#39;,
+ &#39;question&#39;: &#39;To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?&#39;,
+ &#39;answers&#39;: {&#39;text&#39;: [&#39;Saint Bernadette Soubirous&#39;], &#39;answer_start&#39;: [515]}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tokenizer">Tokenizer<a class="anchor-link" href="#Tokenizer">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After passing raw text through a tokenizer, a single word can be split into multiple tokens. e.g. in the example below, <code>@huggingface</code> is split into multiple tokens, <code>@</code> <code>hugging</code>, and <code>##face</code>. This can cause some issues for our token level labels, as our original label was mapped to a single word <code>@huggingface</code>. To resolve this, we'll need to use offsets mapping returned by the tokenizer, which gives us a tuple indicating each sub token's start and end position relative to the original token it was split from. For special tokens, offset mapping's start and end position will both be set to 0.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">word</span> <span class="o">=</span> <span class="s2">&quot;@huggingface&quot;</span>
+<span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="n">return_offsets_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tokenized</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;input_ids&#39;: [101, 1030, 17662, 12172, 102], &#39;attention_mask&#39;: [1, 1, 1, 1, 1], &#39;offset_mapping&#39;: [(0, 0), (0, 1), (1, 8), (8, 12), (0, 0)]}</pre>
 </div>
 
 </div>
@@ -13833,13 +13759,45 @@ Casting the dataset: 100%|██████████████████
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we can experiment with different pre-trained model checkpoint, e.g. &quot;roberta-base&quot;</span>
-<span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased&quot;</span>
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">convert_id_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">input_id</span> <span class="ow">in</span> <span class="n">input_ids</span><span class="p">:</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_ids_to_tokens</span><span class="p">(</span><span class="n">input_id</span><span class="p">)</span>
+        <span class="n">strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">strings</span>
+
+
+<span class="k">def</span> <span class="nf">convert_offset_mapping_to_string</span><span class="p">(</span><span class="n">tokenized</span><span class="p">,</span> <span class="n">offset_mapping</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+    <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">offset</span> <span class="ow">in</span> <span class="n">offset_mapping</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+            
+    <span class="k">return</span> <span class="n">strings</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># excluding for special tokens, the two should be identical</span>
+<span class="n">strings</span> <span class="o">=</span> <span class="n">convert_id_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;input ids&#39; string: &quot;</span><span class="p">,</span> <span class="n">strings</span><span class="p">)</span>
+
+<span class="n">strings</span> <span class="o">=</span> <span class="n">convert_offset_mapping_to_string</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;offset_mapping&quot;</span><span class="p">],</span> <span class="n">word</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;offset mapping string: &quot;</span><span class="p">,</span> <span class="n">strings</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13855,10 +13813,9 @@ Casting the dataset: 100%|██████████████████
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
-- This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
-- This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>input ids&#39; string:  [&#39;[CLS]&#39;, &#39;@&#39;, &#39;hugging&#39;, &#39;##face&#39;, &#39;[SEP]&#39;]
+offset mapping string:  [&#39;@&#39;, &#39;hugging&#39;, &#39;face&#39;]
 </pre>
 </div>
 </div>
@@ -13870,46 +13827,30 @@ Casting the dataset: 100%|██████████████████
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As usual, we tokenize our anchor and positive text.</p>
+<p>Another specific preprocessing detail for question answering task is appropriate ways to deal with long documents. In many other tasks, we typically truncate documents that are longer than our model's maximum sequence/sentence length, but here, removing some parts of the context might result in losing a section of the document that contains our answer. To deal with this, we will allow one (long) example in our dataset to give several input features by turning on <code>return_overflowing_tokens</code>. Commonly referred to as chunks, each chunk's length will be shorter than the model's maximum length (configurable hyper-parameter). Also, just in case a particular answer lies at the point where we splitted a long context, we will allow some overlap between chunks/features controlled by a hyper-parameter <code>doc_stride</code>, sometimes commonly known as sliding window.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">tokenize_fn</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
-    <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_text&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
-    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
-
-    <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_text&quot;</span><span class="p">],</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
-    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">examples</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prevents progress bar from flooding our document</span>
-<span class="n">set_progress_bar_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">dataset_dict_tokenized</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-    <span class="n">tokenize_fn</span><span class="p">,</span>
-    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">remove_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;anchor_text&quot;</span><span class="p">,</span> <span class="s2">&quot;positive_text&quot;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">examples</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;We are going to split this sentence&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;This sentence is longer, we are also going to split it&quot;</span>
+<span class="p">]</span>
+<span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+    <span class="n">examples</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_overflowing_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">stride</span><span class="o">=</span><span class="mi">2</span>
 <span class="p">)</span>
-<span class="n">dataset_dict_tokenized</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of examples: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">examples</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of tokenized features: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]))</span>
+<span class="n">tokenized</span>
 </pre></div>
 
     </div>
@@ -13922,86 +13863,25 @@ Casting the dataset: 100%|██████████████████
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>DatasetDict({
-    train: Dataset({
-        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
-        num_rows: 314315
-    })
-    validation: Dataset({
-        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
-        num_rows: 5749
-    })
-    test: Dataset({
-        features: [&#39;label&#39;, &#39;anchor_input_ids&#39;, &#39;anchor_attention_mask&#39;, &#39;positive_input_ids&#39;, &#39;positive_attention_mask&#39;],
-        num_rows: 1500
-    })
-})</pre>
-</div>
-
-</div>
-
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>number of examples:  2
+number of tokenized features:  8
+</pre>
 </div>
 </div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;label&#39;: 0,
- &#39;anchor_input_ids&#39;: [101,
-  1037,
-  2711,
-  2006,
-  1037,
-  3586,
-  14523,
-  2058,
-  1037,
-  3714,
-  2091,
-  13297,
-  1012,
-  102],
- &#39;anchor_attention_mask&#39;: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
- &#39;positive_input_ids&#39;: [101,
-  1037,
-  2711,
-  2003,
-  19350,
-  1010,
-  2006,
-  1037,
-  3586,
-  1012,
-  102],
- &#39;positive_attention_mask&#39;: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}</pre>
+<pre>{&#39;input_ids&#39;: [[101, 2057, 2024, 2183, 2000, 102], [101, 2183, 2000, 3975, 2023, 102], [101, 3975, 2023, 6251, 102], [101, 2023, 6251, 2003, 2936, 102], [101, 2003, 2936, 1010, 2057, 102], [101, 1010, 2057, 2024, 2036, 102], [101, 2024, 2036, 2183, 2000, 102], [101, 2183, 2000, 3975, 2009, 102]], &#39;attention_mask&#39;: [[1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1]], &#39;overflow_to_sample_mapping&#39;: [0, 0, 0, 1, 1, 1, 1, 1]}</pre>
 </div>
 
 </div>
@@ -14013,89 +13893,22 @@ Casting the dataset: 100%|██████████████████
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here we also define a customize collate function for batching our dataset.</p>
+<p>Our two input sentences/examples has been split into 8 tokenized features. From the <code>overflow_to_sample_mapping</code> field, we can see which original example these 8 features map to.</p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">transformers.tokenization_utils_base</span> <span class="kn">import</span> <span class="n">PreTrainedTokenizerBase</span>
-<span class="kn">from</span> <span class="nn">transformers.file_utils</span> <span class="kn">import</span> <span class="n">PaddingStrategy</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">DataCollatorForSiamese</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Huggingface&#39;s DataCollatorWithPadding is for a single input, here we extend it</span>
-<span class="sd">    to take paired inputs.</span>
-<span class="sd">    </span>
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    https://huggingface.co/docs/transformers/main_classes/data_collator#transformers.DataCollatorWithPadding</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tokenizer</span><span class="p">:</span> <span class="n">PreTrainedTokenizerBase</span>
-    <span class="n">padding</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">PaddingStrategy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">max_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">pad_to_multiple_of</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">return_tensors</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="n">anchor_features</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
-            <span class="s2">&quot;attention_mask&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
-            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
-        <span class="p">}</span>
-        <span class="n">pos_features</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input_ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;positive_input_ids&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">],</span>
-            <span class="s2">&quot;attention_mask&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
-        <span class="p">}</span>
-        <span class="n">anchor_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
-            <span class="n">anchor_features</span><span class="p">,</span>
-            <span class="n">padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span>
-            <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">,</span>
-            <span class="n">pad_to_multiple_of</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_to_multiple_of</span><span class="p">,</span>
-            <span class="n">return_tensors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_tensors</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">pos_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
-            <span class="n">pos_features</span><span class="p">,</span>
-            <span class="n">padding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span>
-            <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">,</span>
-            <span class="n">pad_to_multiple_of</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_to_multiple_of</span><span class="p">,</span>
-            <span class="n">return_tensors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_tensors</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;anchor_input_ids&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;anchor_attention_mask&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;positive_input_ids&quot;</span><span class="p">:</span> <span class="n">pos_batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;positive_attention_mask&quot;</span><span class="p">:</span> <span class="n">pos_batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">anchor_batch</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">batch</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample output from a data loader</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorForSiamese</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
-<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">))</span>
-<span class="n">batch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># if we print out the batched input ids, we&#39;ll see each one</span>
+<span class="c1"># of our sentences has been split to multiple chunks/features</span>
+<span class="k">for</span> <span class="n">input_id</span><span class="p">,</span> <span class="n">sample_mapping</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">],</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;overflow_to_sample_mapping&quot;</span><span class="p">]):</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">input_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chunk: &quot;</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Orignal input: &quot;</span><span class="p">,</span> <span class="n">examples</span><span class="p">[</span><span class="n">sample_mapping</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -14108,25 +13921,290 @@ Casting the dataset: 100%|██████████████████
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Chunk:  [CLS] we are going to [SEP]
+Orignal input:  We are going to split this sentence
+Chunk:  [CLS] going to split this [SEP]
+Orignal input:  We are going to split this sentence
+Chunk:  [CLS] split this sentence [SEP]
+Orignal input:  We are going to split this sentence
+Chunk:  [CLS] this sentence is longer [SEP]
+Orignal input:  This sentence is longer, we are also going to split it
+Chunk:  [CLS] is longer, we [SEP]
+Orignal input:  This sentence is longer, we are also going to split it
+Chunk:  [CLS], we are also [SEP]
+Orignal input:  This sentence is longer, we are also going to split it
+Chunk:  [CLS] are also going to [SEP]
+Orignal input:  This sentence is longer, we are also going to split it
+Chunk:  [CLS] going to split it [SEP]
+Orignal input:  This sentence is longer, we are also going to split it
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Last thing we'll mention is the <code>sequence_ids</code> attribute. When feeding pairs of input to a tokenizer, we can use it to distinguish first and second portion of a given sentence. In question and answering this will be helpful for identifying whether the predicted answer's start and end position falls inside context portion of a given document, instead of question portion. If we look at a sample output, we'll notice that special tokens will be mapped to <code>None</code>, whereas our context, which is passed as the second part of our paired input will receive a value of 1.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;question section&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;context section&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">tokenized</span><span class="o">.</span><span class="n">sequence_ids</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;anchor_input_ids&#39;: tensor([[  101,  1037,  2711,  2006,  1037,  3586, 14523,  2058,  1037,  3714,
-           2091, 13297,  1012,   102],
-         [  101,  2336,  5629,  1998, 12015,  2012,  4950,   102,     0,     0,
-              0,     0,     0,     0]]),
- &#39;anchor_attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-         [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]]),
- &#39;positive_input_ids&#39;: tensor([[  101,  1037,  2711,  2003, 19350,  1010,  2006,  1037,  3586,  1012,
-            102],
-         [  101,  2045,  2024,  2336,  2556,   102,     0,     0,     0,     0,
-              0]]),
- &#39;positive_attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-         [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0]]),
- &#39;labels&#39;: tensor([0, 0])}</pre>
+<pre>[None, 0, 0, None, 1, 1, None]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Upon introducing these advanced tokenizer usages, the next few code cell showcase how to put them in use and creates a function for preprocessing our question answer dataset into a format that's suited for downstream modeling. Note:</p>
+<ul>
+<li>When performing truncation, we should only truncate the context, never the question. Configured via <code>truncation="only_second"</code></li>
+<li>Given that we split a single document into several chunks, it can happen that a given chunk doesn't contain a valid answer, in this case, we will set question answer task's label, <code>start_position</code> and <code>end_position</code>, to index 0 (special token <code>[CLS]</code>'s index).</li>
+<li>We'll be padding every feature to maximum length, as most of the context will be reaching that threshold, there's no real benefit of performing dynamic padding.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># maximum length of a feature (question and context)</span>
+<span class="n">max_length</span> <span class="o">=</span> <span class="mi">384</span>
+<span class="c1"># overlap between two part of the context</span>
+<span class="n">doc_stride</span> <span class="o">=</span> <span class="mi">128</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">prepare_qa_train</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepare training data, input features plus label for question answering dataset.&quot;&quot;&quot;</span>
+    <span class="n">answers</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;answers&quot;</span><span class="p">]</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">question</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]]</span>
+    
+    <span class="c1"># Tokenize our examples with truncation and padding, but keep overflows using a stride.</span>
+    <span class="c1"># This results in one example potentially generating several features when a context is</span>
+    <span class="c1"># long, each of those features having a context that overlaps a bit the previous</span>
+    <span class="c1"># feature&#39;s context to prevent chopping off answer span.</span>
+    <span class="n">tokenized_examples</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+        <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
+        <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">],</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">,</span>
+        <span class="n">truncation</span><span class="o">=</span><span class="s2">&quot;only_second&quot;</span><span class="p">,</span>
+        <span class="n">return_overflowing_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">return_offsets_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">stride</span><span class="o">=</span><span class="n">doc_stride</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;max_length&quot;</span>
+    <span class="p">)</span>
+    <span class="n">sample_mapping</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;overflow_to_sample_mapping&quot;</span><span class="p">]</span>
+    <span class="n">offset_mapping</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;offset_mapping&quot;</span><span class="p">]</span>
+
+     <span class="c1"># We will label impossible answers with CLS token&#39;s index.</span>
+    <span class="n">cls_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># start_positions and end_positions will be the labels for extractive question answering</span>
+    <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;start_positions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;end_positions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">offset_mapping</span><span class="p">):</span>
+        <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">sample_index</span> <span class="o">=</span> <span class="n">sample_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">answers</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span>
+        
+        <span class="c1"># if no answers are given, set CLS index as answer</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">answer</span><span class="p">[</span><span class="s2">&quot;answer_start&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;start_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_index</span><span class="p">)</span>
+            <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;end_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">start_char</span> <span class="o">=</span> <span class="n">answer</span><span class="p">[</span><span class="s2">&quot;answer_start&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">end_char</span> <span class="o">=</span> <span class="n">start_char</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">answer</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">sequence_ids</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="o">.</span><span class="n">sequence_ids</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="c1"># find the context&#39;s corresponding start and end token index</span>
+            <span class="n">token_start_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">sequence_ids</span><span class="p">[</span><span class="n">token_start_index</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">token_start_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">token_end_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">sequence_ids</span><span class="p">[</span><span class="n">token_end_index</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">token_end_index</span> <span class="o">-=</span> <span class="mi">1</span>
+
+            <span class="c1"># if answer is within the context offset, move the token_start_index and token_end_index</span>
+            <span class="c1"># to two ends of the answer else label it with cls index</span>
+            <span class="n">offset_start_char</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="n">token_start_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">offset_end_char</span> <span class="o">=</span> <span class="n">offset</span><span class="p">[</span><span class="n">token_end_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">offset_start_char</span> <span class="o">&lt;=</span> <span class="n">start_char</span> <span class="ow">and</span> <span class="n">offset_end_char</span> <span class="o">&gt;=</span> <span class="n">end_char</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">token_start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">offset</span><span class="p">[</span><span class="n">token_start_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">start_char</span><span class="p">:</span>
+                    <span class="n">token_start_index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">start_position</span> <span class="o">=</span> <span class="n">token_start_index</span> <span class="o">-</span> <span class="mi">1</span>
+
+                <span class="k">while</span> <span class="n">offset</span><span class="p">[</span><span class="n">token_end_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">end_char</span><span class="p">:</span>
+                    <span class="n">token_end_index</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">end_position</span> <span class="o">=</span> <span class="n">token_end_index</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;start_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_position</span><span class="p">)</span>
+                <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;end_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_position</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;start_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_index</span><span class="p">)</span>
+                <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;end_positions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls_index</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tokenized_examples</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We test our preprocessing function on a sample text to ensure our somewhat complicated preprocessing function works as expected, i.e. the start and end position of a tokenized answer matches the original un-tokenized version.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">examples</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">answers</span> <span class="o">=</span> <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;answers&quot;</span><span class="p">]</span>
+
+<span class="n">tokenized_examples</span> <span class="o">=</span> <span class="n">prepare_qa_train</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span>
+
+<span class="n">start_positions</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;start_positions&quot;</span><span class="p">]</span>
+<span class="n">end_positions</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;end_positions&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">input_ids</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">start_positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">end_positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">input_ids</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;expected answer:&quot;</span><span class="p">,</span> <span class="n">answers</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;preprocessing answer:&quot;</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>expected answer: Saint Bernadette Soubirous
+preprocessing answer: saint bernadette soubirous
+expected answer: a copper statue of Christ
+preprocessing answer: a copper statue of christ
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prevents progress bar from flooding our document</span>
+<span class="n">disable_progress_bar</span><span class="p">()</span>
+
+<span class="n">tokenized_datasets</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">prepare_qa_train</span><span class="p">,</span>
+    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">remove_columns</span><span class="o">=</span><span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span>
+<span class="p">)</span>
+<span class="n">tokenized_datasets</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>DatasetDict({
+    train: Dataset({
+        features: [&#39;input_ids&#39;, &#39;attention_mask&#39;, &#39;offset_mapping&#39;, &#39;overflow_to_sample_mapping&#39;, &#39;start_positions&#39;, &#39;end_positions&#39;],
+        num_rows: 88524
+    })
+    validation: Dataset({
+        features: [&#39;input_ids&#39;, &#39;attention_mask&#39;, &#39;offset_mapping&#39;, &#39;overflow_to_sample_mapping&#39;, &#39;start_positions&#39;, &#39;end_positions&#39;],
+        num_rows: 10784
+    })
+})</pre>
 </div>
 
 </div>
@@ -14145,111 +14223,25 @@ Casting the dataset: 100%|██████████████████
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This section defines our transformer followed by pooling encoder, siamese network, evaluation metric, then proceed with using transformer library's Trainer class for training our network.</p>
+<p>Upon preparing our dataset, fine-tuning a question answer model on top of pre-trained language model will be similar to other tasks, where we initialize a <code>AutoModelForQuestionAnswering</code> model, and follow the standard fine-tuning process.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TransformerPoolingEncoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_checkpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">fine_tuned_model_checkpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">-fine_tuned-</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">pooling_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="s2">&quot;cls&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pooling_mode</span><span class="si">}</span><span class="s2"> needs to one of avg, cls&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">=</span> <span class="n">pooling_mode</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="p">(</span><span class="n">input_ids</span><span class="o">=</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="n">attention_mask</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">==</span> <span class="s2">&quot;avg&quot;</span><span class="p">:</span>
-            <span class="c1"># reshape attention mask to cover all hidden dimension</span>
-            <span class="n">mask</span> <span class="o">=</span> <span class="n">attention_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span><span class="p">)</span>
-            <span class="c1"># perform mean pooling, but excluding attention mask</span>
-            <span class="n">pooled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span> <span class="o">*</span> <span class="n">mask</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span>
-                <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-9</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pooling_mode</span> <span class="o">==</span> <span class="s2">&quot;cls&quot;</span><span class="p">:</span>
-            <span class="n">pooled</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">last_hidden_state</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-
-        <span class="k">return</span> <span class="n">pooled</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SiameseModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The loss function we are using is similar to Multiple Negative Ranking Loss that&#39;s mentioned</span>
-<span class="sd">    in the sentence bert package.</span>
-<span class="sd">    </span>
-<span class="sd">    The similarity function implemented here is cosine similarity, with cosine similarity, we often</span>
-<span class="sd">    times add a scaling multiplier. As cosine similarity&#39;s range is between -1 and 1, this scaling</span>
-<span class="sd">    factor ensures our loss are large enough between positive and negative samples for the network</span>
-<span class="sd">    to train.</span>
-<span class="sd">    </span>
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="n">cache_dir</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">TransformerPoolingEncoder</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">pooling_mode</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">anchor_input_ids</span><span class="p">,</span>
-        <span class="n">anchor_attention_mask</span><span class="p">,</span>
-        <span class="n">positive_input_ids</span><span class="p">,</span>
-        <span class="n">positive_attention_mask</span><span class="p">,</span>
-        <span class="n">labels</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="c1"># [batch size, hidden dim]</span>
-        <span class="n">anchor_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span>
-            <span class="n">input_ids</span><span class="o">=</span><span class="n">anchor_input_ids</span><span class="p">,</span>
-            <span class="n">attention_mask</span><span class="o">=</span><span class="n">anchor_attention_mask</span>
-        <span class="p">)</span>
-        <span class="n">positive_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span>
-            <span class="n">input_ids</span><span class="o">=</span><span class="n">positive_input_ids</span><span class="p">,</span>
-            <span class="n">attention_mask</span><span class="o">=</span><span class="n">positive_attention_mask</span>
-        <span class="p">)</span>
-
-        <span class="c1"># cosine similarity</span>
-        <span class="n">anchor_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">positive_norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">positive_embedding</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">anchor_norm</span><span class="p">,</span> <span class="n">positive_norm</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
-
-        <span class="c1"># Example a[i] should match with p[i]</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">scores</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SiameseModel</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">):</span>
+    <span class="n">do_train</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">do_train</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForQuestionAnswering</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_checkpoint</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14266,9 +14258,11 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
-- This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
-- This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForQuestionAnswering: [&#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_projector.bias&#39;]
+- This IS expected if you are initializing DistilBertForQuestionAnswering from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing DistilBertForQuestionAnswering from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of DistilBertForQuestionAnswering were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;qa_outputs.bias&#39;, &#39;qa_outputs.weight&#39;]
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
 </pre>
 </div>
 </div>
@@ -14279,111 +14273,32 @@ Casting the dataset: 100%|██████████████████
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample forward output from the model given our input batch</span>
-<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">batch</span><span class="p">)</span>
-    
-<span class="n">output</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[15]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(tensor(0.4709, device=&#39;cuda:0&#39;),
- tensor([[-0.1386, -0.0835, -0.2738,  ..., -0.3862,  0.0325, -0.0017],
-         [ 0.3649,  0.3073,  0.0864,  ..., -0.2507,  0.2876, -0.0527]],
-        device=&#39;cuda:0&#39;),
- tensor([[-0.0968, -0.2067, -0.0868,  ..., -0.4490, -0.0050,  0.0568],
-         [-0.0548,  0.0111,  0.1266,  ..., -0.1976,  0.2901, -0.1404]],
-        device=&#39;cuda:0&#39;))</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For our evaluation metric, we will first compute the cosine similarity of our pairs' embedding, then calculate pearson and spearman correlation with our ground truth similarity score.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">eval_prediction</span><span class="p">):</span>
-    <span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">predictions</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">label_ids</span>
-
-    <span class="n">cosine_sim</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">paired_cosine_distances</span><span class="p">(</span><span class="n">anchor_embedding</span><span class="p">,</span> <span class="n">positive_embedding</span><span class="p">)</span>
-    <span class="n">pearson</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">)</span>
-    <span class="n">spearman</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">cosine_sim</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;pearson&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">pearson</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;spearman&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">spearman</span><span class="p">,</span> <span class="mi">3</span><span class="p">)}</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;DISABLE_MLFLOW_INTEGRATION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
 
-<span class="n">finetuned_checkpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">-siamese&quot;</span>
-<span class="n">training_args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="n">finetuned_checkpoint</span><span class="p">,</span>
-    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">,</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
     <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
-    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="n">fp16</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">STEPS</span><span class="p">,</span>
-    <span class="n">save_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">STEPS</span><span class="p">,</span>
-    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">save_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="c1"># we set it to evaluate/save per epoch to avoid flowing console</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">EPOCH</span><span class="p">,</span>
+    <span class="n">save_strategy</span><span class="o">=</span><span class="n">IntervalStrategy</span><span class="o">.</span><span class="n">EPOCH</span><span class="p">,</span>
     <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s2">&quot;spearman&quot;</span>
+    <span class="n">do_train</span><span class="o">=</span><span class="n">do_train</span>
 <span class="p">)</span>
 
 <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
     <span class="n">model</span><span class="p">,</span>
-    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span> 
-    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
-    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">],</span>
-    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">],</span>
-    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span><span class="p">,</span>
-    <span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">EarlyStoppingCallback</span><span class="p">(</span><span class="n">early_stopping_patience</span><span class="o">=</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="n">args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">tokenized_datasets</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">tokenized_datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">],</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 
@@ -14412,10 +14327,14 @@ Casting the dataset: 100%|██████████████████
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">do_train</span><span class="p">:</span>
+    <span class="n">train_output</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="c1"># saving the model which allows us to leverage</span>
+    <span class="c1"># .from_pretrained(model_path)</span>
+    <span class="n">trainer</span><span class="o">.</span><span class="n">save_model</span><span class="p">(</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14432,15 +14351,16 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/root/.local/lib/python3.8/site-packages/transformers/optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+<pre>The following columns in the training set don&#39;t have a corresponding argument in `DistilBertForQuestionAnswering.forward` and have been ignored: offset_mapping, overflow_to_sample_mapping. If offset_mapping, overflow_to_sample_mapping are not expected by `DistilBertForQuestionAnswering.forward`,  you can safely ignore this message.
+/root/.local/lib/python3.8/site-packages/transformers/optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
   warnings.warn(
 ***** Running training *****
-  Num examples = 314315
+  Num examples = 88524
   Num Epochs = 2
   Instantaneous batch size per device = 64
   Total train batch size (w. parallel, distributed &amp; accumulation) = 64
   Gradient Accumulation steps = 1
-  Total optimization steps = 9824
+  Total optimization steps = 2768
 </pre>
 </div>
 </div>
@@ -14454,68 +14374,27 @@ Casting the dataset: 100%|██████████████████
 <div class="output_html rendered_html output_subarea ">
     <div>
       
-      <progress value='3500' max='9824' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [3500/9824 05:36 < 10:07, 10.41 it/s, Epoch 0/2]
+      <progress value='2768' max='2768' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [2768/2768 13:41, Epoch 2/2]
     </div>
     <table border="1" class="dataframe">
   <thead>
  <tr style="text-align: left;">
-      <th>Step</th>
+      <th>Epoch</th>
       <th>Training Loss</th>
       <th>Validation Loss</th>
-      <th>Pearson</th>
-      <th>Spearman</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>500</td>
-      <td>0.300600</td>
-      <td>2.117372</td>
-      <td>0.783000</td>
-      <td>0.757000</td>
+      <td>1</td>
+      <td>1.310800</td>
+      <td>1.138176</td>
     </tr>
     <tr>
-      <td>1000</td>
-      <td>0.234000</td>
-      <td>2.185063</td>
-      <td>0.792000</td>
-      <td>0.765000</td>
-    </tr>
-    <tr>
-      <td>1500</td>
-      <td>0.215600</td>
-      <td>2.248563</td>
-      <td>0.789000</td>
-      <td>0.760000</td>
-    </tr>
-    <tr>
-      <td>2000</td>
-      <td>0.200300</td>
-      <td>2.208026</td>
-      <td>0.805000</td>
-      <td>0.777000</td>
-    </tr>
-    <tr>
-      <td>2500</td>
-      <td>0.183800</td>
-      <td>2.221604</td>
-      <td>0.797000</td>
-      <td>0.768000</td>
-    </tr>
-    <tr>
-      <td>3000</td>
-      <td>0.182500</td>
-      <td>2.224505</td>
-      <td>0.800000</td>
-      <td>0.769000</td>
-    </tr>
-    <tr>
-      <td>3500</td>
-      <td>0.172100</td>
-      <td>2.226413</td>
-      <td>0.803000</td>
-      <td>0.774000</td>
+      <td>2</td>
+      <td>0.797600</td>
+      <td>1.133642</td>
     </tr>
   </tbody>
 </table><p></div>
@@ -14528,124 +14407,36 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2000] due to args.save_total_limit
+<pre>The following columns in the evaluation set don&#39;t have a corresponding argument in `DistilBertForQuestionAnswering.forward` and have been ignored: offset_mapping, overflow_to_sample_mapping. If offset_mapping, overflow_to_sample_mapping are not expected by `DistilBertForQuestionAnswering.forward`,  you can safely ignore this message.
 ***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3500] due to args.save_total_limit
+  Num examples = 10784
+  Batch size = 64
+Saving model checkpoint to distilbert-base-uncased-fine_tuned-squad/checkpoint-1384
+Configuration saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-1384/config.json
+Model weights saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-1384/pytorch_model.bin
+tokenizer config file saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-1384/tokenizer_config.json
+Special tokens file saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-1384/special_tokens_map.json
+The following columns in the evaluation set don&#39;t have a corresponding argument in `DistilBertForQuestionAnswering.forward` and have been ignored: offset_mapping, overflow_to_sample_mapping. If offset_mapping, overflow_to_sample_mapping are not expected by `DistilBertForQuestionAnswering.forward`,  you can safely ignore this message.
 ***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1000] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3000] due to args.save_total_limit
+  Num examples = 10784
+  Batch size = 64
+Saving model checkpoint to distilbert-base-uncased-fine_tuned-squad/checkpoint-2768
+Configuration saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-2768/config.json
+Model weights saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-2768/pytorch_model.bin
+tokenizer config file saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-2768/tokenizer_config.json
+Special tokens file saved in distilbert-base-uncased-fine_tuned-squad/checkpoint-2768/special_tokens_map.json
 
 
 Training completed. Do not forget to share your model on huggingface.co/models =)
 
 
-Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 0.777).
+Saving model checkpoint to distilbert-base-uncased-fine_tuned-squad
+Configuration saved in distilbert-base-uncased-fine_tuned-squad/config.json
+Model weights saved in distilbert-base-uncased-fine_tuned-squad/pytorch_model.bin
+tokenizer config file saved in distilbert-base-uncased-fine_tuned-squad/tokenizer_config.json
+Special tokens file saved in distilbert-base-uncased-fine_tuned-squad/special_tokens_map.json
 </pre>
 </div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">dataset_dict_tokenized</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 1500
-  Batch size = 256
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-    <div>
-      
-      <progress value='6' max='6' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [6/6 00:00]
-    </div>
-    </div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;eval_loss&#39;: 2.7090277671813965,
- &#39;eval_pearson&#39;: 0.832,
- &#39;eval_spearman&#39;: 0.832,
- &#39;eval_runtime&#39;: 0.5742,
- &#39;eval_samples_per_second&#39;: 2612.205,
- &#39;eval_steps_per_second&#39;: 10.449,
- &#39;epoch&#39;: 0.71}</pre>
-</div>
-
 </div>
 
 </div>
@@ -14662,7 +14453,7 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Quantitative benchmark on our test set shows we are capable of achieving a 80+% spearman correlation. This section performs a manual inspection on some sample input sentences, where some are more similar compared to others.</p>
+<p>Evaluating our model also requires a bit more work on postprocessing front, hence we'll first use transformer's <code>pipeline</code> object for confirming the model we just trained is indeed learning by seeing if its predicted answer resembles ground truth answer.</p>
 
 </div>
 </div>
@@ -14672,18 +14463,20 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># tokenize our input sentences</span>
-<span class="n">sentences</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;it caught him off guard that space smelled of seared steak&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;she could not decide between painting her teeth or brushing her nails&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;he thought there&#39;d be sufficient time is he hid his watch&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;the bees decided to have a mutiny against their queen&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;the sign said there was road work ahead so she decided to speed up&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;on a scale of one to ten, what&#39;s your favorite flavor of color?&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;flying stinging insects rebelled in opposition to the matriarch&quot;</span>
-<span class="p">]</span>
-<span class="n">batch</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">sentences</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span>
-<span class="n">batch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">qa_pipeline</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span>
+    <span class="s2">&quot;question-answering&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">fine_tuned_model_checkpoint</span>
+<span class="p">)</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">qa_pipeline</span><span class="p">({</span>
+    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="n">answer_text</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;answers&quot;</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;output answer matches expected answer: &quot;</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">answer_text</span><span class="p">)</span> 
+<span class="n">output</span>
 </pre></div>
 
     </div>
@@ -14693,6 +14486,90 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>loading configuration file distilbert-base-uncased-fine_tuned-squad/config.json
+Model config DistilBertConfig {
+  &#34;_name_or_path&#34;: &#34;distilbert-base-uncased-fine_tuned-squad&#34;,
+  &#34;activation&#34;: &#34;gelu&#34;,
+  &#34;architectures&#34;: [
+    &#34;DistilBertForQuestionAnswering&#34;
+  ],
+  &#34;attention_dropout&#34;: 0.1,
+  &#34;dim&#34;: 768,
+  &#34;dropout&#34;: 0.1,
+  &#34;hidden_dim&#34;: 3072,
+  &#34;initializer_range&#34;: 0.02,
+  &#34;max_position_embeddings&#34;: 512,
+  &#34;model_type&#34;: &#34;distilbert&#34;,
+  &#34;n_heads&#34;: 12,
+  &#34;n_layers&#34;: 6,
+  &#34;pad_token_id&#34;: 0,
+  &#34;qa_dropout&#34;: 0.1,
+  &#34;seq_classif_dropout&#34;: 0.2,
+  &#34;sinusoidal_pos_embds&#34;: false,
+  &#34;tie_weights_&#34;: true,
+  &#34;torch_dtype&#34;: &#34;float32&#34;,
+  &#34;transformers_version&#34;: &#34;4.21.3&#34;,
+  &#34;vocab_size&#34;: 30522
+}
+
+loading configuration file distilbert-base-uncased-fine_tuned-squad/config.json
+Model config DistilBertConfig {
+  &#34;_name_or_path&#34;: &#34;distilbert-base-uncased-fine_tuned-squad&#34;,
+  &#34;activation&#34;: &#34;gelu&#34;,
+  &#34;architectures&#34;: [
+    &#34;DistilBertForQuestionAnswering&#34;
+  ],
+  &#34;attention_dropout&#34;: 0.1,
+  &#34;dim&#34;: 768,
+  &#34;dropout&#34;: 0.1,
+  &#34;hidden_dim&#34;: 3072,
+  &#34;initializer_range&#34;: 0.02,
+  &#34;max_position_embeddings&#34;: 512,
+  &#34;model_type&#34;: &#34;distilbert&#34;,
+  &#34;n_heads&#34;: 12,
+  &#34;n_layers&#34;: 6,
+  &#34;pad_token_id&#34;: 0,
+  &#34;qa_dropout&#34;: 0.1,
+  &#34;seq_classif_dropout&#34;: 0.2,
+  &#34;sinusoidal_pos_embds&#34;: false,
+  &#34;tie_weights_&#34;: true,
+  &#34;torch_dtype&#34;: &#34;float32&#34;,
+  &#34;transformers_version&#34;: &#34;4.21.3&#34;,
+  &#34;vocab_size&#34;: 30522
+}
+
+loading weights file distilbert-base-uncased-fine_tuned-squad/pytorch_model.bin
+All model checkpoint weights were used when initializing DistilBertForQuestionAnswering.
+
+All the weights of DistilBertForQuestionAnswering were initialized from the model checkpoint at distilbert-base-uncased-fine_tuned-squad.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use DistilBertForQuestionAnswering for predictions without further training.
+Didn&#39;t find file distilbert-base-uncased-fine_tuned-squad/added_tokens.json. We won&#39;t load it.
+loading file distilbert-base-uncased-fine_tuned-squad/vocab.txt
+loading file distilbert-base-uncased-fine_tuned-squad/tokenizer.json
+loading file None
+loading file distilbert-base-uncased-fine_tuned-squad/special_tokens_map.json
+loading file distilbert-base-uncased-fine_tuned-squad/tokenizer_config.json
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>output answer matches expected answer:  True
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -14702,76 +14579,10 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;input_ids&#39;: tensor([[  101,  2009,  3236,  2032,  2125,  3457,  2008,  2686,  9557,  1997,
-          2712,  5596, 21475,   102,     0,     0,     0,     0,     0],
-        [  101,  2016,  2071,  2025,  5630,  2090,  4169,  2014,  4091,  2030,
-         12766,  2014, 10063,   102,     0,     0,     0,     0,     0],
-        [  101,  2002,  2245,  2045,  1005,  1040,  2022,  7182,  2051,  2003,
-          2002, 11041,  2010,  3422,   102,     0,     0,     0,     0],
-        [  101,  1996, 13734,  2787,  2000,  2031,  1037, 19306,  2114,  2037,
-          3035,   102,     0,     0,     0,     0,     0,     0,     0],
-        [  101,  1996,  3696,  2056,  2045,  2001,  2346,  2147,  3805,  2061,
-          2016,  2787,  2000,  3177,  2039,   102,     0,     0,     0],
-        [  101,  2006,  1037,  4094,  1997,  2028,  2000,  2702,  1010,  2054,
-          1005,  1055,  2115,  5440, 14894,  1997,  3609,  1029,   102],
-        [  101,  3909, 22748,  9728, 25183,  1999,  4559,  2000,  1996, 13523,
-          4360, 11140,   102,     0,     0,     0,     0,     0,     0]]), &#39;attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]])}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># feed it through our siamese network&#39;s encoder</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
-
-<span class="n">embeddings</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-<span class="n">embeddings</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[21]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([[ 0.21393271,  0.33937266, -0.35428116, ...,  0.13894947,
-         0.36403698, -0.09026248],
-       [ 0.5465353 , -0.6560232 , -0.86056316, ..., -0.28352353,
-         0.06771367,  0.32315105],
-       [-0.05830259,  0.1330159 ,  0.06023514, ...,  0.1857918 ,
-        -0.7235887 , -0.7109812 ],
-       ...,
-       [ 0.40011722, -0.43589538,  0.3119559 , ...,  0.23818746,
-        -0.40150076,  0.33471447],
-       [-0.600745  ,  0.1105762 ,  0.26701927, ...,  0.14820881,
-         0.16505945, -0.00796631],
-       [-1.0210578 , -0.22127706, -0.3994902 , ..., -0.19572051,
-        -0.2220803 ,  0.32416752]], dtype=float32)</pre>
+<pre>{&#39;score&#39;: 0.845287561416626,
+ &#39;start&#39;: 177,
+ &#39;end&#39;: 191,
+ &#39;answer&#39;: &#39;Denver Broncos&#39;}</pre>
 </div>
 
 </div>
@@ -14783,21 +14594,76 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Given our sentence embedding, we then perform a cosine similarity for finding semantically similar sentences. Notice our trained model was able to capture sentences that have very few matching words but are semantically similar.</p>
-<p>The step is not done here, but we can compare this with results from out of the box pre-trained models and see that further training these networks with constrastive loss makes day and night differences. i.e. if we were to directly retrieve sentence embeddings by either pooling its last hidden output/layer or extracting first token ([CLS] token)'s embedding, it often times yield rather poor sentence embeddings.</p>
+<p>For evaluation, we'll preprocess our dataset in a slightly different manner:</p>
+<ul>
+<li>First, we technically don't need to generate labels.</li>
+<li>Second, the "fun" part is to map our model's prediction back to original context's span. As a reminder, some of our features are overflowed inputs for the same given example. We'll be using example id for creating this mapping.</li>
+<li>Last, but not least, we'll set the question part of our input sequence to <code>None</code>, this is for efficiently detecting if our predicted answer span is within the context portion of input sentence as opposed to the question portion.</li>
+</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">prepare_qa_test</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
+    <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">question</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]]</span>
+
+    <span class="c1"># Tokenize our examples with truncation and padding, but keep overflows using a stride.</span>
+    <span class="c1"># This results in one example potentially generating several features when a context is</span>
+    <span class="c1"># long, each of those features having a context that overlaps a bit the previous</span>
+    <span class="c1"># feature&#39;s context to prevent chopping off answer span.</span>
+    <span class="n">tokenized_examples</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+        <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
+        <span class="n">examples</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">],</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">,</span>
+        <span class="n">truncation</span><span class="o">=</span><span class="s2">&quot;only_second&quot;</span><span class="p">,</span>
+        <span class="n">return_overflowing_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">return_offsets_mapping</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">stride</span><span class="o">=</span><span class="n">doc_stride</span>
+    <span class="p">)</span>
+    <span class="n">sample_mapping</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;overflow_to_sample_mapping&quot;</span><span class="p">]</span>
+
+    <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;example_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">])):</span>
+        <span class="n">sequence_ids</span> <span class="o">=</span> <span class="n">tokenized_examples</span><span class="o">.</span><span class="n">sequence_ids</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">sample_index</span> <span class="o">=</span> <span class="n">sample_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;example_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">][</span><span class="n">sample_index</span><span class="p">])</span>
+
+        <span class="c1"># for offset mapping that are not part of context, set it to None so it&#39;s easy to determine</span>
+        <span class="c1"># if a token positiion is part of the context or not</span>
+        <span class="n">offset_mapping</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;offset_mapping&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">sequence_ids</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">offset_mapping</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+
+        <span class="n">tokenized_examples</span><span class="p">[</span><span class="s2">&quot;offset_mapping&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">offset_mapping</span>
+
+    <span class="k">return</span> <span class="n">tokenized_examples</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_embedding</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">embeddings</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">candidate_embedding</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">scores</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">paired_cosine_distances</span><span class="p">(</span><span class="n">input_embedding</span><span class="p">,</span> <span class="n">candidate_embedding</span><span class="p">)</span>
-<span class="n">scores</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">validation_features</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">prepare_qa_test</span><span class="p">,</span>
+    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">remove_columns</span><span class="o">=</span><span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span>
+<span class="p">)</span>
+<span class="n">validation_features</span>
 </pre></div>
 
     </div>
@@ -14816,8 +14682,10 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([0.07516348, 0.21306509, 0.00834197, 0.62654173, 0.01274633,
-       0.0575071 ], dtype=float32)</pre>
+<pre>Dataset({
+    features: [&#39;input_ids&#39;, &#39;attention_mask&#39;, &#39;offset_mapping&#39;, &#39;overflow_to_sample_mapping&#39;, &#39;example_id&#39;],
+    num_rows: 10784
+})</pre>
 </div>
 
 </div>
@@ -14825,17 +14693,211 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With our features, we can generate prediction which is a pair of start and end logits.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">sentences</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
-    <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentences</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">sentence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">raw_predictions</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">validation_features</span><span class="p">)</span>
+<span class="n">raw_predictions</span><span class="o">.</span><span class="n">predictions</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>The following columns in the test set don&#39;t have a corresponding argument in `DistilBertForQuestionAnswering.forward` and have been ignored: offset_mapping, example_id, overflow_to_sample_mapping. If offset_mapping, example_id, overflow_to_sample_mapping are not expected by `DistilBertForQuestionAnswering.forward`,  you can safely ignore this message.
+***** Running Prediction *****
+  Num examples = 10784
+  Batch size = 64
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea "></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(array([[  -8.055,   -9.14 ,   -9.33 , ..., -100.   , -100.   , -100.   ],
+        [  -8.13 ,   -9.06 ,   -9.31 , ..., -100.   , -100.   , -100.   ],
+        [  -8.4  ,   -8.65 ,   -9.53 , ..., -100.   , -100.   , -100.   ],
+        ...,
+        [  -5.02 ,   -8.89 ,   -9.48 , ..., -100.   , -100.   , -100.   ],
+        [  -3.217,   -9.12 ,   -9.04 , ..., -100.   , -100.   , -100.   ],
+        [  -4.484,   -9.04 ,   -9.46 , ..., -100.   , -100.   , -100.   ]],
+       dtype=float16),
+ array([[  -8.19 ,   -9.32 ,   -9.195, ..., -100.   , -100.   , -100.   ],
+        [  -8.26 ,   -9.37 ,   -9.234, ..., -100.   , -100.   , -100.   ],
+        [  -8.125,   -9.37 ,   -8.805, ..., -100.   , -100.   , -100.   ],
+        ...,
+        [  -4.406,   -9.34 ,   -9.24 , ..., -100.   , -100.   , -100.   ],
+        [  -2.547,   -9.22 ,   -9.   , ..., -100.   , -100.   , -100.   ],
+        [  -3.742,   -9.195,   -9.04 , ..., -100.   , -100.   , -100.   ]],
+       dtype=float16))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Having our original example, preprocessed features, generated predictions, we'll perform a final post-processing to generate predicted answer for each example. This process mainly involves:</p>
+<ul>
+<li>Creating a map between examples and features.</li>
+<li>Looping through all the examples, and for each example, loop through all its features to pick the best start and end logit combination from the n_best start and end logits.</li>
+<li>During this picking out best answer span process, we'll automatically eliminate answers that are not inside the context, gives negative length (start position greater than end position), as well as answers that are too long (configurable with a max_answer_length parameter).</li>
+<li>The "proper" way of computing score for each answer is to convert start and end logit into probability using a softmax operation, then taking a product of these two probabilities. Here, we'll skip the softmax and obtain the logit scores by summing start and end logits instead (log(ab)=log(a)+log(b)) </li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">postprocess_qa_predictions</span><span class="p">(</span>
+    <span class="n">examples</span><span class="p">,</span>
+    <span class="n">features</span><span class="p">,</span>
+    <span class="n">raw_predictions</span><span class="p">,</span>
+    <span class="n">n_best_size</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">max_answer_length</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+    <span class="n">no_answer</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Post-processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span><span class="si">}</span><span class="s2"> example predictions split into </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="si">}</span><span class="s2"> features.&quot;</span><span class="p">)</span>
+
+    <span class="n">all_start_logits</span><span class="p">,</span> <span class="n">all_end_logits</span> <span class="o">=</span> <span class="n">raw_predictions</span>
+
+    <span class="c1"># build a dictionary that stores examples to features/chunks mapping</span>
+    <span class="c1"># key : example, value : list of features</span>
+    <span class="n">example_id_to_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])}</span>
+    <span class="n">features_per_example</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">features</span><span class="p">):</span>
+        <span class="n">features_per_example</span><span class="p">[</span><span class="n">example_id_to_index</span><span class="p">[</span><span class="n">feature</span><span class="p">[</span><span class="s2">&quot;example_id&quot;</span><span class="p">]]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">cls_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="c1"># for each example, loop through all its features/chunks for finding the best one</span>
+    <span class="k">for</span> <span class="n">example_index</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">examples</span><span class="p">)):</span>
+        <span class="n">feature_indices</span> <span class="o">=</span> <span class="n">features_per_example</span><span class="p">[</span><span class="n">example_index</span><span class="p">]</span>
+
+        <span class="n">min_null_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">valid_answers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">feature_index</span> <span class="ow">in</span> <span class="n">feature_indices</span><span class="p">:</span>
+            <span class="c1"># model prediction for this feature</span>
+            <span class="n">start_logits</span> <span class="o">=</span> <span class="n">all_start_logits</span><span class="p">[</span><span class="n">feature_index</span><span class="p">]</span>
+            <span class="n">end_logits</span> <span class="o">=</span> <span class="n">all_end_logits</span><span class="p">[</span><span class="n">feature_index</span><span class="p">]</span>
+
+            <span class="n">offset_mapping</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">feature_index</span><span class="p">][</span><span class="s2">&quot;offset_mapping&quot;</span><span class="p">]</span>
+            
+            <span class="c1"># update minimum null prediction&#39;s score</span>
+            <span class="n">feature_null_score</span> <span class="o">=</span> <span class="n">start_logits</span><span class="p">[</span><span class="n">cls_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">end_logits</span><span class="p">[</span><span class="n">cls_index</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">min_null_score</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">min_null_score</span> <span class="o">&lt;</span> <span class="n">feature_null_score</span><span class="p">:</span>
+                <span class="n">min_null_score</span> <span class="o">=</span> <span class="n">feature_null_score</span>
+            
+            <span class="c1"># loop through all possibilities for `n_best_size` start and end logits.</span>
+            <span class="n">start_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">start_logits</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">n_best_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">end_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">end_logits</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">n_best_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">start_index</span> <span class="ow">in</span> <span class="n">start_indexes</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">end_index</span> <span class="ow">in</span> <span class="n">end_indexes</span><span class="p">:</span>
+                    <span class="c1"># Don&#39;t consider out-of-scope answers, either because indices</span>
+                    <span class="c1"># are out of bounds or correspond to input_ids that</span>
+                    <span class="c1"># are not part of the context section.</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">start_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset_mapping</span><span class="p">)</span>
+                        <span class="ow">or</span> <span class="n">end_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset_mapping</span><span class="p">)</span>
+                        <span class="ow">or</span> <span class="n">offset_mapping</span><span class="p">[</span><span class="n">start_index</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                        <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset_mapping</span><span class="p">[</span><span class="n">start_index</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span>
+                        <span class="ow">or</span> <span class="n">offset_mapping</span><span class="p">[</span><span class="n">end_index</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+                        <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">offset_mapping</span><span class="p">[</span><span class="n">end_index</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span>
+                    <span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># Don&#39;t consider answers with a length that is either &lt; 0 or &gt; max_answer_length.</span>
+                    <span class="k">if</span> <span class="n">end_index</span> <span class="o">&lt;</span> <span class="n">start_index</span> <span class="ow">or</span> <span class="n">end_index</span> <span class="o">-</span> <span class="n">start_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">max_answer_length</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">start_char</span> <span class="o">=</span> <span class="n">offset_mapping</span><span class="p">[</span><span class="n">start_index</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">end_char</span> <span class="o">=</span> <span class="n">offset_mapping</span><span class="p">[</span><span class="n">end_index</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">valid_answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">context</span><span class="p">[</span><span class="n">start_char</span><span class="p">:</span><span class="n">end_char</span><span class="p">],</span>
+                            <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">start_logits</span><span class="p">[</span><span class="n">start_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">end_logits</span><span class="p">[</span><span class="n">end_index</span><span class="p">]</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_answers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">best_answer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">valid_answers</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># In the very rare edge case we have not a single non-null prediction,</span>
+            <span class="c1"># we create a fake prediction to avoid failure.</span>
+            <span class="n">best_answer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
+
+        <span class="n">example_id</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">no_answer</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">best_answer</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">best_answer</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">min_null_score</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">predictions</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">answer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">predictions</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_answer</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">predictions</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_predictions</span> <span class="o">=</span> <span class="n">postprocess_qa_predictions</span><span class="p">(</span>
+    <span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">],</span>
+    <span class="n">validation_features</span><span class="p">,</span>
+    <span class="n">raw_predictions</span><span class="o">.</span><span class="n">predictions</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;output answer matches expected answer: &quot;</span><span class="p">,</span> <span class="n">final_predictions</span><span class="p">[</span><span class="n">example</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">==</span> <span class="n">answer_text</span><span class="p">)</span> 
 </pre></div>
 
     </div>
@@ -14852,13 +14914,39 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>flying stinging insects rebelled in opposition to the matriarch
-0.0752 | it caught him off guard that space smelled of seared steak
-0.2131 | she could not decide between painting her teeth or brushing her nails
-0.0083 | he thought there&#39;d be sufficient time is he hid his watch
-0.6265 | the bees decided to have a mutiny against their queen
-0.0127 | the sign said there was road work ahead so she decided to speed up
-0.0575 | on a scale of one to ten, what&#39;s your favorite flavor of color?
+<pre>Post-processing 10570 example predictions split into 10784 features.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10570/10570 [00:13&lt;00:00, 768.69it/s]</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>output answer matches expected answer:  True
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>
 </pre>
 </div>
 </div>
@@ -14870,7 +14958,60 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this document, we walked through a modern baseline approach for training sentence transformers. Modern in a sense that we are building on top of pre-trained language models instead of training from scratch, baseline meaning there're a lot more we can do to improve these models' performance, we'll take a look at those tricks in future documents.</p>
+<p>Squad primarily uses two metrics for model evaluation.</p>
+<ul>
+<li>Exact Match: Measures percentage of predictions that perfectly matches any one of the ground truth answers.</li>
+<li>Macro F1: Measures average overlap between prediction and ground truth answer.</li>
+</ul>
+<p>For context, screenshot below shows performance reported by the original Squad 2 paper <a href="https://arxiv.org/abs/1806.03822">[5]</a>.</p>
+<p><img src="imgs/squad2_paper_results.png"></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">squad_metric</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">task_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">formatted_predictions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">example_id</span><span class="p">,</span> <span class="s2">&quot;prediction_text&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">example_id</span><span class="p">,</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">final_predictions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">]</span>
+<span class="n">references</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="s2">&quot;answers&quot;</span><span class="p">:</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;answers&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">]]</span>
+<span class="n">squad_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">predictions</span><span class="o">=</span><span class="n">formatted_predictions</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;exact_match&#39;: 76.8306527909177, &#39;f1&#39;: 85.18462636575374}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>That's a wrap for this document. We went through nitty gritty details on how to pre-process our inputs and post-process our outputs for fine-tuning a cross attention model on top of pre-trained language model.</p>
 
 </div>
 </div>
@@ -14886,11 +15027,11 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://www.pinecone.io/learn/fine-tune-sentence-transformers-mnr/">Blog: Next-Gen Sentence Embeddings with Multiple Negatives Ranking Loss</a></li>
-<li><a href="https://fennel.ai/blog/real-world-recommendation-system/">Blog: Real World Recommendation System – Part 1</a></li>
-<li><a href="https://www.sbert.net/examples/applications/retrieve_rerank/README.html">Sentence Transformers Documentation: Retrieve &amp; Re-Rank</a></li>
-<li><a href="https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli">Github: Sentence Transformers Training Natural Language Inference</a></li>
-<li><a href="https://arxiv.org/abs/1908.10084">Paper: Nils Reimers, Iryna Gurevych - Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks - 2019</a></li>
+<li><a href="https://github.com/huggingface/notebooks/blob/main/examples/question_answering.ipynb">[1]</a> Notebook: Fine-tuning a model on a question-answering task</li>
+<li><a href="https://github.com/huggingface/transformers/tree/main/examples/pytorch/question-answering">[2]</a> Github: Huggingface Question Answering Examples</li>
+<li><a href="https://huggingface.co/course/chapter7/7?fw=pt">[3]</a> Huggingface Course: Chapter 7 Main NLP tasks - Question answering</li>
+<li><a href="https://www.pinecone.io/learn/reader-models/">[4]</a> Blog: Reader Models for Open Domain Question-Answering</li>
+<li><a href="https://arxiv.org/abs/1806.03822">[5]</a> Paper: Pranav Rajpurkar, Robin Jia, et al. - Know What You Don't Know: Unanswerable Questions for SQuAD - 2018</li>
 </ul>
 
 </div>

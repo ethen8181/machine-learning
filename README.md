@@ -66,8 +66,9 @@ Curated notes on deep learning.
     - Approximate Nearest Neighborhood Search with Navigable Small World. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/multi_label/nsw.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/multi_label/nsw.html)]
 - Graph Neural Network (GNN).
     - - Quick Introduction to Graph Neural Network Node Classification Task (DGL, GraphSAGE). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/gnn/gnn_node_classification_intro.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/gnn/gnn_node_classification_intro.html)]
-- Contrastive Learning.
+- Transformer.
     - Sentence Transformer: Training Bi-Encoder via Contrastive Loss. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/sentence_transformer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/sentence_transformer.html)]
+    - Fine Tuning Pre-trained Encoder on Question Answer Task. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/question_answer/question_answer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/question_answer/question_answer.html)]
 - Deep Learning for Tabular Data - PyTorch, PyTorch Lightning, ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/tabular.html)]
 
 ### model deployment
