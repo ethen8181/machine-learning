@@ -13086,15 +13086,6 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1>Table of Contents<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Response-Knowledge-Distillation" data-toc-modified-id="Response-Knowledge-Distillation-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Response Knowledge Distillation</a></span><ul class="toc-item"><li><span><a href="#Data-Preprocessing" data-toc-modified-id="Data-Preprocessing-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preprocessing</a></span></li><li><span><a href="#Teacher-Model" data-toc-modified-id="Teacher-Model-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Teacher Model</a></span></li><li><span><a href="#Student-Model" data-toc-modified-id="Student-Model-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Student Model</a></span></li><li><span><a href="#Benchmark" data-toc-modified-id="Benchmark-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Benchmark</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -15953,6 +15944,22 @@ Average latency (ms): 4.02 +\- 0.34
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It is not surprising that large models tend to give superior performance. As software and hardware continues to advance, the barrier for training or accessing these large models will continue to lower, making scaling up still a promising approach to obtain better performance for whatever applications we care about. Despite that being said, there will always be scenarios where smaller models are preferable, and knowledge distillation <a href="https://arxiv.org/abs/1503.02531">[6]</a> is a popular way for compressing our large models into less expensive ones while still retaining majority of its performance.</p>
+<p>As mentioned in DistilBERT <a href="https://arxiv.org/abs/1910.01108">[7]</a>, they were able to compress a 110 million parameters BERT-base model to 66 million parameters DistilBERT model while retaining 97% of the original performance when measured on GLUE benchmark's dev set. Note, if we were to distill a pre-trained model ourselves, it might be worth mentioning that a better student initialization strategy is to make sure our students are &quot;well read&quot; <a href="https://arxiv.org/abs/1908.08962">[8]</a>. i.e. Our students typically have the same architecture with the only variations on smaller number of layers, instead of initializing them via truncating teacher layers or by taking one layer out of two like in DistilBERT, we should initialized from weights that have also gone through similar pre-training procedure as our teacher.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
@@ -15961,13 +15968,14 @@ Average latency (ms): 4.02 +\- 0.34
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://www.philschmid.de/knowledge-distillation-bert-transformers">Blog: Task-specific knowledge distillation for BERT using Transformers &amp; Amazon SageMaker</a></li>
-<li><a href="https://medium.com/huggingface/distilbert-8cf3380435b5">Blog: Smaller, faster, cheaper, lighter: Introducing DistilBERT, a distilled version of BERT</a></li>
-<li><a href="https://neptune.ai/blog/knowledge-distillation">Blog: Knowledge Distillation: Principles, Algorithms, Applications</a></li>
-<li><a href="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html">Blog: Weeknotes: Distilling distilled transformers</a></li>
-<li><a href="https://intellabs.github.io/distiller/knowledge_distillation.html">Doc: Neural Network Distiller - Knowledge Distillation</a></li>
-<li><a href="https://arxiv.org/abs/1910.01108">Paper: V. Sanh, L. Debut, J. Chaumond, T. Wolf - DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter - 2019</a></li>
-<li><a href="https://arxiv.org/abs/1503.02531">Paper: G. Hinton, O. Vinyals, J. Dean - Distilling the Knowledge in a Neural Network - 2015</a></li>
+<li><a href="https://www.philschmid.de/knowledge-distillation-bert-transformers">[1]</a> Blog: Task-specific knowledge distillation for BERT using Transformers &amp; Amazon SageMaker</li>
+<li><a href="https://medium.com/huggingface/distilbert-8cf3380435b5">[2]</a> Blog: Smaller, faster, cheaper, lighter: Introducing DistilBERT, a distilled version of BERT</li>
+<li><a href="https://neptune.ai/blog/knowledge-distillation">[3]</a> Blog: Knowledge Distillation: Principles, Algorithms, Applications</li>
+<li><a href="https://lewtun.github.io/blog/weeknotes/nlp/huggingface/transformers/2021/01/17/wknotes-distillation-and-generation.html">[4]</a> Blog: Weeknotes: Distilling distilled transformers</li>
+<li><a href="https://intellabs.github.io/distiller/knowledge_distillation.html">[5]</a> Doc: Neural Network Distiller - Knowledge Distillation</li>
+<li><a href="https://arxiv.org/abs/1503.02531">[6]</a> Paper: Geoffrey Hinton, Oriol Vinyals, et al. - Distilling the Knowledge in a Neural Network - 2015</li>
+<li><a href="https://arxiv.org/abs/1910.01108">[7]</a> Paper: Victor Sanh, Lysandre Debut, Julien Chaumond, Thomas Wolf - DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter - 2019</li>
+<li><a href="https://arxiv.org/abs/1908.08962">[8]</a> Paper: Iulia Turc, Ming-Wei Chang, Kenton Lee, Kristina Toutanova - Well-Read Students Learn Better: On the Importance of Pre-training Compact Models - 2019</li>
 </ul>
 
 </div>
