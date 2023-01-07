@@ -6,6 +6,8 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Changed
 
+- Machine Translation with Huggingface Transformers mT5. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/translation_mt5/translation_mt5.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/seq2seq/translation_mt5/translation_mt5.html)]
+  - This is a complete overhaul of the original Machine Translation with Huggingface Transformers article, which was a bit obsolete.
 - Response Knowledge Distillation for Training Student Model. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/response_knowledge_distillation.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/response_knowledge_distillation.html)]
   - Added a final notes section on distilbert, well read students read well.
 
