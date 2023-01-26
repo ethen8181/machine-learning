@@ -1,3 +1,6 @@
+"""
+Run a seq2seq Marian translation model evaluation on wmt16 dataset.
+"""
 import os
 import torch
 import random
@@ -12,12 +15,13 @@ from transformers import (
     Seq2SeqTrainer,
     DataCollatorForSeq2Seq
 )
+from translation_utils import download_file, create_translation_data
 
 
 @dataclass
 class Config:
-    data_files = {'train': ['train.tsv'], 'val': ['val.tsv'], 'test': ['test.tsv']}
-        
+    cache_dir: str = "./translation"
+    data_dir: str = os.path.join(cache_dir, "wmt16")
     source_lang: str = 'de'
     target_lang: str = 'en'    
     
@@ -94,14 +98,38 @@ def compute_metrics(eval_pred):
     return {k: round(v, 4) for k, v in result.items()}
 
 
+def create_wmt16_data_files(config: Config):
+    # files are downloaded from
+    # http://www.statmt.org/wmt16/multimodal-task.html
+    urls = [
+        'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/training.tar.gz',
+        'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz',
+        'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/mmt16_task1_test.tar.gz'
+    ]
+
+    for url in urls:
+        download_file(url, config.data_dir)
+
+    data_files = {}
+    for split in ["train", "val", "test"]:
+        source_input_path = os.path.join(config.data_dir, f"{split}.{config.source_lang}")
+        target_input_path = os.path.join(config.data_dir, f"{split}.{config.target_lang}")
+        output_path = os.path.join(config.cache_dir, f"{split}.tsv")
+        create_translation_data(source_input_path, target_input_path, output_path)
+        data_files[split] = [output_path]
+
+    return data_files
+
+
 if __name__ == "__main__":
     config = Config()
 
+    data_files = create_wmt16_data_files(config)
     dataset_dict = load_dataset(
         'csv',
         delimiter='\t',
         column_names=[config.source_lang, config.target_lang],
-        data_files=config.data_files
+        data_files=data_files
     )
     dataset_dict_tokenized = dataset_dict.map(
         batch_tokenize_fn,
@@ -109,7 +137,10 @@ if __name__ == "__main__":
     )
 
     model_name = config.model_checkpoint.split("/")[-1]
-    output_dir = os.path.join(config.cache_dir, f"{model_name}_{config.source_lang}-{config.target_lang}")
+    output_dir = os.path.join(
+        config.cache_dir,
+        f"{model_name}_{config.source_lang}-{config.target_lang}"
+    )
     args = Seq2SeqTrainingArguments(
         output_dir=output_dir,
         per_device_eval_batch_size=config.batch_size,
@@ -128,4 +159,3 @@ if __name__ == "__main__":
         compute_metrics=compute_metrics,
     )
     print(trainer.evaluate())
-

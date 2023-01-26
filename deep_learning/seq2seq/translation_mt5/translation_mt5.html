@@ -13585,7 +13585,7 @@ transformers: 4.21.3
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./translation&quot;</span>
-    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;multi30k&quot;</span><span class="p">)</span>
+    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;wmt16&quot;</span><span class="p">)</span>
     <span class="n">source_lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;de&quot;</span>
     <span class="n">target_lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span>    
     
@@ -14183,8 +14183,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 <span class="n">model_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">model_checkpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">fine_tuned_model_checkpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
     <span class="n">config</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;checkpoint-4500&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="p">)</span>
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">):</span>
     <span class="n">do_train</span> <span class="o">=</span> <span class="kc">False</span>
@@ -14698,8 +14697,8 @@ prediction:  A group of men are loading cotton on a truck.
 <li><a href="https://aclanthology.org/W18-6319/">[7]</a> Matt Post - A Call for Clarity in Reporting BLEU Scores - 2018</li>
 <li><a href="https://aclanthology.org/W04-1013/">[8]</a> Chin-Yew Lin - ROUGE: A Package for Automatic Evaluation of Summaries - 2004</li>
 <li><a href="https://arxiv.org/abs/1605.00459">[9]</a> Desmond Elliott, Stella Frank, Khalil Sima'an, Lucia Specia - Multi30K: Multilingual English-German Image Descriptions - 2016</li>
-<li><a href="https://arxiv.org/abs/1910.10683">[10]</a> Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer - 2019</li>
-<li><a href="https://arxiv.org/abs/2010.11934">[11]</a> Linting Xue, Noah Constant, Adam Roberts - mT5: A massively multilingual pre-trained text-to-text transformer - 2020</li>
+<li><a href="https://arxiv.org/abs/1910.10683">[10]</a> Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, et al. - Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer - 2019</li>
+<li><a href="https://arxiv.org/abs/2010.11934">[11]</a> Linting Xue, Noah Constant, Adam Roberts, et al. - mT5: A massively multilingual pre-trained text-to-text transformer - 2020</li>
 </ul>
 
 </div>
