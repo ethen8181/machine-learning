@@ -13070,12 +13070,12 @@ div#notebook {
                 },
                 displayAlign: 'center',
                 CommonHTML: {
-                    linebreaks: { 
-                    automatic: true 
+                    linebreaks: {
+                    automatic: true
                     }
                 }
             });
-        
+
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
     }
@@ -13566,11 +13566,11 @@ datasets    : 1.18.4
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In modern recommendation system, it is common to have two major distinct stages, a recall/retrieval stage, and a ranking stage, it can get more sophisticated than this, but that's out of scope for this discussion. We'll be discussing these two stages in the context of a pre-trained encoder model, where different types of architectures are commonly used at different stages to reflect their own strength.</p>
-<p><img src="imgs/stages.png"></p>
+<img src="imgs/stages.png">
 <p>Recall/Retrieval focuses on candidate generation, given we have a million things be it inventories, passages, etc. stored in our database, we need a way to efficiently retrieve a subset of them that are more relevant for the given context. In encoder model's paradigm, this means we need a way to represent our incoming context be it query, questions, etc. in a vector representation, often times referred to as sentence embedding and perform a similarity search between that with entities that are also already represented in a sentence embedding. This step is often done using the bi-encoder architecture, where we can pass individual sentences/entities through our encoder and then perform similarity search using metrics such as cosine similarity. Being able to input individual entities through our encoder is the key to an effient retrieval stage, where we need to quickly scan through our database, as it means we can often times pre-compute these results apriori.</p>
-<p><img src="imgs/bi_encoder.png"></p>
+<img src="imgs/bi_encoder.png">
 <p>These subsets are then passed to the ranker, where given we now have our pairs, we need to score these pairs so the system can assign a score to rank these retrieved inventories in a sorted order. This step is often done using cross encoder, a.k.a. cross attention architectures. Cross encoder doesn't produce sentence embeddings for our data but instead relies on classification mechansim for out input pairs, hence whenever we have a fixed set of data pairs we wish to score, cross encoder often times achieves better performance than their bi encoder counterparts even when using less training data.</p>
-<p><img src="imgs/cross_encoder.png"></p>
+<img src="imgs/cross_encoder.png">
 <p>In this document, we'll be focusing on how to train bi-encoder style architecture using contrastive loss.</p>
 
 </div>
@@ -14903,7 +14903,7 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 
- 
+
 
 
 </html>
