@@ -6,8 +6,8 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ## Added
 
-- Contrative Learning Notes. [[markdown](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.md)]
-- Introduction to CLIP (Contrastive Language-Image Pre-training) [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip.html)]
+- Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
+- Introduction to CLIP (Contrastive Language-Image Pre-training) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
 
 ## [2023-01]
 
