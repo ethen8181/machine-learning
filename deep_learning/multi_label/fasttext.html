@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>fasttext</title>
+<title>fasttext</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#MultiLabel-Text-Classification-with-FastText" data-toc-modified-id="MultiLabel-Text-Classification-with-FastText-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>MultiLabel Text Classification with FastText</a></span><ul class="toc-item"><li><span><a href="#Quick-Introduction-to-Fasttext" data-toc-modified-id="Quick-Introduction-to-Fasttext-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Quick Introduction to Fasttext</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model Training</a></span></li><li><span><a href="#Tokenizer" data-toc-modified-id="Tokenizer-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Tokenizer</a></span></li><li><span><a href="#Fasttext-Text-Classification-Pipeline" data-toc-modified-id="Fasttext-Text-Classification-Pipeline-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Fasttext Text Classification Pipeline</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13117,8 +13125,7 @@ div#notebook {
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<style>
+<div class="output_html rendered_html output_subarea output_execute_result"><style>
 @import url('http://fonts.googleapis.com/css?family=Source+Code+Pro');
 @import url('http://fonts.googleapis.com/css?family=Vollkorn');
 @import url('http://fonts.googleapis.com/css?family=Arimo');
@@ -13334,7 +13341,6 @@ div#notebook {
                 }
         });
 </script>
-
 </div>
 
 </div>
@@ -13407,11 +13413,11 @@ tokenizers 0.8.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Multi label classification is different from regular classification task where there is single ground truth that we are predicting. Here, each record can have multiple labels attached to it. e.g. in the data that we'll be working with later, our goal is to build a classifier that assigns tags to stackexchange questions about cooking. As we can imagine, each question can belong into multiple tags/topics at the same time, i.e. each record have multiple "correct" labels/targets. Let's look at some examples to materialize this.</p>
-
+<p>Multi label classification is different from regular classification task where there is single ground truth that we are predicting. Here, each record can have multiple labels attached to it. e.g. in the data that we'll be working with later, our goal is to build a classifier that assigns tags to stackexchange questions about cooking. As we can imagine, each question can belong into multiple tags/topics at the same time, i.e. each record have multiple &quot;correct&quot; labels/targets. Let's look at some examples to materialize this.</p>
 <pre><code>__label__sauce __label__cheese How much does potato starch affect a cheese sauce recipe?
 __label__food-safety __label__acidity Dangerous pathogens capable of growing in acidic environments
-__label__cast-iron __label__stove How do I cover up the white spots on my cast iron stove?</code></pre>
+__label__cast-iron __label__stove How do I cover up the white spots on my cast iron stove?
+</code></pre>
 <p>Looking at the first few lines, we can see that for each question, its corresponding tags are prepended with the <code>__label__</code> prefix. Our task is to train a model that predicts the tags/labels given the question.</p>
 <p>This file format is expected by <a href="https://fasttext.cc/">Fasttext</a>, the library we'll be using to train our tag classifier.</p>
 
@@ -13430,9 +13436,9 @@ __label__cast-iron __label__stove How do I cover up the white spots on my cast i
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We'll be using Fasttext to train our text classifier. Fasttext at its core is composed of two main idea.</p>
 <p>First, unlike deep learning methods where there are multiple hidden layers, the architecture is similar to Word2vec. After feeding the words into 1 hidden layer, the words representation are averaged into the sentence representation and directly followed by the output layer.</p>
-<p><img src="img/fasttext.png" width="50%" height="50%"></p>
+<img src="img/fasttext.png" width="50%" height="50%">
 <p>This seemingly simple method works extremely well on classification task, and from the original paper it can achieve performance that are on par with more complex deep learning methods, while being significantly quicker to train.</p>
-<p>The second idea is instead of treating words as the basic entity, it uses character n-grams or word n-grams as additional features. For example, in the sentence, "I like apple", the 1-grams are 'I', 'like', 'apple'. The word 2-gram are consecutive word such as: 'I like', 'like apple', whereas the character 2-grams are for the word apple are 'ap', 'pp', 'pl', 'le'. By using word n-grams, the model now has the potential to capture some information from the ordering of the word. Whereas, with character n-grams, the model can now generate better embeddings for rare words or even out of vocabulary words as we can compose the embedding for a word using the sum or average of its character n-grams.</p>
+<p>The second idea is instead of treating words as the basic entity, it uses character n-grams or word n-grams as additional features. For example, in the sentence, &quot;I like apple&quot;, the 1-grams are 'I', 'like', 'apple'. The word 2-gram are consecutive word such as: 'I like', 'like apple', whereas the character 2-grams are for the word apple are 'ap', 'pp', 'pl', 'le'. By using word n-grams, the model now has the potential to capture some information from the ordering of the word. Whereas, with character n-grams, the model can now generate better embeddings for rare words or even out of vocabulary words as we can compose the embedding for a word using the sum or average of its character n-grams.</p>
 <p>For readers accustomed to Word2vec, one should note that the word embedding/representation for the classification task is neither the skipgram or cbow method. Instead it is tailored for the classification task at hand. To elaborate:</p>
 <ul>
 <li>Given a word, predict me which other words should go around (skipgram).</li>
@@ -13712,7 +13718,8 @@ example label:  [&#39;__label__baking&#39;, &#39;__label__food-safety&#39;, &#39
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Although not used here, fasttext has a parameter called <code>bucket</code>. It can be a bit unintuitive what the parameter controls. We note down the <a href="https://github.com/facebookresearch/fastText/issues/641">explanation provided by the package maintainer</a>.</p>
-<blockquote><p>The size of the model will increase linearly with the number of buckets. The size of the input matrix is DIM x (VS + BS), where VS is the number of words in the vocabulary and BS is the number of buckets. The number of buckets does not have other influence on the model size.
+<blockquote>
+<p>The size of the model will increase linearly with the number of buckets. The size of the input matrix is DIM x (VS + BS), where VS is the number of words in the vocabulary and BS is the number of buckets. The number of buckets does not have other influence on the model size.
 The buckets are used for hashed features (such as character ngrams or word ngrams), which are used in addition to word features. In the input matrix, each word is represented by a vector, and the additional ngram features are represented by a fixed number of vectors (which corresponds to the number of buckets).</p>
 </blockquote>
 <p>The loss function that we've specified is one versus all, <code>ova</code> for short. This type of loss function handles the multiple labels by building independent binary classifiers for each label.</p>
@@ -13994,7 +14001,7 @@ F1@2	0.283
 <li>Train the tokenizer on the file that contains the training data. To do so, we need to read the training data and create a file that only contains the text data, i.e. we need to strip the label out from the file to train our tokenizer only on the input text file.</li>
 <li>Once the tokenizer is trained, we need to read in the training data again, and tokenize the text in the file with our trained-tokenizer and also make sure the data is in the format that fasttext can consume.</li>
 <li>Proceed as usual to train the model on the preprocessed data.</li>
-<li>When generating prediction for new data, remember to pass it through the tokenizer before. </li>
+<li>When generating prediction for new data, remember to pass it through the tokenizer before.</li>
 </ol>
 
 </div>
@@ -14834,8 +14841,7 @@ F1@2	0.283
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -14891,8 +14897,7 @@ F1@2	0.283
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -15041,7 +15046,10 @@ test metric - num_records: 3107, precision@1: 0.491, recall@1: 0.212, f1@1: 0.29
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

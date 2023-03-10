@@ -13096,12 +13096,13 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>SBERT (Sentence Bert) <a href="https://arxiv.org/abs/1908.10084">[5]</a> demonstrated it is beneficial to perform additional fine-tuning on top of pre-trained transformer based language models for competitive sentence embedding performance. From a practical stand point, sentence embeddings are particular useful in:</p>
+<p>From a practical stand point, sentence embeddings are particular useful in:</p>
 <ul>
 <li>Retrieval tasks where the typical setup is a bi-encoder, a.k.a. twin tower architecture model. These architecture accepts individual entity as inputs, and comparing them with future inputs for retrieving &quot;similar&quot; entities (definition of similar is use case dependent). This enables pre-computing embeddings and caching for retrieving &quot;similar&quot; entities through fast approximate nearest neighborhood look ups which is critical for latency sensitive applications.</li>
 <li>Embedding-based classification tasks, where the embeddings are fed in as features to downstream models. This is different from a typical fine-tuning setup, here the embeddings, once generated are considered frozen, and won't be tuned along with the downstream system. These are places where downstream application relies on non-deep learning models such as gradient boosted tree as their choice of machine learning algorithm.</li>
 </ul>
 <p>Example industrial use case: Facebook search's embedding based retrieval <a href="https://arxiv.org/abs/2006.11632">[15]</a>.</p>
+<p>As BERT <a href="https://arxiv.org/abs/1810.04805">[16]</a> doesn't generate meaningful sentence embeddings as per one of the <a href="https://github.com/google-research/bert/issues/164#issuecomment-441324222">original authors</a>, SBERT (Sentence Bert) <a href="https://arxiv.org/abs/1908.10084">[5]</a> demonstrated it is beneficial to perform additional fine-tuning on top of pre-trained transformer based language models for competitive sentence embedding performance. Although original SBERT paper performed all of its training using classification style loss/objective function, but one of its authors later pointed out that contrastive learning is a much better approach <a href="https://www.youtube.com/watch?v=RHXZKUr8qOY">[1]</a>. So here we are, discussing some recipes for training sentence embeddings via contrastive learning.</p>
 
 </div>
 </div>
@@ -13118,7 +13119,7 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>As with most other use cases, we can of course use a more powerful encoder to generate the embedding representations for our anchor and positive, but some tips specific to improving the performance for contrastive loss based learning involves:</p>
 <p><strong>Noise Contrastive Objective Function</strong></p>
-<p>In recent years, most of these fine-tuning procedure leverage contrastive learning via variants of InfoNCE (Noise Contrastive Estimation) loss <a href="https://arxiv.org/abs/1807.03748">[11]</a>. This type of loss is sometimes referred to as NT-Xent (normalized temperature scaled cross entropy loss) in SimCLR (simple contrastiv learning of visual representations) <a href="https://arxiv.org/abs/2002.05709">[12]</a> or multiple negative ranking loss <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">[2]</a>, which uses cross entropy loss to distinguish positive from negative pairs.</p>
+<p>In recent years, most of these fine-tuning procedure leverage contrastive learning via variants of InfoNCE (Noise Contrastive Estimation) loss <a href="https://arxiv.org/abs/1807.03748">[11]</a>. This type of loss is sometimes referred to as NT-Xent (normalized temperature scaled cross entropy loss) in SimCLR (simple contrastive learning of visual representations) <a href="https://arxiv.org/abs/2002.05709">[12]</a> or multiple negative ranking loss <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">[2]</a>, which uses cross entropy loss to distinguish positive from negative pairs.</p>
 \begin{align}
 L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_i, p_j) / \tau)}
 \end{align}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example ($a_1$, $p_1$). What we wish to accomplish is $a_i$ and $p_i$ becomes close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant in vector space. $sim$ here represents a similarity function such as cosine similarity or dot product, $\tau$ denotes temperature scaling which can be a learned parameter, or configurable value. Note if choosing cosine similarity as similarity function, we might need to set a smaller value for temperature. As by default, cosine similarity's score differences are too small and doesn't lead to good empirical results.</p>
@@ -13204,6 +13205,7 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <li><a href="https://arxiv.org/abs/2212.03533">[13]</a> Liang Wang, Nan Yang, Xiaolong Huang, Binxing Jiao, Linjun Yang, Daxin Jiang, Rangan Majumder, Furu Wei - Text Embeddings by Weakly-Supervised Contrastive Pre-training - 2022</li>
 <li><a href="https://arxiv.org/abs/2104.02057">[14]</a> Xinlei Chen, Saining Xie, et al. - An Empirical Study of Training Self-Supervised Vision Transformers - 2021</li>
 <li><a href="https://arxiv.org/abs/2006.11632">[15]</a> Jui-Ting Huang, Ashish Sharma, Shuying Sun, Li Xia, David Zhang, Philip Pronin, Janani Padmanabhan, Giuseppe Ottaviano, Linjun Yang - Embedding-based Retrieval in Facebook Search - 2020</li>
+<li><a href="https://arxiv.org/abs/1810.04805">[16]</a> Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova - BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding - 2018</li>
 </ul>
 
 </div>
