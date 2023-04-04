@@ -13143,7 +13143,7 @@ aws s3 cp &lt;s3 path&gt; &lt;<span class="nb">local</span> path&gt; --recursive
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-03-27
+Last updated: 2023-04-04
 
 Python implementation: CPython
 Python version       : 3.8.10
@@ -13151,8 +13151,8 @@ IPython version      : 8.4.0
 
 json   : 2.0.9
 numpy  : 1.23.2
-boto3  : 1.24.58
 pyarrow: 5.0.0
+boto3  : 1.24.58
 pandas : 1.4.3
 
 </pre>
@@ -13268,15 +13268,14 @@ pandas : 1.4.3
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">save_embedding_as_parquet_to_s3</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Saves the into data dictionary as a parquet file and push it to s3.    </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Saves the dictionary as a parquet file and push it to s3.    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">s3_path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">pa_table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">pa_table</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
 
     <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">Filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">s3_path</span><span class="p">)</span>
-
     <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">pa_table</span><span class="p">)</span>
@@ -13292,7 +13291,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># convert 2d numpy array to list of 1d numpy array as pyarrow supports saving 1d numpy array</span>
@@ -13301,7 +13300,7 @@ pandas : 1.4.3
     <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
     <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">embedding</span> <span class="k">for</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
 <span class="p">}</span>
-<span class="n">save_embedding_as_parquet_to_s3</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">s3_parquet_path</span><span class="p">)</span>
+<span class="n">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">s3_parquet_path</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13311,7 +13310,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">download_files_from_s3</span><span class="p">(</span>
@@ -13344,7 +13343,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
@@ -13359,9 +13358,9 @@ pandas : 1.4.3
     <span class="n">end</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;download files from s3 elapsed: &quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 
-<span class="n">df_download_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
-<span class="n">df_download</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_download_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_download</span>
+<span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span>
 </pre></div>
 
     </div>
@@ -13374,19 +13373,120 @@ pandas : 1.4.3
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>download files from s3
-download files from s3 elapsed:  0.6087481509894133
-</pre>
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ids</th>
+      <th>embeddings</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>[1.0, 2.0, 3.0]</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>[4.0, 5.0, 6.0]</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
 </div>
 </div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instead of downloading our parquet files to disk first, we can also read it directly into memory.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">list_s3_object</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+    <span class="n">bucket</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">)</span>
+
+    <span class="n">objects</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Prefix</span><span class="o">=</span><span class="n">s3_dir</span><span class="p">)</span>
+    <span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span> <span class="k">if</span> <span class="s2">&quot;_SUCCESS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">objects</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">):</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">s3_object</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s2">&quot;Body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">BufferReader</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_objects</span> <span class="o">=</span> <span class="n">list_s3_object</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
+<span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">)</span> <span class="k">for</span> <span class="n">s3_object</span> <span class="ow">in</span> <span class="n">s3_objects</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
