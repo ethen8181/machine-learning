@@ -13250,6 +13250,13 @@ pandas : 1.4.3
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Upload-and-Download-Parquet-Files">Upload and Download Parquet Files<a class="anchor-link" href="#Upload-and-Download-Parquet-Files">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>All of this is well and good until we work with some large python objects, which we'll encounter <a href="https://stackoverflow.com/questions/26319815/entitytoolarge-error-when-uploading-a-5g-file-to-amazon-s3">errors</a> such as entity too large error.</p>
 <p>Directly copied from S3's <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/upload-objects.html">documentation</a></p>
 <blockquote>
@@ -13423,7 +13430,7 @@ pandas : 1.4.3
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Instead of downloading our parquet files to disk first, we can also read it directly into memory.</p>
+<p>Instead of downloading our parquet files to disk first, we can also read it directly into memory by wrapping the bytes object in a pyarrow <code>BufferReader</code> followed with <code>read_table</code>.</p>
 
 </div>
 </div>
@@ -13453,6 +13460,9 @@ pandas : 1.4.3
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    https://stackoverflow.com/questions/58061225/read-a-parquet-bytes-object-in-python</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">body</span> <span class="o">=</span> <span class="n">s3_object</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s2">&quot;Body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">BufferReader</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
@@ -13536,6 +13546,75 @@ pandas : 1.4.3
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Additional-Tips">Additional Tips<a class="anchor-link" href="#Additional-Tips">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When conducting heavy write operations, we might encounter slow down: please reduce your request rate related <a href="https://stackoverflow.com/questions/58433594/aws-s3-slowdown-please-reduce-your-request-rate">errors</a>. Although Amazon S3 has announced <a href="https://aws.amazon.com/about-aws/whats-new/2018/07/amazon-s3-announces-increased-request-rate-performance/">performance improvements</a>, it might not be enough for our use case. When countered with these type of situations, the two most common suggestions would be to: 1. add retry. 2. add prefixes/partitions.</p>
+<p>When encountering 503 slown down error or other errors that we suspect to be not from our client, we could leverage built-in retry with exponential backoff and jitter capability <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/retries.html">[3]</a> <a href="https://docs.aws.amazon.com/general/latest/gr/api-retries.html">[4]</a>. Meaning after we receive a server or throttling related error, we use progressively longer wait time with some noise added to it between each retries. For example, we can explicitly configure our boto3 client with the retry max attempt as well as retry mode (algorithm that's used for conducting the retry).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">botocore.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">retries</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;max_attempts&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;standard&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If then new limits and adjusting retry still prove to be insufficient. Prefixes would need to be used, which is adding any string between a bucket name and an object name, for example:</p>
+<ul>
+<li>bucket/1/file</li>
+<li>bucket/2/file</li>
+</ul>
+<p>Prefixes of the object <code>file</code> would be: <code>/1/</code>, <code>/2/</code>. In this example, if we spread write across all 2 prefixes evenly, we can achieve double the throughput.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># we can configure the partition base on use case</span>
+<span class="n">num_partition</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">random_part</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_partition</span><span class="p">))</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s3_path</span><span class="p">,</span> <span class="n">random_part</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+<span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">Filename</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The offical documentation also has further suggestions on optimizing S3 performance <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html">[2]</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
@@ -13545,6 +13624,9 @@ pandas : 1.4.3
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li><a href="https://www.learnaws.org/2022/07/13/boto3-upload-files-s3/">[1]</a> How to use Boto3 to upload files to an S3 Bucket?</li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html">[2]</a> Best practices design patterns: optimizing Amazon S3 performance</li>
+<li><a href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/retries.html">[3]</a> Boto3 Documentation: Retries</li>
+<li><a href="https://docs.aws.amazon.com/general/latest/gr/api-retries.html">[4]</a> Error retries and exponential backoff in AWS</li>
 </ul>
 
 </div>
