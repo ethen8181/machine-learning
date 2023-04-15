@@ -13130,7 +13130,13 @@ div#notebook {
 <p>In recent years, most contrastive learning procedures leverage variants of InfoNCE (Noise Contrastive Estimation) loss <a href="https://arxiv.org/abs/1807.03748">[11]</a>. This type of loss is sometimes referred to as NT-Xent (normalized temperature scaled cross entropy loss) in as SimCLR (simple contrastive learning of visual representations) <a href="https://arxiv.org/abs/2002.05709">[12]</a> or multiple negative ranking loss <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">[2]</a>, uses cross entropy loss to distinguish positive from potentially multiple negative examples.</p>
 \begin{align}
 L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_i, p_j) / \tau)}
-\end{align}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example ($a_1$, $p_1$). What we wish to accomplish is $a_i$ and $p_i$ becomes close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant. $sim$ here represents a similarity function such as cosine similarity or dot product, $\tau$ denotes temperature scaling which can be a learned parameter, or configurable value. Note if choosing cosine similarity as similarity function, and $\tau$ is chosen by hand, we might need to lean towards a smaller value. As by default, cosine similarity's score differences are too small and doesn't lead to good empirical results.</p>
+\end{align}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example. Here:</p>
+<ul>
+<li>$a_i$, $p_i$ denotes embedding respresentation of our anchor and positive examples. What we wish to accomplish is $a_i$ and $p_i$ becomes close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant apart.</li>
+<li>$sim$ here represents a similarity function such as cosine similarity or dot product.</li>
+<li>$\tau$ denotes temperature scaling which can be a learned parameter, or configurable value.</li>
+</ul>
+<p>Note if choosing cosine similarity as similarity function, and $\tau$ is chosen by hand, we might need to lean towards a smaller value. As by default, cosine similarity's score differences are too small and doesn't lead to good empirical results.</p>
 <p>PyTorch style pseudocode for this loss is also shown below:</p>
 <div class="highlight"><pre><span></span><span class="c1"># @ denotes matrix multiplication, and the similarity metric here is a dot product</span>
 <span class="n">scores</span> <span class="o">=</span> <span class="n">embedding_a</span> <span class="o">@</span> <span class="n">embedding_p</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">temperature</span>

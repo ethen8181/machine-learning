@@ -13489,9 +13489,10 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">load_dataset</span><span class="p">,</span>
     <span class="n">concatenate_datasets</span><span class="p">,</span>
-    <span class="n">set_progress_bar_enabled</span><span class="p">,</span>
-    <span class="n">DatasetDict</span><span class="p">,</span>
+    <span class="n">disable_progress_bar</span><span class="p">,</span>
+    <span class="n">DatasetDict</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">datasets.utils.logging</span> <span class="kn">import</span> <span class="n">set_verbosity_error</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Trainer</span><span class="p">,</span>
     <span class="n">TrainingArguments</span><span class="p">,</span>
@@ -13538,14 +13539,14 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2022-11-24
+Last updated: 2023-04-15
 
-torch       : 1.10.0a0+git36449ea
+datasets    : 2.11.0
 pandas      : 1.4.3
-numpy       : 1.23.2
-transformers: 4.21.3
 scipy       : 1.9.0
-datasets    : 1.18.4
+numpy       : 1.23.2
+torch       : 2.0.0
+transformers: 4.28.1
 
 </pre>
 </div>
@@ -13565,13 +13566,13 @@ datasets    : 1.18.4
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In modern recommendation system, it is common to have two major distinct stages, a recall/retrieval stage, and a ranking stage, it can get more sophisticated than this, but that's out of scope for this discussion. We'll be discussing these two stages in the context of a pre-trained encoder model, where different types of architectures are commonly used at different stages to reflect their own strength.</p>
+<p>In modern recommendation system, it is common to have two major distinct stages, a recall/retrieval stage, and a ranking stage <a href="https://fennel.ai/blog/real-world-recommendation-system/">[2]</a> <a href="https://www.sbert.net/examples/applications/retrieve_rerank/README.html">[3]</a>. In this article, we'll be discussing these two stages in the context of a pre-trained encoder model, where different types of architectures are commonly used at different stages to reflect their own strength.</p>
 <img src="imgs/stages.png">
 <p>Recall/Retrieval focuses on candidate generation, given we have a million things be it inventories, passages, etc. stored in our database, we need a way to efficiently retrieve a subset of them that are more relevant for the given context. In encoder model's paradigm, this means we need a way to represent our incoming context be it query, questions, etc. in a vector representation, often times referred to as sentence embedding and perform a similarity search between that with entities that are also already represented in a sentence embedding. This step is often done using the bi-encoder architecture, where we can pass individual sentences/entities through our encoder and then perform similarity search using metrics such as cosine similarity. Being able to input individual entities through our encoder is the key to an effient retrieval stage, where we need to quickly scan through our database, as it means we can often times pre-compute these results apriori.</p>
 <img src="imgs/bi_encoder.png">
 <p>These subsets are then passed to the ranker, where given we now have our pairs, we need to score these pairs so the system can assign a score to rank these retrieved inventories in a sorted order. This step is often done using cross encoder, a.k.a. cross attention architectures. Cross encoder doesn't produce sentence embeddings for our data but instead relies on classification mechansim for out input pairs, hence whenever we have a fixed set of data pairs we wish to score, cross encoder often times achieves better performance than their bi encoder counterparts even when using less training data.</p>
 <img src="imgs/cross_encoder.png">
-<p>In this document, we'll be focusing on how to train bi-encoder style architecture using contrastive loss.</p>
+<p>In this document, our focus will be how to train bi-encoder style architecture using contrastive loss <a href="https://www.pinecone.io/learn/fine-tune-sentence-transformers-mnr/">[1]</a> <a href="https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli">[4]</a>.</p>
 
 </div>
 </div>
@@ -13586,7 +13587,7 @@ datasets    : 1.18.4
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For Bi-encoder our input data at the bare minimum needs to contain positive pairs, where we need to define what's the definition for positive pairs based on our use case. These pairs are often referred to as anchors $a$ and positives, $p$. Given our dataset, the standard architecture for these type of task is a siamese network. Each base arm involves using a pre-trained encoder followed by a pooling operator for deriving a fix sized sentence embedding vector. During each step we feed both our anchor and positive one at time through the same encoder plus pooling arm. This encoder plus pooling arm's weights are often tied for our pairs. Tying weights ensure similar entities are mapped to similar locations in the representation space.</p>
+<p>For Bi-encoder, our input data at the bare minimum needs to contain positive pairs, where we need to be creative and define what's the definition for positive pairs based on our use case. These pairs are often referred to as anchors $a$ and positives, $p$. Given our dataset, the standard architecture for these type of task is a siamese network. Each base arm involves using a pre-trained encoder followed by a pooling operator for deriving a fix sized sentence embedding vector. During each step we feed both our anchor and positive one at time through the same encoder plus pooling arm. This encoder plus pooling arm's weights are often tied for our pairs. Tying weights ensure similar entities are mapped to similar locations in the representation space.</p>
 <p>For training this network, what we wish to accomplish is have our anchor and positive pairs $a_i$ and $p_i$ become closer in the vector space, whereas $a_i$ and some random negative examples $p_j$ becomes distant in vector space.</p>
 \begin{align}
 L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i))}{\sum_j exp(sim(a_i, p_j))}
@@ -13616,7 +13617,11 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i))}{\sum_j exp(sim(a_i, p_j)
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">stsb</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;stsb&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prevents progress bar and logging from flooding our document</span>
+<span class="n">disable_progress_bar</span><span class="p">()</span>
+<span class="n">set_verbosity_error</span><span class="p">()</span>
+
+<span class="n">stsb</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;glue&#39;</span><span class="p">,</span> <span class="s1">&#39;stsb&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
 
 <span class="c1"># we normalize the score to a range of 0 ~ 1</span>
 <span class="n">stsb</span> <span class="o">=</span> <span class="n">stsb</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">5.0</span><span class="p">})</span>
@@ -13633,22 +13638,6 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i))}{\sum_j exp(sim(a_i, p_j)
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Reusing dataset glue (/root/.cache/huggingface/datasets/glue/stsb/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 806.55it/s]
-Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; of the transform datasets.arrow_dataset.Dataset._map_single couldn&#39;t be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won&#39;t be showed.
-5749ex [00:00, 10941.77ex/s]
-1500ex [00:00, 11010.17ex/s]
-1379ex [00:00, 10766.22ex/s]
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -13750,24 +13739,6 @@ Parameter &#39;function&#39;=&lt;function &lt;lambda&gt; at 0x7fa1b01ddf70&gt; o
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Reusing dataset snli (/root/.cache/huggingface/datasets/snli/plain_text/1.0.0/1f60b67533b65ae0275561ff7828aad5ee4282d0e6f844fd148d05d3c6ea251b)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 857.44it/s]
-Reusing dataset glue (/root/.cache/huggingface/datasets/glue/mnli/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00&lt;00:00, 783.45it/s]
-Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 39.17ba/s]
-Casting the dataset: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 56/56 [00:01&lt;00:00, 42.98ba/s]
-Casting the dataset: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 41.09ba/s]
-100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 943/943 [00:04&lt;00:00, 194.00ba/s]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
     <div class="prompt output_prompt">Out[4]:</div>
 
 
@@ -13856,7 +13827,7 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;]
 - This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 </pre>
@@ -13901,9 +13872,7 @@ Casting the dataset: 100%|██████████████████
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># prevents progress bar from flooding our document</span>
-<span class="n">set_progress_bar_enabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">dataset_dict_tokenized</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict_tokenized</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
     <span class="n">tokenize_fn</span><span class="p">,</span>
     <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
@@ -14108,6 +14077,17 @@ Casting the dataset: 100%|██████████████████
 
 <div class="output_area">
 
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>You&#39;re using a DistilBertTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
     <div class="prompt output_prompt">Out[11]:</div>
 
 
@@ -14266,7 +14246,7 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_projector.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.weight&#39;]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertModel: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_transform.bias&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;]
 - This IS expected if you are initializing DistilBertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 </pre>
@@ -14391,24 +14371,6 @@ Casting the dataset: 100%|██████████████████
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using cuda_amp half precision backend
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -14432,15 +14394,8 @@ Casting the dataset: 100%|██████████████████
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/root/.local/lib/python3.8/site-packages/transformers/optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+<pre>/usr/local/lib/python3.8/dist-packages/transformers/optimization.py:391: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
   warnings.warn(
-***** Running training *****
-  Num examples = 314315
-  Num Epochs = 2
-  Instantaneous batch size per device = 64
-  Total train batch size (w. parallel, distributed &amp; accumulation) = 64
-  Gradient Accumulation steps = 1
-  Total optimization steps = 9824
 </pre>
 </div>
 </div>
@@ -14454,8 +14409,8 @@ Casting the dataset: 100%|██████████████████
 <div class="output_html rendered_html output_subarea ">
     <div>
       
-      <progress value='3500' max='9824' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [3500/9824 05:36 < 10:07, 10.41 it/s, Epoch 0/2]
+      <progress value='6500' max='9824' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [6500/9824 08:57 < 04:35, 12.08 it/s, Epoch 1/2]
     </div>
     <table border="1" class="dataframe">
   <thead>
@@ -14470,114 +14425,98 @@ Casting the dataset: 100%|██████████████████
   <tbody>
     <tr>
       <td>500</td>
-      <td>0.300600</td>
-      <td>2.117372</td>
-      <td>0.783000</td>
-      <td>0.757000</td>
+      <td>0.300400</td>
+      <td>2.122955</td>
+      <td>0.782000</td>
+      <td>0.755000</td>
     </tr>
     <tr>
       <td>1000</td>
-      <td>0.234000</td>
-      <td>2.185063</td>
-      <td>0.792000</td>
-      <td>0.765000</td>
-    </tr>
-    <tr>
-      <td>1500</td>
-      <td>0.215600</td>
-      <td>2.248563</td>
+      <td>0.234200</td>
+      <td>2.186666</td>
       <td>0.789000</td>
       <td>0.760000</td>
     </tr>
     <tr>
+      <td>1500</td>
+      <td>0.216200</td>
+      <td>2.237437</td>
+      <td>0.791000</td>
+      <td>0.762000</td>
+    </tr>
+    <tr>
       <td>2000</td>
-      <td>0.200300</td>
-      <td>2.208026</td>
-      <td>0.805000</td>
-      <td>0.777000</td>
+      <td>0.202000</td>
+      <td>2.220945</td>
+      <td>0.803000</td>
+      <td>0.776000</td>
     </tr>
     <tr>
       <td>2500</td>
-      <td>0.183800</td>
-      <td>2.221604</td>
-      <td>0.797000</td>
-      <td>0.768000</td>
+      <td>0.184900</td>
+      <td>2.192533</td>
+      <td>0.800000</td>
+      <td>0.772000</td>
     </tr>
     <tr>
       <td>3000</td>
-      <td>0.182500</td>
-      <td>2.224505</td>
-      <td>0.800000</td>
-      <td>0.769000</td>
+      <td>0.182200</td>
+      <td>2.195967</td>
+      <td>0.802000</td>
+      <td>0.774000</td>
     </tr>
     <tr>
       <td>3500</td>
-      <td>0.172100</td>
-      <td>2.226413</td>
-      <td>0.803000</td>
-      <td>0.774000</td>
+      <td>0.172800</td>
+      <td>2.239089</td>
+      <td>0.807000</td>
+      <td>0.779000</td>
+    </tr>
+    <tr>
+      <td>4000</td>
+      <td>0.161300</td>
+      <td>2.302346</td>
+      <td>0.801000</td>
+      <td>0.773000</td>
+    </tr>
+    <tr>
+      <td>4500</td>
+      <td>0.161600</td>
+      <td>2.299685</td>
+      <td>0.799000</td>
+      <td>0.773000</td>
+    </tr>
+    <tr>
+      <td>5000</td>
+      <td>0.145900</td>
+      <td>2.234666</td>
+      <td>0.806000</td>
+      <td>0.781000</td>
+    </tr>
+    <tr>
+      <td>5500</td>
+      <td>0.105800</td>
+      <td>2.264370</td>
+      <td>0.807000</td>
+      <td>0.781000</td>
+    </tr>
+    <tr>
+      <td>6000</td>
+      <td>0.112700</td>
+      <td>2.267491</td>
+      <td>0.806000</td>
+      <td>0.777000</td>
+    </tr>
+    <tr>
+      <td>6500</td>
+      <td>0.104400</td>
+      <td>2.288190</td>
+      <td>0.808000</td>
+      <td>0.781000</td>
     </tr>
   </tbody>
 </table><p></div>
 
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2000] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-1500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1000] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-2500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-1500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3000
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-2500] due to args.save_total_limit
-***** Running Evaluation *****
-  Num examples = 5749
-  Batch size = 256
-Saving model checkpoint to distilbert-base-uncased-siamese/checkpoint-3500
-Trainer.model is not a `PreTrainedModel`, only saving its state dict.
-Deleting older checkpoint [distilbert-base-uncased-siamese/checkpoint-3000] due to args.save_total_limit
-
-
-Training completed. Do not forget to share your model on huggingface.co/models =)
-
-
-Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 0.777).
-</pre>
-</div>
 </div>
 
 </div>
@@ -14605,19 +14544,6 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 1500
-  Batch size = 256
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 
 <div class="output_html rendered_html output_subarea ">
     <div>
@@ -14637,13 +14563,13 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;eval_loss&#39;: 2.7090277671813965,
- &#39;eval_pearson&#39;: 0.832,
- &#39;eval_spearman&#39;: 0.832,
- &#39;eval_runtime&#39;: 0.5742,
- &#39;eval_samples_per_second&#39;: 2612.205,
- &#39;eval_steps_per_second&#39;: 10.449,
- &#39;epoch&#39;: 0.71}</pre>
+<pre>{&#39;eval_loss&#39;: 2.7663321495056152,
+ &#39;eval_pearson&#39;: 0.839,
+ &#39;eval_spearman&#39;: 0.838,
+ &#39;eval_runtime&#39;: 0.3629,
+ &#39;eval_samples_per_second&#39;: 4133.329,
+ &#39;eval_steps_per_second&#39;: 16.533,
+ &#39;epoch&#39;: 1.32}</pre>
 </div>
 
 </div>
@@ -14759,19 +14685,19 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[ 0.21393271,  0.33937266, -0.35428116, ...,  0.13894947,
-         0.36403698, -0.09026248],
-       [ 0.5465353 , -0.6560232 , -0.86056316, ..., -0.28352353,
-         0.06771367,  0.32315105],
-       [-0.05830259,  0.1330159 ,  0.06023514, ...,  0.1857918 ,
-        -0.7235887 , -0.7109812 ],
+<pre>array([[ 0.6091151 , -0.05289527, -0.735597  , ..., -0.20718901,
+         0.9009036 , -0.08248363],
+       [ 0.39508554, -0.67105526, -1.0313998 , ..., -0.5491935 ,
+        -0.6127097 ,  0.34172556],
+       [ 0.41667876,  0.01123782,  0.18218265, ..., -0.04224749,
+        -0.41398963, -0.81505966],
        ...,
-       [ 0.40011722, -0.43589538,  0.3119559 , ...,  0.23818746,
-        -0.40150076,  0.33471447],
-       [-0.600745  ,  0.1105762 ,  0.26701927, ...,  0.14820881,
-         0.16505945, -0.00796631],
-       [-1.0210578 , -0.22127706, -0.3994902 , ..., -0.19572051,
-        -0.2220803 ,  0.32416752]], dtype=float32)</pre>
+       [ 0.52507514,  0.10277902,  0.3072502 , ...,  0.30447486,
+        -0.4546693 ,  0.26497468],
+       [-0.78691447, -0.33936325,  0.02374081, ..., -0.25195748,
+         0.06752441,  0.20980802],
+       [-0.8355608 , -0.08190179, -1.2289685 , ..., -0.11544642,
+         0.06740702,  0.32486174]], dtype=float32)</pre>
 </div>
 
 </div>
@@ -14784,7 +14710,7 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Given our sentence embedding, we then perform a cosine similarity for finding semantically similar sentences. Notice our trained model was able to capture sentences that have very few matching words but are semantically similar.</p>
-<p>The step is not done here, but we can compare this with results from out of the box pre-trained models and see that further training these networks with constrastive loss makes day and night differences. i.e. if we were to directly retrieve sentence embeddings by either pooling its last hidden output/layer or extracting first token ([CLS] token)'s embedding, it often times yield rather poor sentence embeddings.</p>
+<p>The comparison is not shown here, but we can compare this with results from out of the box pre-trained models and see that further training these networks with constrastive loss makes day and night differences. i.e. if we were to directly retrieve sentence embeddings by either pooling its last hidden output/layer or extracting first token ([CLS] token)'s embedding, it often times yield rather poor sentence embeddings as mentioned in sentence BERT <a href="https://arxiv.org/abs/1908.10084">[5]</a>.</p>
 
 </div>
 </div>
@@ -14816,8 +14742,8 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([0.07516348, 0.21306509, 0.00834197, 0.62654173, 0.01274633,
-       0.0575071 ], dtype=float32)</pre>
+<pre>array([ 0.18791032,  0.21843803, -0.05063367,  0.6107122 ,  0.07014787,
+        0.02572602], dtype=float32)</pre>
 </div>
 
 </div>
@@ -14853,12 +14779,12 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>flying stinging insects rebelled in opposition to the matriarch
-0.0752 | it caught him off guard that space smelled of seared steak
-0.2131 | she could not decide between painting her teeth or brushing her nails
-0.0083 | he thought there&#39;d be sufficient time is he hid his watch
-0.6265 | the bees decided to have a mutiny against their queen
-0.0127 | the sign said there was road work ahead so she decided to speed up
-0.0575 | on a scale of one to ten, what&#39;s your favorite flavor of color?
+0.1879 | it caught him off guard that space smelled of seared steak
+0.2184 | she could not decide between painting her teeth or brushing her nails
+-0.0506 | he thought there&#39;d be sufficient time is he hid his watch
+0.6107 | the bees decided to have a mutiny against their queen
+0.0701 | the sign said there was road work ahead so she decided to speed up
+0.0257 | on a scale of one to ten, what&#39;s your favorite flavor of color?
 </pre>
 </div>
 </div>
@@ -14886,11 +14812,11 @@ Loading best model from distilbert-base-uncased-siamese/checkpoint-2000 (score: 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://www.pinecone.io/learn/fine-tune-sentence-transformers-mnr/">Blog: Next-Gen Sentence Embeddings with Multiple Negatives Ranking Loss</a></li>
-<li><a href="https://fennel.ai/blog/real-world-recommendation-system/">Blog: Real World Recommendation System – Part 1</a></li>
-<li><a href="https://www.sbert.net/examples/applications/retrieve_rerank/README.html">Sentence Transformers Documentation: Retrieve &amp; Re-Rank</a></li>
-<li><a href="https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli">Github: Sentence Transformers Training Natural Language Inference</a></li>
-<li><a href="https://arxiv.org/abs/1908.10084">Paper: Nils Reimers, Iryna Gurevych - Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks - 2019</a></li>
+<li><a href="https://www.pinecone.io/learn/fine-tune-sentence-transformers-mnr/">[1]</a> Blog: Next-Gen Sentence Embeddings with Multiple Negatives Ranking Loss</li>
+<li><a href="https://fennel.ai/blog/real-world-recommendation-system/">[2]</a> Blog: Real World Recommendation System – Part 1</li>
+<li><a href="https://www.sbert.net/examples/applications/retrieve_rerank/README.html">[3]</a> Sentence Transformers Documentation: Retrieve &amp; Re-Rank</li>
+<li><a href="https://github.com/UKPLab/sentence-transformers/tree/master/examples/training/nli">[4]</a> Github: Sentence Transformers Training Natural Language Inference</li>
+<li><a href="https://arxiv.org/abs/1908.10084">[5]</a> Paper: Nils Reimers, Iryna Gurevych - Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks - 2019</li>
 </ul>
 
 </div>
