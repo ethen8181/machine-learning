@@ -13484,7 +13484,8 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">DatasetDict</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">DatasetDict</span><span class="p">,</span> <span class="n">disable_progress_bar</span>
+<span class="kn">from</span> <span class="nn">datasets.utils.logging</span> <span class="kn">import</span> <span class="n">set_verbosity_error</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">pipeline</span><span class="p">,</span>
     <span class="n">Trainer</span><span class="p">,</span>
@@ -13496,7 +13497,11 @@ div#notebook {
 <span class="p">)</span>
 <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -p torch,datasets,transformers,evaluate,numpy,pandas
+<span class="c1"># prevent dataset from floading outputs to our notebook</span>
+<span class="n">disable_progress_bar</span><span class="p">()</span>
+<span class="n">set_verbosity_error</span><span class="p">()</span>
+
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -v -p torch,datasets,transformers,evaluate,numpy,pandas
 </pre></div>
 
     </div>
@@ -13512,17 +13517,33 @@ div#notebook {
     <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.8/dist-packages/tqdm/auto.py:22: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2022-08-26
+Last updated: 2023-04-16
 
-torch       : 1.12.1
-datasets    : 2.3.2
-transformers: 4.20.1
-evaluate    : 0.2.2
-numpy       : 1.21.6
-pandas      : 1.2.4
+Python implementation: CPython
+Python version       : 3.8.10
+IPython version      : 8.4.0
+
+torch       : 2.0.0
+datasets    : 2.11.0
+transformers: 4.28.1
+evaluate    : 0.4.0
+numpy       : 1.23.2
+pandas      : 1.4.3
 
 </pre>
 </div>
@@ -13556,11 +13577,11 @@ L_{CE} = - \sum^c_{j=1}y_j \text{log} \sigma_j(z_s, 1)
 L_{KD} = - T^2 \sum^c_{j=1}\sigma_j(z_t, T) \text{log} \frac{\sigma_j(z_t, T)}{\sigma_j(z_s, T)}
 \end{align}<p>The idea behind temperature scaling is that teacher model tend to assign extremely high predicted scores to the true class, as such it doesn't provide too much additional information beyond what dataset's ground truth label was already provided. To tackle this issue, temperature scaling acts as a scaling parameter to &quot;soften&quot; our predictions. The intuition behind this it allows us to learn &quot;ish&quot; concepts in our data, e.g. we have a 1-ish 7 (a 7 that looks like a 1, or more formally, although our model predicted 7 with the highest score, it still assign some amount of score to 1). Note:</p>
 <ul>
-<li>When a student model is a lot smaller than a teacher model, we tend to keep a smaller temperature. Because as we raise the temperature parameter, the resulting predicted distribution may start to contain too much &quot;knowledge&quot; for the student to capture effectively.</li>
-<li>Once our student model has been trained, the temperature parameter $T$, is set back to 1 during inferencing stage.</li>
-<li>There's a multiplication term $T^2$, in our knowledge distillation loss Since the magnitudes of the gradients produced by the soft targets scale as $1/T^2$. It is important to add a multiplication term back to ensure contribution from the ground truth hard target and the teacher's predicted soft target remains roughly equal.</li>
+<li>When a student model is a lot smaller than a teacher model, we tend to keep a smaller temperature. Because as we raise this temperature parameter, the resulting predicted distribution may start to contain too much &quot;knowledge&quot; for the student to capture effectively.</li>
+<li>Once our student model has been trained, temperature parameter $T$, is set back to 1 during inferencing stage.</li>
+<li>There's a multiplication term $T^2$, in our knowledge distillation loss. Since magnitudes of the gradients produced by soft targets scale as $1/T^2$. It's important to add a multiplication term back to ensure contribution from the ground truth hard target and the teacher's predicted soft target remains roughly equal.</li>
 </ul>
-<p>As we can see, the main idea behind response knowledge distillation is that while training our student model, instead of solely optimizing for our task's original loss function using our dataset's ground truth label (e.g. in classification task this may be cross entropy loss), we will augment it with the teacher model's predicted output probability. In our loss function we will have a parameter $\alpha$ that controls weighting between the two loss function.</p>
+<p>As we can see, the main idea behind response knowledge distillation is that while training our student model, instead of solely optimizing for our task's original loss function using dataset's ground truth label (e.g. in classification task this may be cross entropy loss), we will augment it with the teacher model's predicted output probability. In our loss function we will have a parameter $\alpha$ that controls weighting between the two loss function.</p>
 
 </div>
 </div>
@@ -13596,30 +13617,6 @@ L_{KD} = - T^2 \sum^c_{j=1}\sigma_j(z_t, T) \text{log} \frac{\sigma_j(z_t, T)}{\
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Reusing dataset glue (/home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad)
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>  0%|          | 0/3 [00:00&lt;?, ?it/s]</pre>
-</div>
-
-</div>
 
 <div class="output_area">
 
@@ -13882,9 +13879,7 @@ L_{KD} = - T^2 \sum^c_{j=1}\sigma_j(z_t, T) \text{log} \frac{\sigma_j(z_t, T)}{\
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">student_checkpoint</span> <span class="o">=</span> <span class="s1">&#39;distilbert-base-uncased&#39;</span>
-
 <span class="n">student_tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">student_checkpoint</span><span class="p">)</span>
-
 <span class="n">student_config</span> <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
     <span class="n">student_checkpoint</span><span class="p">,</span>
     <span class="n">num_labels</span><span class="o">=</span><span class="n">teacher_model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">num_labels</span><span class="p">,</span>
@@ -13929,10 +13924,10 @@ L_{KD} = - T^2 \sum^c_{j=1}\sigma_j(z_t, T) \text{log} \frac{\sigma_j(z_t, T)}{\
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_transform.bias&#39;]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_transform.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;]
 - This IS expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;, &#39;pre_classifier.weight&#39;, &#39;classifier.bias&#39;]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;classifier.bias&#39;, &#39;pre_classifier.weight&#39;, &#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
 </pre>
 </div>
@@ -13981,6 +13976,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict_student_tokenized</span> <span class="o">=</span> <span class="n">tokenize_dataset</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">,</span> <span class="n">student_tokenizer</span><span class="p">)</span>
+<span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13993,531 +13989,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-a8f61aaa83ba2ee2.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-daebdc7105b1e8f7.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-20d395268d52b4e3.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-8bc658db78dde795.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-f0374f1cbc06fa12.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-2e9088b1dbb8434c.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-7bbccc3a4229a83e.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-4c824600f621243f.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-51ae49f9d8a95037.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-591dc6edfbe0d7c2.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-302a4412aa27fb83.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-39d35fb67c02d467.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-458b6d6a7aa7b7f8.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-cc09642df872468a.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-452ef0103d9c6221.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-377807dbd74b5216.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-c7bdc7a185c7f2c8.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-c6fe5844c32761d8.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-f16094dbb6270595.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-074946734d50b003.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-93678765a8db8d07.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-2dc173cc4049ad28.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-480e4d963d7d4495.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-2b01915a997e8ff1.arrow
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[13]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
@@ -14610,7 +14082,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf_metrics</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">combine</span><span class="p">([</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">])</span>
@@ -14645,7 +14117,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">pred</span><span class="p">):</span>
@@ -14671,12 +14143,12 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">64</span>
-<span class="n">num_train_epochs</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">2e-5</span>
+<span class="n">num_train_epochs</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.0001</span>
 <span class="n">weight_decay</span> <span class="o">=</span> <span class="mf">0.01</span>
 
 <span class="n">student_finetuned_checkpoint</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased-finetuned-qqp&quot;</span>
@@ -14689,6 +14161,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
     <span class="n">weight_decay</span><span class="o">=</span><span class="n">weight_decay</span><span class="p">,</span>
     <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
@@ -14696,8 +14169,8 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
     <span class="n">model_init</span><span class="o">=</span><span class="n">student_model_init</span><span class="p">,</span>
     <span class="n">args</span><span class="o">=</span><span class="n">student_training_args</span><span class="p">,</span>
     <span class="n">tokenizer</span><span class="o">=</span><span class="n">student_tokenizer</span><span class="p">,</span> 
-    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">],</span>
-    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">],</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_dict_student_tokenized</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">],</span>
     <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span>
 <span class="p">)</span>
 <span class="n">student_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
@@ -14717,27 +14190,19 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>loading weights file https://huggingface.co/distilbert-base-uncased/resolve/main/pytorch_model.bin from cache at /home/mingyuliu/.cache/huggingface/transformers/9c169103d7e5a73936dd2b627e42851bec0831212b677c637033ee4bce9ab5ee.126183e36667471617ae2f0835fab707baa54b731f991507ebbb55ea85adb12a
-Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_transform.bias&#39;]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_transform.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;]
 - This IS expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;, &#39;pre_classifier.weight&#39;, &#39;classifier.bias&#39;]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;classifier.bias&#39;, &#39;pre_classifier.weight&#39;, &#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-loading weights file https://huggingface.co/distilbert-base-uncased/resolve/main/pytorch_model.bin from cache at /home/mingyuliu/.cache/huggingface/transformers/9c169103d7e5a73936dd2b627e42851bec0831212b677c637033ee4bce9ab5ee.126183e36667471617ae2f0835fab707baa54b731f991507ebbb55ea85adb12a
-Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_transform.bias&#39;]
+Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_transform.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;]
 - This IS expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;, &#39;pre_classifier.weight&#39;, &#39;classifier.bias&#39;]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;classifier.bias&#39;, &#39;pre_classifier.weight&#39;, &#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-/home/mingyuliu/.local/lib/python3.7/site-packages/transformers/optimization.py:310: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
-  FutureWarning,
-***** Running training *****
-  Num examples = 363846
-  Num Epochs = 3
-  Instantaneous batch size per device = 64
-  Total train batch size (w. parallel, distributed &amp; accumulation) = 64
-  Gradient Accumulation steps = 1
-  Total optimization steps = 17058
+/usr/local/lib/python3.8/dist-packages/transformers/optimization.py:391: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+You&#39;re using a DistilBertTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
 </pre>
 </div>
 </div>
@@ -14751,8 +14216,8 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 <div class="output_html rendered_html output_subarea ">
     <div>
       
-      <progress value='17058' max='17058' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [17058/17058 40:35, Epoch 3/3]
+      <progress value='11372' max='11372' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [11372/11372 26:47, Epoch 2/2]
     </div>
     <table border="1" class="dataframe">
   <thead>
@@ -14769,30 +14234,21 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
   <tbody>
     <tr>
       <td>1</td>
-      <td>0.285100</td>
-      <td>0.270191</td>
-      <td>0.843404</td>
-      <td>0.816137</td>
-      <td>0.872556</td>
-      <td>0.951686</td>
+      <td>0.282800</td>
+      <td>0.261373</td>
+      <td>0.850860</td>
+      <td>0.821411</td>
+      <td>0.882499</td>
+      <td>0.955464</td>
     </tr>
     <tr>
       <td>2</td>
-      <td>0.219800</td>
-      <td>0.254518</td>
-      <td>0.861569</td>
-      <td>0.830724</td>
-      <td>0.894793</td>
-      <td>0.959855</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>0.172200</td>
-      <td>0.257736</td>
-      <td>0.863629</td>
-      <td>0.846228</td>
-      <td>0.881760</td>
-      <td>0.961481</td>
+      <td>0.179600</td>
+      <td>0.247799</td>
+      <td>0.866363</td>
+      <td>0.852121</td>
+      <td>0.881088</td>
+      <td>0.963130</td>
     </tr>
   </tbody>
 </table><p></div>
@@ -14801,53 +14257,13 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-qqp/checkpoint-5686
-Configuration saved in distilbert-base-uncased-finetuned-qqp/checkpoint-5686/config.json
-Model weights saved in distilbert-base-uncased-finetuned-qqp/checkpoint-5686/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-5686/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-5686/special_tokens_map.json
-***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-qqp/checkpoint-11372
-Configuration saved in distilbert-base-uncased-finetuned-qqp/checkpoint-11372/config.json
-Model weights saved in distilbert-base-uncased-finetuned-qqp/checkpoint-11372/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-11372/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-11372/special_tokens_map.json
-***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-qqp/checkpoint-17058
-Configuration saved in distilbert-base-uncased-finetuned-qqp/checkpoint-17058/config.json
-Model weights saved in distilbert-base-uncased-finetuned-qqp/checkpoint-17058/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-17058/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-qqp/checkpoint-17058/special_tokens_map.json
-
-
-Training completed. Do not forget to share your model on huggingface.co/models =)
-
-
-Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (score: 0.25451797246932983).
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>TrainOutput(global_step=17058, training_loss=0.24440976354326394, metrics={&#39;train_runtime&#39;: 2436.7937, &#39;train_samples_per_second&#39;: 447.94, &#39;train_steps_per_second&#39;: 7.0, &#39;total_flos&#39;: 2.2013605137213264e+16, &#39;train_loss&#39;: 0.24440976354326394, &#39;epoch&#39;: 3.0})</pre>
+<pre>TrainOutput(global_step=11372, training_loss=0.2587387173518806, metrics={&#39;train_runtime&#39;: 1607.3946, &#39;train_samples_per_second&#39;: 452.715, &#39;train_steps_per_second&#39;: 7.075, &#39;total_flos&#39;: 1.4672952700483704e+16, &#39;train_loss&#39;: 0.2587387173518806, &#39;epoch&#39;: 2.0})</pre>
 </div>
 
 </div>
@@ -14859,14 +14275,14 @@ Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order for us to finetune for model using knowledge distillation, we will subclass the <code>TrainingArguments</code> to include our two hyperparameters, $\alpha$ and $T$, as well as <code>Trainer</code> to mainly overwrite its <code>compute_loss</code> method so we can add our knowledge distillation loss term.</p>
+<p>In order for us to finetune a model using knowledge distillation, we will subclass the <code>TrainingArguments</code> to include our two hyperparameters, $\alpha$ and $T$, as well as <code>Trainer</code> to mainly overwrite its <code>compute_loss</code> method so we can add our knowledge distillation loss term.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">DistillationTrainingArguments</span><span class="p">(</span><span class="n">TrainingArguments</span><span class="p">):</span>
@@ -14881,7 +14297,7 @@ Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher</span> <span class="o">=</span> <span class="n">teacher_model</span>
         <span class="c1"># place teacher on same device as student</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_move_model_to_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_move_model_to_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teacher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">teacher</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">kl_div_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">KLDivLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;batchmean&quot;</span><span class="p">)</span>
@@ -14911,7 +14327,7 @@ Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">student_distillation_checkpoint</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased-finetuned-distillation-qqp&quot;</span>
@@ -14924,6 +14340,7 @@ Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (
     <span class="n">weight_decay</span><span class="o">=</span><span class="n">weight_decay</span><span class="p">,</span>
     <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
 <span class="p">)</span>
@@ -14954,29 +14371,18 @@ Loading best model from distilbert-base-uncased-finetuned-qqp/checkpoint-11372 (
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>PyTorch: setting up devices
-The default value for the training argument `--report_to` will change in v5 (from all installed integrations to none). In v5, you will need to use `--report_to all` to get the same behavior as now. You should start updating your code and make this info disappear :-).
-loading weights file https://huggingface.co/distilbert-base-uncased/resolve/main/pytorch_model.bin from cache at /home/mingyuliu/.cache/huggingface/transformers/9c169103d7e5a73936dd2b627e42851bec0831212b677c637033ee4bce9ab5ee.126183e36667471617ae2f0835fab707baa54b731f991507ebbb55ea85adb12a
-Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_transform.bias&#39;]
+<pre>Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_transform.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;]
 - This IS expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;, &#39;pre_classifier.weight&#39;, &#39;classifier.bias&#39;]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;classifier.bias&#39;, &#39;pre_classifier.weight&#39;, &#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-loading weights file https://huggingface.co/distilbert-base-uncased/resolve/main/pytorch_model.bin from cache at /home/mingyuliu/.cache/huggingface/transformers/9c169103d7e5a73936dd2b627e42851bec0831212b677c637033ee4bce9ab5ee.126183e36667471617ae2f0835fab707baa54b731f991507ebbb55ea85adb12a
-Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_layer_norm.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;, &#39;vocab_transform.bias&#39;]
+Some weights of the model checkpoint at distilbert-base-uncased were not used when initializing DistilBertForSequenceClassification: [&#39;vocab_transform.bias&#39;, &#39;vocab_layer_norm.weight&#39;, &#39;vocab_projector.weight&#39;, &#39;vocab_layer_norm.bias&#39;, &#39;vocab_transform.weight&#39;, &#39;vocab_projector.bias&#39;]
 - This IS expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
 - This IS NOT expected if you are initializing DistilBertForSequenceClassification from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
-Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;, &#39;pre_classifier.weight&#39;, &#39;classifier.bias&#39;]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: [&#39;classifier.bias&#39;, &#39;pre_classifier.weight&#39;, &#39;pre_classifier.bias&#39;, &#39;classifier.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-/home/mingyuliu/.local/lib/python3.7/site-packages/transformers/optimization.py:310: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
-  FutureWarning,
-***** Running training *****
-  Num examples = 363846
-  Num Epochs = 3
-  Instantaneous batch size per device = 64
-  Total train batch size (w. parallel, distributed &amp; accumulation) = 64
-  Gradient Accumulation steps = 1
-  Total optimization steps = 17058
+/usr/local/lib/python3.8/dist-packages/transformers/optimization.py:391: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
 </pre>
 </div>
 </div>
@@ -14990,8 +14396,8 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 <div class="output_html rendered_html output_subarea ">
     <div>
       
-      <progress value='17058' max='17058' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [17058/17058 1:05:54, Epoch 3/3]
+      <progress value='11372' max='11372' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [11372/11372 44:05, Epoch 2/2]
     </div>
     <table border="1" class="dataframe">
   <thead>
@@ -15008,30 +14414,21 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
   <tbody>
     <tr>
       <td>1</td>
-      <td>0.418700</td>
-      <td>0.408516</td>
-      <td>0.831750</td>
-      <td>0.852827</td>
-      <td>0.811690</td>
-      <td>0.951295</td>
+      <td>0.418600</td>
+      <td>0.403182</td>
+      <td>0.813883</td>
+      <td>0.881096</td>
+      <td>0.756198</td>
+      <td>0.953579</td>
     </tr>
     <tr>
       <td>2</td>
-      <td>0.376300</td>
-      <td>0.396593</td>
-      <td>0.850368</td>
-      <td>0.867762</td>
-      <td>0.833658</td>
-      <td>0.958391</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>0.348700</td>
-      <td>0.400977</td>
-      <td>0.856636</td>
-      <td>0.870724</td>
-      <td>0.842996</td>
-      <td>0.960325</td>
+      <td>0.352200</td>
+      <td>0.396250</td>
+      <td>0.853818</td>
+      <td>0.878482</td>
+      <td>0.830501</td>
+      <td>0.961582</td>
     </tr>
   </tbody>
 </table><p></div>
@@ -15040,53 +14437,13 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-5686
-Configuration saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-5686/config.json
-Model weights saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-5686/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-5686/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-5686/special_tokens_map.json
-***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372
-Configuration saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372/config.json
-Model weights saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372/special_tokens_map.json
-***** Running Evaluation *****
-  Num examples = 40430
-  Batch size = 64
-Saving model checkpoint to distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-17058
-Configuration saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-17058/config.json
-Model weights saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-17058/pytorch_model.bin
-tokenizer config file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-17058/tokenizer_config.json
-Special tokens file saved in distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-17058/special_tokens_map.json
-
-
-Training completed. Do not forget to share your model on huggingface.co/models =)
-
-
-Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/checkpoint-11372 (score: 0.3965926468372345).
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
+    <div class="prompt output_prompt">Out[17]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>TrainOutput(global_step=17058, training_loss=0.3921033198647013, metrics={&#39;train_runtime&#39;: 3955.2862, &#39;train_samples_per_second&#39;: 275.969, &#39;train_steps_per_second&#39;: 4.313, &#39;total_flos&#39;: 2.2013605137213264e+16, &#39;train_loss&#39;: 0.3921033198647013, &#39;epoch&#39;: 3.0})</pre>
+<pre>TrainOutput(global_step=11372, training_loss=0.4020600615778818, metrics={&#39;train_runtime&#39;: 2645.7956, &#39;train_samples_per_second&#39;: 275.037, &#39;train_steps_per_second&#39;: 4.298, &#39;total_flos&#39;: 1.4672952700483704e+16, &#39;train_loss&#39;: 0.4020600615778818, &#39;epoch&#39;: 2.0})</pre>
 </div>
 
 </div>
@@ -15112,7 +14469,7 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Benchmark</span><span class="p">:</span>
@@ -15131,7 +14488,7 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
         <span class="bp">self</span><span class="o">.</span><span class="n">perf_batch_size</span> <span class="o">=</span> <span class="n">perf_batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">perf_round_digits</span> <span class="o">=</span> <span class="n">perf_round_digits</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model_path</span> <span class="o">=</span> <span class="s1">&#39;model.pt&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_model_path</span> <span class="o">=</span> <span class="s2">&quot;model.pt&quot;</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">run_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;run benchmark for a given tokenizer and model</span>
@@ -15164,9 +14521,9 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
     
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
-            <span class="n">example</span><span class="p">[</span><span class="s1">&#39;question1&#39;</span><span class="p">],</span>
-            <span class="n">example</span><span class="p">[</span><span class="s1">&#39;question2&#39;</span><span class="p">],</span>
-            <span class="n">return_tensors</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span>
+            <span class="n">example</span><span class="p">[</span><span class="s2">&quot;question1&quot;</span><span class="p">],</span>
+            <span class="n">example</span><span class="p">[</span><span class="s2">&quot;question2&quot;</span><span class="p">],</span>
+            <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
@@ -15226,7 +14583,7 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
         <span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorWithPadding</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
         <span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_tokenized</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perf_batch_size</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">data_loader</span><span class="p">:</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                 <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">example</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
                 <span class="n">score</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -15237,7 +14594,7 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
             <span class="n">references</span> <span class="o">+=</span> <span class="n">tensor_to_list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="n">metrics</span> <span class="o">=</span> <span class="n">clf_metrics</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">)</span>
-        <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">prediction_scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">)[</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">]</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">prediction_scores</span><span class="o">=</span><span class="n">scores</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="n">references</span><span class="p">)[</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">metrics</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">perf_round_digits</span><span class="p">)</span>
 
@@ -15255,12 +14612,12 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmark_metrics_dict</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">benchmark</span> <span class="o">=</span> <span class="n">Benchmark</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">])</span>
-<span class="n">benchmark_metrics</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">teacher_tokenizer</span><span class="p">,</span> <span class="n">teacher_model</span><span class="p">,</span> <span class="s1">&#39;bert_uncased_teacher&#39;</span><span class="p">)</span>
+<span class="n">benchmark</span> <span class="o">=</span> <span class="n">Benchmark</span><span class="p">(</span><span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;validation&quot;</span><span class="p">])</span>
+<span class="n">benchmark_metrics</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">teacher_tokenizer</span><span class="p">,</span> <span class="n">teacher_model</span><span class="p">,</span> <span class="s2">&quot;bert_uncased_teacher&quot;</span><span class="p">)</span>
 <span class="n">benchmark_metrics_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmark_metrics</span><span class="p">)</span>
 </pre></div>
 
@@ -15278,20 +14635,9 @@ Loading best model from distilbert-base-uncased-finetuned-distillation-qqp/check
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Model size (MB): 417.73
+<pre>Model size (MB): 417.72
 # of parameters: 109483778
-Average latency (ms): 7.01 +\- 0.63
- </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-0c6ac1d39dfd9e94.arrow
+Average latency (ms): 13.54 +\- 0.07
 </pre>
 </div>
 </div>
@@ -15301,63 +14647,36 @@ Average latency (ms): 7.01 +\- 0.63
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-7aa70ce020a63c9d.arrow
+<pre>You&#39;re using a BertTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
 </pre>
 </div>
 </div>
 
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
 </div>
 </div>
 
-<div class="output_area">
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmark_metrics</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">student_tokenizer</span><span class="p">,</span>
+    <span class="n">student_trainer</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+    <span class="s2">&quot;distilbert_student&quot;</span>
+<span class="p">)</span>
+<span class="n">benchmark_metrics_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmark_metrics</span><span class="p">)</span>
+</pre></div>
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-58720fa6daa16de3.arrow
-</pre>
+    </div>
 </div>
 </div>
 
-<div class="output_area">
+<div class="output_wrapper">
+<div class="output">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-554217326819c7b0.arrow
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -15365,80 +14684,9 @@ Average latency (ms): 7.01 +\- 0.63
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-eda7739157194c24.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-d08f8b13da74e2bf.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-675828f6d2b994cd.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-f92fb802867c268e.arrow
+<pre>Model size (MB): 255.45
+# of parameters: 66955010
+Average latency (ms): 7.66 +\- 0.31
 </pre>
 </div>
 </div>
@@ -15454,8 +14702,8 @@ Average latency (ms): 7.01 +\- 0.63
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmark_metrics</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
     <span class="n">student_tokenizer</span><span class="p">,</span>
-    <span class="n">student_trainer</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-    <span class="s1">&#39;distilbert_student&#39;</span>
+    <span class="n">student_distillation_trainer</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+    <span class="s2">&quot;distilbert_distillation_student&quot;</span>
 <span class="p">)</span>
 <span class="n">benchmark_metrics_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmark_metrics</span><span class="p">)</span>
 </pre></div>
@@ -15476,165 +14724,7 @@ Average latency (ms): 7.01 +\- 0.63
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Model size (MB): 255.45
 # of parameters: 66955010
-Average latency (ms): 4.24 +\- 0.62
- </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-51ae49f9d8a95037.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-591dc6edfbe0d7c2.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-302a4412aa27fb83.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-39d35fb67c02d467.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-458b6d6a7aa7b7f8.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-cc09642df872468a.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-452ef0103d9c6221.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-377807dbd74b5216.arrow
+Average latency (ms): 7.11 +\- 0.09
 </pre>
 </div>
 </div>
@@ -15648,12 +14738,7 @@ Average latency (ms): 4.24 +\- 0.62
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">benchmark_metrics</span> <span class="o">=</span> <span class="n">benchmark</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-    <span class="n">student_tokenizer</span><span class="p">,</span>
-    <span class="n">student_distillation_trainer</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-    <span class="s1">&#39;distilbert_distillation_student&#39;</span>
-<span class="p">)</span>
-<span class="n">benchmark_metrics_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">benchmark_metrics</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">benchmark_metrics_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15666,198 +14751,7 @@ Average latency (ms): 4.24 +\- 0.62
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Model size (MB): 255.45
-# of parameters: 66955010
-Average latency (ms): 4.02 +\- 0.34
- </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-51ae49f9d8a95037.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-591dc6edfbe0d7c2.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-302a4412aa27fb83.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-39d35fb67c02d467.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-458b6d6a7aa7b7f8.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-cc09642df872468a.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-452ef0103d9c6221.arrow
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre> </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading cached processed dataset at /home/mingyuliu/.cache/huggingface/datasets/glue/qqp/1.0.0/dacbe3125aa31d7f70367a07a8a9e72a5a0bfeb5fc42e75c9db75b96da6053ad/cache-377807dbd74b5216.arrow
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">benchmark_metrics_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[23]:</div>
+    <div class="prompt output_prompt">Out[22]:</div>
 
 
 
@@ -15892,10 +14786,10 @@ Average latency (ms): 4.02 +\- 0.34
   <tbody>
     <tr>
       <th>bert_uncased_teacher</th>
-      <td>417.73</td>
+      <td>417.72</td>
       <td>109483778</td>
-      <td>7.01</td>
-      <td>0.63</td>
+      <td>13.54</td>
+      <td>0.07</td>
       <td>0.878</td>
       <td>0.867</td>
       <td>0.890</td>
@@ -15905,23 +14799,23 @@ Average latency (ms): 4.02 +\- 0.34
       <th>distilbert_student</th>
       <td>255.45</td>
       <td>66955010</td>
-      <td>4.24</td>
-      <td>0.62</td>
-      <td>0.862</td>
-      <td>0.831</td>
-      <td>0.895</td>
-      <td>0.960</td>
+      <td>7.66</td>
+      <td>0.31</td>
+      <td>0.866</td>
+      <td>0.852</td>
+      <td>0.881</td>
+      <td>0.963</td>
     </tr>
     <tr>
       <th>distilbert_distillation_student</th>
       <td>255.45</td>
       <td>66955010</td>
-      <td>4.02</td>
-      <td>0.34</td>
-      <td>0.850</td>
-      <td>0.868</td>
-      <td>0.834</td>
-      <td>0.959</td>
+      <td>7.11</td>
+      <td>0.09</td>
+      <td>0.854</td>
+      <td>0.878</td>
+      <td>0.831</td>
+      <td>0.962</td>
     </tr>
   </tbody>
 </table>
@@ -15952,7 +14846,7 @@ Average latency (ms): 4.02 +\- 0.34
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It is not surprising that large models tend to give superior performance. As software and hardware continues to advance, the barrier for training or accessing these large models will continue to lower, making scaling up still a promising approach to obtain better performance for whatever applications we care about. Despite that being said, there will always be scenarios where smaller models are preferable, and knowledge distillation <a href="https://arxiv.org/abs/1503.02531">[6]</a> is a popular way for compressing our large models into less expensive ones while still retaining majority of its performance.</p>
-<p>As mentioned in DistilBERT <a href="https://arxiv.org/abs/1910.01108">[7]</a>, they were able to compress a 110 million parameters BERT-base model to 66 million parameters DistilBERT model while retaining 97% of the original performance when measured on GLUE benchmark's dev set. Note, if we were to distill a pre-trained model ourselves, it might be worth mentioning that a better student initialization strategy is to make sure our students are &quot;well read&quot; <a href="https://arxiv.org/abs/1908.08962">[8]</a>. i.e. Our students typically have the same architecture with the only variations on smaller number of layers, instead of initializing them via truncating teacher layers or by taking one layer out of two like in DistilBERT, we should initialized from weights that have also gone through similar pre-training procedure as our teacher.</p>
+<p>As mentioned in DistilBERT <a href="https://arxiv.org/abs/1910.01108">[7]</a>, they were able to compress a 110 million parameters BERT-base model to 66 million parameters DistilBERT model while retaining 97% of the original performance when measured on GLUE benchmark's dev set. If we were to distill a pre-trained model ourselves, it might be worth mentioning that a better student initialization strategy is to make sure our students are &quot;well read&quot; <a href="https://arxiv.org/abs/1908.08962">[8]</a>. i.e. Our students typically have the same architecture with the only variations on smaller number of layers, instead of initializing them via truncating teacher layers or by taking one layer out of two like in DistilBERT, we should initialized from weights that have also gone through similar pre-training procedure as our teacher.</p>
 
 </div>
 </div>
