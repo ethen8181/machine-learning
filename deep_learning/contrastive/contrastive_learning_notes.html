@@ -13086,6 +13086,42 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Author: Ethen
+
+Last updated: 2023-04-18
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13118,7 +13154,7 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In this transformer-based deep learning era, it is often beneficial to warm start our models from pre-trained checkpoints. One important caveat is popular pre-trained models trained using masked language modeling objective such as BERT <a href="https://arxiv.org/abs/1810.04805">[16]</a> or RoBERTA <a href="https://arxiv.org/abs/1907.11692">[17]</a> doesn't generate meaningful sentence embeddings as per one of the <a href="https://github.com/google-research/bert/issues/164#issuecomment-441324222">original authors</a>. SBERT (Sentence Bert) <a href="https://arxiv.org/abs/1908.10084">[5]</a> further demonstrated it is beneficial to perform additional fine-tuning on top of pre-trained transformer based language models for competitive sentence embedding performance.</p>
 <p>For fine-tuning procedure, many works including the original SBERT relied on classification, regression, pairwise triplet/hinge loss style objective function <a href="https://arxiv.org/abs/1908.10084">[5]</a> <a href="https://arxiv.org/abs/1907.00937">[14]</a> <a href="https://arxiv.org/abs/2006.11632">[15]</a>. But one of SBERT authors later pointed out that contrastive learning is a much better approach <a href="https://www.youtube.com/watch?v=RHXZKUr8qOY">[1]</a> and E5 (EmbEddings from bidirEctional Encoder rEpresentations) <a href="https://arxiv.org/abs/2212.03533">[13]</a> which also involves pre-training stage with contrastive learning tops the retrieval benchmark suite from MTEB (Massive Text Embedding Benchmark) <a href="https://arxiv.org/abs/2210.07316">[10]</a>. So here we are, discussing some recipes for training sentence embeddings via contrastive learning.</p>
-<p>As with most other use cases, we can of course use a more powerful encoder to generate the embedding representations for our input examples, but some tips specific to improving the performance for contrastive loss based learning involves:</p>
+<p>As with most other use cases, we can of course use a more powerful encoder to generate the embedding representations for our input examples, but some tips specific to improve the performance for contrastive loss based learning involves:</p>
 
 </div>
 </div>
@@ -13126,29 +13162,67 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Noise Contrastive Objective Function</strong></p>
+<h3 id="Noise-Contrastive-Objective-Function">Noise Contrastive Objective Function<a class="anchor-link" href="#Noise-Contrastive-Objective-Function">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>In recent years, most contrastive learning procedures leverage variants of InfoNCE (Noise Contrastive Estimation) loss <a href="https://arxiv.org/abs/1807.03748">[11]</a>. This type of loss is sometimes referred to as NT-Xent (normalized temperature scaled cross entropy loss) in as SimCLR (simple contrastive learning of visual representations) <a href="https://arxiv.org/abs/2002.05709">[12]</a> or multiple negative ranking loss <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">[2]</a>, uses cross entropy loss to distinguish positive from potentially multiple negative examples.</p>
 \begin{align}
 L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_i, p_j) / \tau)}
 \end{align}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example. Here:</p>
 <ul>
-<li>$a_i$, $p_i$ denotes embedding respresentation of our anchor and positive examples. What we wish to accomplish is $a_i$ and $p_i$ becomes close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant apart.</li>
+<li>$a_i$, $p_i$ denotes embedding respresentation of our anchor and positive examples. What we wish to accomplish is $a_i$ and $p_i$ becoming close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant apart.</li>
 <li>$sim$ here represents a similarity function such as cosine similarity or dot product.</li>
 <li>$\tau$ denotes temperature scaling which can be a learned parameter, or configurable value.</li>
 </ul>
 <p>Note if choosing cosine similarity as similarity function, and $\tau$ is chosen by hand, we might need to lean towards a smaller value. As by default, cosine similarity's score differences are too small and doesn't lead to good empirical results.</p>
-<p>PyTorch style pseudocode for this loss is also shown below:</p>
-<div class="highlight"><pre><span></span><span class="c1"># @ denotes matrix multiplication, and the similarity metric here is a dot product</span>
-<span class="n">scores</span> <span class="o">=</span> <span class="n">embedding_a</span> <span class="o">@</span> <span class="n">embedding_p</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">temperature</span>
+<p>CLIP (Contrastive Language-Image Pre-Training) <a href="https://arxiv.org/abs/2103.00020">[8]</a> introduces a symmetric version of this loss function. PyTorch style pseudocode is shown below:</p>
+<div class="highlight"><pre><span></span><span class="c1"># @ denotes matrix multiplication</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">anchor_embedding</span> <span class="o">@</span> <span class="n">positive_embedding</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">temperature</span>
 <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">scores</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
 <span class="n">cross_entropy_loss</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+<span class="c1"># clip style symmetric version</span>
+<span class="n">anchor_scores</span> <span class="o">=</span> <span class="n">anchor_embedding</span> <span class="o">@</span> <span class="n">positive_embedding</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">temperature</span>
+<span class="n">positive_scores</span> <span class="o">=</span> <span class="n">positive_embedding</span> <span class="o">@</span> <span class="n">anchor_embedding</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">temperature</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">anchor_scores</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">scores</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">cross_entropy_loss</span><span class="p">(</span><span class="n">anchor_scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span> <span class="o">+</span> <span class="n">cross_entropy_loss</span><span class="p">(</span><span class="n">positive_scores</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
 </pre></div>
-<p><code>embedding_a</code> and <code>embedding_p</code> are embedding representation of anchor and positive, in the shape of <code>[batch size, hidden size]</code>. They are generated by backbone encoder (e.g. transformer) with or without linear projection of our choice. The encoder can even share weights, which is commonly referred to as siamese network.</p>
-<p><strong>Larger In Batch Negatives:</strong></p>
+<p><code>anchor_embedding</code> and <code>positive_embedding</code> are embedding representation of anchor and positive samples, in the shape of <code>[batch size, hidden size]</code>. They are generated by backbone encoder (e.g. transformer) with or without linear projection of our choice. The encoder can even share weights, which is commonly referred to as siamese network.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Large-In-Batch-Negatives">Large In Batch Negatives<a class="anchor-link" href="#Large-In-Batch-Negatives">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>In batch negatives is widely used for training models with contrastive loss. Assuming there are $B$ positive pairs for a given mini batch, each of these positive pairs can be paired with $B - 1$ negatives (rest of the positive passages). This paradigm allows us to leverage the already loaded mini batch rather than using additional resources to sample negative examples. When relying on in batch negative sampling, using a larger batch size is key, as it allows the loss function to optimize over a more diverse set of negative samples. i.e. it's easier to find the right answer over a pool of 2 candidates, versus say 1024 candidates. This can be treated as an implicit version of hard negative mining.</p>
-<p>Work such as RocketQA <a href="https://arxiv.org/abs/2010.08191">[6]</a> and CLIP (Contrastive Language-Image Pre-Training) <a href="https://arxiv.org/abs/2103.00020">[8]</a> further mentions the use of cross-gpu negatives, where when training on multiple GPUs, the calculation of passage embedding can be sharded within each single GPU, these passage embeddings can then be shared among all the GPUs and serves as additional negative examples. i.e. for A GPUs, we can now collect $A \times B - 1$ negatives. Note, sharing here refers to a differentiable all gather operation. With this approach CLIP reports to be using a effective batch size as large as 32,768 sharded across 256 GPUs, it should be noted that the optimal size will be dependent on training data size, where CLIP's training data consists of more than 400M examples.</p>
+<p>Work such as RocketQA <a href="https://arxiv.org/abs/2010.08191">[6]</a> and CLIP <a href="https://arxiv.org/abs/2103.00020">[8]</a> further mentions the use of cross-gpu negatives, where when training on multiple GPUs, the embedding calculation can be sharded within each single GPU, these embeddings can then be shared among all GPUs and serves as additional negative examples. i.e. for A GPUs, we can now collect $A \times B - 1$ negatives. Note, sharing here refers to a differentiable all gather operation. With this approach CLIP reports to be using a effective batch size as large as 32,768 sharded across 256 GPUs, it should be noted that the optimal size will be dependent on training data size, where CLIP's training data consists of more than 400M examples.</p>
 <p>As with all hyper parameters, the optimal setting will be use-case dependent. When pressed for time, this is most likely the parameter that we should prioritize on tuning above everything else.</p>
-<p><strong>Data Augmentation with Denoised Negatives</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mine-Hard-Negatives">Mine Hard Negatives<a class="anchor-link" href="#Mine-Hard-Negatives">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>While increasing our in batch negative sampling's batch size can increase the number of negative samples, a lot of them might be easy negatives that can be quickly discerned by our model, as a result they are potentially not providing too much additional information. Hence, we will need a mechanism to find hard negatives. In other words instead of providing pairs of anchors, $a_i$, and positives, $p_i$ as our input data. We now provide triplets $a_i, p_i, n_i$, where negative $n_i$ should be similar to $p_i$ but not match with $a_i$. The primary strategies are:</p>
 <ul>
 <li>Leveraging structure from our data <a href="https://www.youtube.com/watch?v=RHXZKUr8qOY">[1]</a>, this strategy relies on our creativity and domain knowledge. For example:<ul>
@@ -13173,6 +13247,45 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <li>Fine-tune a new bi-encoder model on this larger augmented training dataset.</li>
 <li>Rinse and repeat.</li>
 </ul>
+<img src="imgs/augmented_sbert.png" width="50%" height="50%">
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Data-Augmentation">Data Augmentation<a class="anchor-link" href="#Data-Augmentation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Another trend in informational retrieval is to leverage generative models to generate synthetic data for training ranking models. At its core, the idea is large generative models that demonstrated impressive results across the board on many NLP tasks, however, they can be expensive to apply at run time. Hence, instead of using them directly in our system, we would like to apply them in an offline setting, where we use them to generate more in-domain training data for training our actual retrieval or ranking model. This arguably can be seen as an alternative form of distillation, where we aim to distill the knowledge of large generative models into small bi-encoder or cross encoder models via prompt generation. This high level workflow is depicted in the figure below:</p>
+<img src="imgs/inpars_workflow.png" width="50%" height="50%">
+<p>To elaborate:</p>
+<ul>
+<li>We randomly sample 100,000 documents from the collection, $D$ and generate one question, $q$ per document. In open sourced landscape, training on <a href="https://microsoft.github.io/msmarco/">MS MARCO dataset</a> was shown to provide reasonable out of domain performance. Caveat: the dataset's license prevents it from being used in a commerical context.</li>
+<li>This generation process can be done via prompting a language or seq2seq model of choice (e.g. GPT-J) using only a few supervised examples.</li>
+<li>From that collection of generated pairs, we pick the top K=10,000 pairs as positive examples for finetuning our models. This filtering step, sometimes referred to as consistency check can be done via training a bi-encoder model (e.g. from MiniLM, Deberta v3, etc.) on the generated pairs, then for each query, we retrieve a set of documents, and mark a query as passing the consistency check if the top-k retrieved document was the document from which the query was generated.</li>
+<li>Given our re-ranker models are binary classifiers, we also need a way to select negative pairs, $(q, d−)$. This can be done via BM25 or from a trained bi-encoder, with $q$ as query to retrieve top documents from the collection $D$. We randomly select one of these as $d−$.</li>
+</ul>
+<p>We can imagine many variations that can stem out of this workflow: including different prompting template as well as which language or seq2seq model to use, etc. Work such as InPars (Inquisitive Parrots for Search) v1/v2/light <a href="https://arxiv.org/abs/2202.05144">[22]</a> <a href="https://arxiv.org/abs/2301.01820">[23]</a> <a href="https://arxiv.org/abs/2301.02998">[24]</a>, Prompt base Query Generation for Retriever (PROMPTAGATOR) <a href="https://arxiv.org/abs/2209.11755">[25]</a> demonstrated different design choices and its effectiveness to various degree.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Others">Others<a class="anchor-link" href="#Others">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Note, in pure image field work such as Moco (Momentum Contrast) <a href="https://arxiv.org/abs/1911.05722">[18]</a> introduces the concept of memory queue and momentum encoder for improving contrastive learning results. Both of them are not elaborated upon here as:</p>
 <ul>
 <li>Memory queue was shown to be unnecessary when given large enough batch size in Moco v3 <a href="https://arxiv.org/abs/2104.02057">[19]</a>.</li>
@@ -13194,7 +13307,7 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We can refer to public pre-trained sentence transformer's model card <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L12-v2">[3]</a>, and E5 <a href="https://arxiv.org/abs/2212.03533">[13]</a> on public datasets that can be combined and used to fine-tune these models .</p>
-<p>As with all methods, it is important to find an established benchmark dataset so we can quickly iterate on new ideas. MTEB <a href="https://arxiv.org/abs/2210.07316">[10]</a>, has collected 8 embedding tasks ranging from semantic textual similarity (STS, SemEval), classification (fine tuning a classifier using the embedding as input features, SentEval), information retrieval (BEIR), etc., in total it consists of 56 datasets, covering 112 languages. They also evaluated 30 different models to provide a holistic view of state of the art public pre-trained text embedding models.</p>
+<p>As with all methods, it is important to find an established benchmark dataset so we can quickly iterate on new ideas. MTEB <a href="https://arxiv.org/abs/2210.07316">[10]</a>, has collected 8 embedding tasks ranging from semantic textual similarity (STS, SemEval), classification (fine tuning a classifier using the embedding as input features, SentEval), information retrieval (BEIR <a href="https://arxiv.org/abs/2104.08663">[20]</a>), etc., in total it consists of 56 datasets, covering 112 languages. They also evaluated 30 different models to provide a holistic view of state of the art public pre-trained text embedding models.</p>
 
 </div>
 </div>
@@ -13229,6 +13342,12 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <li><a href="https://arxiv.org/abs/1907.11692">[17]</a> Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, etc. - RoBERTa: A Robustly Optimized BERT Pretraining Approach - 2019</li>
 <li><a href="https://arxiv.org/abs/1911.05722">[18]</a> Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick - Momentum Contrast for Unsupervised Visual Representation Learning - 2019</li>
 <li><a href="https://arxiv.org/abs/2104.02057">[19]</a> Xinlei Chen, Saining Xie, et al. - An Empirical Study of Training Self-Supervised Vision Transformers - 2021</li>
+<li><a href="https://arxiv.org/abs/2104.08663">[20]</a> Nandan Thakur, Nils Reimers, Andreas Rücklé , Abhishek Srivastava, Iryna Gurevych - BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models - 2021</li>
+<li><a href="https://blog.vespa.ai/improving-text-ranking-with-few-shot-prompting/">[21]</a> Vespa Blog: Improving Search Ranking with Few-Shot Prompting of LLMs</li>
+<li><a href="https://arxiv.org/abs/2202.05144">[22]</a> Luiz Bonifacio, Hugo Abonizio, Marzieh Fadaee, Rodrigo Nogueira - InPars: Data Augmentation for Information Retrieval using Large Language Models - 2022</li>
+<li><a href="https://arxiv.org/abs/2301.01820">[23]</a> Vitor Jeronymo, Luiz Bonifacio, Hugo Abonizio, Marzieh Fadaee, Roberto Lotufo, Jakub Zavrel, Rodrigo Nogueira - InPars-v2: Large Language Models as Efficient Dataset Generators for Information Retrieval - 2023</li>
+<li><a href="https://arxiv.org/abs/2301.02998">[24]</a> Leonid Boytsov, Preksha Patel, Vivek Sourabh, Riddhi Nisar, Sayani Kundu, Ramya Ramanathan, et al. - InPars-Light: Cost-Effective Unsupervised Training of Efficient Rankers - 2023</li>
+<li><a href="https://arxiv.org/abs/2209.11755">[25]</a> Zhuyun Dai, Vincent Y. Zhao, Ji Ma, Yi Luan, et al. - Promptagator: Few-shot Dense Retrieval From 8 Examples - 2022</li>
 </ul>
 
 </div>
