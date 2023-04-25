@@ -6,7 +6,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Changed
 
-- Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
+- Training Bi-Encoder Models with Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
   - Update to include a section on data augmentation as well as various clarification on wordings.
 - Response Knowledge Distillation for Training Student Model. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/response_knowledge_distillation.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/response_knowledge_distillation.html)]
   - Re-ran with huggingface dataset logging disabled, this is to prevent messages from flooding main content.
@@ -23,7 +23,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
-- Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
+- Training Bi-Encoder Models with Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
 - Introduction to CLIP (Contrastive Language-Image Pre-training) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
 
 ## [2023-01]
