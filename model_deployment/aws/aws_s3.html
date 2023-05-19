@@ -13143,17 +13143,17 @@ aws s3 cp &lt;s3 path&gt; &lt;<span class="nb">local</span> path&gt; --recursive
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-04-04
+Last updated: 2023-05-19
 
 Python implementation: CPython
 Python version       : 3.8.10
-IPython version      : 8.4.0
+IPython version      : 8.8.0
 
-json   : 2.0.9
+pandas : 1.5.2
+pyarrow: 10.0.1
+boto3  : 1.26.49
 numpy  : 1.23.2
-pyarrow: 5.0.0
-boto3  : 1.24.58
-pandas : 1.4.3
+json   : 2.0.9
 
 </pre>
 </div>
@@ -13169,8 +13169,8 @@ pandas : 1.4.3
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># replace these top level configuration, especially s3 region and bucket</span>
-<span class="n">region_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">bucket</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">region_name</span> <span class="o">=</span> <span class="s2">&quot;us-east-1&quot;</span>
+<span class="n">s3_bucket</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">s3_json_path</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/test.json&quot;</span>
 <span class="n">s3_dir</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/data&quot;</span>
 <span class="n">local_dir</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/data&quot;</span>
@@ -13237,7 +13237,7 @@ pandas : 1.4.3
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span>
     <span class="n">Body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prediction</span><span class="p">),</span>
-    <span class="n">Bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">,</span>
+    <span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span>
     <span class="n">Key</span><span class="o">=</span><span class="n">s3_json_path</span>
 <span class="p">)</span>
 </pre></div>
@@ -13298,7 +13298,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># convert 2d numpy array to list of 1d numpy array as pyarrow supports saving 1d numpy array</span>
@@ -13307,7 +13307,61 @@ pandas : 1.4.3
     <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
     <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">embedding</span> <span class="k">for</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
 <span class="p">}</span>
-<span class="n">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">s3_parquet_path</span><span class="p">)</span>
+<span class="n">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_parquet_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">download_files_from_s3</span><span class="p">(</span>
+    <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">local_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download files under a s3 bucket &amp; path to a specified local path.</span>
+<span class="sd">    n_jobs configures the number of threads used for downloading files in parallel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    download_paths : </span>
+<span class="sd">        list of files that were downloaded their corresponding local path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">s3_client</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">):</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">object_key</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">s3_client</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">object_key</span><span class="p">,</span> <span class="n">download_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">download_path</span>
+
+    <span class="c1"># use clients instead of resource, as they are thread safe</span>
+    <span class="c1"># https://boto3.amazonaws.com/v1/documentation/api/latest/guide/clients.html#multithreading-or-multiprocessing-with-clients</span>
+    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+
+    <span class="c1"># leverage paginator to avoid list object&#39;s limitation of returning 1000 objects at a time</span>
+    <span class="c1"># https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html</span>
+    <span class="n">paginator</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s2">&quot;list_objects_v2&quot;</span><span class="p">)</span>
+    <span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Prefix</span><span class="o">=</span><span class="n">s3_path</span><span class="p">)</span>
+
+    <span class="n">parallel</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;threading&quot;</span><span class="p">)</span>
+    <span class="n">page_download_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">page_iterator</span><span class="p">:</span>
+        <span class="n">object_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;Key&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;Contents&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;_SUCCESS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;Key&quot;</span><span class="p">]]</span>
+        <span class="n">download_paths</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">download_file</span><span class="p">)(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">s3_client</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">object_key</span> <span class="ow">in</span> <span class="n">object_keys</span>
+        <span class="p">)</span>
+        <span class="n">page_download_paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">download_paths</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">page_download_paths</span>
 </pre></div>
 
     </div>
@@ -13320,53 +13374,14 @@ pandas : 1.4.3
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">download_files_from_s3</span><span class="p">(</span>
-    <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">s3_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">local_dir</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Download all files from a s3 path to local&quot;&quot;&quot;</span>
-    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
-    <span class="n">bucket</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">)</span>
-
-    <span class="n">objects</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Prefix</span><span class="o">=</span><span class="n">s3_dir</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="c1"># remove success file that are automatically saved by spark jobs</span>
-    <span class="n">objects_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span> <span class="k">if</span> <span class="s2">&quot;_SUCCESS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
-
-    <span class="n">download_paths</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">object_key</span> <span class="ow">in</span> <span class="n">objects_key</span><span class="p">:</span>
-        <span class="n">download_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">object_key</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">bucket</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">download_path</span><span class="p">)</span>
-        <span class="n">download_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">download_path</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">download_paths</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">local_dir</span><span class="p">)</span>
-    <span class="p">]</span>
-<span class="k">else</span><span class="p">:</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;download files from s3&quot;</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="n">download_files_from_s3</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">download_files_from_s3</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;download files from s3 elapsed: &quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 
-<span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">local_dir</span><span class="p">)</span>
 <span class="n">df</span>
 </pre></div>
 
@@ -13380,7 +13395,7 @@ pandas : 1.4.3
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -13437,7 +13452,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">list_s3_object</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -13456,7 +13471,7 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">):</span>
@@ -13477,10 +13492,10 @@ pandas : 1.4.3
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_objects</span> <span class="o">=</span> <span class="n">list_s3_object</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_objects</span> <span class="o">=</span> <span class="n">list_s3_object</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
 <span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">)</span> <span class="k">for</span> <span class="n">s3_object</span> <span class="ow">in</span> <span class="n">s3_objects</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">df</span>
@@ -13496,7 +13511,7 @@ pandas : 1.4.3
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -13623,10 +13638,11 @@ pandas : 1.4.3
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://www.learnaws.org/2022/07/13/boto3-upload-files-s3/">[1]</a> How to use Boto3 to upload files to an S3 Bucket?</li>
-<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html">[2]</a> Best practices design patterns: optimizing Amazon S3 performance</li>
+<li><a href="https://www.learnaws.org/2022/07/13/boto3-upload-files-s3/">[1]</a> Blog: How to use Boto3 to upload files to an S3 Bucket?</li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/optimizing-performance.html">[2]</a> AWS Documentation: Best practices design patterns: optimizing Amazon S3 performance</li>
 <li><a href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/retries.html">[3]</a> Boto3 Documentation: Retries</li>
-<li><a href="https://docs.aws.amazon.com/general/latest/gr/api-retries.html">[4]</a> Error retries and exponential backoff in AWS</li>
+<li><a href="https://docs.aws.amazon.com/general/latest/gr/api-retries.html">[4]</a> AWS Documentation: Error retries and exponential backoff in AWS</li>
+<li><a href="https://www.learnaws.org/2022/10/12/boto3-download-multiple-files-s3/">[5]</a> Blog: How to use Boto3 to download multiple files from S3 in parallel?</li>
 </ul>
 
 </div>
