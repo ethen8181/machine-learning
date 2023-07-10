@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>huggingface_torch_transformer</title>
+<title>huggingface_torch_transformer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Machine-Translation-with-Huggingface-Transformer" data-toc-modified-id="Machine-Translation-with-Huggingface-Transformer-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Machine Translation with Huggingface Transformer</a></span><ul class="toc-item"><li><span><a href="#Data-Preprocessing" data-toc-modified-id="Data-Preprocessing-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preprocessing</a></span></li><li><span><a href="#Pretrained-Model" data-toc-modified-id="Pretrained-Model-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Pretrained Model</a></span></li><li><span><a href="#Training-Model-From-Scratch" data-toc-modified-id="Training-Model-From-Scratch-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Training Model From Scratch</a></span></li><li><span><a href="#Training-Tokenizer-and-Model-From-Scratch" data-toc-modified-id="Training-Tokenizer-and-Model-From-Scratch-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Training Tokenizer and Model From Scratch</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13118,7 +13126,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13452,8 +13459,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13941,17 +13947,8 @@ Boys dancing on poles in the middle of the night.
 
 
 
-
- 
- 
-<div id="1e71e38b-d5df-48c8-b7a0-7f19647dc547"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#1e71e38b-d5df-48c8-b7a0-7f19647dc547');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "a93ddabdc2ec4c8087296cd0a9f00a9f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -13973,17 +13970,8 @@ var element = $('#1e71e38b-d5df-48c8-b7a0-7f19647dc547');
 
 
 
-
- 
- 
-<div id="404f7b99-a9e5-4f43-8a39-aec0178e7670"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#404f7b99-a9e5-4f43-8a39-aec0178e7670');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "0ef9ad739ca74044ab7dfda0b682b5c5", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -14005,17 +13993,8 @@ var element = $('#404f7b99-a9e5-4f43-8a39-aec0178e7670');
 
 
 
-
- 
- 
-<div id="ae77ebfa-35e3-4302-9618-625132efd0a1"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#ae77ebfa-35e3-4302-9618-625132efd0a1');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c612332e1e9d470ca7808a20c8156e78", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -14346,17 +14325,8 @@ var element = $('#ae77ebfa-35e3-4302-9618-625132efd0a1');
 
 
 
-
- 
- 
-<div id="a0d677c7-a392-480f-a924-451215db272a"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#a0d677c7-a392-480f-a924-451215db272a');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d6051597a5354fbead9671e9a5bccb6f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14378,17 +14348,8 @@ var element = $('#a0d677c7-a392-480f-a924-451215db272a');
 
 
 
-
- 
- 
-<div id="7b2bf4ea-7fb0-4f08-bcc8-09ae242edffc"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#7b2bf4ea-7fb0-4f08-bcc8-09ae242edffc');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "acc94d858ce0407882a13057d3b5bce1", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14410,17 +14371,8 @@ var element = $('#7b2bf4ea-7fb0-4f08-bcc8-09ae242edffc');
 
 
 
-
- 
- 
-<div id="c484b9f1-0612-4822-a8ac-7fd8e68e00a2"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#c484b9f1-0612-4822-a8ac-7fd8e68e00a2');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "fe777f652f014c35811968583403ec69", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14442,17 +14394,8 @@ var element = $('#c484b9f1-0612-4822-a8ac-7fd8e68e00a2');
 
 
 
-
- 
- 
-<div id="e65224ad-ee68-492c-9dcd-eaaca6cc555c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#e65224ad-ee68-492c-9dcd-eaaca6cc555c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "16c079f92a2046bc8365cc2bfdc981a6", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14464,17 +14407,8 @@ var element = $('#e65224ad-ee68-492c-9dcd-eaaca6cc555c');
 
 
 
-
- 
- 
-<div id="31e6dba5-2a79-475f-b935-384a4a5741de"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#31e6dba5-2a79-475f-b935-384a4a5741de');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "5bed431304fc4659920397ca15f4c0b7", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14486,17 +14420,8 @@ var element = $('#31e6dba5-2a79-475f-b935-384a4a5741de');
 
 
 
-
- 
- 
-<div id="b889d864-c231-425a-8c28-08ff2f1ccb09"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#b889d864-c231-425a-8c28-08ff2f1ccb09');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "e7b912cb771347b9b7a203f8120657a2", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14508,17 +14433,8 @@ var element = $('#b889d864-c231-425a-8c28-08ff2f1ccb09');
 
 
 
-
- 
- 
-<div id="2f5c21bb-3688-4bce-9b71-14b415ab7b7d"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#2f5c21bb-3688-4bce-9b71-14b415ab7b7d');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "669c9c28025449e198f12073b693d7be", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14530,17 +14446,8 @@ var element = $('#2f5c21bb-3688-4bce-9b71-14b415ab7b7d');
 
 
 
-
- 
- 
-<div id="7cbdb526-923d-4171-ba68-73fb63f740ee"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#7cbdb526-923d-4171-ba68-73fb63f740ee');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3a6b7b057b1f4db5a53b36ec58f9d6b9", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14570,17 +14477,8 @@ var element = $('#7cbdb526-923d-4171-ba68-73fb63f740ee');
 
 
 
-
- 
- 
-<div id="cb67742d-f83d-4bc2-867c-7bd983dc49ec"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#cb67742d-f83d-4bc2-867c-7bd983dc49ec');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3f80b0a6ac6f476285fce127effcf32a", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14592,17 +14490,8 @@ var element = $('#cb67742d-f83d-4bc2-867c-7bd983dc49ec');
 
 
 
-
- 
- 
-<div id="51e4b941-2907-45a1-b544-25dd5dd5ef38"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#51e4b941-2907-45a1-b544-25dd5dd5ef38');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "88c87815207b455f91259103e40b985f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14624,17 +14513,8 @@ var element = $('#51e4b941-2907-45a1-b544-25dd5dd5ef38');
 
 
 
-
- 
- 
-<div id="5991e3dc-bd23-4215-9d9f-13c313f43e16"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5991e3dc-bd23-4215-9d9f-13c313f43e16');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c0eba2dd1fac493da1e331ac32290328", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14646,17 +14526,8 @@ var element = $('#5991e3dc-bd23-4215-9d9f-13c313f43e16');
 
 
 
-
- 
- 
-<div id="cb5c8552-f1b8-4463-b1b3-5aeb6ae32f2e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#cb5c8552-f1b8-4463-b1b3-5aeb6ae32f2e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3b637a68d5144a769e45deeed7620d67", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14668,17 +14539,8 @@ var element = $('#cb5c8552-f1b8-4463-b1b3-5aeb6ae32f2e');
 
 
 
-
- 
- 
-<div id="54a013f0-4947-4728-906c-ca201451b149"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#54a013f0-4947-4728-906c-ca201451b149');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "070ee1706e8e444e9a322daff89462e5", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14703,17 +14565,8 @@ var element = $('#54a013f0-4947-4728-906c-ca201451b149');
 
 
 
-
- 
- 
-<div id="1cb5db11-e377-4c81-8ee7-77dc93caa88c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#1cb5db11-e377-4c81-8ee7-77dc93caa88c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "958be04a8bba411785218ca4ef7d34cd", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14725,17 +14578,8 @@ var element = $('#1cb5db11-e377-4c81-8ee7-77dc93caa88c');
 
 
 
-
- 
- 
-<div id="6c8227cc-1eb3-493a-90f7-fa14f09dd029"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#6c8227cc-1eb3-493a-90f7-fa14f09dd029');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "08f7a57bda1845ba8724bac074eb12fb", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14761,17 +14605,8 @@ var element = $('#6c8227cc-1eb3-493a-90f7-fa14f09dd029');
 
 
 
-
- 
- 
-<div id="3b563c06-265e-428e-ab2d-df9bfa3e867b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#3b563c06-265e-428e-ab2d-df9bfa3e867b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "669c85b3732f4569a69e04bca6d9f8ea", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14794,17 +14629,8 @@ var element = $('#3b563c06-265e-428e-ab2d-df9bfa3e867b');
 
 
 
-
- 
- 
-<div id="0b8f9d8d-d312-43c2-b525-da8225287d5c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#0b8f9d8d-d312-43c2-b525-da8225287d5c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "fdd25ec407504d439aaa5739c0dff855", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14827,17 +14653,8 @@ var element = $('#0b8f9d8d-d312-43c2-b525-da8225287d5c');
 
 
 
-
- 
- 
-<div id="94e781d4-8e09-46fa-a65f-5a33681a6b6d"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#94e781d4-8e09-46fa-a65f-5a33681a6b6d');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "0808b32962f244798dbdbd5880bb1d35", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14859,17 +14676,8 @@ var element = $('#94e781d4-8e09-46fa-a65f-5a33681a6b6d');
 
 
 
-
- 
- 
-<div id="427cde44-4e3b-4175-8d71-41f21f0a800b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#427cde44-4e3b-4175-8d71-41f21f0a800b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "ca71776f60de4316a9245815c0546b59", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14881,17 +14689,8 @@ var element = $('#427cde44-4e3b-4175-8d71-41f21f0a800b');
 
 
 
-
- 
- 
-<div id="cb3f1019-16ba-4473-a963-3c44f301ec25"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#cb3f1019-16ba-4473-a963-3c44f301ec25');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "961b5e48dac04ef5a97717237288a8c3", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14914,17 +14713,8 @@ var element = $('#cb3f1019-16ba-4473-a963-3c44f301ec25');
 
 
 
-
- 
- 
-<div id="8fe45d8e-e65c-4ae1-b56a-2d294407081c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#8fe45d8e-e65c-4ae1-b56a-2d294407081c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "85493ad173a641d694272d41bd24585f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14949,17 +14739,8 @@ var element = $('#8fe45d8e-e65c-4ae1-b56a-2d294407081c');
 
 
 
-
- 
- 
-<div id="c9652deb-7c9b-4089-8516-34b2362f64e3"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#c9652deb-7c9b-4089-8516-34b2362f64e3');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "893f8957876c45ff94f9ecc82c510dcf", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -14982,17 +14763,8 @@ var element = $('#c9652deb-7c9b-4089-8516-34b2362f64e3');
 
 
 
-
- 
- 
-<div id="9e34d212-7840-47fa-a82c-c9c999161333"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9e34d212-7840-47fa-a82c-c9c999161333');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "134c8a6c68f84a369b4d72562200c7ef", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -15015,17 +14787,8 @@ var element = $('#9e34d212-7840-47fa-a82c-c9c999161333');
 
 
 
-
- 
- 
-<div id="9740b7d0-d97a-49f6-8f94-b426caf22a49"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9740b7d0-d97a-49f6-8f94-b426caf22a49');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d64c31da50984057b82bd9ca7d8bd804", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -15958,7 +15721,6 @@ prediction:  A man with an orange hat staring at something.
 
 
 <div class="output_html rendered_html output_subarea ">
-
     <div>
         <style>
             /* Turns off some styling */
@@ -16062,8 +15824,7 @@ prediction:  A man with an orange hat staring at something.
       <td>1716.157000</td>
     </tr>
   </tbody>
-</table><p>
-</div>
+</table><p></div>
 
 </div>
 
@@ -16368,17 +16129,8 @@ target vocab size:  5000
 
 
 
-
- 
- 
-<div id="efd44520-c4d1-4ce0-b781-8db393ff622c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#efd44520-c4d1-4ce0-b781-8db393ff622c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "f2d828507cf14fa69dc5c9b5fcc9c9d0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16390,17 +16142,8 @@ var element = $('#efd44520-c4d1-4ce0-b781-8db393ff622c');
 
 
 
-
- 
- 
-<div id="0583bee7-27e0-4a15-9c86-32de723f196f"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#0583bee7-27e0-4a15-9c86-32de723f196f');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "99ff4522218c4a6ca655b6af23a61664", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16412,17 +16155,8 @@ var element = $('#0583bee7-27e0-4a15-9c86-32de723f196f');
 
 
 
-
- 
- 
-<div id="f0f4ee79-c237-4e51-9c9a-bce2a8f7a13f"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#f0f4ee79-c237-4e51-9c9a-bce2a8f7a13f');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "2b12ecb5ba78486f8ed99fb3656c1e4a", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16434,17 +16168,8 @@ var element = $('#f0f4ee79-c237-4e51-9c9a-bce2a8f7a13f');
 
 
 
-
- 
- 
-<div id="4d1a0fa4-10dc-4598-8e99-dabbaf280ac9"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#4d1a0fa4-10dc-4598-8e99-dabbaf280ac9');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "66820df017aa45fcaefd047a1f048c32", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16456,17 +16181,8 @@ var element = $('#4d1a0fa4-10dc-4598-8e99-dabbaf280ac9');
 
 
 
-
- 
- 
-<div id="9215b038-6351-46cf-802e-d41d2e520e1b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9215b038-6351-46cf-802e-d41d2e520e1b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "f4b0dc4256654110ab9766fc7b9a8136", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16478,17 +16194,8 @@ var element = $('#9215b038-6351-46cf-802e-d41d2e520e1b');
 
 
 
-
- 
- 
-<div id="2d8fd7bd-122a-463d-8664-ab14b8617298"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#2d8fd7bd-122a-463d-8664-ab14b8617298');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "fba0cf327a7c415faa99565caf65c38a", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16500,17 +16207,8 @@ var element = $('#2d8fd7bd-122a-463d-8664-ab14b8617298');
 
 
 
-
- 
- 
-<div id="3e69cc5c-1386-4524-b200-a87e74a26bb8"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#3e69cc5c-1386-4524-b200-a87e74a26bb8');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "88529b83cc904f1298ae3d67fcf1760e", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16522,17 +16220,8 @@ var element = $('#3e69cc5c-1386-4524-b200-a87e74a26bb8');
 
 
 
-
- 
- 
-<div id="0de7a901-f1d6-4974-a022-e148c9dd140e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#0de7a901-f1d6-4974-a022-e148c9dd140e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "5746e4c8bde444d097402a50f2bc0f9d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=4.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16562,17 +16251,8 @@ var element = $('#0de7a901-f1d6-4974-a022-e148c9dd140e');
 
 
 
-
- 
- 
-<div id="4ab644f9-10b3-4256-97e8-b02d651c2e91"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#4ab644f9-10b3-4256-97e8-b02d651c2e91');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "4a855f19d5574137a9be298799c99242", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16584,17 +16264,8 @@ var element = $('#4ab644f9-10b3-4256-97e8-b02d651c2e91');
 
 
 
-
- 
- 
-<div id="21737d7d-8a74-4fe4-83d5-67c64d8e810c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#21737d7d-8a74-4fe4-83d5-67c64d8e810c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d2a8ad44c0f6449fb959627f594e9c31", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16606,17 +16277,8 @@ var element = $('#21737d7d-8a74-4fe4-83d5-67c64d8e810c');
 
 
 
-
- 
- 
-<div id="558c152e-c59d-432e-b2e7-72a9b499d23d"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#558c152e-c59d-432e-b2e7-72a9b499d23d');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d8b120665d544c15aa2eb829eb6bcfdf", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16628,17 +16290,8 @@ var element = $('#558c152e-c59d-432e-b2e7-72a9b499d23d');
 
 
 
-
- 
- 
-<div id="22d0f249-eeff-4c12-aebf-cc5bbd724ed8"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#22d0f249-eeff-4c12-aebf-cc5bbd724ed8');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "4b1b4777e4434d3b98bf2868bd98484d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16650,17 +16303,8 @@ var element = $('#22d0f249-eeff-4c12-aebf-cc5bbd724ed8');
 
 
 
-
- 
- 
-<div id="fe19784a-bc41-47d5-afe0-ca1d346c0090"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#fe19784a-bc41-47d5-afe0-ca1d346c0090');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3a16aff563a34f80a915bb06ec9e62e7", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16672,17 +16316,8 @@ var element = $('#fe19784a-bc41-47d5-afe0-ca1d346c0090');
 
 
 
-
- 
- 
-<div id="7522095c-0556-4245-ae85-ca3c091d4207"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#7522095c-0556-4245-ae85-ca3c091d4207');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c48d89b75aee42d09b91c0b7d17c0c92", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16694,17 +16329,8 @@ var element = $('#7522095c-0556-4245-ae85-ca3c091d4207');
 
 
 
-
- 
- 
-<div id="caaef1cf-5c24-46ee-8bed-be8395461019"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#caaef1cf-5c24-46ee-8bed-be8395461019');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d5e9df442169417a9fc1725aad2e3548", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16716,17 +16342,8 @@ var element = $('#caaef1cf-5c24-46ee-8bed-be8395461019');
 
 
 
-
- 
- 
-<div id="76c8eab0-7ec0-4848-a060-1db54256fe9c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#76c8eab0-7ec0-4848-a060-1db54256fe9c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "25caa37e83d54b11bda4f45a0e394f46", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16756,17 +16373,8 @@ var element = $('#76c8eab0-7ec0-4848-a060-1db54256fe9c');
 
 
 
-
- 
- 
-<div id="95f0409b-d571-47d2-bcc8-d5c454cc3617"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#95f0409b-d571-47d2-bcc8-d5c454cc3617');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c8830a7ffd8b4d0c8e66029c2587c63c", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16778,17 +16386,8 @@ var element = $('#95f0409b-d571-47d2-bcc8-d5c454cc3617');
 
 
 
-
- 
- 
-<div id="9ac6813b-6dc0-4898-82e8-38a3f58adff2"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9ac6813b-6dc0-4898-82e8-38a3f58adff2');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "92294f6c31c1434eb5775dfbd1ce7c59", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16800,17 +16399,8 @@ var element = $('#9ac6813b-6dc0-4898-82e8-38a3f58adff2');
 
 
 
-
- 
- 
-<div id="b806943d-0449-435c-b3d9-54dbc2330170"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#b806943d-0449-435c-b3d9-54dbc2330170');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "0e3021ddb16447269d830d6e0adb8793", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16822,17 +16412,8 @@ var element = $('#b806943d-0449-435c-b3d9-54dbc2330170');
 
 
 
-
- 
- 
-<div id="e33af804-bd4d-41a1-a997-3be82039a0fd"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#e33af804-bd4d-41a1-a997-3be82039a0fd');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "2c2a9343eaa54b42a26d31adf5a0e5b1", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16844,17 +16425,8 @@ var element = $('#e33af804-bd4d-41a1-a997-3be82039a0fd');
 
 
 
-
- 
- 
-<div id="45671836-b5f7-4d57-9568-3c947a7fc452"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#45671836-b5f7-4d57-9568-3c947a7fc452');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "58d96b4173924c08bccb071198a36a7f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16866,17 +16438,8 @@ var element = $('#45671836-b5f7-4d57-9568-3c947a7fc452');
 
 
 
-
- 
- 
-<div id="44d3bd97-a652-4678-baf5-d1c36fc585bf"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#44d3bd97-a652-4678-baf5-d1c36fc585bf');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "68f2feee414f4bd4b95ec144ba86dd05", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16888,17 +16451,8 @@ var element = $('#44d3bd97-a652-4678-baf5-d1c36fc585bf');
 
 
 
-
- 
- 
-<div id="e960760c-b8cc-4db5-a0a9-a754c6161e2e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#e960760c-b8cc-4db5-a0a9-a754c6161e2e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "681bd1ba0e2149b3b48b8c7c3dd0e22a", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -16910,17 +16464,8 @@ var element = $('#e960760c-b8cc-4db5-a0a9-a754c6161e2e');
 
 
 
-
- 
- 
-<div id="70dd4d40-538f-46e7-9311-77c42f0f4d90"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#70dd4d40-538f-46e7-9311-77c42f0f4d90');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "6ff22d92e1e04905b23d4a750a5acdbc", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=1.0, style=ProgressStyle(description_width=&#39;init…</pre>
 </div>
 
 </div>
@@ -17560,7 +17105,6 @@ var element = $('#70dd4d40-538f-46e7-9311-77c42f0f4d90');
 
 
 <div class="output_html rendered_html output_subarea ">
-
     <div>
         <style>
             /* Turns off some styling */
@@ -17692,8 +17236,7 @@ var element = $('#70dd4d40-538f-46e7-9311-77c42f0f4d90');
       <td>1923.935000</td>
     </tr>
   </tbody>
-</table><p>
-</div>
+</table><p></div>
 
 </div>
 
@@ -18006,8 +17549,7 @@ prediction:  a man in an orange hat who is looking at something.
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -18100,8 +17642,7 @@ prediction:  a man in an orange hat who is looking at something.
   </tbody>
 </table>
 <p>1000 rows × 3 columns</p>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -18131,7 +17672,10 @@ prediction:  a man in an orange hat who is looking at something.
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

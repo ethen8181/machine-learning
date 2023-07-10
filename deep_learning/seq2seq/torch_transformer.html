@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>torch_transformer</title>
+<title>torch_transformer</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Transformer" data-toc-modified-id="Transformer-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Transformer</a></span><ul class="toc-item"><li><span><a href="#Data-Preprocessing" data-toc-modified-id="Data-Preprocessing-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preprocessing</a></span></li><li><span><a href="#Model-Architecture-From-Scratch" data-toc-modified-id="Model-Architecture-From-Scratch-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model Architecture From Scratch</a></span><ul class="toc-item"><li><span><a href="#Position-Wise-Embedding" data-toc-modified-id="Position-Wise-Embedding-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Position Wise Embedding</a></span></li><li><span><a href="#Multi-Head-Attention-Layer" data-toc-modified-id="Multi-Head-Attention-Layer-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Multi Head Attention Layer</a></span></li><li><span><a href="#Position-Wise-Feed-Forward-Layer" data-toc-modified-id="Position-Wise-Feed-Forward-Layer-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Position Wise Feed Forward Layer</a></span></li><li><span><a href="#Encoder" data-toc-modified-id="Encoder-1.2.4"><span class="toc-item-num">1.2.4&nbsp;&nbsp;</span>Encoder</a></span></li><li><span><a href="#Decoder" data-toc-modified-id="Decoder-1.2.5"><span class="toc-item-num">1.2.5&nbsp;&nbsp;</span>Decoder</a></span></li><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1.2.6"><span class="toc-item-num">1.2.6&nbsp;&nbsp;</span>Seq2Seq</a></span></li></ul></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model Training</a></span></li><li><span><a href="#Model-Evaluation" data-toc-modified-id="Model-Evaluation-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Model Evaluation</a></span></li><li><span><a href="#Transformer-Module" data-toc-modified-id="Transformer-Module-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Transformer Module</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13118,7 +13126,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13452,8 +13459,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13943,17 +13949,8 @@ Boys dancing on poles in the middle of the night.
 
 
 
-
- 
- 
-<div id="9b021aeb-a9c4-41f6-9399-e89aabffbf8c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9b021aeb-a9c4-41f6-9399-e89aabffbf8c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "dff3af1454e04dc19464ce4c9b8055ec", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -13975,17 +13972,8 @@ var element = $('#9b021aeb-a9c4-41f6-9399-e89aabffbf8c');
 
 
 
-
- 
- 
-<div id="cf7bc16f-6e1e-4d92-9ffa-e32177464a7e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#cf7bc16f-6e1e-4d92-9ffa-e32177464a7e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "01037d54d92c404b996602cd673a81c6", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -14007,17 +13995,8 @@ var element = $('#cf7bc16f-6e1e-4d92-9ffa-e32177464a7e');
 
 
 
-
- 
- 
-<div id="f1fdcd1f-54b9-4b32-9e7c-5c773db6e527"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#f1fdcd1f-54b9-4b32-9e7c-5c773db6e527');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "b523d8b88eb74344a8be3b30209ccf52", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
 </div>
 
 </div>
@@ -14282,17 +14261,8 @@ target vocab size:  5000
 
 
 
-
- 
- 
-<div id="47260e80-d0a9-436d-8ccb-c3a30af0a548"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#47260e80-d0a9-436d-8ccb-c3a30af0a548');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c265f219448643b992f75bea6468d9e8", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14304,17 +14274,8 @@ var element = $('#47260e80-d0a9-436d-8ccb-c3a30af0a548');
 
 
 
-
- 
- 
-<div id="cd580742-9919-42e9-a941-79d820a80b46"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#cd580742-9919-42e9-a941-79d820a80b46');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "185ca666a09241449853cb5945bcd9ce", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14326,17 +14287,8 @@ var element = $('#cd580742-9919-42e9-a941-79d820a80b46');
 
 
 
-
- 
- 
-<div id="6cacbc04-44cc-4b29-a94d-81dca6aefdbb"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#6cacbc04-44cc-4b29-a94d-81dca6aefdbb');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3c51eaf4a63d40efb7b4ff6bd1be9b52", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14348,17 +14300,8 @@ var element = $('#6cacbc04-44cc-4b29-a94d-81dca6aefdbb');
 
 
 
-
- 
- 
-<div id="fdcafe46-95fb-4539-b9d2-ca2a1c46e158"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#fdcafe46-95fb-4539-b9d2-ca2a1c46e158');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "ce1f4fd20e954d85ab23278ed2e5979a", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14370,17 +14313,8 @@ var element = $('#fdcafe46-95fb-4539-b9d2-ca2a1c46e158');
 
 
 
-
- 
- 
-<div id="e9034a06-83e1-4ef6-9573-3c5c2bdb295a"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#e9034a06-83e1-4ef6-9573-3c5c2bdb295a');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "6a1088e9bb084de1992054f4dc938837", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14392,17 +14326,8 @@ var element = $('#e9034a06-83e1-4ef6-9573-3c5c2bdb295a');
 
 
 
-
- 
- 
-<div id="5b343b07-4135-452f-aeb0-43dc49c20484"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5b343b07-4135-452f-aeb0-43dc49c20484');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "93cfe72857de4639acf796fd56f38cf0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14414,17 +14339,8 @@ var element = $('#5b343b07-4135-452f-aeb0-43dc49c20484');
 
 
 
-
- 
- 
-<div id="5f6707c7-3f9a-4ffe-923f-7f931f09e496"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5f6707c7-3f9a-4ffe-923f-7f931f09e496');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "fcae7e3439e6463488ba0bd2e2e40074", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14436,17 +14352,8 @@ var element = $('#5f6707c7-3f9a-4ffe-923f-7f931f09e496');
 
 
 
-
- 
- 
-<div id="5065dce5-10b8-4009-ad31-ddadea93a19b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5065dce5-10b8-4009-ad31-ddadea93a19b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "6f5562578f5f4d3fb0eb7f26a16c882c", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
 </div>
 
 </div>
@@ -14476,17 +14383,8 @@ var element = $('#5065dce5-10b8-4009-ad31-ddadea93a19b');
 
 
 
-
- 
- 
-<div id="805a4c2a-0993-4b8c-b9ac-d496397928bf"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#805a4c2a-0993-4b8c-b9ac-d496397928bf');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "52d8d7cf4c574b0aa824973a8c3afc00", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14498,17 +14396,8 @@ var element = $('#805a4c2a-0993-4b8c-b9ac-d496397928bf');
 
 
 
-
- 
- 
-<div id="28f4520d-d63b-48e2-9ae7-b3e2ec9b621a"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#28f4520d-d63b-48e2-9ae7-b3e2ec9b621a');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "1e37882cc27a4371b69a7c64b27ec1ae", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14520,17 +14409,8 @@ var element = $('#28f4520d-d63b-48e2-9ae7-b3e2ec9b621a');
 
 
 
-
- 
- 
-<div id="669ea30d-0b48-4199-bde5-453bd0c37ae0"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#669ea30d-0b48-4199-bde5-453bd0c37ae0');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "340a3bb05c1745e681bd956f859f344d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14542,17 +14422,8 @@ var element = $('#669ea30d-0b48-4199-bde5-453bd0c37ae0');
 
 
 
-
- 
- 
-<div id="d3498684-3cca-4155-9b0c-6e9b3dfef4bd"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#d3498684-3cca-4155-9b0c-6e9b3dfef4bd');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "405190d50df34fc9b5afc20dfbc585eb", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14564,17 +14435,8 @@ var element = $('#d3498684-3cca-4155-9b0c-6e9b3dfef4bd');
 
 
 
-
- 
- 
-<div id="0fad7d00-7735-4c24-a4a1-7502a0f80318"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#0fad7d00-7735-4c24-a4a1-7502a0f80318');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "8d54f25b6da6499cb079cc8579a4592b", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14586,17 +14448,8 @@ var element = $('#0fad7d00-7735-4c24-a4a1-7502a0f80318');
 
 
 
-
- 
- 
-<div id="2f0f57d1-18d0-4331-afef-7c3265acf234"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#2f0f57d1-18d0-4331-afef-7c3265acf234');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "a0880fc39a45415f98e14445940b921c", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14608,17 +14461,8 @@ var element = $('#2f0f57d1-18d0-4331-afef-7c3265acf234');
 
 
 
-
- 
- 
-<div id="200a4b1c-8253-4993-95d1-cd3e7326cf99"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#200a4b1c-8253-4993-95d1-cd3e7326cf99');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "35be0143e76c4777bb7c71419323933e", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=126.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14630,17 +14474,8 @@ var element = $('#200a4b1c-8253-4993-95d1-cd3e7326cf99');
 
 
 
-
- 
- 
-<div id="632233ef-f3da-44cb-95b0-cb572b07b54b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#632233ef-f3da-44cb-95b0-cb572b07b54b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3c18b00e8d474a5f98d9325ccbb41fab", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=126.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14670,17 +14505,8 @@ var element = $('#632233ef-f3da-44cb-95b0-cb572b07b54b');
 
 
 
-
- 
- 
-<div id="051da65c-23de-4a1c-b7b2-f45d81bc8811"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#051da65c-23de-4a1c-b7b2-f45d81bc8811');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "b727b473e3884d629d1df23be8305360", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14692,17 +14518,8 @@ var element = $('#051da65c-23de-4a1c-b7b2-f45d81bc8811');
 
 
 
-
- 
- 
-<div id="dc4828c3-5ff4-4be0-bf86-e206f71b0302"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#dc4828c3-5ff4-4be0-bf86-e206f71b0302');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "817322f347574b4ea6fa64774fe76265", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14714,17 +14531,8 @@ var element = $('#dc4828c3-5ff4-4be0-bf86-e206f71b0302');
 
 
 
-
- 
- 
-<div id="c7f00ed4-4a93-492f-a3eb-9a0c24b42de3"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#c7f00ed4-4a93-492f-a3eb-9a0c24b42de3');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "1a0f528161dd4a3b8f2a0957a3ce6150", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14736,17 +14544,8 @@ var element = $('#c7f00ed4-4a93-492f-a3eb-9a0c24b42de3');
 
 
 
-
- 
- 
-<div id="412bd7d1-c587-430c-bc83-c560a4bd1df2"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#412bd7d1-c587-430c-bc83-c560a4bd1df2');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "6d6ba9078edf47b18ae60802811604e7", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14758,17 +14557,8 @@ var element = $('#412bd7d1-c587-430c-bc83-c560a4bd1df2');
 
 
 
-
- 
- 
-<div id="40fd56ee-eb3e-4f84-b250-a4fd94d9a807"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#40fd56ee-eb3e-4f84-b250-a4fd94d9a807');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "989875b12dac467bb143502729610a3d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14780,17 +14570,8 @@ var element = $('#40fd56ee-eb3e-4f84-b250-a4fd94d9a807');
 
 
 
-
- 
- 
-<div id="c974aa7f-26b8-4b85-b345-45792acf11b6"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#c974aa7f-26b8-4b85-b345-45792acf11b6');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "a34e19834b5144bc9a133341a3ff15e2", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14802,17 +14583,8 @@ var element = $('#c974aa7f-26b8-4b85-b345-45792acf11b6');
 
 
 
-
- 
- 
-<div id="bac6134e-ea5b-4b04-9771-190a4f641ad3"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#bac6134e-ea5b-4b04-9771-190a4f641ad3');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "fa13bf65907e45d4abfbeffadc842cfb", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -14824,17 +14596,8 @@ var element = $('#bac6134e-ea5b-4b04-9771-190a4f641ad3');
 
 
 
-
- 
- 
-<div id="6ca1e25b-4f3e-4e40-8016-399caa24fc35"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#6ca1e25b-4f3e-4e40-8016-399caa24fc35');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "f7100c4a933a4b05802f78e7174d592f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
 </div>
 
 </div>
@@ -15114,7 +14877,7 @@ elapsed:  1.697516679763794
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Having prepared the data, we can now start implementing Transformer model's architecture, which looks like the following:</p>
-<p><img src="img/transformer_architecture.png" width="40%" height="40%"></p>
+<img src="img/transformer_architecture.png" width="40%" height="40%">
 <p>This implementation is largely based on the wonderful <a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/6%20-%20Attention%20is%20All%20You%20Need.ipynb">Jupyter Notebook: Attention is All You Need</a>.</p>
 
 </div>
@@ -15130,7 +14893,7 @@ elapsed:  1.697516679763794
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>First, input tokens are passed through a standard embedding layer. Next, as the entire sentence is fed into the model in one go, by default it has no idea about the tokens' order within the sequence. We cope with this by using a second embedding layer, positional embedding. This is an embedding layer where our input is not the token id but the token's position within the sequence. If we configure our position embedding to have a "vocabulary" size of 100, this means our model can accept sentences up to 100 tokens long.</p>
+<p>First, input tokens are passed through a standard embedding layer. Next, as the entire sentence is fed into the model in one go, by default it has no idea about the tokens' order within the sequence. We cope with this by using a second embedding layer, positional embedding. This is an embedding layer where our input is not the token id but the token's position within the sequence. If we configure our position embedding to have a &quot;vocabulary&quot; size of 100, this means our model can accept sentences up to 100 tokens long.</p>
 <p>The original Transformer implementation from the Attention is All You Need paper does not learn positional embeddings. Instead it uses a fixed static positional encoding. Modern Transformer architectures, like BERT, use positional embeddings, hence, we have decided to use them in these tutorials. Check out <a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html#positional-encoding">this</a> section to read more about the positional encoding used in the original Transformer model.</p>
 <p>Next, the token and positional embeddings are combined together using an elementwise sum operation, giving us a single vector that contains information on both the token and its position with in the sequence. Before they are summed, the token embeddings are multiplied by a scaling factor $\sqrt{d_{model}}$, where $d_{model}$ is the hidden dimension size, <code>hid_dim</code>. This supposedly reduces variance in the embeddings and without this scaling factor, it becomes difficult to train the model reliably. Dropout is then applied to the combined embeddings.</p>
 
@@ -15271,7 +15034,7 @@ elapsed:  1.697516679763794
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>One of the key concepts introduced by Transformer model is <strong>multi-head attention layer</strong>.</p>
-<p><img src="img/transformer_multi_head_attention.png" width="70%" height="70%"></p>
+<img src="img/transformer_multi_head_attention.png" width="70%" height="70%">
 <p>The purpose behind an attention mechanism is to relate inputs from different parts of the sequence. Attention operation is comprised of <em>queries</em>, <em>keys</em> and <em>values</em>. It might be helpful to look at these terms from an informational retrieval perspective, where every time we issue a query to a search engine, the search engine will match it with some key (title, description), and retrieve the associated value (content).</p>
 <p>To be specific, Transformer model uses scaled dot-product attention, where query is used with key to get an attention vector, which is then used to get a weighted sum of the values.</p>
 \begin{align}
@@ -15473,8 +15236,8 @@ torch.Size([128, 8, 40, 40])
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We'll now put our building blocks together to form the encoder.</p>
-<p><img src="img/transformer_encoders.png" width="20%" height="20%"></p>
-<p>We first pass the source sentence through a position wise embedding layer, this is then followed by <em>N</em> (configurable) encoder layers, the "meat" of modern transformer based architecture. The main role of our encoder is to update our embeddings/weights so that it can learn some contextual information about our text sequence, e.g. the word "bank" will be updated to be more "financial establishment" like and less "land along river" if words such as money and investment are close to it.</p>
+<img src="img/transformer_encoders.png" width="20%" height="20%">
+<p>We first pass the source sentence through a position wise embedding layer, this is then followed by <em>N</em> (configurable) encoder layers, the &quot;meat&quot; of modern transformer based architecture. The main role of our encoder is to update our embeddings/weights so that it can learn some contextual information about our text sequence, e.g. the word &quot;bank&quot; will be updated to be more &quot;financial establishment&quot; like and less &quot;land along river&quot; if words such as money and investment are close to it.</p>
 <p>Inside the encoder layer, we start from the multi-head attention layer, perform dropout on it, apply a residual connection, pass it through a layer normalization layer. followed by a position-wise feedforward layer and then, again, apply dropout, a residual connection and then layer normalization to get the output, this is then fed into the next layer. This sounds like a mouthful, but potentially the code will clarify things a bit. Things worth noting:</p>
 <ul>
 <li>Parameters are not shared between layers.</li>
@@ -15678,7 +15441,7 @@ torch.Size([128, 8, 40, 40])
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now comes the decoder part:</p>
-<p><img src="img/transformer_decoders.png" width="20%" height="20%"></p>
+<img src="img/transformer_decoders.png" width="20%" height="20%">
 <p>Decoder's main goal is to take our source sentence's encoded representation, $Z$, convert it into predicted tokens in the target sentence, $\hat{Y}$. We then compare it with the actual tokens in the target sentence, $Y$, to calculate our loss and update our parameters to improve our predictions.</p>
 <p>Decoder layer contains similar building blocks as the encoder layer, except it now has two multi-head attention layers, <code>self_attention</code> and <code>encoder_attention</code>.</p>
 <p>The former attention layer performs self attention on our target sentence's embedding representation to generate a decoder representation. Whereas for the encoder/decoder attention layer, decoder's intermediate presentation will represent queries, whereas keys and values come from encoder representation's output.</p>
@@ -15899,7 +15662,7 @@ torch.Size([128, 8, 40, 40])
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now that we have our encoder and decoder, the final part is to have a Seq2Seq module that encapsulates the two. In this module, we'll also handle masking.</p>
 <p>The source mask is created by checking where our source sequence is not equal to the <code>&lt;pad&gt;</code> token. It is 1 where the token is not a <pad> token and 0 when it is. This is used in our encoder layers' multi-head attention mechanisms, where we want our model to not pay any attention to <code>&lt;pad&gt;</code> tokens, which contain no useful information.</p>
-<p>The target mask is a bit more involved. First, we create a mask for the <pad> tokens, as we did for the source mask. Next, we create a "subsequent" mask, <code>trg_sub_mask</code>, using <code>torch.tril</code>. This creates a diagonal matrix where the elements above the diagonal will be zero and the elements below the diagonal will be set to whatever the input tensor is. In this case, the input tensor will be a tensor filled with ones, meaning our <code>trg_sub_mask</code> will look something like this (for a target with 5 tokens):</p>
+<p>The target mask is a bit more involved. First, we create a mask for the <pad> tokens, as we did for the source mask. Next, we create a &quot;subsequent&quot; mask, <code>trg_sub_mask</code>, using <code>torch.tril</code>. This creates a diagonal matrix where the elements above the diagonal will be zero and the elements below the diagonal will be set to whatever the input tensor is. In this case, the input tensor will be a tensor filled with ones, meaning our <code>trg_sub_mask</code> will look something like this (for a target with 5 tokens):</p>
 \begin{matrix}
 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
@@ -15907,7 +15670,7 @@ torch.Size([128, 8, 40, 40])
 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\
 1 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\
 \end{matrix}<p>This shows what each target token (row) is allowed to look at (column). Our first target token has a mask of [1, 0, 0, 0, 0] which means it can only look at the first target token, whereas the second target token has a mask of [1, 1, 0, 0, 0] which it means it can look at both the first and second target tokens and so on.</p>
-<p>The "subsequent" mask is then logically anded with the padding mask, this combines the two masks ensuring both the subsequent tokens and the padding tokens cannot be attended to. For example if the last two tokens were <code>&lt;pad&gt;</code> tokens the final target mask would look like:</p>
+<p>The &quot;subsequent&quot; mask is then logically anded with the padding mask, this combines the two masks ensuring both the subsequent tokens and the padding tokens cannot be attended to. For example if the last two tokens were <code>&lt;pad&gt;</code> tokens the final target mask would look like:</p>
 \begin{matrix}
 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
@@ -15915,7 +15678,7 @@ torch.Size([128, 8, 40, 40])
 1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 \\
 1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 \\
 \end{matrix}<p>These masks are fed in into model along with source and target sentence to get out predicted target output.</p>
-<p>Site Note: Introducing some other terminology that we might come across. The need to create a subsequent mask is very common in autoregressive model, where the task is to predict the next token in the sequence (e.g. language model). By introducing this masking, we are making the self attention block casual. Different implementation or library might have different ways of specifying this masking, but the core idea is to prevent the model from "cheating" by copying the tokens that are after the ones it's currently processing.</p>
+<p>Site Note: Introducing some other terminology that we might come across. The need to create a subsequent mask is very common in autoregressive model, where the task is to predict the next token in the sequence (e.g. language model). By introducing this masking, we are making the self attention block casual. Different implementation or library might have different ways of specifying this masking, but the core idea is to prevent the model from &quot;cheating&quot; by copying the tokens that are after the ones it's currently processing.</p>
 
 </div>
 </div>
@@ -16712,7 +16475,7 @@ target:  Two young, White males are outside near many bushes.
         <span class="c1"># decoder_output = self.decoder(trg, enc_src, trg_mask, src_mask)</span>
 
         <span class="c1"># in PyTorch&#39;s Transformer Encoder and Decoder implementation, they</span>
-        <span class="c1"># expect the first dimensionto be batch size</span>
+        <span class="c1"># expect the first dimension to be batch size</span>
         <span class="n">src_encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">src_tensor</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">trg_tensor</span><span class="p">,</span> <span class="n">src_encoded</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
@@ -17078,7 +16841,10 @@ target:  Two young, White males are outside near many bushes.
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

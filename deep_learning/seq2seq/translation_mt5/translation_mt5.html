@@ -13070,12 +13070,12 @@ div#notebook {
                 },
                 displayAlign: 'center',
                 CommonHTML: {
-                    linebreaks: { 
-                    automatic: true 
+                    linebreaks: {
+                    automatic: true
                     }
                 }
             });
-        
+
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
     }
@@ -13552,17 +13552,17 @@ transformers: 4.21.3
 <p>In this article we'll be leveraging <a href="https://github.com/huggingface/transformers">Huggingface's Transformer</a> on our machine translation task as the library provides tons of pretrained models that we can either directly use or fine tune on our tasks.</p>
 <p>Machine translation is a sequence to sequence task, where we have a source and a target sentence as our dataset, and in transformer era, we use an encoder-decoder model architecture to solve for these type of problems. This type of architecture can also be used for tasks such as summarization, generative question answering, etc.</p>
 <p>We'll be using publicly available mT5 <a href="https://arxiv.org/abs/2010.11934">[11]</a> pre-trained checkpoints, which is essentially a multi-lingual version of T5 (Text To Text Transfer Transformer) <a href="https://arxiv.org/abs/1910.10683">[10]</a>. Quick recap: T5 is a also a pre-trained language model based on un-labeled data, the main distinction is it re-formulates all text based NLP problem, be it classification (e.g. GLUE or SuperGLUE benchmarks), transalation, summarization, question and answering, into a sequence to sequence setting that can be solved by an encoder-decoder architecture as shown in its original diagram.</p>
-<p><img src="imgs/t5.png" width="60%" height="60%"></p>
+<img src="imgs/t5.png" width="60%" height="60%">
 <p>Some key takeaways:</p>
 <ul>
 <li>Notice from the diagram above, apart from pre-training, it also introduces this notion of adding task specific prefix to specify which task the model should perform during fine-tuning stage.</li>
-<li>For pre-training, T5 uses a masked language modeling "span-corruption" objective, where consecutive spans of input tokens are replaced with a special sentinel token and the model is trained to reconstruct these masked-out tokens as shown below. The original paper also explored various strategies and shared that:<ul>
+<li>For pre-training, T5 uses a masked language modeling &quot;span-corruption&quot; objective, where consecutive spans of input tokens are replaced with a special sentinel token and the model is trained to reconstruct these masked-out tokens as shown below. The original paper also explored various strategies and shared that:<ul>
 <li>Denoising objectives outperforms language modeling and deshuffling for pre-training.</li>
 <li>Performance-wise different denoising variants did not lead to remarkable differences, though can lead to different sequence length and therefore training speed.</li>
 </ul>
 </li>
 </ul>
-<p><img src="imgs/t5_span_masking.png" width="60%" height="60%"></p>
+<img src="imgs/t5_span_masking.png" width="60%" height="60%">
 <ul>
 <li>The primary dataset used for T5 is C4 (Colossal Clean Crawled Corpus), a post-processed corpus from common crawl, after experimenting with different dataset variants, the main lession is a not surprising finding that pre-training on in-domain unlabeled data can improve performance on in-domain downstream tasks, and given that obtaining pre-training corpus should ideally be cheap compared to human annotation, they suggested using larger pre-training datasets whenever possible.</li>
 <li>Scaling up model size continues to be a promising approach for achieving better performance. i.e. Training a smaller model on more data was often outperformed by training a larger model for fewer steps.</li>
@@ -13950,19 +13950,19 @@ Extracting data files: 100%|█████████████████�
 \text{Modified Precision}=\frac{\text{capped number of overlapping words}}{\text{total number of words in generated summary}}
 \end{align}<p>Where in the numerator, we will give each word credit only up to the maximum number of times that word appeared in its reference sentence.</p>
 <p>e.g. Given the following example reference and candidate</p>
-
 <pre><code>Candidate: the the the cat mat
-Reference: the cat is on the mat</code></pre>
-<p>We would have a precision of 3 / 5. As there are 5 total candidate words, making it our the denominator. As for numerator, "the", appeared 3 times in the candidate sentence but is then capped to 2 as, "the", only appeared 2 times in its reference sentence, and "cat" and "mat" both appeared 1 time.</p>
+Reference: the cat is on the mat
+</code></pre>
+<p>We would have a precision of 3 / 5. As there are 5 total candidate words, making it our the denominator. As for numerator, &quot;the&quot;, appeared 3 times in the candidate sentence but is then capped to 2 as, &quot;the&quot;, only appeared 2 times in its reference sentence, and &quot;cat&quot; and &quot;mat&quot; both appeared 1 time.</p>
 <p>BLEU introduces two additional adjustments on top of its modified precision cornerstone.</p>
 <ul>
 <li>It combines n-gram modified precision up till 4-gram and then computes the geometric mean.</li>
 <li>It introduces a brevity penalty to compensate for its lack of recall component, making it an adjustment that penalize translations that are too short.</li>
 </ul>
 <p>e.g. If we have a candidate, reference pair like below:</p>
-
 <pre><code>Candidate: of the
-Reference: It is the practical guide for the army always to heed the directions of the party.</code></pre>
+Reference: It is the practical guide for the army always to heed the directions of the party.
+</code></pre>
 <p>We would obtain a modified unigram precision of 2/2. Intuitively, this candidate translation's precision metric is a bit inflated due to its short nature. To account for this, sentence brevity penalty is introduced as the second component:</p>
 \begin{align}
 \text{BP} =
@@ -13970,7 +13970,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 1 &amp; \text{if } c &gt; r \\
 \exp \big(1-\frac{r}{c}\big) &amp; \text{if } c \leq r
 \end{cases}
-\end{align}<p>where $c$ is the word length for the candidate sentences, and $r$ is the best match length for each candidate sentence in the corpus. e.g. given 2 references with lengths 12, 15 words and the candidate translation is 12 words, our brevity penalty will be 1 as the candidate's length is the same as any reference translation, and the closest reference's sentence length is termed "best match length". Note, this brevity penalty is computed by summing over the entire corpus to allow some freedom at sentence level.</p>
+\end{align}<p>where $c$ is the word length for the candidate sentences, and $r$ is the best match length for each candidate sentence in the corpus. e.g. given 2 references with lengths 12, 15 words and the candidate translation is 12 words, our brevity penalty will be 1 as the candidate's length is the same as any reference translation, and the closest reference's sentence length is termed &quot;best match length&quot;. Note, this brevity penalty is computed by summing over the entire corpus to allow some freedom at sentence level.</p>
 <p>Finally, putting it all together, BLEU score is defined as:</p>
 \begin{align}
 \text{BLEU} = \text{BP} \cdot \exp \bigg( \sum_{n=1}^{N} \frac{1}{N} \log p_n \bigg)
@@ -14148,7 +14148,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Important things to keep in mind:</p>
 <ul>
-<li>Given the text matching nature of these metrics, we can imagine they can't really compare different wordings that have same semantic meaning or ensure sentence level grammatical correctness. e.g. dropping a potentially less important function word like "a" will incur the same penalty as missing a word that's crucial. Hence further human judgement might be needed to ensure our model is indeed generating coherent results.</li>
+<li>Given the text matching nature of these metrics, we can imagine they can't really compare different wordings that have same semantic meaning or ensure sentence level grammatical correctness. e.g. dropping a potentially less important function word like &quot;a&quot; will incur the same penalty as missing a word that's crucial. Hence further human judgement might be needed to ensure our model is indeed generating coherent results.</li>
 <li>Prior to computing these metrics, both reference and candidate sentences need to be normalization and tokenized, make sure our pipelines are using the same pre-processing steps to ensure we are conducting an apples to apples comparison as different pre-processing variations can have signficant affect on the final numbers. This issue is raised in SACREBLEU <a href="https://aclanthology.org/W18-6319/">[7]</a>, which aims to provide a tool to faciliate standard configuration on BLEU metrics.</li>
 <li>These scores ranges from 0.0 to 1.0, where 1.0 indicates perfect overlap with reference sentences. Given the free form nature of these type of tasks, adding more reference sentences for a given candidate sentence can improve these scores. Note that even human do not achieve a perfect score of 1.0.</li>
 <li>Despite having their own drawbacks, they are widely use given their favorable properties including, language independent, ease of computation (compared to sending results for human judgements), and have been shown to correlate reasonably well with human judgements.</li>
@@ -14611,8 +14611,8 @@ To disable this warning, you can either:
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>These numbers we got by fine-tuning a pre-trained MT5 model are pretty solid when comparing with, <a href="https://huggingface.co/transformers/model_doc/marian.html">MarianMT</a>, an already pretrained machine translation model, <code>Helsinki-NLP/opus-mt-de-en</code>. Note, MarianMT model only has 74,410,496 parameters, which is a lot smaller compared to mt5-small's 300,176,768 parameters.</p>
-
-<pre><code>{'eval_loss': 1.1351912021636963, 'eval_rouge1': 0.7198, 'eval_rouge2': 0.4904, 'eval_rougeL': 0.6935, 'eval_sacrebleu': 40.2274, 'eval_runtime': 40.1401, 'eval_samples_per_second': 25.262, 'eval_steps_per_second': 1.594}</code></pre>
+<pre><code>{'eval_loss': 1.1351912021636963, 'eval_rouge1': 0.7198, 'eval_rouge2': 0.4904, 'eval_rougeL': 0.6935, 'eval_sacrebleu': 40.2274, 'eval_runtime': 40.1401, 'eval_samples_per_second': 25.262, 'eval_steps_per_second': 1.594}
+</code></pre>
 <p>These numbers are computed using <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/translation_mt5/seq2seq_eval.py">this script</a>.</p>
 <p>Apart from quantitative metric evaluation, we can also look at sample generated translations.</p>
 
@@ -14692,7 +14692,7 @@ prediction:  A group of men are loading cotton on a truck.
 <li><a href="https://huggingface.co/course/chapter7/4?fw=pt">[2]</a> Hugginface Course: Translation</li>
 <li><a href="https://huggingface.co/course/chapter7/5?fw=pt">[3]</a> Hugginface Course: Summarization</li>
 <li><a href="https://huggingface.co/docs/transformers/model_doc/t5">[4]</a> Huggingface Model Doc: T5</li>
-<li><a href="https://cloud.google.com/translate/automl/docs/evaluate">[5]</a>  Google Cloud AutomML Translation Doc: Evaluating Models </li>
+<li><a href="https://cloud.google.com/translate/automl/docs/evaluate">[5]</a>  Google Cloud AutomML Translation Doc: Evaluating Models</li>
 <li><a href="https://aclanthology.org/P02-1040/">[6]</a> Kishore Papineni, Salim Roukos, Todd Ward, Wei-Jing Zhu - Bleu: a Method for Automatic Evaluation of Machine Translation - 2002</li>
 <li><a href="https://aclanthology.org/W18-6319/">[7]</a> Matt Post - A Call for Clarity in Reporting BLEU Scores - 2018</li>
 <li><a href="https://aclanthology.org/W04-1013/">[8]</a> Chin-Yew Lin - ROUGE: A Package for Automatic Evaluation of Summaries - 2004</li>
@@ -14711,7 +14711,7 @@ prediction:  A group of men are loading cotton on a truck.
 
 
 
- 
+
 
 
 </html>

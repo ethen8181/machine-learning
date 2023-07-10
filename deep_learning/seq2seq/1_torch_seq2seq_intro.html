@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>1_torch_seq2seq_intro</title>
+<title>1_torch_seq2seq_intro</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Seq2Seq" data-toc-modified-id="Seq2Seq-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Seq2Seq</a></span><ul class="toc-item"><li><span><a href="#Seq2Seq-Introduction" data-toc-modified-id="Seq2Seq-Introduction-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Seq2Seq Introduction</a></span></li><li><span><a href="#Data-Preparation" data-toc-modified-id="Data-Preparation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Data Preparation</a></span><ul class="toc-item"><li><span><a href="#Declaring-Fields" data-toc-modified-id="Declaring-Fields-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Declaring Fields</a></span></li><li><span><a href="#Constructing-Dataset" data-toc-modified-id="Constructing-Dataset-1.2.2"><span class="toc-item-num">1.2.2&nbsp;&nbsp;</span>Constructing Dataset</a></span></li><li><span><a href="#Constructing-Iterator" data-toc-modified-id="Constructing-Iterator-1.2.3"><span class="toc-item-num">1.2.3&nbsp;&nbsp;</span>Constructing Iterator</a></span></li></ul></li><li><span><a href="#Seq2Seq-Implementation" data-toc-modified-id="Seq2Seq-Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Seq2Seq Implementation</a></span><ul class="toc-item"><li><span><a href="#Encoder-Module" data-toc-modified-id="Encoder-Module-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Encoder Module</a></span></li><li><span><a href="#Decoder-Module" data-toc-modified-id="Decoder-Module-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>Decoder Module</a></span></li><li><span><a href="#Seq2Seq-Module" data-toc-modified-id="Seq2Seq-Module-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>Seq2Seq Module</a></span></li><li><span><a href="#Training-Seq2Seq" data-toc-modified-id="Training-Seq2Seq-1.3.4"><span class="toc-item-num">1.3.4&nbsp;&nbsp;</span>Training Seq2Seq</a></span></li><li><span><a href="#Evaluating-Seq2Seq" data-toc-modified-id="Evaluating-Seq2Seq-1.3.5"><span class="toc-item-num">1.3.5&nbsp;&nbsp;</span>Evaluating Seq2Seq</a></span></li></ul></li><li><span><a href="#Summary" data-toc-modified-id="Summary-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Summary</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13118,7 +13126,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13452,8 +13459,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13564,17 +13570,17 @@ spacy 2.1.6
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following sections are heavily "borrowed" from the wonderful tutorial on this topic listed below.</p>
+<p>The following sections are heavily &quot;borrowed&quot; from the wonderful tutorial on this topic listed below.</p>
 <ul>
 <li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/1%20-%20Sequence%20to%20Sequence%20Learning%20with%20Neural%20Networks.ipynb">Jupyter Notebook: Sequence to Sequence Learning with Neural Networks</a></li>
 </ul>
 <p>Some personal preference modifications have been made.</p>
-<p><img src="img/1_seq2seq.png" width="70%" height="70%"></p>
-<p>The above image shows an example translation. The input/source sentence, "guten morgen", is input into the encoder (green) one word at a time. We also append a <em>start of sequence</em> (<code>&lt;sos&gt;</code>) and <em>end of sequence</em> (<code>&lt;eos&gt;</code>) token to the start and end of sentence, respectively. At each time-step, the input to the encoder is both the current word, $x_t$, as well as the hidden state from the previous time-step, $h_{t-1}$, and the encoder outputs a new hidden state $h_t$. We can think of the hidden state as a vector representation of the sentence so far. The can be represented as a function of both of $x_t$ and $h_{t-1}$:</p>
+<img src="img/1_seq2seq.png" width="70%" height="70%">
+<p>The above image shows an example translation. The input/source sentence, &quot;guten morgen&quot;, is input into the encoder (green) one word at a time. We also append a <em>start of sequence</em> (<code>&lt;sos&gt;</code>) and <em>end of sequence</em> (<code>&lt;eos&gt;</code>) token to the start and end of sentence, respectively. At each time-step, the input to the encoder is both the current word, $x_t$, as well as the hidden state from the previous time-step, $h_{t-1}$, and the encoder outputs a new hidden state $h_t$. We can think of the hidden state as a vector representation of the sentence so far. The can be represented as a function of both of $x_t$ and $h_{t-1}$:</p>
 $$h_t = \text{Encoder}(x_t, h_{t-1})$$<p>We're using the term encoder loosely here, in practice, it can be any type of architecture, the most common ones being RNN-type network such as <em>LSTM</em> (Long Short-Term Memory) or a <em>GRU</em> (Gated Recurrent Unit).</p>
 <p>Here, we have $X = \{x_1, x_2, ..., x_T\}$, where $x_1 = \text{&lt;sos&gt;}, x_2 = \text{guten}$, etc. The initial hidden state, $h_0$, is usually either initialized to zeros or a learned parameter.</p>
 <p>Once the final word, $x_T$, has been passed into the encoder, we use the final hidden state, $h_T$, as the context vector, i.e. $h_T = z$. This is a vector representation of the entire source sentence.</p>
-<p>Now we have our context vector, $z$, we can start decoding it to get the target sentence, "good morning". Again, we append the start and end of sequence tokens to the target sentence. At each time-step, the input to the decoder (blue) is the current word, $y_t$, as well as the hidden state from the previous time-step, $s_{t-1}$, where the initial decoder hidden state, $s_0$, is the context vector, $s_0 = z = h_T$, i.e. the initial decoder hidden state is the final encoder hidden state. Thus, similar to the encoder, we can represent the decoder as:</p>
+<p>Now we have our context vector, $z$, we can start decoding it to get the target sentence, &quot;good morning&quot;. Again, we append the start and end of sequence tokens to the target sentence. At each time-step, the input to the decoder (blue) is the current word, $y_t$, as well as the hidden state from the previous time-step, $s_{t-1}$, where the initial decoder hidden state, $s_0$, is the context vector, $s_0 = z = h_T$, i.e. the initial decoder hidden state is the final encoder hidden state. Thus, similar to the encoder, we can represent the decoder as:</p>
 $$s_t = \text{Decoder}(y_t, s_{t-1})$$<p>In the decoder, we need to go from the hidden state to an actual word, therefore at each time-step we use $s_t$ to predict (by passing it through a <code>Linear</code> layer, shown in purple) what we think is the next word in the sequence, $\hat{y}_t$.</p>
 $$\hat{y}_t = f(s_t)$$<p>The words in the decoder are always generated one after another, with one per time-step. We always use <code>&lt;sos&gt;</code> for the first input to the decoder, $y_1$, but for subsequent inputs, $y_{t&gt;1}$, we will sometimes use the actual, ground truth next word in the sequence, $y_t$ and sometimes use the word predicted by our decoder, $\hat{y}_{t-1}$. This is called <strong>teacher forcing</strong>, which we'll later see in action.</p>
 <p>When training/testing our model, we always know how many words are in our target sentence, so we stop generating words once we hit that many. During inference (i.e. real world usage) it is common to keep generating words until the model outputs an <code>&lt;eos&gt;</code> token or after a certain amount of words have been generated.</p>
@@ -13721,7 +13727,8 @@ $$\hat{y}_t = f(s_t)$$<p>The words in the decoder are always generated one after
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The tokenizer is language specific, e.g. it knows that in the English language don't should be tokenized into do not (n't).</p>
 <p>Another thing to note is that <strong>the order of the source sentence is reversed during the tokenization process</strong>. The rationale behind things comes from the original seq2seq paper where they identified that this trick improved the result of their model.</p>
-<blockquote><p>Normally, when we concatenate a source sentence with a target sentence, each word in the source sentence is far from its corresponding word in the target sentence. By reversing the source sentence, the first few words in the source sentence now becomes very close to the first few words in the target sentence, thus the model would have lesser issue establishing communication between the source and target sentence.
+<blockquote>
+<p>Normally, when we concatenate a source sentence with a target sentence, each word in the source sentence is far from its corresponding word in the target sentence. By reversing the source sentence, the first few words in the source sentence now becomes very close to the first few words in the target sentence, thus the model would have lesser issue establishing communication between the source and target sentence.
 Although, the average distance between words in the source and target language remains the same during this process, however, it was shown that the model learned much better even on later parts of the sentence.</p>
 </blockquote>
 
@@ -13739,7 +13746,7 @@ Although, the average distance between words in the source and target language r
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Moving on, we will begin leveraging torchtext's functionality. The first once is <a href="https://pytorch.org/text/data.html#field"><code>Field</code></a>, which is where we specify how we wish to preprocess our text data for a certain field.</p>
-<p>Here, we set the <code>tokenize</code> argument to the correct tokenization function for the source and target field, with German being the source field and English being the target field. The field also appends the "start of sequence" and "end of sequence" tokens via the <code>init_token</code> and <code>eos_token</code> arguments, and converts all words to lowercase. The docstring of the <code>Field</code> object is pretty well-written, please refer to it to see other arguments that it takes in.</p>
+<p>Here, we set the <code>tokenize</code> argument to the correct tokenization function for the source and target field, with German being the source field and English being the target field. The field also appends the &quot;start of sequence&quot; and &quot;end of sequence&quot; tokens via the <code>init_token</code> and <code>eos_token</code> arguments, and converts all words to lowercase. The docstring of the <code>Field</code> object is pretty well-written, please refer to it to see other arguments that it takes in.</p>
 
 </div>
 </div>
@@ -13912,7 +13919,7 @@ Number of testing examples: 1000
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The next missing piece is to build the vocabulary for the source and target languages. That way we can convert our tokenized tokens into integers so that they can be fed into downstream models. Constructing the vocabulary and word to integer mapping is done by calling the <code>build_vocab</code> method of a <code>Field</code> on a dataset. This adds the <code>vocab</code> attribute to the field.</p>
 <p>The vocabularies of the source and target languages are distinct. Using the <code>min_freq</code> argument, we only allow tokens that appear at least 2 times to appear in our vocabulary. Tokens that appear only once are converted into an <code>&lt;unk&gt;</code> (unknown) token (we can customize this in the Field earlier if we like).</p>
-<p>It is important to note that our vocabulary should only be built from the training set and not the validation/test set. This prevents "information leakage" into our model, giving us artificially inflated validation/test scores.</p>
+<p>It is important to note that our vocabulary should only be built from the training set and not the validation/test set. This prevents &quot;information leakage&quot; into our model, giving us artificially inflated validation/test scores.</p>
 
 </div>
 </div>
@@ -14373,7 +14380,7 @@ Unique tokens in target (en) vocabulary: 5893
 <p>For the final part of the implementation, we'll implement the seq2seq model. This will handle:</p>
 <ul>
 <li>receiving the input/source sentence</li>
-<li>using the encoder to produce the context vectors </li>
+<li>using the encoder to produce the context vectors</li>
 <li>using the decoder to produce the predicted output/target sentence</li>
 </ul>
 <p>The <code>Seq2Seq</code> model takes in an <code>Encoder</code>, <code>Decoder</code>, and a <code>device</code> (used to place tensors on the GPU, if it exists).</p>
@@ -14386,7 +14393,7 @@ Unique tokens in target (en) vocabulary: 5893
 <li>pass the input, previous hidden and previous cell states ($y_t, s_{t-1}, c_{t-1}$) into the decoder</li>
 <li>receive a prediction, next hidden state and next cell state ($\hat{y}_{t+1}, s_{t}, c_{t}$) from the decoder</li>
 <li>place our prediction, $\hat{y}_{t+1}$/<code>output</code> in our tensor of predictions, $\hat{Y}$/<code>outputs</code></li>
-<li>decide if we are going to "teacher force" or not<ul>
+<li>decide if we are going to &quot;teacher force&quot; or not<ul>
 <li>if we do, the next <code>input</code> is the ground-truth next token in the sequence, $y_{t+1}$/<code>trg[t]</code></li>
 <li>if we don't, the next <code>input</code> is the predicted next token in the sequence, $\hat{y}_{t+1}$/<code>top1</code>, which we get by doing an <code>argmax</code> over the output tensor</li>
 </ul>
@@ -14834,7 +14841,7 @@ Epoch: 20 | Time: 1m 11s
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here, we pick a random example in our dataset, print out the original source and target sentence. Then takes a look at whether the "predicted" target sentence generated by the model.</p>
+<p>Here, we pick a random example in our dataset, print out the original source and target sentence. Then takes a look at whether the &quot;predicted&quot; target sentence generated by the model.</p>
 
 </div>
 </div>
@@ -15009,7 +15016,10 @@ target sentence:  two young , white males are outside near many bushes .
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

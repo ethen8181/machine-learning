@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>gbm</title>
+<title>gbm</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Gradient-Boosting-Machine-(GBM)" data-toc-modified-id="Gradient-Boosting-Machine-(GBM)-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Gradient Boosting Machine (GBM)</a></span><ul class="toc-item"><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Classification" data-toc-modified-id="Classification-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Classification</a></span><ul class="toc-item"><li><span><a href="#Softmax" data-toc-modified-id="Softmax-1.2.1"><span class="toc-item-num">1.2.1&nbsp;&nbsp;</span>Softmax</a></span></li></ul></li><li><span><a href="#Implementation" data-toc-modified-id="Implementation-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Implementation</a></span></li><li><span><a href="#Understanding-Model-Complexity" data-toc-modified-id="Understanding-Model-Complexity-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Understanding Model Complexity</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13118,7 +13126,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13452,8 +13459,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13531,7 +13537,7 @@ sklearn 0.19.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Just like <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb">Random Forest and Extra Trees</a>, Gradient Boosting Machine is also a type of Ensemble Tree method, the only difference is it is stemmed from the the boosting framework. The idea of boosting is to add one weak classifier to the ensemble at a time, and this newly added weak classifier is trained to improve upon the already trained ensemble. Meaning it will pay higher attention to examples which are misclassiﬁed or have higher errors and focus on mitigating those errors. Boosting is a general framework that can be applied to any sort of weak learner, although Decision Tree is by far the most commonly used ones due to them having the flexibility to be weak learners by simply restricting their depth and they are quite fast to train.</p>
+<p>Just like <a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/trees/random_forest.ipynb">Random Forest and Extra Trees</a>, Gradient Boosting Machine is also a type of Ensemble Tree method, the only difference is it is stemmed from the boosting framework. The idea of boosting is to add one weak classifier to the ensemble at a time, and this newly added weak classifier is trained to improve upon the already trained ensemble. Meaning it will pay higher attention to examples which are misclassiﬁed or have higher errors and focus on mitigating those errors. Boosting is a general framework that can be applied to any sort of weak learner, although Decision Tree is by far the most commonly used ones due to them having the flexibility to be weak learners by simply restricting their depth and they are quite fast to train.</p>
 <p>Suppose we are given some dataset $(x_1, y_1), (x_2, y_2), ...,(x_n, y_n)$, and the task is to fit a model $F(x)$ to minimize square loss. After training the model, we discovered the model is good but not perfect.
 There are some mistakes: $F(x_1) = 0.8$, while $y_1 = 0.9$, and $F(x_2) = 1.4$ while $y_2 = 1.3$ .... Now the question is, how can we improve this model without changing anything from $F(x)$?</p>
 <p>How about we simply add an additional model (e.g. regression tree) $h$ to the already existing $F$, so the new prediction becomes $F(x) + h(x)$. In other words, we wish to improve upon the existing model so that $F(x_1) + h(x_1) = y_1, F(x_2) + h(x_2) = y_2 ...$ or equivalent we wish to find a new model $h$ such that $h(x_1) = y_1 - F(x_1), h(x_2) = y_2 - F(x_2) ...$. The idea is all well and good, but the bad news is probably no model $h$ (e.g. regression tree) will be able to do this perfectly. Fortunately, the good news is, some $h$ might be able to do this approximately.</p>
@@ -13568,18 +13574,18 @@ F_b(x_i) &amp;= F_{b-1}(x_i) + h(x_i) \nonumber \\
 <p>In practice though, Gradient Boosting Machine is more prone to overfitting, since the week learner is tasked with optimally fitting the gradient. This means that boosting will select the optimal learner at each stage of the algorithm, although this strategy generates an optimal solution at the current stage, it has the drawbacks of not finding the optimal global model as well as overfitting the training data. A remedy for greediness is to constrain the learning process by setting the learning rate $\eta$ (also known as shrinkage). In the above algorithm, instead of directly adding the predicted value for a sample to next iteration's predicted value, so that only a fraction of the current predicted value is added to the previous iteration's predicted value. This parameter can take values between 0 and 1 and becomes another tuning parameter for the model. Small values of the learning parameter such as 0.1 tends to work better, but the value of the parameter is inversely proportional to the computation time required to find an optimal model, because more iterations is required.</p>
 <p>To sum it all up, the process of training a GBM for regression is:</p>
 <ol>
-<li>Initialize a predicted value for each observation (e.g. the original response or the average response or a value that minimizes the loss function). This will be our initial "residuals", $r$. It can be called the residuals because we're dealing with a regression task, but this quantity is more often referred to as the negative gradient, this terminology makes the $- \nabla \times L\big(y_i, F(x_i) \big)$ part generalizes to any loss function we might wish to employ. In short, GBM is fitting to the gradient of the loss function</li>
+<li>Initialize a predicted value for each observation (e.g. the original response or the average response or a value that minimizes the loss function). This will be our initial &quot;residuals&quot;, $r$. It can be called the residuals because we're dealing with a regression task, but this quantity is more often referred to as the negative gradient, this terminology makes the $- \nabla \times L\big(y_i, F(x_i) \big)$ part generalizes to any loss function we might wish to employ. In short, GBM is fitting to the gradient of the loss function</li>
 <li>For step = 1 to $B$ (number of iterations that we specify) do:<ul>
 <li>Fit a regression tree $F_b$ to the training data $(X, r)$, where we use the residuals as the response variable</li>
-<li>Update model $F$ by adding a shrunken version of the newly fitted regression tree. Translating it to code, this means we append the new tree to the array of trees we've already stored: 
-$F(X) = F(X) + \eta F_{b}(X)$</li>
-<li>Update each observation's residual by adding the predicted value to it:
-$r_{b + 1} = r_b - \eta F_b(X)$</li>
+<li>Update model $F$ by adding a shrunken version of the newly fitted regression tree. Translating it to code, this means we append the new tree to the array of trees we've already stored:</li>
 </ul>
-</li>
+$F(X) = F(X) + \eta F_{b}(X)$<ul>
+<li>Update each observation's residual by adding the predicted value to it:</li>
+</ul>
+$r_{b + 1} = r_b - \eta F_b(X)$</li>
 <li>In the end, our final output boosted model becomes $F(x) = \sum_{b = 1}^B \eta F_b(x)$, where we sum the values that each individual tree gives (times the learning rate)</li>
 </ol>
-<p>To hit the notion home, let's conside an example using made up numbers. Suppose we have 5 observations, with responses 10, 20, 30, 40, 50. The first tree is built and gives predictions of 12, 18, 27, 39, 54 (these predictions are made up numbers). If our learning rate $\eta$ = 0.1, all trees will have their predictions scaled down by $\eta$, so the first tree will instead "predict" 1.2, 1.8, 2.7, 3.9, 5.4. The response variable passed to the next tree will then have values 8.8, 18.2, 27.3, 36.1, 44.6 (the difference between the prediction that was scaled down by the prediction and the true response). The second round then uses these response values to build another tree - and again the predictions are scaled down by the learning rate $\eta$. So tree 2 predicts say, 7, 18, 25, 40, 40, which, once scaled, become 0.7, 1.8, 2.5, 4.0, 4.0. As before, the third tree will be passed the difference between these values and the previous tree's response variable (so 8.1, 16.4, 24.8, 32.1. 40.6). And we keep iterating this process until we finished training all the trees (a parameter that we specify), in the end, the sum of the predictions from all trees will give the final prediction.</p>
+<p>To hit the notion home, let's conside an example using made up numbers. Suppose we have 5 observations, with responses 10, 20, 30, 40, 50. The first tree is built and gives predictions of 12, 18, 27, 39, 54 (these predictions are made up numbers). If our learning rate $\eta$ = 0.1, all trees will have their predictions scaled down by $\eta$, so the first tree will instead &quot;predict&quot; 1.2, 1.8, 2.7, 3.9, 5.4. The response variable passed to the next tree will then have values 8.8, 18.2, 27.3, 36.1, 44.6 (the difference between the prediction that was scaled down by the prediction and the true response). The second round then uses these response values to build another tree - and again the predictions are scaled down by the learning rate $\eta$. So tree 2 predicts say, 7, 18, 25, 40, 40, which, once scaled, become 0.7, 1.8, 2.5, 4.0, 4.0. As before, the third tree will be passed the difference between these values and the previous tree's response variable (so 8.1, 16.4, 24.8, 32.1. 40.6). And we keep iterating this process until we finished training all the trees (a parameter that we specify), in the end, the sum of the predictions from all trees will give the final prediction.</p>
 
 </div>
 </div>
@@ -13644,8 +13650,7 @@ $r_{b + 1} = r_b - \eta F_b(X)$</li>
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -13755,8 +13760,7 @@ $r_{b + 1} = r_b - \eta F_b(X)$</li>
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -14092,7 +14096,7 @@ $$
 &amp;= p_i - y_i \nonumber
 \end{align}
 $$<p>Remember $\sum_ky_k=1$ (as $y$ is a vector with only one non-zero element, which is $1$ when the indicating the observation belongs to the $k_{th}$ class.</p>
-<p>After a long journey, we now see, for every class $k$, the gradient is the difference between the associated dummy variable and the predicted probability of belonging to that class. This is essentially the "residuals" from the classification gradient boosting. Given this, we can now implement the algorithm, the overall process of training a regression tree has still not changed, only now we must deal with the dummy variables, $y_k$ and fit a regression tree on the negative gradient for each dummy variable.</p>
+<p>After a long journey, we now see, for every class $k$, the gradient is the difference between the associated dummy variable and the predicted probability of belonging to that class. This is essentially the &quot;residuals&quot; from the classification gradient boosting. Given this, we can now implement the algorithm, the overall process of training a regression tree has still not changed, only now we must deal with the dummy variables, $y_k$ and fit a regression tree on the negative gradient for each dummy variable.</p>
 
 </div>
 </div>
@@ -14620,7 +14624,10 @@ height=377
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

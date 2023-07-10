@@ -13112,7 +13112,7 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-05-15
+Last updated: 2023-07-03
 
 </pre>
 </div>
@@ -13229,7 +13229,7 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>While increasing our in batch negative sampling's batch size can increase the number of negative samples, a lot of them might be easy negatives that can be quickly discerned by our model, as a result they are potentially not providing too much additional information. Hence, we will need a mechanism to find hard negatives. In other words, instead of providing pairs of anchors, $a_i$, and positives, $p_i$ as our input data. We now provide triplets $a_i, p_i, n_i$, where negative $n_i$ should be similar to $p_i$ but not match with $a_i$ (note, technically negative can also be an array of negatives and not just a single instance). This supposedly also alleviate selection bias, giving the model better resolution towards samples that are not in our positive examples set <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>. Primary strategies of providing these hard negatives includes:</p>
+<p>By increasing training batch size for our in-batch negative sampling, we can generate a larger number of negative samples from in batch negative sampling. However, many of these negatives may be easily distinguishable by our model, thereby providing limited additional information after a certain point. To address this, we need a mechanism to identify hard negatives, which are more challenging for the model to discern. In other words, instead of providing pairs of anchors, $a_i$, and positives, $p_i$ as our input data. We now provide triplets $a_i, p_i, n_i$, where negative $n_i$ should be similar to $p_i$ but shouldn't match with $a_i$. It is worth noting negative can be an array of negatives and not just a single instance. This supposedly also alleviate selection bias, giving the model better resolution towards samples that are not in our positive examples set <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>. Primary strategies of providing these hard negatives includes:</p>
 <ul>
 <li>Leveraging structure from our data <a href="https://www.youtube.com/watch?v=RHXZKUr8qOY">[1]</a>, this strategy relies on our creativity and domain knowledge. For example:<ul>
 <li>For stackexchange question and answering dataset that contains sub-forums talking about programming, travel, cooking, creating pairs from each sub-forums while likely yield higher quality batches.</li>
@@ -13239,7 +13239,7 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 </ul>
 </li>
 <li>Algorithmically generate them.<ul>
-<li>RocketQA <a href="https://arxiv.org/abs/2010.08191">[6]</a>, Augmented SBERT <a href="https://arxiv.org/abs/2010.08240">[7]</a>, DPR (Dense Passage Retrieval) <a href="https://arxiv.org/abs/2004.04906">[9]</a> suggests mining hard negatives using BM25 or a trained bi-encoder to generate semantically similar hard negatives. This is likely to perform better than performing lexical edits like insert/swap/delete/synonym replace <a href="https://github.com/makcedward/nlpaug">[4]</a>. ANCE (Approximate nearest neighbor Negative Contrastive Learning) <a href="https://arxiv.org/abs/2007.00808">[32]</a> even proposes using an asynchronously updated ANN index to continuously mine hard negatives from a trained bi-encoder throughout the training process</li>
+<li>RocketQA <a href="https://arxiv.org/abs/2010.08191">[6]</a>, Augmented SBERT <a href="https://arxiv.org/abs/2010.08240">[7]</a>, DPR (Dense Passage Retrieval) <a href="https://arxiv.org/abs/2004.04906">[9]</a> suggests mining hard negatives using BM25 or a trained bi-encoder to generate semantically similar hard negatives. These model dependent methods are likely to perform better than performing lexical edits like insert/swap/delete/synonym replace <a href="https://github.com/makcedward/nlpaug">[4]</a>. ANCE (Approximate nearest neighbor Negative Contrastive Estimation) <a href="https://arxiv.org/abs/2007.00808">[32]</a> even proposes using an asynchronously updated ANN index to continuously mine hard negatives from a trained bi-encoder throughout the training process</li>
 <li>For images, there're plethora of image augmentation techniques, e.g. random cropping, resize, color distortion, gaussian blur, etc. All are methods to transform pixels while preserving the semantic meaning of an image's content such as its class labels. In un-supervised context such as SimCLR <a href="https://arxiv.org/abs/2002.05709">[12]</a>, where they rely on data augmentations to create positive pairs, they argue that stronger data augmentation is needed for contrastive learning to learn strong representations compared to the supervised counterparts, where the composite augmentation random cropping and color distortion was shown to stand out.</li>
 </ul>
 </li>
@@ -13330,11 +13330,11 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Two tower based models are extremely popular in industrial for various embedding based retrieval use case, and for good reasons:</p>
 <ul>
-<li>They can complement existing token/keyword based retrieval systems.</li>
+<li>Hybrid/Ensemble. They can complement existing token/keyword based retrieval systems <a href="https://colinharman.substack.com/p/beware-tunnel-vision-in-ai-retrieval">[34]</a>.</li>
 <li>Efficiency. In a common setup of retrieving items based on a particular context (common ones includes query or user), we can pre-compute and cache the item representation/embeddings. At inference time, we would only need to calculate a single embedding for our context, and perform an approximate nearest neighbor (ANN) search.</li>
 <li>Alleviate cold start problem. Two tower based models often takes in additional metadata as input features instead of purely relying on user and item ids.</li>
 </ul>
-<p>Non-exhaustive list of their presence at Amazon's semantic product search <a href="https://arxiv.org/abs/1907.00937">[14]</a>, Facebook search's multi-modal embedding based retrieval <a href="https://arxiv.org/abs/2006.11632">[15]</a> <a href="https://arxiv.org/abs/2302.11052">[29]</a>, Google play's retrieval system <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>, Bing sponsored search's multi-objective retrieval system <a href="https://arxiv.org/abs/2202.06212">[31]</a>.</p>
+<p>Non-exhaustive list of their presence in the industry includes: Amazon's semantic product search <a href="https://arxiv.org/abs/1907.00937">[14]</a> as well as query rewrite <a href="https://assets.amazon.science/98/18/4a89ed6e42a39314d69963963d2f/behavior-driven-query-similarity-prediction-based-on-pre-trained-language-models-for-e-commerce-search.pdf">[35]</a>, Facebook search's multi-modal embedding based retrieval <a href="https://arxiv.org/abs/2006.11632">[15]</a> <a href="https://arxiv.org/abs/2302.11052">[29]</a>, Google play's retrieval system <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>, Youtube's fresh content retrieval <a href="https://arxiv.org/abs/2306.01720">[36]</a>, Bing sponsored search's multi-objective retrieval system <a href="https://arxiv.org/abs/2202.06212">[31]</a>.</p>
 <p>Even in the context of modern large language model, retrieval augmented generation <a href="https://mattboegner.com/knowledge-retrieval-architecture-for-llms/">[33]</a> is still a highly efficient method to avoid stuffing everything inside a model's prompt, and having to fear the need to re-train this model to prevent generating potentially out-dated information.</p>
 
 </div>
@@ -13384,6 +13384,9 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <li><a href="https://arxiv.org/abs/2202.06212">[31]</a> Jianjin Zhang, Zheng Liu, Weihao Han, Shitao Xiao, Ruicheng Zheng, Yingxia Shao, Hao Sun, Hanqing Zhu, Premkumar Srinivasan, Denvy Deng, Qi Zhang, Xing Xie - Uni-Retriever: Towards Learning The Unified Embedding Based Retriever in Bing Sponsored Search - 2022</li>
 <li><a href="https://arxiv.org/abs/2007.00808">[32]</a> Lee Xiong, Chenyan Xiong, et al. - Approximate Nearest Neighbor Negative Contrastive Learning for Dense Text Retrieval - 2020</li>
 <li><a href="https://mattboegner.com/knowledge-retrieval-architecture-for-llms/">[33]</a> Blog: Knowledge Retrieval Architecture for LLM’s (2023)</li>
+<li><a href="https://colinharman.substack.com/p/beware-tunnel-vision-in-ai-retrieval">[34]</a> Blog: Beware Tunnel Vision in AI Retrieval</li>
+<li><a href="https://assets.amazon.science/98/18/4a89ed6e42a39314d69963963d2f/behavior-driven-query-similarity-prediction-based-on-pre-trained-language-models-for-e-commerce-search.pdf">[35]</a> Yupin Huang, Jiri Gesi, Xinyu Hong, Han Cheng, Kai Zhong, Vivek Mittal, Qingjun Cui, and Vamsi Salaka - Behavior-driven Query Similarity Prediction based on Pre-trained Language Models for E-Commerce Search - 2023</li>
+<li><a href="https://arxiv.org/abs/2306.01720">[36]</a> Jianling Wang, Haokai Lu, et al. - Fresh Content Needs More Attention: Multi-funnel Fresh Content Recommendation - 2023</li>
 </ul>
 
 </div>
