@@ -13169,11 +13169,11 @@ Last updated: 2023-07-03
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In recent years, most contrastive learning procedures leverage variants of InfoNCE (Noise Contrastive Estimation) loss <a href="https://arxiv.org/abs/1807.03748">[11]</a>. This type of loss, sometimes referred to as NT-Xent (normalized temperature scaled cross entropy loss) in as SimCLR (simple contrastive learning of visual representations) <a href="https://arxiv.org/abs/2002.05709">[12]</a> or multiple negative ranking loss <a href="https://www.sbert.net/docs/package_reference/losses.html#multiplenegativesrankingloss">[2]</a>, uses cross entropy loss to distinguish positive from potentially multiple negative examples.</p>
-\begin{align}
-L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_i, p_j) / \tau)}
-\end{align}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example. Here:</p>
+\begin{aligned}
+\mathcal{L} = &amp; -\log \frac{\exp \left(\operatorname{sim}\left(\boldsymbol{a}_i, \boldsymbol{p}_i\right) / \tau\right)}{\exp \left(\operatorname{sim}\left(\boldsymbol{a}_i, \boldsymbol{p}_i\right) / \tau\right) + \sum_{j=1}^m \exp \left(\operatorname{sim}\left(\boldsymbol{a}_i, \boldsymbol{n}_j\right) / \tau\right)}
+\end{aligned}<p>For training this loss function, we need to have pairs of anchors and its corresponding positive example. Here:</p>
 <ul>
-<li>$a_i$, $p_i$ denotes embedding respresentation of our anchor and positive examples. What we wish to accomplish is $a_i$ and $p_i$ becoming close in the vector space, whereas $a_i$ and some random examples $p_j$ becomes distant apart.</li>
+<li>$a_i$, $p_i$ denotes embedding respresentation of our anchor and positive examples. What we wish to accomplish is $a_i$ and $p_i$ becoming close in the vector space, whereas $a_i$ and other $m$ negative examples $n_j$ becomes distant apart. We'll discuss how negative examples can be derived in up coming paragraphs.</li>
 <li>$sim$ here represents a similarity function such as cosine similarity or dot product.</li>
 <li>$\tau$ denotes temperature scaling which can be a learned parameter, or configurable value.</li>
 </ul>
@@ -13229,13 +13229,20 @@ L = -\frac{1}{n} \sum^n_{i=1} \frac{exp(sim(a_i, p_i) / \tau)}{\sum_j exp(sim(a_
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>By increasing training batch size for our in-batch negative sampling, we can generate a larger number of negative samples from in batch negative sampling. However, many of these negatives may be easily distinguishable by our model, thereby providing limited additional information after a certain point. To address this, we need a mechanism to identify hard negatives, which are more challenging for the model to discern. In other words, instead of providing pairs of anchors, $a_i$, and positives, $p_i$ as our input data. We now provide triplets $a_i, p_i, n_i$, where negative $n_i$ should be similar to $p_i$ but shouldn't match with $a_i$. It is worth noting negative can be an array of negatives and not just a single instance. This supposedly also alleviate selection bias, giving the model better resolution towards samples that are not in our positive examples set <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>. Primary strategies of providing these hard negatives includes:</p>
+<p>By increasing training batch size for our in-batch negative sampling, we can generate a larger number of negative samples from in batch negative sampling. However, many of these negatives may be easily distinguishable by our model, thereby providing limited additional information after a certain point. To address this, we need a mechanism to identify hard negatives, which are more challenging for the model to discern. In other words, instead of providing pairs of anchors, $a_i$, and positives, $p_i$ as our input data. We now provide triplets $a_i, p_i, n_i$, where negative $n_i$ should be similar to $p_i$ but shouldn't match with $a_i$. While forming a contrastive learning training batch, these explicit hard negatives will be concatenated along with other in batch negatives as shown in the diagram below.</p>
+<img src="imgs/hard_negatives.png" width="70%" height="70%">
+<p>It is worth noting:</p>
+<ul>
+<li>Negative can be an array of negatives and not just a single instance.</li>
+<li>This supposedly also alleviate selection bias, giving the model better resolution towards samples that are not in our positive examples set <a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/b9f4e78a8830fe5afcf2f0452862fb3c0d6584ea.pdf">[30]</a>.</li>
+<li>Adding these hard negatives doesn't change our InfoNCE style contrastive learning loss, the only difference being now our $m$ negative examples, $n_j$ includes both in batch negatives as well as these additionally mined explicit hard negatives.</li>
+</ul>
+<p>Primary strategies of providing these hard negatives includes:</p>
 <ul>
 <li>Leveraging structure from our data <a href="https://www.youtube.com/watch?v=RHXZKUr8qOY">[1]</a>, this strategy relies on our creativity and domain knowledge. For example:<ul>
 <li>For stackexchange question and answering dataset that contains sub-forums talking about programming, travel, cooking, creating pairs from each sub-forums while likely yield higher quality batches.</li>
-<li>For a stackoverflow question and answering dataset, we can take answers with many upvotes and the positive sample and answers without any upvotes as hard negatives.</li>
 <li>Or let's say we have a paper citation dataset, given a seed paper representing our anchor example, we can use the seed paper's cited paper as positive, while the paper that is cited by our cited paper, but not cited by the seed paper acting as negatives.</li>
-<li>If we are working with website logs, using users engagement such as impressions, clicks or purchases <a href="https://arxiv.org/abs/2006.11632">[15]</a> <a href="https://arxiv.org/abs/2302.11052">[29]</a>.</li>
+<li>If we are working with website logs, using users engagement such as impressions, clicks or purchases <a href="https://arxiv.org/abs/2006.11632">[15]</a> <a href="https://arxiv.org/abs/2302.11052">[29]</a>. e.g. For a stackoverflow question and answering dataset, we can take answers with many upvotes and the positive sample and answers without any upvotes as hard negatives.</li>
 </ul>
 </li>
 <li>Algorithmically generate them.<ul>
