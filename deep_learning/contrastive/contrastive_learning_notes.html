@@ -13210,10 +13210,14 @@ Last updated: 2023-07-03
 <p>Work such as RocketQA <a href="https://arxiv.org/abs/2010.08191">[6]</a> and CLIP <a href="https://arxiv.org/abs/2103.00020">[8]</a> further mentions the use of cross gpu/batch negatives, where when training on multiple GPUs, the embedding calculation can be sharded within each single GPU, these embeddings can then be shared among all GPUs and serves as additional negative examples. i.e. for A GPUs, we can now collect $A \times B - 1$ negatives. Note, sharing here refers to a differentiable all gather operation.</p>
 <img src="imgs/cross_gpu_negatives.png" width="50%" height="50%">
 <p>With this approach, CLIP reports to be using a effective batch size as large as 32,768 sharded across 256 GPUs, it should be noted that the optimal size will be dependent on training data size, where CLIP's training data consists of more than 400M examples. As with all hyper parameters, the optimal setting will be use-case dependent. When pressed for time, this is most likely the parameter that we should prioritize on tuning above everything else.</p>
-<p>Given the importance of large batch size in contrastive learning, it can be helpful to employ techniques that reduces memory consumption during training so we can safely enlarge our micro batch size without resulting in out of memory issues when training large scale models. This includes:</p>
+<p>Given the importance of large batch size in contrastive learning, it can be helpful to employ techniques that:</p>
 <ul>
+<li>Reduces memory consumption during training so we can safely enlarge our micro batch size without resulting in out of memory issues when training large scale models. This includes:<ul>
 <li>Deepspeed's zero optimization stage 2 <a href="https://arxiv.org/abs/1910.02054">[28]</a>, which removes the memory redundancies across data-parallel processes by partitioning optimizer states as well as gradients across nodes.</li>
 <li>Gradient/Activation checkpointing. In order to compute gradients during backward pass, all activations from the forward pass are normally saved. Gradient checkpointing saves strategically selected activations throughout the computational graph and recompute them on demand during backward pass.</li>
+</ul>
+</li>
+<li>Design a curriculum learning <a href="https://ronan.collobert.com/pub/2009_curriculum_icml.pdf">[37]</a> style training procedure, where we gradually increase contrastive learning's effective batch size.</li>
 </ul>
 
 </div>
@@ -13394,6 +13398,7 @@ Last updated: 2023-07-03
 <li><a href="https://colinharman.substack.com/p/beware-tunnel-vision-in-ai-retrieval">[34]</a> Blog: Beware Tunnel Vision in AI Retrieval</li>
 <li><a href="https://assets.amazon.science/98/18/4a89ed6e42a39314d69963963d2f/behavior-driven-query-similarity-prediction-based-on-pre-trained-language-models-for-e-commerce-search.pdf">[35]</a> Yupin Huang, Jiri Gesi, Xinyu Hong, Han Cheng, Kai Zhong, Vivek Mittal, Qingjun Cui, and Vamsi Salaka - Behavior-driven Query Similarity Prediction based on Pre-trained Language Models for E-Commerce Search - 2023</li>
 <li><a href="https://arxiv.org/abs/2306.01720">[36]</a> Jianling Wang, Haokai Lu, et al. - Fresh Content Needs More Attention: Multi-funnel Fresh Content Recommendation - 2023</li>
+<li><a href="https://ronan.collobert.com/pub/2009_curriculum_icml.pdf">[37]</a> Yoshua Bengio, Jerome Louradour, Ronan Collobert, Jason Weston - Curriculum Learning - 2009</li>
 </ul>
 
 </div>
