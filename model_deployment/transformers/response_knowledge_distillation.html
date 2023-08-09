@@ -14491,7 +14491,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
         <span class="bp">self</span><span class="o">.</span><span class="n">temp_model_path</span> <span class="o">=</span> <span class="s2">&quot;model.pt&quot;</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">run_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;run benchmark for a given tokenizer and model</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;run benchmark for a given tokenizer and model</span>
 <span class="sd">        we can provide a run_name to differentiate the results</span>
 <span class="sd">        from different runs in the final dictionary.</span>
 <span class="sd">        </span>
@@ -14531,7 +14531,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">compute_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;save the model&#39;s parameter temporarily to local path for calculating model size.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;save the model&#39;s parameter temporarily to local path for calculating model size.</span>
 <span class="sd">        Once calculation is done, purge the checkpoint.</span>
 <span class="sd">        Size is reported in megabtyes.</span>
 
@@ -14546,7 +14546,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;size_mb&quot;</span><span class="p">:</span> <span class="n">size_mb</span><span class="p">,</span> <span class="s2">&quot;num_parameters&quot;</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">num_parameters</span><span class="p">()}</span>
     
     <span class="k">def</span> <span class="nf">compute_latency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pick the first example of the input dataset, compute the average latency as well as</span>
 <span class="sd">        standard deviation over a configurable number of runs.</span>
 <span class="sd">        Latency is reported in milliseconds.</span>
@@ -14570,7 +14570,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;latency_avg_ms&quot;</span><span class="p">:</span> <span class="n">latency_avg_ms</span><span class="p">,</span> <span class="s2">&quot;latency_std_ms&quot;</span><span class="p">:</span> <span class="n">latency_std_ms</span><span class="p">}</span>
         
     <span class="k">def</span> <span class="nf">compute_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;compute f1/precision/recall/roc_auc metrics around sequence classification.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;compute f1/precision/recall/roc_auc metrics around sequence classification.&quot;&quot;&quot;</span>
         <span class="n">clf_metrics</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">combine</span><span class="p">([</span><span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">])</span>
         <span class="n">roc_auc_metric</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">)</span>
 
