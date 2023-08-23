@@ -1,0 +1,131 @@
+tabular_features_config:
+    I1:
+        dtype: numerical
+    I2:
+        dtype: numerical
+    I3:
+        dtype: numerical
+    I4:
+        dtype: numerical
+    I5:
+        dtype: numerical
+    I6:
+        dtype: numerical
+    I7:
+        dtype: numerical
+    I8:
+        dtype: numerical
+    I9:
+        dtype: numerical
+    I10:
+        dtype: numerical
+    I11:
+        dtype: numerical
+    I12:
+        dtype: numerical
+    I13:
+        dtype: numerical 
+    C1:
+        dtype: categorical
+        vocab_size: 179728
+        embedding_size: 64
+    C2:
+        dtype: categorical
+        vocab_size: 12325
+        embedding_size: 32
+    C3:
+        dtype: categorical
+        vocab_size: 11780
+        embedding_size: 32
+    C4:
+        dtype: categorical
+        vocab_size: 4156
+        embedding_size: 32
+    C5:
+        dtype: categorical
+        vocab_size: 10576
+        embedding_size: 32
+    C6:
+        dtype: categorical
+        vocab_size: 3
+        embedding_size: 3
+    C7:
+        dtype: categorical
+        vocab_size: 5850
+        embedding_size: 32
+    C8:
+        dtype: categorical
+        vocab_size: 1139
+        embedding_size: 32
+    C9:
+        dtype: categorical
+        vocab_size: 38
+        embedding_size: 16
+    C10:
+        dtype: categorical
+        vocab_size: 136421
+        embedding_size: 64
+    C11:
+        dtype: categorical
+        vocab_size: 33820
+        embedding_size: 32
+    C12:
+        dtype: categorical
+        vocab_size: 34916
+        embedding_size: 32
+    C13:
+        dtype: categorical
+        vocab_size: 10
+        embedding_size: 10
+    C14:
+        dtype: categorical
+        vocab_size: 1841
+        embedding_size: 32
+    C15:
+        dtype: categorical
+        vocab_size: 5445
+        embedding_size: 32
+    C16:
+        dtype: categorical
+        vocab_size: 56
+        embedding_size: 16
+    C17:
+        dtype: categorical
+        vocab_size: 4
+        embedding_size: 4
+    C18:
+        dtype: categorical
+        vocab_size: 615
+        embedding_size: 32
+    C19:
+        dtype: categorical
+        vocab_size: 14
+        embedding_size: 14
+    C20:
+        dtype: categorical
+        vocab_size: 187780
+        embedding_size: 64
+    C21:
+        dtype: categorical
+        vocab_size: 80020
+        embedding_size: 32
+    C22:
+        dtype: categorical
+        vocab_size: 165496
+        embedding_size: 64
+    C23:
+        dtype: categorical
+        vocab_size: 29741
+        embedding_size: 9
+    C24:
+        dtype: categorical
+        vocab_size: 7693
+        embedding_size: 32
+    C25:
+        dtype: categorical
+        vocab_size: 54
+        embedding_size: 16
+    C26:
+        dtype: categorical
+        vocab_size: 33 
+        embedding_size: 16
