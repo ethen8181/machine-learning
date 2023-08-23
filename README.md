@@ -73,7 +73,8 @@ Curated notes on deep learning.
     - Sentence Transformer: Training Bi-Encoder via Contrastive Loss. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/sentence_transformer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/sentence_transformer.html)]
     - Introduction to CLIP (Contrastive Language-Image Pre-training) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
     - Self Supervised (SIMCLR) versus Supervised Contrastive Learning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/self_supervised_vs_supervised_contrastive/self_supervised_vs_supervised_contrastive.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/self_supervised_vs_supervised_contrastive/self_supervised_vs_supervised_contrastive.html)]
-- Deep Learning for Tabular Data - PyTorch, PyTorch Lightning, ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/tabular.html)]
+- Tabular
+  - Deep Learning for Tabular Data - PyTorch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_tabular.html)]
 
 ### model deployment
 

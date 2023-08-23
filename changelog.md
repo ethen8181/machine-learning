@@ -7,9 +7,13 @@ The changelog will record what content was **changed** (e.g. changed an existing
 ### Changed
 
 - Finetuning Pre-trained BERT Model on Text Classification Task And Inferencing with ONNX Runtime. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/transformers/text_classification_onnxruntime.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/transformers/text_classification_onnxruntime.html)]
-    - Overhaul the content using latest version of PyTorch 2.
-    - Use huggingface trainer for model evaluation instead of custom implementation.
-    - Benchmarked ONNX verus PyTorch on both GPU and CPU.
+  - Overhaul the content using latest version of PyTorch 2.
+  - Use huggingface trainer for model training/evaluation instead of custom implementation.
+  - Benchmarked ONNX versus PyTorch on both GPU and CPU.
+- Deep Learning for Tabular Data - PyTorch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_tabular.html)]
+  - Overhaul the content using latest version of PyTorch 2.
+  - Use huggingface trainer for model training/evaluation instead of custom implementation.
+  - Removed outdated content around ONNX which are not relevant for this particular topic.
 
 ## [2023-07]
 
