@@ -13575,7 +13575,7 @@ transformers 4.3.0
 
 
 <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download the file at ``url`` to ``directory``.</span>
 <span class="sd">    Extract to the file content ``directory`` if the original file</span>
 <span class="sd">    is a tar, tar.gz or zip file.</span>
@@ -13608,7 +13608,7 @@ transformers 4.3.0
 
 
 <span class="k">def</span> <span class="nf">extract_compressed_file</span><span class="p">(</span><span class="n">compressed_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract a compressed file to ``directory``. Supports zip, tar.gz, tgz,</span>
 <span class="sd">    tar extensions.</span>
 
@@ -13629,7 +13629,7 @@ transformers 4.3.0
 
 
 <span class="k">def</span> <span class="nf">get_file_name_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the file_name from a URL</span>
 
 <span class="sd">    Parameters</span>
@@ -13703,7 +13703,7 @@ transformers 4.3.0
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls multi30k
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls<span class="w"> </span>multi30k
 </pre></div>
 
     </div>
@@ -13735,7 +13735,7 @@ test.de			 train.de  training.tar.gz  val.en
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head multi30k/train.de
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head<span class="w"> </span>multi30k/train.de
 </pre></div>
 
     </div>
@@ -13775,7 +13775,7 @@ Jungen tanzen mitten in der Nacht auf Pfosten.
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head multi30k/train.en
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head<span class="w"> </span>multi30k/train.en
 </pre></div>
 
     </div>
@@ -13831,7 +13831,7 @@ Boys dancing on poles in the middle of the night.
     <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the paired source and target dataset from the separated ones.</span>
 <span class="sd">    e.g. creates `train.tsv` from `train.de` and `train.en`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -14267,7 +14267,7 @@ Boys dancing on poles in the middle of the night.
 
 
 <span class="k">def</span> <span class="nf">batch_tokenize_fn</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the input_ids and labels field for huggingface dataset/dataset dict.</span>
 <span class="sd">    </span>
 <span class="sd">    Truncation is enabled, so we cap the sentence to the max length, padding will be done later</span>
@@ -15161,7 +15161,7 @@ Boys dancing on poles in the middle of the night.
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">generate_translation</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">example</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">source_lang</span><span class="p">]</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">target_lang</span><span class="p">]</span>
     <span class="n">input_ids</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">]</span>
@@ -15859,7 +15859,7 @@ prediction:  A man with an orange hat staring at something.
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">generate_translation</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">example</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">source_lang</span><span class="p">]</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">target_lang</span><span class="p">]</span>
     <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">source</span><span class="p">)[</span><span class="s1">&#39;input_ids&#39;</span><span class="p">]</span>
@@ -16630,7 +16630,7 @@ target vocab size:  5000
 
     
 <span class="k">def</span> <span class="nf">pad_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">max_length</span><span class="p">,</span> <span class="n">pad_token_id</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pad the list of sequences (numerical token ids) to the same length.</span>
 <span class="sd">    Sequence that are shorter than the specified ``max_len`` will be appended</span>
 <span class="sd">    with the specified ``pad_token_id``. Those that are longer will be truncated.</span>

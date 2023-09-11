@@ -13493,11 +13493,14 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
-<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">tokenizers</span> <span class="kn">import</span> <span class="n">ByteLevelBPETokenizer</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">disable_progress_bar</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -p datasets,numpy,torch,tokenizers
+<span class="c1"># prevents progress bar and logging from flooding our document</span>
+<span class="n">disable_progress_bar</span><span class="p">()</span>
+
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -u -p datasets,numpy,torch,tokenizers
 </pre></div>
 
     </div>
@@ -13513,16 +13516,32 @@ div#notebook {
     <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.10/dist-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2021-05-17 03:42:33 
+<pre>Author: Ethen
 
-CPython 3.6.5
-IPython 7.16.1
+Last updated: 2023-09-11 22:48:58
 
-datasets 1.1.3
-numpy 1.18.1
-torch 1.7.0+cu101
-tokenizers 0.10.1
+Python implementation: CPython
+Python version       : 3.10.6
+IPython version      : 8.13.2
+
+datasets  : 2.14.4
+numpy     : 1.23.2
+torch     : 2.0.1
+tokenizers: 0.13.3
+
 </pre>
 </div>
 </div>
@@ -13543,7 +13562,7 @@ tokenizers 0.10.1
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Seq2Seq based machine translation system usually comprises of two main components, an encoder that encodes in source sentence into context vectors and a decoder that decodes the context vectors into target sentence, transformer model is no different in this regards. Reasons to their growing popularity at the time of writing this document are primarily due to <strong>self attention layers</strong> and <strong>parallel computation</strong>.</p>
 <p>Previous RNN based encoder and decoder has a constraint of sequential computation. A hidden state at time $t$ in a recurrent layer, has only seen tokens $x_t$ and all the tokens before it, even though this gives us the benefit of modeling long dependencies, it hinders training speed as we can't process the next time step until we finish processing the current one. Transformer model aims to mitigate this issue by solely relying on attention mechanism, where each context vector produced by a transformer model has seen all tokens at all positions within the input sequence. In other words, instead of compressing the entire source sentence, $X = (x_1, ... , x_n)$ into a single context vector, $z$, it produces a sequence of context vectors, $Z = (z_1, ... , z_n)$ in one parallel computation. We'll get to the details of attention mechanism, self attention, that's used throughout the Transformer model in later sections. One important thing to note here is that breakthrough of this model is not due to invention of the attention mechansim, as this concept existed well before. The highlight here is we can build a highly performant model with attention mechanism in isolation, i.e. without the use of recurrent (RNN) or convolutional (CNN) neural networks in the mix.</p>
-<p>In this article, we implemented the Transformer module from scratch as well as leveraged PyTorch built in Transformer Encoder and Decoder to construct the Transformer model.</p>
+<p>In this article, we will be implementing Transformer module from the famous Attention is all you need paper <a href="https://arxiv.org/abs/1706.03762">[9]</a>. This implementation's structure is largely based on <a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/6%20-%20Attention%20is%20All%20You%20Need.ipynb">[1]</a>. With the primary difference that we'll be using huggingface's dataset instead of torchtext for data loading, as well as show casing how to implement Transformer module leveraging PyTorch built in Transformer Encoder and Decoder block.</p>
 
 </div>
 </div>
@@ -13558,7 +13577,7 @@ tokenizers 0.10.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll be using the <a href="http://www.statmt.org/wmt16/multimodal-task.html">Multi30k dataset</a> to demonstrate using the transfomer model in a machine translation task. This German to English training dataset's size is around 29K. We'll start off by downloading the raw dataset and extracting them. Feel free to swap this step with any other machine translation dataset.</p>
+<p>We'll be using the <a href="http://www.statmt.org/wmt16/multimodal-task.html">Multi30k dataset</a> to demonstrate using the transfomer model in a machine translation task. This German to English training dataset's size is around 29K. We'll start off by downloading the raw dataset and extracting them. Feel free to swap this step with any other machine translation dataset. If the original link for these datasets fails to load, use this alternative <a href="https://drive.google.com/drive/folders/10zrAb3BHz4xCuyqUvqphiBTivahX0V8I?usp=drive_link">google drive link</a>.</p>
 
 </div>
 </div>
@@ -13577,7 +13596,7 @@ tokenizers 0.10.1
 
 
 <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download the file at ``url`` to ``directory``.</span>
 <span class="sd">    Extract to the file content ``directory`` if the original file</span>
 <span class="sd">    is a tar, tar.gz or zip file.</span>
@@ -13610,7 +13629,7 @@ tokenizers 0.10.1
 
 
 <span class="k">def</span> <span class="nf">extract_compressed_file</span><span class="p">(</span><span class="n">compressed_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract a compressed file to ``directory``. Supports zip, tar.gz, tgz,</span>
 <span class="sd">    tar extensions.</span>
 
@@ -13631,7 +13650,7 @@ tokenizers 0.10.1
 
 
 <span class="k">def</span> <span class="nf">get_file_name_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the file_name from a URL</span>
 
 <span class="sd">    Parameters</span>
@@ -13662,32 +13681,12 @@ tokenizers 0.10.1
     <span class="s1">&#39;http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz&#39;</span><span class="p">,</span>
     <span class="s1">&#39;http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/mmt16_task1_test.tar.gz&#39;</span>
 <span class="p">]</span>
-<span class="n">directory</span> <span class="o">=</span> <span class="s1">&#39;multi30k&#39;</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="s1">&#39;./translation/wmt16&#39;</span>
 <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
     <span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">directory</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████| 1207136/1207136 [00:01&lt;00:00, 697905.06B/s]
-100%|██████████| 46329/46329 [00:00&lt;00:00, 162345.03B/s]
-100%|██████████| 43905/43905 [00:00&lt;00:00, 152818.28B/s]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -13705,7 +13704,7 @@ tokenizers 0.10.1
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls multi30k
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls<span class="w"> </span><span class="nv">$directory</span>
 </pre></div>
 
     </div>
@@ -13737,7 +13736,7 @@ test.de			 train.de  training.tar.gz  val.en
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head multi30k/train.de
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head<span class="w"> </span><span class="nv">$directory</span>/train.de
 </pre></div>
 
     </div>
@@ -13777,7 +13776,7 @@ Jungen tanzen mitten in der Nacht auf Pfosten.
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head multi30k/train.en
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>head<span class="w"> </span><span class="nv">$directory</span>/train.en
 </pre></div>
 
     </div>
@@ -13833,7 +13832,7 @@ Boys dancing on poles in the middle of the night.
     <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the paired source and target dataset from the separated ones.</span>
 <span class="sd">    e.g. creates `train.tsv` from `train.de` and `train.en`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -13919,98 +13918,6 @@ Boys dancing on poles in the middle of the night.
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using custom data configuration default
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Downloading and preparing dataset csv/default-e201b31b229fe923 (download: Unknown size, generated: Unknown size, post-processed: Unknown size, total: Unknown size) to /home/mingyuliu/.cache/huggingface/datasets/csv/default-e201b31b229fe923/0.0.0/2960f95a26e85d40ca41a230ac88787f715ee3003edaacb8b1f0891e9f04dda2...
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre></pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre></pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=1.0, bar_style=&#39;info&#39;, max=1.0), HTML(value=&#39;&#39;)))</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Dataset csv downloaded and prepared to /home/mingyuliu/.cache/huggingface/datasets/csv/default-e201b31b229fe923/0.0.0/2960f95a26e85d40ca41a230ac88787f715ee3003edaacb8b1f0891e9f04dda2. Subsequent calls will reuse this data.
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -14118,7 +14025,7 @@ Boys dancing on poles in the middle of the night.
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>multi30k/train.de multi30k/train.en
+<pre>./translation/wmt16/train.de ./translation/wmt16/train.en
 </pre>
 </div>
 </div>
@@ -14170,7 +14077,7 @@ Boys dancing on poles in the middle of the night.
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>elapsed:  10.487832069396973
+<pre>elapsed:  1.4205942153930664
 source vocab size:  5000
 target vocab size:  5000
 </pre>
@@ -14212,7 +14119,7 @@ target vocab size:  5000
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Encode the raw text into numerical token ids. Creating two new fields</span>
 <span class="sd">    ``source_ids`` and ``target_ids``.</span>
 <span class="sd">    Also append the init token and prepend eos token to the sentence.</span>
@@ -14250,373 +14157,7 @@ target vocab size:  5000
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>        </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=3625.0, style=ProgressStyle(description_width=&#39;i…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-
-
-
-
-
-
-
-        </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=127.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=126.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=126.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-
-
-
-
-
-
-
-        </pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#0&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#1&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#3&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#2&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#5&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#4&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#6&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-
-<div class="output_text output_subarea ">
-<pre>HBox(children=(FloatProgress(value=0.0, description=&#39;#7&#39;, max=125.0, style=ProgressStyle(description_width=&#39;in…</pre>
-</div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-
-
-
-
-
-
-
-elapsed:  1.697516679763794
+<pre>elapsed:  2.2638769149780273
 </pre>
 </div>
 </div>
@@ -14751,7 +14292,7 @@ elapsed:  1.697516679763794
 
 
 <span class="k">def</span> <span class="nf">pad_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">pad_idx</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pad the list of sequences (numerical token ids) to the same length.</span>
 <span class="sd">    Sequence that are shorter than the specified ``max_len`` will be appended</span>
 <span class="sd">    with the specified ``pad_idx``. Those that are longer will be truncated.</span>
@@ -14878,7 +14419,6 @@ elapsed:  1.697516679763794
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Having prepared the data, we can now start implementing Transformer model's architecture, which looks like the following:</p>
 <img src="img/transformer_architecture.png" width="40%" height="40%">
-<p>This implementation is largely based on the wonderful <a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/6%20-%20Attention%20is%20All%20You%20Need.ipynb">Jupyter Notebook: Attention is All You Need</a>.</p>
 
 </div>
 </div>
@@ -14894,8 +14434,8 @@ elapsed:  1.697516679763794
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First, input tokens are passed through a standard embedding layer. Next, as the entire sentence is fed into the model in one go, by default it has no idea about the tokens' order within the sequence. We cope with this by using a second embedding layer, positional embedding. This is an embedding layer where our input is not the token id but the token's position within the sequence. If we configure our position embedding to have a &quot;vocabulary&quot; size of 100, this means our model can accept sentences up to 100 tokens long.</p>
-<p>The original Transformer implementation from the Attention is All You Need paper does not learn positional embeddings. Instead it uses a fixed static positional encoding. Modern Transformer architectures, like BERT, use positional embeddings, hence, we have decided to use them in these tutorials. Check out <a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html#positional-encoding">this</a> section to read more about the positional encoding used in the original Transformer model.</p>
-<p>Next, the token and positional embeddings are combined together using an elementwise sum operation, giving us a single vector that contains information on both the token and its position with in the sequence. Before they are summed, the token embeddings are multiplied by a scaling factor $\sqrt{d_{model}}$, where $d_{model}$ is the hidden dimension size, <code>hid_dim</code>. This supposedly reduces variance in the embeddings and without this scaling factor, it becomes difficult to train the model reliably. Dropout is then applied to the combined embeddings.</p>
+<p>The original Transformer implementation from the Attention is All You Need paper does not learn positional embeddings. Instead it uses a fixed static positional encoding. Modern Transformer architectures, like BERT, use positional embeddings, hence, we have decided to use them in these tutorials. Feel free to check out other tutorials <a href="https://pytorch.org/tutorials/beginner/transformer_tutorial.html">[7]</a> <a href="http://nlp.seas.harvard.edu/annotated-transformer/">[8]</a> to read more about positional encoding used in the original Transformer model.</p>
+<p>Next, token and positional embeddings are combined together using an elementwise sum operation, giving us a single vector that contains information on both the token and its position with in the sequence. Before they are summed, token embeddings are multiplied by a scaling factor $\sqrt{d_{model}}$, where $d_{model}$ is the hidden dimension size, <code>hid_dim</code>. This supposedly reduces variance in the embeddings and without this scaling factor, it becomes difficult to train the model reliably. Dropout is then applied to the combined embeddings.</p>
 
 </div>
 </div>
@@ -15698,7 +15238,7 @@ torch.Size([128, 8, 40, 40])
         <span class="bp">self</span><span class="o">.</span><span class="n">trg_pad_idx</span> <span class="o">=</span> <span class="n">trg_pad_idx</span>
 
     <span class="k">def</span> <span class="nf">make_src_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        the padding mask is unsqueezed so it can be correctly broadcasted</span>
 <span class="sd">        when applying the mask to the attention weights, which is of shape</span>
 <span class="sd">        [batch size, n heads, seq len, seq len].</span>
@@ -15797,82 +15337,7 @@ torch.Size([128, 8, 40, 40])
       (dropout): Dropout(p=0.1, inplace=False)
     )
     (layers): ModuleList(
-      (0): EncoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (1): EncoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (2): EncoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (3): EncoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (4): EncoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (5): EncoderLayer(
+      (0-5): 6 x EncoderLayer(
         (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
         (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
         (self_attention): MultiHeadAttention(
@@ -15896,51 +15361,7 @@ torch.Size([128, 8, 40, 40])
       (dropout): Dropout(p=0.1, inplace=False)
     )
     (layers): ModuleList(
-      (0): DecoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (encoder_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (encoder_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (1): DecoderLayer(
-        (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (encoder_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
-        (self_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (encoder_attention): MultiHeadAttention(
-          (key_weight): Linear(in_features=512, out_features=512, bias=True)
-          (query_weight): Linear(in_features=512, out_features=512, bias=True)
-          (value_weight): Linear(in_features=512, out_features=512, bias=True)
-          (linear_weight): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (position_ff): PositionWiseFeedForward(
-          (fc1): Linear(in_features=512, out_features=512, bias=True)
-          (fc2): Linear(in_features=512, out_features=512, bias=True)
-        )
-        (dropout): Dropout(p=0.1, inplace=False)
-      )
-      (2): DecoderLayer(
+      (0-2): 3 x DecoderLayer(
         (self_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
         (encoder_attention_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
         (position_ff_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
@@ -16222,36 +15643,36 @@ torch.Size([128, 8, 40, 40])
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Epoch: 01 | Time: 0m 30s
-	Train Loss: 4.942 | Train PPL: 140.059
-	 Val. Loss: 4.053 |  Val. PPL:  57.582
-Epoch: 02 | Time: 0m 30s
-	Train Loss: 3.816 | Train PPL:  45.434
-	 Val. Loss: 3.575 |  Val. PPL:  35.688
-Epoch: 03 | Time: 0m 33s
-	Train Loss: 3.424 | Train PPL:  30.706
-	 Val. Loss: 3.279 |  Val. PPL:  26.550
-Epoch: 04 | Time: 0m 31s
-	Train Loss: 3.156 | Train PPL:  23.474
-	 Val. Loss: 3.081 |  Val. PPL:  21.777
-Epoch: 05 | Time: 0m 33s
-	Train Loss: 2.945 | Train PPL:  19.012
-	 Val. Loss: 2.922 |  Val. PPL:  18.579
-Epoch: 06 | Time: 0m 33s
-	Train Loss: 2.762 | Train PPL:  15.832
-	 Val. Loss: 2.780 |  Val. PPL:  16.127
-Epoch: 07 | Time: 0m 32s
-	Train Loss: 2.604 | Train PPL:  13.512
-	 Val. Loss: 2.677 |  Val. PPL:  14.547
-Epoch: 08 | Time: 0m 34s
-	Train Loss: 2.460 | Train PPL:  11.706
-	 Val. Loss: 2.593 |  Val. PPL:  13.373
-Epoch: 09 | Time: 0m 36s
-	Train Loss: 2.332 | Train PPL:  10.302
-	 Val. Loss: 2.502 |  Val. PPL:  12.201
-Epoch: 10 | Time: 0m 38s
-	Train Loss: 2.212 | Train PPL:   9.132
-	 Val. Loss: 2.430 |  Val. PPL:  11.360
+<pre>Epoch: 01 | Time: 0m 16s
+	Train Loss: 4.926 | Train PPL: 137.785
+	 Val. Loss: 4.057 |  Val. PPL:  57.784
+Epoch: 02 | Time: 0m 16s
+	Train Loss: 3.808 | Train PPL:  45.049
+	 Val. Loss: 3.566 |  Val. PPL:  35.371
+Epoch: 03 | Time: 0m 16s
+	Train Loss: 3.422 | Train PPL:  30.628
+	 Val. Loss: 3.290 |  Val. PPL:  26.830
+Epoch: 04 | Time: 0m 16s
+	Train Loss: 3.156 | Train PPL:  23.484
+	 Val. Loss: 3.078 |  Val. PPL:  21.713
+Epoch: 05 | Time: 0m 16s
+	Train Loss: 2.945 | Train PPL:  19.018
+	 Val. Loss: 2.918 |  Val. PPL:  18.507
+Epoch: 06 | Time: 0m 16s
+	Train Loss: 2.766 | Train PPL:  15.891
+	 Val. Loss: 2.789 |  Val. PPL:  16.257
+Epoch: 07 | Time: 0m 17s
+	Train Loss: 2.606 | Train PPL:  13.544
+	 Val. Loss: 2.681 |  Val. PPL:  14.599
+Epoch: 08 | Time: 0m 16s
+	Train Loss: 2.463 | Train PPL:  11.738
+	 Val. Loss: 2.585 |  Val. PPL:  13.259
+Epoch: 09 | Time: 0m 17s
+	Train Loss: 2.336 | Train PPL:  10.340
+	 Val. Loss: 2.515 |  Val. PPL:  12.368
+Epoch: 10 | Time: 0m 17s
+	Train Loss: 2.216 | Train PPL:   9.173
+	 Val. Loss: 2.448 |  Val. PPL:  11.561
 </pre>
 </div>
 </div>
@@ -16291,7 +15712,7 @@ Epoch: 10 | Time: 0m 38s
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>| Test Loss: 2.426 | Test PPL:  11.317 |
+<pre>| Test Loss: 2.429 | Test PPL:  11.352 |
 </pre>
 </div>
 </div>
@@ -16306,7 +15727,7 @@ Epoch: 10 | Time: 0m 38s
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">source_tokenizer</span><span class="p">,</span> <span class="n">target_tokenizer</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given the raw token, predict the translation using greedy search.</span>
 <span class="sd">    This is a naive implementation without batching</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -16385,7 +15806,7 @@ target:  Two young, White males are outside near many bushes.
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;two young men are outside near white shirts near the woods.&#39;</pre>
+<pre>&#39;two young men are outside near white.&#39;</pre>
 </div>
 
 </div>
@@ -16415,7 +15836,7 @@ target:  Two young, White males are outside near many bushes.
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    </span>
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -16521,7 +15942,7 @@ target:  Two young, White males are outside near many bushes.
 
 
 <span class="k">def</span> <span class="nf">generate_subsequent_mask</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If a BoolTensor is provided, positions with True are not</span>
 <span class="sd">    allowed to attend while False values will be unchanged</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -16666,36 +16087,36 @@ target:  Two young, White males are outside near many bushes.
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Epoch: 01 | Time: 0m 22s
-	Train Loss: 4.076 | Train PPL:  58.881
-	 Val. Loss: 3.314 |  Val. PPL:  27.483
-Epoch: 02 | Time: 0m 19s
-	Train Loss: 3.020 | Train PPL:  20.491
-	 Val. Loss: 2.772 |  Val. PPL:  15.983
-Epoch: 03 | Time: 0m 19s
-	Train Loss: 2.535 | Train PPL:  12.611
-	 Val. Loss: 2.490 |  Val. PPL:  12.066
-Epoch: 04 | Time: 0m 19s
-	Train Loss: 2.189 | Train PPL:   8.929
-	 Val. Loss: 2.314 |  Val. PPL:  10.113
-Epoch: 05 | Time: 0m 19s
-	Train Loss: 1.922 | Train PPL:   6.832
-	 Val. Loss: 2.209 |  Val. PPL:   9.111
-Epoch: 06 | Time: 0m 19s
-	Train Loss: 1.708 | Train PPL:   5.518
-	 Val. Loss: 2.153 |  Val. PPL:   8.608
-Epoch: 07 | Time: 0m 19s
-	Train Loss: 1.528 | Train PPL:   4.611
-	 Val. Loss: 2.132 |  Val. PPL:   8.430
-Epoch: 08 | Time: 0m 19s
-	Train Loss: 1.372 | Train PPL:   3.942
-	 Val. Loss: 2.145 |  Val. PPL:   8.543
-Epoch: 09 | Time: 0m 19s
-	Train Loss: 1.240 | Train PPL:   3.455
-	 Val. Loss: 2.164 |  Val. PPL:   8.702
-Epoch: 10 | Time: 0m 19s
-	Train Loss: 1.124 | Train PPL:   3.076
-	 Val. Loss: 2.189 |  Val. PPL:   8.930
+<pre>Epoch: 01 | Time: 0m 13s
+	Train Loss: 4.061 | Train PPL:  58.036
+	 Val. Loss: 3.313 |  Val. PPL:  27.469
+Epoch: 02 | Time: 0m 13s
+	Train Loss: 3.010 | Train PPL:  20.289
+	 Val. Loss: 2.769 |  Val. PPL:  15.946
+Epoch: 03 | Time: 0m 13s
+	Train Loss: 2.530 | Train PPL:  12.555
+	 Val. Loss: 2.478 |  Val. PPL:  11.921
+Epoch: 04 | Time: 0m 13s
+	Train Loss: 2.180 | Train PPL:   8.848
+	 Val. Loss: 2.319 |  Val. PPL:  10.167
+Epoch: 05 | Time: 0m 13s
+	Train Loss: 1.922 | Train PPL:   6.834
+	 Val. Loss: 2.213 |  Val. PPL:   9.140
+Epoch: 06 | Time: 0m 13s
+	Train Loss: 1.703 | Train PPL:   5.489
+	 Val. Loss: 2.163 |  Val. PPL:   8.697
+Epoch: 07 | Time: 0m 13s
+	Train Loss: 1.527 | Train PPL:   4.602
+	 Val. Loss: 2.148 |  Val. PPL:   8.570
+Epoch: 08 | Time: 0m 13s
+	Train Loss: 1.361 | Train PPL:   3.898
+	 Val. Loss: 2.139 |  Val. PPL:   8.488
+Epoch: 09 | Time: 0m 13s
+	Train Loss: 1.235 | Train PPL:   3.438
+	 Val. Loss: 2.143 |  Val. PPL:   8.526
+Epoch: 10 | Time: 0m 13s
+	Train Loss: 1.128 | Train PPL:   3.089
+	 Val. Loss: 2.192 |  Val. PPL:   8.957
 </pre>
 </div>
 </div>
@@ -16728,7 +16149,7 @@ Epoch: 10 | Time: 0m 19s
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>| Test Loss: 2.145 | Test PPL:   8.545 |
+<pre>| Test Loss: 2.134 | Test PPL:   8.445 |
 </pre>
 </div>
 </div>
@@ -16756,7 +16177,7 @@ Epoch: 10 | Time: 0m 19s
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">translation</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -16790,13 +16211,13 @@ target:  Two young, White males are outside near many bushes.
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[55]:</div>
+    <div class="prompt output_prompt">Out[54]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;two young men are outside near many white bushes.&#39;</pre>
+<pre>&#39;two young men are outside, one in white, are in the doorway.&#39;</pre>
 </div>
 
 </div>
@@ -16808,7 +16229,7 @@ target:  Two young, White males are outside near many bushes.
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In this notebook, we worked through the nitty, gritty details of Transformer models. While NLP is the domain in which the Transformer architecture has been originally proposed for, and we've also used a machine translation example to illustrate the use case. This model is also being studied in other fields such as <a href="https://arxiv.org/abs/2010.11929">computer vision</a>.</p>
+<p>In this notebook, we delved into the implementation of Transformer models. Although originally proposed for solving NLP tasks like machine translation, this module or building block is also gaining popularity in other fields such as computer vision <a href="https://nbviewer.jupyter.org/github/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.ipynb">[2]</a>.</p>
 
 </div>
 </div>
@@ -16824,14 +16245,15 @@ target:  Two young, White males are outside near many bushes.
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/6%20-%20Attention%20is%20All%20You%20Need.ipynb">Jupyter Notebook: Attention is All You Need</a></li>
-<li><a href="https://nbviewer.jupyter.org/github/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.ipynb">Jupyter Notebook: Tutorial 6: Transformers and Multi-Head Attention</a></li>
-<li><a href="https://colab.research.google.com/drive/1swXWW5sOLW8zSZBaQBYcGQkQ_Bje_bmI">Colab: Simple PyTorch Transformer Example with Greedy Decoding</a></li>
-<li><a href="http://peterbloem.nl/blog/transformers">Blog: Transformers from scratch</a></li>
-<li><a href="https://scale.com/blog/pytorch-improvements">Blog: Making Pytorch Transformer Twice as Fast on Sequence Generation</a></li>
-<li><a href="https://theaisummer.com/transformer/">Blog: How Transformers work in deep learning and NLP: an intuitive introduction</a></li>
-<li><a href="https://pytorch.org/tutorials/beginner/transformer_tutorial.html">PyTorch Documentation: Sequence to sequence modeling with nn.Transformer and Torchtext</a></li>
-<li><a href="https://arxiv.org/abs/1706.03762">Paper: Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Łukasz and Polosukhin, Illia (2017) - Attention is All you Need</a></li>
+<li><a href="https://nbviewer.jupyter.org/github/bentrevett/pytorch-seq2seq/blob/master/6%20-%20Attention%20is%20All%20You%20Need.ipynb">[1]</a> Jupyter Notebook: Attention is All You Need</li>
+<li><a href="https://nbviewer.jupyter.org/github/phlippe/uvadlc_notebooks/blob/master/docs/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.ipynb">[2]</a> Jupyter Notebook: Tutorial 6: Transformers and Multi-Head Attention</li>
+<li><a href="https://colab.research.google.com/drive/1swXWW5sOLW8zSZBaQBYcGQkQ_Bje_bmI">[3]</a> Colab: Simple PyTorch Transformer Example with Greedy Decoding</li>
+<li><a href="http://peterbloem.nl/blog/transformers">[4]</a> Blog: Transformers from scratch</li>
+<li><a href="https://scale.com/blog/pytorch-improvements">[5]</a> Blog: Making Pytorch Transformer Twice as Fast on Sequence Generation</li>
+<li><a href="https://theaisummer.com/transformer/">[6]</a> Blog: How Transformers work in deep learning and NLP: an intuitive introduction</li>
+<li><a href="https://pytorch.org/tutorials/beginner/transformer_tutorial.html">[7]</a> PyTorch Documentation: Sequence to sequence modeling with nn.Transformer and Torchtext</li>
+<li><a href="http://nlp.seas.harvard.edu/annotated-transformer/">[8]</a> The Annotated Transformer</li>
+<li><a href="https://arxiv.org/abs/1706.03762">[9]</a> Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin - Attention is All you Need (2017)</li>
 </ul>
 
 </div>

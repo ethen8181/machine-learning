@@ -13463,7 +13463,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1. magic for inline plot</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+<span class="c1"># 1. magic for inline plot</span>
 <span class="c1"># 2. magic to print version</span>
 <span class="c1"># 3. magic so that the notebook will reload external python modules</span>
 <span class="c1"># 4. magic to enable retina (high resolution) plots</span>
@@ -13487,8 +13489,8 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span> 
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span>
-<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span><span class="p">,</span> <span class="n">disable_progress_bar</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AutoConfig</span><span class="p">,</span>
     <span class="n">AutoTokenizer</span><span class="p">,</span>
@@ -13499,7 +13501,10 @@ div#notebook {
     <span class="n">EarlyStoppingCallback</span>
 <span class="p">)</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -v -iv
+<span class="c1"># prevents progress bar and logging from flooding our document</span>
+<span class="n">disable_progress_bar</span><span class="p">()</span>
+
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -v -p datasets,evaluate,torch,transformers,numpy,rouge_score,sacrebleu
 </pre></div>
 
     </div>
@@ -13518,18 +13523,19 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-01-07
+Last updated: 2023-09-11
 
 Python implementation: CPython
-Python version       : 3.8.10
-IPython version      : 8.4.0
+Python version       : 3.10.6
+IPython version      : 8.13.2
 
-matplotlib  : 3.5.3
-pandas      : 1.4.3
+datasets    : 2.14.4
+evaluate    : 0.4.0
+torch       : 2.0.1
+transformers: 4.31.0
 numpy       : 1.23.2
-torch       : 1.10.0a0+git36449ea
-evaluate    : 0.3.0
-transformers: 4.21.3
+rouge_score : 0.1.2
+sacrebleu   : 2.3.1
 
 </pre>
 </div>
@@ -13584,7 +13590,7 @@ transformers: 4.21.3
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./translation&quot;</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./translation&quot;</span> 
     <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s2">&quot;wmt16&quot;</span><span class="p">)</span>
     <span class="n">source_lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;de&quot;</span>
     <span class="n">target_lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span>    
@@ -13638,7 +13644,7 @@ transformers: 4.21.3
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We'll be using Multi30k dataset <a href="https://arxiv.org/abs/1605.00459">[9]</a>, used in WMT16 (Multimodal Machine Translation 2016) conference, to demonstrate transfomer model in a machine translation task. This is a moderate sized German to English translation dataset, whose size is around 29K. That way, we can get our results without waiting too long. We'll start off by downloading the raw dataset and extracting them. Feel free to swap this step with any other machine translation dataset.</p>
-<p>Utility scripts for creating this data reside <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/translation_mt5/translation_utils.py">here</a>.</p>
+<p>Utility scripts for creating this data reside <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/seq2seq/translation_mt5/translation_utils.py">here</a>. If the original link for these datasets fails to load, use the alternative <a href="https://drive.google.com/drive/folders/10zrAb3BHz4xCuyqUvqphiBTivahX0V8I?usp=drive_link">google drive link</a>.</p>
 
 </div>
 </div>
@@ -13648,7 +13654,7 @@ transformers: 4.21.3
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">translation_utils</span> <span class="kn">import</span> <span class="n">download_file</span><span class="p">,</span> <span class="n">create_translation_data</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">translation_utils</span> <span class="kn">import</span> <span class="n">download_file</span>
 
 <span class="c1"># files are downloaded from</span>
 <span class="c1"># http://www.statmt.org/wmt16/multimodal-task.html</span>
@@ -13692,7 +13698,7 @@ transformers: 4.21.3
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls <span class="nv">$config</span>.data_dir
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>ls<span class="w"> </span><span class="nv">$config</span>.data_dir
 </pre></div>
 
     </div>
@@ -13732,7 +13738,9 @@ test.de			 train.de  training.tar.gz  val.en
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_files</span> <span class="o">=</span> <span class="p">{}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">translation_utils</span> <span class="kn">import</span> <span class="n">create_translation_data</span>
+
+<span class="n">data_files</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">split</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]:</span>
     <span class="n">source_input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">target_input_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -13759,7 +13767,9 @@ test.de			 train.de  training.tar.gz  val.en
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;train&#39;: [&#39;./train.tsv&#39;], &#39;val&#39;: [&#39;./val.tsv&#39;], &#39;test&#39;: [&#39;./test.tsv&#39;]}</pre>
+<pre>{&#39;train&#39;: [&#39;./translation/train.tsv&#39;],
+ &#39;val&#39;: [&#39;./translation/val.tsv&#39;],
+ &#39;test&#39;: [&#39;./translation/test.tsv&#39;]}</pre>
 </div>
 
 </div>
@@ -13789,62 +13799,6 @@ test.de			 train.de  training.tar.gz  val.en
 <div class="output_wrapper">
 <div class="output">
 
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Using custom data configuration default-685768bd6cf26331
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Downloading and preparing dataset csv/default to /root/.cache/huggingface/datasets/csv/default-685768bd6cf26331/0.0.0/433e0ccc46f9880962cc2b12065189766fbb2bee57a221866138fb9203c83519...
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Downloading data files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 2885.99it/s]
-Extracting data files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 65.02it/s]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Dataset csv downloaded and prepared to /root/.cache/huggingface/datasets/csv/default-685768bd6cf26331/0.0.0/433e0ccc46f9880962cc2b12065189766fbb2bee57a221866138fb9203c83519. Subsequent calls will reuse this data.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00&lt;00:00, 686.09it/s]
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -14149,7 +14103,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 <p>Important things to keep in mind:</p>
 <ul>
 <li>Given the text matching nature of these metrics, we can imagine they can't really compare different wordings that have same semantic meaning or ensure sentence level grammatical correctness. e.g. dropping a potentially less important function word like &quot;a&quot; will incur the same penalty as missing a word that's crucial. Hence further human judgement might be needed to ensure our model is indeed generating coherent results.</li>
-<li>Prior to computing these metrics, both reference and candidate sentences need to be normalization and tokenized, make sure our pipelines are using the same pre-processing steps to ensure we are conducting an apples to apples comparison as different pre-processing variations can have signficant affect on the final numbers. This issue is raised in SACREBLEU <a href="https://aclanthology.org/W18-6319/">[7]</a>, which aims to provide a tool to faciliate standard configuration on BLEU metrics.</li>
+<li>Prior to computing these metrics, both reference and candidate sentences need to be normalization and tokenized, make sure our pipelines are using the same pre-processing steps to ensure we are conducting an apples to apples comparison as different pre-processing variations can have signficant affect on the final numbers. This issue was raised in SACREBLEU <a href="https://aclanthology.org/W18-6319/">[7]</a>, which aims to provide a tool to faciliate standard configuration on BLEU metrics.</li>
 <li>These scores ranges from 0.0 to 1.0, where 1.0 indicates perfect overlap with reference sentences. Given the free form nature of these type of tasks, adding more reference sentences for a given candidate sentence can improve these scores. Note that even human do not achieve a perfect score of 1.0.</li>
 <li>Despite having their own drawbacks, they are widely use given their favorable properties including, language independent, ease of computation (compared to sending results for human judgements), and have been shown to correlate reasonably well with human judgements.</li>
 </ul>
@@ -14183,7 +14137,8 @@ Reference: It is the practical guide for the army always to heed the directions 
 <span class="n">model_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">model_checkpoint</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">fine_tuned_model_checkpoint</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
     <span class="n">config</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;checkpoint-4500&quot;</span>
 <span class="p">)</span>
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fine_tuned_model_checkpoint</span><span class="p">):</span>
     <span class="n">do_train</span> <span class="o">=</span> <span class="kc">False</span>
@@ -14209,7 +14164,8 @@ Reference: It is the practical guide for the army always to heed the directions 
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/root/.local/lib/python3.8/site-packages/transformers/convert_slow_tokenizer.py:434: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
+<pre>You are using the legacy behaviour of the &lt;class &#39;transformers.models.t5.tokenization_t5.T5Tokenizer&#39;&gt;. This means that tokens that come after special tokens will not be properly handled. We recommend you to read the related pull request available at https://github.com/huggingface/transformers/pull/24565
+/usr/local/lib/python3.10/dist-packages/transformers/convert_slow_tokenizer.py:470: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
   warnings.warn(
 </pre>
 </div>
@@ -14236,7 +14192,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">batch_tokenize_fn</span><span class="p">(</span><span class="n">examples</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the input_ids and labels field for huggingface dataset/dataset dict.</span>
 
 <span class="sd">    Truncation is enabled where we cap the sentence to the max length. Padding will be done later</span>
@@ -14290,10 +14246,8 @@ Reference: It is the practical guide for the army always to heed the directions 
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>WARNING:datasets.fingerprint:Parameter &#39;function&#39;=&lt;function batch_tokenize_fn at 0x7f684204e0d0&gt; of the transform datasets.arrow_dataset.Dataset._map_single couldn&#39;t be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won&#39;t be showed.
-100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 29/29 [00:01&lt;00:00, 16.72ba/s]
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00&lt;00:00, 40.31ba/s]
-100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00&lt;00:00, 22.12ba/s]
+<pre>/usr/local/lib/python3.10/dist-packages/transformers/tokenization_utils_base.py:3635: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
 </pre>
 </div>
 </div>
@@ -14356,6 +14310,17 @@ Reference: It is the practical guide for the army always to heed the directions 
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>You&#39;re using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -14440,7 +14405,7 @@ Reference: It is the practical guide for the army always to heed the directions 
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">eval_pred</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute rouge and bleu metrics for seq2seq model generated prediction.</span>
 <span class="sd">    </span>
 <span class="sd">    tip: we can run trainer.predict on our eval/test dataset to see what a sample</span>
@@ -14501,6 +14466,7 @@ Reference: It is the practical guide for the army always to heed the directions 
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># should take around 4117.78 seconds on a single V100 GPU</span>
 <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">do_train</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DISABLE_MLFLOW_INTEGRATION&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
     <span class="n">t1_start</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">train_output</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
     <span class="n">t1_stop</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
@@ -14512,6 +14478,138 @@ Reference: It is the practical guide for the army always to heed the directions 
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.10/dist-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+    <div>
+      
+      <progress value='4000' max='4520' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [4000/4520 1:03:00 < 08:11, 1.06 it/s, Epoch 17/20]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+ <tr style="text-align: left;">
+      <th>Step</th>
+      <th>Training Loss</th>
+      <th>Validation Loss</th>
+      <th>Rouge1</th>
+      <th>Rouge2</th>
+      <th>Rougel</th>
+      <th>Sacrebleu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>500</td>
+      <td>2.182300</td>
+      <td>1.081721</td>
+      <td>0.687200</td>
+      <td>0.470100</td>
+      <td>0.666500</td>
+      <td>36.517600</td>
+    </tr>
+    <tr>
+      <td>1000</td>
+      <td>1.258300</td>
+      <td>0.965689</td>
+      <td>0.706000</td>
+      <td>0.495700</td>
+      <td>0.685200</td>
+      <td>38.707500</td>
+    </tr>
+    <tr>
+      <td>1500</td>
+      <td>1.081300</td>
+      <td>0.930876</td>
+      <td>0.718500</td>
+      <td>0.512400</td>
+      <td>0.697000</td>
+      <td>40.259300</td>
+    </tr>
+    <tr>
+      <td>2000</td>
+      <td>0.977100</td>
+      <td>0.889364</td>
+      <td>0.729800</td>
+      <td>0.528800</td>
+      <td>0.707300</td>
+      <td>41.882400</td>
+    </tr>
+    <tr>
+      <td>2500</td>
+      <td>0.902900</td>
+      <td>0.880183</td>
+      <td>0.732300</td>
+      <td>0.530100</td>
+      <td>0.709100</td>
+      <td>42.070000</td>
+    </tr>
+    <tr>
+      <td>3000</td>
+      <td>0.843900</td>
+      <td>0.873661</td>
+      <td>0.734400</td>
+      <td>0.532500</td>
+      <td>0.712300</td>
+      <td>42.276300</td>
+    </tr>
+    <tr>
+      <td>3500</td>
+      <td>0.805200</td>
+      <td>0.871559</td>
+      <td>0.739000</td>
+      <td>0.537900</td>
+      <td>0.715100</td>
+      <td>42.904100</td>
+    </tr>
+    <tr>
+      <td>4000</td>
+      <td>0.772900</td>
+      <td>0.870490</td>
+      <td>0.738300</td>
+      <td>0.537400</td>
+      <td>0.714000</td>
+      <td>42.774600</td>
+    </tr>
+  </tbody>
+</table><p></div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Training elapsed time: 3782.642230035737
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -14537,50 +14635,15 @@ Reference: It is the practical guide for the army always to heed the directions 
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>***** Running Evaluation *****
-  Num examples = 1014
-  Batch size = 16
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 
 <div class="output_html rendered_html output_subarea ">
     <div>
       
       <progress value='64' max='64' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [64/64 00:22]
+      [64/64 00:24]
     </div>
     </div>
 
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
-huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
-huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
-To disable this warning, you can either:
-	- Avoid using `tokenizers` before the fork if possible
-	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
-</pre>
-</div>
 </div>
 
 <div class="output_area">
@@ -14591,14 +14654,15 @@ To disable this warning, you can either:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;eval_loss&#39;: 0.863990843296051,
- &#39;eval_rouge1&#39;: 0.7403,
- &#39;eval_rouge2&#39;: 0.5408,
- &#39;eval_rougeL&#39;: 0.7178,
- &#39;eval_sacrebleu&#39;: 42.9889,
- &#39;eval_runtime&#39;: 23.4856,
- &#39;eval_samples_per_second&#39;: 43.175,
- &#39;eval_steps_per_second&#39;: 2.725}</pre>
+<pre>{&#39;eval_loss&#39;: 0.8715594410896301,
+ &#39;eval_rouge1&#39;: 0.739,
+ &#39;eval_rouge2&#39;: 0.5379,
+ &#39;eval_rougeL&#39;: 0.7151,
+ &#39;eval_sacrebleu&#39;: 42.9041,
+ &#39;eval_runtime&#39;: 26.0317,
+ &#39;eval_samples_per_second&#39;: 38.953,
+ &#39;eval_steps_per_second&#39;: 2.459,
+ &#39;epoch&#39;: 17.65}</pre>
 </div>
 
 </div>
@@ -14625,7 +14689,7 @@ To disable this warning, you can either:
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">generate_translation</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">example</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;print out the source, target and predicted raw text.&quot;&quot;&quot;</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">source_lang</span><span class="p">]</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">config</span><span class="o">.</span><span class="n">target_lang</span><span class="p">]</span>
     <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">source</span><span class="p">)[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
@@ -14668,7 +14732,7 @@ To disable this warning, you can either:
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>source:  Eine Gruppe von Männern lädt Baumwolle auf einen Lastwagen
 target:  A group of men are loading cotton onto a truck
-prediction:  A group of men are loading cotton on a truck.
+prediction:  A group of men loading cotton on a truck.
 </pre>
 </div>
 </div>
