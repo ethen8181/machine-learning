@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>fft</title>
+<title>fft</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#First-Foray-Into-Discrete/Fast-Fourier-Transformation" data-toc-modified-id="First-Foray-Into-Discrete/Fast-Fourier-Transformation-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>First Foray Into Discrete/Fast Fourier Transformation</a></span><ul class="toc-item"><li><span><a href="#Correlation" data-toc-modified-id="Correlation-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Correlation</a></span></li><li><span><a href="#Fourier-Transformation" data-toc-modified-id="Fourier-Transformation-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Fourier Transformation</a></span></li><li><span><a href="#DFT-In-Action" data-toc-modified-id="DFT-In-Action-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>DFT In Action</a></span></li><li><span><a href="#Fast-Fourier-Transformation-(FFT)" data-toc-modified-id="Fast-Fourier-Transformation-(FFT)-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Fast Fourier Transformation (FFT)</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13118,7 +13126,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13452,8 +13459,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13545,10 +13551,10 @@ matplotlib 2.2.2
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Correlation is a widely used concept in signal processing. It must be noted that the definition of correlation here is slightly different from the definition we encounter in statistics. In the context of signal processing, correlation measures how similar two signals are by computing the dot product between the two. i.e. given two signals $x$ and $y$, the correlation of the two signal can be computed using:</p>
+<p>Correlation is a fundamental concept in signal processing. It must be noted its definition in this context differs slightly from the definition in statistics. In signal processing, correlation quantifies the similarity between two signals by computing their dot product. i.e. given two signals $x$ and $y$, their correlation can be computed using:</p>
 \begin{align}
 \sum_{n=0}^N x_n \cdot y_n
-\end{align}<p>The intuition behind this is that if the two signals are indeed similar, then whenever $x_n$ is positive/negative then $y_n$ should also be positive/negative. Hence when two signals' sign often matches, the resulting correlation number will also be large, indicating that the two signals are similar to one another. It is worth noting that correlation can also take on negative values, a large negative correlation means that the signal is also similar to each other, but one is inverted with respect to the other.</p>
+\end{align}<p>The underlying idea is if the two signals are indeed similar, then whenever $x_n$ is positive/negative then $y_n$ should also be positive/negative. Consequently, when two signals' sign frequently aligns, the resulting correlation value will also be large, indicating a high degree of similarity between them. It is worth noting that correlation can also take on negative values. A large negative correlation also indicates similarity between the two signals, but with one of them being an inverted version of the other.</p>
 
 </div>
 </div>
@@ -13563,7 +13569,7 @@ matplotlib 2.2.2
 
 
 <span class="k">def</span> <span class="nf">create_signal</span><span class="p">(</span><span class="n">sample_duration</span><span class="p">,</span> <span class="n">sample_freq</span><span class="p">,</span> <span class="n">signal_type</span><span class="p">,</span> <span class="n">signal_freq</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create some signals to work with, e.g. if we were to sample at 100 Hz</span>
 <span class="sd">    (100 times per second) and collect the data for 10 seconds, resulting</span>
 <span class="sd">    in 1000 samples in total. Then we would specify sample_duration = 10,</span>
@@ -13680,7 +13686,7 @@ height=403
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Correlation is one of the key concept behind DFT, because as we'll soon see, in DFT, our goal is to find frequencies that gives a high correlation with the signal at hand and a high amplitude of this correlation indicates the presence of this frequency in our signal.</p>
+<p>Correlation is one of the key concepts behind DFT. As we'll soon see, in DFT, our goal is to find frequencies that gives a high correlation with the signal at hand and a high amplitude of this correlation indicates the presence of this frequency in our signal.</p>
 
 </div>
 </div>
@@ -13702,8 +13708,8 @@ height=403
 <li><strong>Phase:</strong> Where does it start, or what angle does it start?</li>
 </ul>
 <p>This cycle component is also referred to as <strong>phasor</strong>. The following gif aims to make this seemingly abstract description into a concrete process that we can visualize.</p>
-<p><img src="img/fft_decompose.gif"></p>
-<p>After applying DFT to our signal shown on the right, we realized that it can be decomposed into five different phasors. Here, the center of the first phasor/cycle component is placed at the origin, and the center of each subsequent phasor is "attached" to the tip of the previous phasor. Once the chain of phasors is built, we begin rotating the phasor. We can then reconstruct the time domain signal by tracing the vertical distance from the origin to the tip of the last phasor.</p>
+<img src="img/fft_decompose.gif">
+<p>After applying DFT to our signal shown on the right, we realized that it can be decomposed into five different phasors. Here, the center of the first phasor/cycle component is placed at the origin, and the center of each subsequent phasor is &quot;attached&quot; to the tip of the previous phasor. Once the chain of phasors is built, we begin rotating the phasor. We can then reconstruct the time domain signal by tracing the vertical distance from the origin to the tip of the last phasor.</p>
 
 </div>
 </div>
@@ -13720,14 +13726,15 @@ X_k = \sum_{n=0}^{N-1} x_n \cdot e^{ -\varphi \mathrm{i} }
 <li>$\varphi = \frac{n}{N} 2\pi k$: Records phase and frequency of our cycle components. Where $N$ is the number of samples we have. $n$ the current sample we're considering. $k$ the currenct frequency we're considering. The $2\pi k$ part represents the cycle component's speed measured in radians and $n / N$ measures the percentage of time that our cycle component has traveled.</li>
 <li>$X_k$ Amount of cycle component with frequency $k$.</li>
 </ul>
-<blockquote><p>Side Note: If the readers are a bit rusty with trigonometry (related to sine and cosine) and complex numbers. e.g. There're already many excellent materials out there that covers these concepts. <a href="https://jackschaedler.github.io/circles-sines-signals/trig_review.html">Blog: Trigonometry Review</a> and <a href="https://jackschaedler.github.io/circles-sines-signals/complex.html">Blog: Complex Numbers</a></p>
+<blockquote>
+<p>Side Note: If the readers are a bit rusty with trigonometry (related to sine and cosine) and complex numbers. e.g. There're already many excellent materials out there that covers these concepts. <a href="https://jackschaedler.github.io/circles-sines-signals/trig_review.html">Blog: Trigonometry Review</a> and <a href="https://jackschaedler.github.io/circles-sines-signals/complex.html">Blog: Complex Numbers</a></p>
 </blockquote>
 <p>From the formula, we notice that it's taking the dot product between the original signal $x_n$ and $e^{ -\varphi \mathrm{i} }$. If we expand $e^{ -\varphi \mathrm{i} }$ using the Euler's formula. $e^{ -\varphi \mathrm{i} } = cos(\varphi) - sin(\varphi)i$, we end up with the formula:</p>
 \begin{align}
 X_k &amp;= \sum_{n=0}^{N-1} x_n \cdot \big( cos(\varphi) - sin(\varphi)i \big) \\
     &amp;= \sum_{n=0}^{N-1} x_n \cdot cos(\varphi) - i \sum_{n=0}^{N-1} x_n \cdot sin(\varphi)
-\end{align}<p>By breaking down the formula a little bit, we can see that underneath the hood, what fourier transformation is doing is taking the input signal and doing 2 correlation calculations, one with the sine wave (it will give us the y coordinates of the circle) and one with the cosine wave (which will give us the x coordinates or the circle). And the following succinct one-sentence colour-coded explanation is also a great reference that we can use for quick reference.</p>
-<p><img src="img/fft_one_sentence.png" width="50%" height="50%"></p>
+\end{align}<p>Breaking down the formula, Fourier transformation essentially involves two correlation calculations: one with sine wave, yielding circle's y coordinates. The other with cosine wave (giving us x coordinates of the circle). This concise color-codede explanation serves as a quick reference for understanding this process.</p>
+<img src="img/fft_one_sentence.png" width="50%" height="50%">
 
 </div>
 </div>
@@ -14043,7 +14050,7 @@ X_k = \sum_{n=0}^{N-1} x_n \cdot e^{ -\frac{n}{N} 2\pi k \mathrm{i} }
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">dft</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute the Discrete Fourier Transform of the 1d ndarray x.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the Discrete Fourier Transform of the 1d ndarray x.&quot;&quot;&quot;</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
     <span class="n">k</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
@@ -14325,7 +14332,10 @@ X_{k + 4} &amp;= G_{k + 4} + e^{ -\mathrm{i} \frac{2\pi}{8} (k + 4) ~\times~ 1 }
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>
