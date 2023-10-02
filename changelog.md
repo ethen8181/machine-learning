@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+
+## [2023-10]
+
+### Added
+
+- BERT CTR. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/bert_ctr/bert_ctr.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/bert_ctr/bert_ctr.html)]
+
 ## [2023-09]
 
 ### Added

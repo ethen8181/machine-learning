@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>deep_learning_learning_to_rank</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>bert_ctr</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13096,7 +13096,7 @@ div#notebook {
 
 <span class="c1"># path : store the current path to convert back to it later</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook_format&#39;</span><span class="p">))</span>
 
 <span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
 <span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span><span class="o">=</span><span class="s1">&#39;custom2.css&#39;</span><span class="p">,</span> <span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -13474,23 +13474,29 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">torch.nn.utils.rnn</span> <span class="kn">import</span> <span class="n">pad_sequence</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span> <span class="k">as</span> <span class="nn">metrics</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">load_dataset</span><span class="p">,</span>
+    <span class="n">disable_progress_bar</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
-<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">torch.nn.utils.rnn</span> <span class="kn">import</span> <span class="n">pad_sequence</span>
 <span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AutoConfig</span><span class="p">,</span>
+    <span class="n">AutoTokenizer</span><span class="p">,</span>
+    <span class="n">AutoModel</span><span class="p">,</span>
+    <span class="n">AutoModelForSequenceClassification</span><span class="p">,</span>
     <span class="n">PretrainedConfig</span><span class="p">,</span>
     <span class="n">PreTrainedModel</span><span class="p">,</span>
     <span class="n">TrainingArguments</span><span class="p">,</span>
     <span class="n">Trainer</span>
 <span class="p">)</span>
-<span class="kn">import</span> <span class="nn">torchmetrics</span>
-
 
 <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v -u -p torch,sklearn,numpy,pandas,torchmetrics,datasets,transformers
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -v -u -p transformers,datasets,torch,numpy,pandas,sklearn
 </pre></div>
 
     </div>
@@ -13509,19 +13515,18 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-09-06 04:00:55
+Last updated: 2023-10-01
 
 Python implementation: CPython
 Python version       : 3.10.6
 IPython version      : 8.13.2
 
+transformers: 4.31.0
+datasets    : 2.14.4
 torch       : 2.0.1
-sklearn     : 1.3.0
 numpy       : 1.23.2
 pandas      : 2.0.1
-torchmetrics: 1.0.3
-datasets    : 2.14.4
-transformers: 4.31.0
+sklearn     : 1.3.0
 
 </pre>
 </div>
@@ -13534,107 +13539,14 @@ transformers: 4.31.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Learning-to-Rank-101">Learning to Rank 101<a class="anchor-link" href="#Learning-to-Rank-101">&#182;</a></h1>
+<h1 id="BERT-CTR">BERT CTR<a class="anchor-link" href="#BERT-CTR">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Suppose we have a query denoted as $q$, and its corresponding $n$ set of documents denoted as $D = {d_1, d_2, ..., d_n}$. Our objective is to learn a function $f$ such that $f(q, D)$ will produce an ordered collection of documents, $D^*$, in descending order of relevance. Where the exact definition of relevance can vary between different applications.</p>
-<p>In general, there're three main types of loss function for training this function: pointwise, pairwise, listwise. In this article, we'll be giving a 101 introduction to each of these variants, list out their pros and cons, as well as implementing these loss functions ourselves and training the tabular deep learning module using huggingface Trainer.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Pointwise</strong></p>
-<p>For pointwise approach, the aforementioned ranking task is formulated as a classic regression or classification task. The function $f(q, D)$ is simplied to $f(q, d_i)$, treating the relevance assessment of each query document independently. Suppose we have two queries that yield 2 and 3 corresponding documents respectively:</p>
-\begin{align}
-q_1 &amp; \rightarrow d_1, d_2 \nonumber \\
-q_2 &amp; \rightarrow d_3, d_4, d_5
-\end{align}<p>The training examples $x_i$ are creating by pairing each query with its associated documents.</p>
-\begin{align}
-x_1: q_1, d_1 \nonumber \\ 
-x_2: q_1, d_2 \nonumber \\
-x_3: q_2, d_3 \nonumber \\
-x_4: q_2, d_4 \nonumber \\
-x_5: q_2, d_5
-\end{align}<p>Pros:</p>
-<ul>
-<li>Simplicity: Existing machine learning algorithms and loss functions we might be more familiar with can be directly applied in the pointwise setting.</li>
-</ul>
-<p>Cons:</p>
-<ul>
-<li>Sub-Optimal Results: This approach may not fully capitalize on the complete information available across the entire document list for a given query, potentially leading to sub-optimal outcomes.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Pairwise</strong></p>
-<p>In pairwise approach, the goal remains identical to pointwise, in which we're learning a pointwise scoring function $f(q, d_i)$, but training instances are constructed using pairs of documents from the same query:</p>
-\begin{align}
-x_1: q_1, (d_1, d_2) \nonumber \\
-x_2: q_2, (d_3, d_4) \nonumber \\
-x_3: q_2, (d_3, d_5) \nonumber \\
-x_4: q_2, (d_4, d_5)
-\end{align}<p>This approach introduces a new set of binary pairwise labels, derived by comparing individual relevance scores within each pair. For instance, considering the first query $q_1$, if $y_1 = 0$ (totally irrelevant) for $d_1$ and $y_2 = 3$ (highly relevant) for $d_2$, a new label $y_1 &lt; y_2$ is assigned to the document pair $(d_1, d_2)$. This transforms the task into a binary classification learning problem.</p>
-<p>To learn the pointwise function $f(q, d_i)$ in a pairwise manner, RankNet <a href="https://icml.cc/2015/wp-content/uploads/2015/06/icml_ranking.pdf">[1]</a> proposed modeling the score difference probabilistically using logistic function:</p>
-\begin{align}
-Pr(i \succ j) = \frac{1}{1 + exp^{-(s_i - s_j)}}
-\end{align}<p>Where if document $i$ is deemed a better match than document $j$ ($i \succ j$), the probability of the scoring function assigning a higher score to $f(q, d_i) = s_i$ than $f(q, d_j) = s_j$ should be close to 1. This reflects the model's effort to understand how to score document pairs based on query information, effectively learning to rank.</p>
-<p>Pros:</p>
-<ul>
-<li>Pairwise Ranking Learning: Compared with pointwise model, pairwise model learns how to rank in a pairwise context, by focusing on correct classification of ordered pairs, it is potentially approximating the ultimate ranking task involving a list of documents.</li>
-</ul>
-<p>Cons:</p>
-<ul>
-<li>Pointwise Scoring: The scoring function remains pointwise, implying relative information among different documents with the same query is not yet fully harnessed.</li>
-<li>Uneven pairs: If not careful with data curation where the number of documents varies largely from query to query, then the trained model may be biased towards queries with more document pairs.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Listwise</strong></p>
-<p>Listwise approach addresses the ranking problem in its natural form, specifically it takes in a list of instances during training so the group structure is maintained.</p>
-\begin{align}
-x_1&amp;: q_1, (d_1, d_2) \nonumber \\ 
-x_2&amp;: q_2, (d_3, d_4, d_5)
-\end{align}<p>One of the first proposed approach is ListNet <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-2007-40.pdf">[2]</a>, where the loss is calculated between a predicted probability distribution versus target probability distribution.</p>
-\begin{align}
-P_{\boldsymbol{y}}\left(x_i\right)=\frac{y_i}{\sum_{j=1}^n y_j} \\
-P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol{x_j})}}
-\end{align}<p>Where:</p>
-<ul>
-<li>$x_i$ denotes features representing a particular query-document pair.</li>
-<li>$y_i$ represents each document's non-negative relevance labels.</li>
-<li>$P_f\left(x_i\right)$ encodes the probability of $x_i$ appearing at the top of the ranked list, referred to as top one probability. Given these two distributions, their loss is can be measured by a standard cross entropy loss.</li>
-</ul>
-\begin{align}
-\ell(\boldsymbol{y}, f(\boldsymbol{x})) = -\sum_{i=1}^n P_{\boldsymbol{y}}\left(x_i\right) \log P_f\left(x_i\right)
-\end{align}<p>Pros:</p>
-<ul>
-<li>Direct Ranking Learning. By formulating the problem in its native form instead of relying on proxies, it is a theoretically sound solution to approach a ranking task. i.e. Minimizing the errors in ranking the entire document list as opposed to document pairs.</li>
-</ul>
-<p>Cons:</p>
-<ul>
-<li>Pointwise Scoring. Scoring function is still pointwise, which could be sub-optimal.</li>
-</ul>
-<p>Note that:</p>
-<ul>
-<li>Different from pointwise approach that also uses softmax function and cross entropy loss, in listwise loss function, both of these are conducted over all items within the same list.</li>
-<li>There're subsuquent works <a href="https://dl.acm.org/doi/10.1145/3341981.3344221">[3]</a> that provides theoretically justifications for ListNet's softmax cross entropy loss. In particular they show that in a binary labeled setup, the loss bounds two popular learning to rank evaluation metrics: Mean Reciprocal Rank and Normalized Discounted Cumulative Gain.</li>
-</ul>
+<p>In many real world applications, our dataset is often times multi-modal <a href="https://medium.com/georgian-impact-blog/how-to-incorporate-tabular-data-with-huggingface-transformers-b70ac45fcfb4">[3]</a>. Where there are textual information, structured/tabular data, or even data represented in image, video, audio format. In this article, we'll look at the problem of multimodal fusion, where our goal is to jointly model information from two or more modalities to make a prediction, specifically text and structured/tabular data.</p>
 
 </div>
 </div>
@@ -13649,7 +13561,10 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll be using LETOR (Learning to Rank) 4.0 dataset <a href="https://arxiv.org/abs/1306.2597">[6]</a> <a href="https://www.microsoft.com/en-us/research/project/letor-learning-rank-information-retrieval/letor-4-0/">[7]</a>. There're also larger datasets such as, MSLR-WEB30k <a href="https://www.microsoft.com/en-us/research/project/mslr/">[8]</a> or istella <a href="http://blog.istella.it/istella-learning-to-rank-dataset/">[9]</a> which also comes in a similar raw format.</p>
+<p>KDD 2012 Track 2 <a href="https://www.kaggle.com/competitions/kddcup2012-track2/overview">[1]</a> is focused on predicting click through rate (CTR). This task involves not only textual data related to search query and ad, but also includes additional structured/tabular data such as user's demographic information gender/age, etc.</p>
+<p>Note, while this dataset we're using is slightly more representative of real world application, it unfortunately still has some limitations. The most notable one being, for anonymity reasons, this dataset provides tokens represented as hash values instead of actual raw text. This entails we can't directly leverage pre-trained tokenizer/model.</p>
+<p>Another dataset with similar characteristics is Baidu-ULTR <a href="https://arxiv.org/abs/2207.03051">[2]</a>. This dataset is advantageous in terms of its larger scale: featuring 1.2B search sessions, and its richness: offering diverse display information such as position, display height, and so on for studying un-biased learning to rank. As well as diversified user behavior, including click, skip, dwell time for exploring multi-task learning. Though, again, it also has similar limitation where raw text is provided in a hashed id manner.</p>
+<p>We'll be working with a sampled version of the original raw dataset. Readers can refer to <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/tabular/bert_ctr/kdd2012_track2_preprocess_data.py">kdd2012_track2_preprocess_data.py</a> for a sample pre-processing script.</p>
 
 </div>
 </div>
@@ -13659,127 +13574,11 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="ch">#!wget https://s3-us-west-2.amazonaws.com/xgboost-examples/MQ2008.rar</span>
-<span class="c1">#!unrar x MQ2008.rar</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># show case some sample raw data</span>
-<span class="n">input_path</span> <span class="o">=</span> <span class="s1">&#39;MQ2008/Fold1/train.txt&#39;</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>0 qid:10002 1:0.007477 2:0.000000 3:1.000000 4:0.000000 5:0.007470 6:0.000000 7:0.000000 8:0.000000 9:0.000000 10:0.000000 11:0.471076 12:0.000000 13:1.000000 14:0.000000 15:0.477541 16:0.005120 17:0.000000 18:0.571429 19:0.000000 20:0.004806 21:0.768561 22:0.727734 23:0.716277 24:0.582061 25:0.000000 26:0.000000 27:0.000000 28:0.000000 29:0.780495 30:0.962382 31:0.999274 32:0.961524 33:0.000000 34:0.000000 35:0.000000 36:0.000000 37:0.797056 38:0.697327 39:0.721953 40:0.582568 41:0.000000 42:0.000000 43:0.000000 44:0.000000 45:0.000000 46:0.007042 #docid = GX008-86-4444840 inc = 1 prob = 0.086622
-
-0 qid:10002 1:0.603738 2:0.000000 3:1.000000 4:0.000000 5:0.603175 6:0.000000 7:0.000000 8:0.000000 9:0.000000 10:0.000000 11:0.000000 12:0.000000 13:0.122130 14:0.000000 15:0.000000 16:0.998377 17:0.375000 18:1.000000 19:0.000000 20:0.998128 21:0.000000 22:0.000000 23:0.154578 24:0.555676 25:0.000000 26:0.000000 27:0.000000 28:0.000000 29:0.071711 30:0.000000 31:0.000000 32:0.000000 33:0.000000 34:0.000000 35:0.000000 36:0.000000 37:0.000000 38:0.000000 39:0.117399 40:0.560607 41:0.000000 42:0.280000 43:0.000000 44:0.003708 45:0.333333 46:1.000000 #docid = GX037-06-11625428 inc = 0.0031586555555558 prob = 0.0897452
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Each row represents a query-document pair in the dataset, with columns structured as follows:</p>
-<ul>
-<li>First column contains the relevance label for this specific pair. A higher relevance label signifies a greater relevance between the query and the document</li>
-<li>Second column contains the query ID.</li>
-<li>Subsequent columns contain various features.</li>
-<li>The row concludes with a comment about the pair, which includes the document's ID.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">parse_raw_data</span><span class="p">(</span><span class="n">input_path</span><span class="p">):</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">query_ids</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># filter out comment about the record</span>
-            <span class="k">if</span> <span class="s2">&quot;#&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)]</span>
-
-            <span class="n">splitted_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">splitted_line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-
-            <span class="n">query_id</span> <span class="o">=</span> <span class="n">splitted_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">query_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query_id</span><span class="p">)</span>
-
-            <span class="n">feature</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">feature_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">feature_str</span> <span class="ow">in</span> <span class="n">splitted_line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]</span>
-            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
-
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">query_ids</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
-    <span class="k">return</span> <span class="n">df</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># concatenate data under different cross validation folds together</span>
-<span class="n">input_paths</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;MQ2008/Fold1/train.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold2/train.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold3/train.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold4/train.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold5/train.txt&#39;</span>
-<span class="p">]</span>
-
-<span class="n">df_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">input_path</span> <span class="ow">in</span> <span class="n">input_paths</span><span class="p">:</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">parse_raw_data</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-    <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;track2_processed_train.parquet&quot;</span><span class="p">)</span>
+<span class="n">df_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;track2_processed_test.parquet&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;train shape: &quot;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test shape: &quot;</span><span class="p">,</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;label distribution: &quot;</span><span class="p">,</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
 <span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -13797,14 +13596,19 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(45633, 49)
+<pre>train shape:  (900000, 17)
+test shape:  (100000, 17)
+label distribution:  label
+0    853036
+1     46964
+Name: count, dtype: int64
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[6]:</div>
+    <div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -13826,153 +13630,128 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>...</th>
-      <th>39</th>
-      <th>40</th>
-      <th>41</th>
-      <th>42</th>
-      <th>43</th>
-      <th>44</th>
-      <th>45</th>
-      <th>context</th>
+      <th>click</th>
+      <th>impression</th>
+      <th>display_url</th>
+      <th>ad_id</th>
+      <th>advertiser_id</th>
+      <th>depth</th>
+      <th>position</th>
+      <th>query_id</th>
+      <th>keyword_id</th>
+      <th>title_id</th>
+      <th>description_id</th>
+      <th>user_id</th>
       <th>label</th>
-      <th>split</th>
+      <th>tokenized_title</th>
+      <th>tokenized_query</th>
+      <th>gender</th>
+      <th>age</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.007477</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.007470</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.582568</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.007042</td>
-      <td>qid:10002</td>
       <td>0</td>
-      <td>train</td>
+      <td>1</td>
+      <td>5511132461021800102</td>
+      <td>20589102</td>
+      <td>572.0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>226</td>
+      <td>666</td>
+      <td>476</td>
+      <td>152</td>
+      <td>3927.0</td>
+      <td>0</td>
+      <td>[141907, 78371, 0, 64251, 69187, 23351, 110163...</td>
+      <td>[60776, 78371, 45372]</td>
+      <td>2.0</td>
+      <td>6.0</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.603738</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.603175</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.560607</td>
-      <td>0.00</td>
-      <td>0.28</td>
-      <td>0.0</td>
-      <td>0.003708</td>
-      <td>0.333333</td>
-      <td>1.000000</td>
-      <td>qid:10002</td>
       <td>0</td>
-      <td>train</td>
+      <td>1</td>
+      <td>12057878999086460853</td>
+      <td>20163506</td>
+      <td>1485.0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>101369</td>
+      <td>9</td>
+      <td>18</td>
+      <td>27</td>
+      <td>3927.0</td>
+      <td>0</td>
+      <td>[97424, 0, 74849, 127933, 62049, 142426]</td>
+      <td>[121115, 74849]</td>
+      <td>2.0</td>
+      <td>1.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.214953</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.213819</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>1.000000</td>
-      <td>0.00</td>
-      <td>0.00</td>
-      <td>0.0</td>
-      <td>1.000000</td>
-      <td>1.000000</td>
-      <td>0.021127</td>
-      <td>qid:10002</td>
       <td>0</td>
-      <td>train</td>
+      <td>1</td>
+      <td>781547179694832263</td>
+      <td>20886416</td>
+      <td>3015.0</td>
+      <td>0.5</td>
+      <td>2</td>
+      <td>10186269</td>
+      <td>1441</td>
+      <td>132250</td>
+      <td>33337</td>
+      <td>3927.0</td>
+      <td>0</td>
+      <td>[63426, 65474, 49687, 113498, 61371, 102713, 4...</td>
+      <td>[122710, 65474, 26556]</td>
+      <td>2.0</td>
+      <td>5.0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.000000</td>
-      <td>0.25</td>
-      <td>1.00</td>
-      <td>0.0</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>0.000000</td>
-      <td>qid:10002</td>
       <td>0</td>
-      <td>train</td>
+      <td>1</td>
+      <td>14340390157469404125</td>
+      <td>3110734</td>
+      <td>1224.0</td>
+      <td>0.0</td>
+      <td>1</td>
+      <td>284</td>
+      <td>64</td>
+      <td>121</td>
+      <td>170</td>
+      <td>3927.0</td>
+      <td>0</td>
+      <td>[105048, 115914, 66509, 48803]</td>
+      <td>[66509, 71597, 119309, 67224, 129706]</td>
+      <td>2.0</td>
+      <td>3.0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>1.000000</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.730347</td>
-      <td>1.00</td>
-      <td>0.84</td>
-      <td>0.0</td>
-      <td>0.184564</td>
-      <td>0.666667</td>
-      <td>0.000000</td>
-      <td>qid:10002</td>
       <td>0</td>
-      <td>train</td>
+      <td>1</td>
+      <td>5468727571223080485</td>
+      <td>20003716</td>
+      <td>102.0</td>
+      <td>0.5</td>
+      <td>2</td>
+      <td>1348</td>
+      <td>1111</td>
+      <td>18547</td>
+      <td>23993</td>
+      <td>3605.0</td>
+      <td>0</td>
+      <td>[119985, 1, 24536, 69187, 124848, 105787, 74848]</td>
+      <td>[119985]</td>
+      <td>2.0</td>
+      <td>5.0</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 49 columns</p>
 </div></div>
 
 </div>
@@ -13983,26 +13762,13 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">input_paths</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;MQ2008/Fold1/vali.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold2/vali.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold3/vali.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold4/vali.txt&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MQ2008/Fold5/vali.txt&#39;</span>
-<span class="p">]</span>
-
-<span class="n">df_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">input_path</span> <span class="ow">in</span> <span class="n">input_paths</span><span class="p">:</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">parse_raw_data</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-    <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-<span class="n">df_validation</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_validation</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;validation&quot;</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_validation</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">df_validation</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_train</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span>
+<span class="n">dataset_test</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">)</span>
+<span class="n">dataset_train</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -14019,292 +13785,39 @@ P_f\left(x_i\right)=\frac{e^{f(\boldsymbol{x_i})}}{\sum_{j=1}^n e^{f(\boldsymbol
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(15211, 49)
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>...</th>
-      <th>39</th>
-      <th>40</th>
-      <th>41</th>
-      <th>42</th>
-      <th>43</th>
-      <th>44</th>
-      <th>45</th>
-      <th>context</th>
-      <th>label</th>
-      <th>split</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.000000</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.711831</td>
-      <td>0.50</td>
-      <td>0.290698</td>
-      <td>0.0</td>
-      <td>0.197431</td>
-      <td>0.50</td>
-      <td>0.000000</td>
-      <td>qid:15928</td>
-      <td>0</td>
-      <td>validation</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0.003315</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.005525</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.313640</td>
-      <td>0.50</td>
-      <td>0.255814</td>
-      <td>0.0</td>
-      <td>0.212859</td>
-      <td>0.25</td>
-      <td>0.214286</td>
-      <td>qid:15928</td>
-      <td>0</td>
-      <td>validation</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0.093923</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.093923</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.760799</td>
-      <td>0.25</td>
-      <td>0.127907</td>
-      <td>0.0</td>
-      <td>0.309468</td>
-      <td>1.00</td>
-      <td>0.357143</td>
-      <td>qid:15928</td>
-      <td>1</td>
-      <td>validation</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0.065193</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.065193</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>1.000000</td>
-      <td>0.25</td>
-      <td>0.069767</td>
-      <td>0.0</td>
-      <td>0.178784</td>
-      <td>0.50</td>
-      <td>0.428571</td>
-      <td>qid:15928</td>
-      <td>1</td>
-      <td>validation</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0.064088</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.064088</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.784191</td>
-      <td>0.50</td>
-      <td>0.255814</td>
-      <td>0.0</td>
-      <td>0.012703</td>
-      <td>0.25</td>
-      <td>0.214286</td>
-      <td>qid:15928</td>
-      <td>0</td>
-      <td>validation</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 49 columns</p>
-</div></div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># convert context column to numerical indices, PyTorch doesn&#39;t take in string field</span>
-<span class="n">label_encoder</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_validation</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">])</span>
-
-<span class="c1"># we can experiment with binary relevance label or the default graded relevance label</span>
-<span class="c1"># df.loc[df[&quot;label&quot;] == 2, &quot;label&quot;] = 1</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>(60844, 49)
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[8]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>label
-0    49116
-1     8004
-2     3724
-Name: count, dtype: int64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_validation</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;validation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">dataset_train</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span>
-<span class="n">dataset_validation</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df_validation</span><span class="p">)</span>
-<span class="n">dataset_train</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/usr/local/lib/python3.10/dist-packages/datasets/table.py:761: UserWarning: The DataFrame has column names of mixed type. They will be converted to strings and not roundtrip correctly.
-  return cls(pa.Table.from_pandas(*args, **kwargs))
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[9]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
 <pre>Dataset({
-    features: [&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;, &#39;10&#39;, &#39;11&#39;, &#39;12&#39;, &#39;13&#39;, &#39;14&#39;, &#39;15&#39;, &#39;16&#39;, &#39;17&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;, &#39;21&#39;, &#39;22&#39;, &#39;23&#39;, &#39;24&#39;, &#39;25&#39;, &#39;26&#39;, &#39;27&#39;, &#39;28&#39;, &#39;29&#39;, &#39;30&#39;, &#39;31&#39;, &#39;32&#39;, &#39;33&#39;, &#39;34&#39;, &#39;35&#39;, &#39;36&#39;, &#39;37&#39;, &#39;38&#39;, &#39;39&#39;, &#39;40&#39;, &#39;41&#39;, &#39;42&#39;, &#39;43&#39;, &#39;44&#39;, &#39;45&#39;, &#39;context&#39;, &#39;label&#39;],
-    num_rows: 45633
-})</pre>
+    features: [&#39;click&#39;, &#39;impression&#39;, &#39;display_url&#39;, &#39;ad_id&#39;, &#39;advertiser_id&#39;, &#39;depth&#39;, &#39;position&#39;, &#39;query_id&#39;, &#39;keyword_id&#39;, &#39;title_id&#39;, &#39;description_id&#39;, &#39;user_id&#39;, &#39;label&#39;, &#39;tokenized_title&#39;, &#39;tokenized_query&#39;, &#39;gender&#39;, &#39;age&#39;],
+    num_rows: 900000
+})
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[4]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;click&#39;: 0,
+ &#39;impression&#39;: 1,
+ &#39;display_url&#39;: 5511132461021800102,
+ &#39;ad_id&#39;: 20589102,
+ &#39;advertiser_id&#39;: 572.0,
+ &#39;depth&#39;: 0.0,
+ &#39;position&#39;: 1,
+ &#39;query_id&#39;: 226,
+ &#39;keyword_id&#39;: 666,
+ &#39;title_id&#39;: 476,
+ &#39;description_id&#39;: 152,
+ &#39;user_id&#39;: 3927.0,
+ &#39;label&#39;: 0,
+ &#39;tokenized_title&#39;: [141907, 78371, 0, 64251, 69187, 23351, 110163, 74848],
+ &#39;tokenized_query&#39;: [60776, 78371, 45372],
+ &#39;gender&#39;: 2.0,
+ &#39;age&#39;: 6.0}</pre>
 </div>
 
 </div>
@@ -14317,67 +13830,24 @@ Name: count, dtype: int64</pre>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>These subsequent function/class for using deep learning on tabular data closely follows the ones introduced in Deep Learning for Tabular Data - PyTorch. [<a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_tabular.ipynb">nbviewer</a>][<a href="http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_tabular.html">html</a>]</p>
+<p>We'll specify a config mapping for our input features, which will be utilized in both our batch collate function as well as the model itself. This config mapping stores the features we want to use as keys, and different value/enum specifying whether the field is of text/token, numerical or categorical type. Which inform our pipeline about the embedding size required for a categorical type, how many numerical fields are there to initiate the dense/feed forward layers, whether to apply tokenization/padding for text/token type fields.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># example feature config</span>
-<span class="c1"># tabular_features_config = {</span>
-<span class="c1">#     &quot;0&quot;: {</span>
-<span class="c1">#         &quot;dtype&quot;: &quot;numerical&quot;</span>
-<span class="c1">#     }</span>
-<span class="c1"># }</span>
-<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">46</span><span class="p">)]</span>
-<span class="n">tabular_features_config</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="p">{</span><span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;numerical&quot;</span><span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">}</span>
-
-
-<span class="k">def</span> <span class="nf">tabular_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Use in conjunction with Dataloader&#39;s collate_fn for tabular data.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    batch : dict</span>
-<span class="sd">        Dictionary with three keys: tabular_inputs, contexts, and labels. Tabular</span>
-<span class="sd">        inputs is a nested field, where each element is a feature_name -&gt; float tensor</span>
-<span class="sd">        mapping. Contexts defines examples that share the same context/query. e.g.</span>
-<span class="sd">        {</span>
-<span class="sd">            &#39;tabular_inputs&#39;: {&#39;I1&#39;: tensor([0., 0.]), &#39;C1&#39;: tensor([ 888., 1313.])},</span>
-<span class="sd">            &#39;labels&#39;: tensor([0, 0]),</span>
-<span class="sd">            &#39;contexts&#39;: tensor([0, 0])</span>
-<span class="sd">        }</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">contexts</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">tabular_inputs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
-        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-
-        <span class="n">context</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]</span>
-        <span class="n">contexts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tabular_features_config</span><span class="p">:</span>
-            <span class="n">feature</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tabular_inputs</span><span class="p">:</span>
-                <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tabular_inputs</span><span class="p">:</span>
-        <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-
-    <span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;tabular_inputs&quot;</span><span class="p">:</span> <span class="n">tabular_inputs</span><span class="p">,</span>
-        <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span>
-        <span class="s2">&quot;contexts&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">batch</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># we use a distil bert style architecture, with 2 layers, these</span>
+<span class="c1"># will be trained from scratch along with the CTR application</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;distilbert-base-uncased&quot;</span>
+<span class="n">n_layers</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1"># vocabulary size can be obtained from the data preprocessing script</span>
+<span class="n">pad_token_id</span> <span class="o">=</span> <span class="mi">148597</span>
+<span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">148598</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14387,10 +13857,121 @@ Name: count, dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">tabular_collate_fn</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># for category in ordinal_encoder.categories_:</span>
+<span class="c1">#     print(len(category))</span>
+<span class="n">features_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;tokenized_title&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;token_id&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;tokenized_query&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;token_id&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;numerical&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;gender&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vocab_size&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_size&quot;</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vocab_size&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_size&quot;</span><span class="p">:</span> <span class="mi">4</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;advertiser_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vocab_size&quot;</span><span class="p">:</span> <span class="mi">12193</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_size&quot;</span><span class="p">:</span> <span class="mi">32</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vocab_size&quot;</span><span class="p">:</span> <span class="mi">202547</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_size&quot;</span><span class="p">:</span> <span class="mi">64</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">text_tabular_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use in conjunction with Dataloader&#39;s collate_fn for text and tabular data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    batch : dict</span>
+<span class="sd">        Dictionary with 4 primary keys: input_ids, attention_mask, tabular_inputs, and labels.</span>
+<span class="sd">        Tabular inputs is a nested field, where each element is a feature_name -&gt; float tensor</span>
+<span class="sd">        mapping. e.g.</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;input_ids&#39;: tensor([[116438,  65110]]),</span>
+<span class="sd">            &#39;attention_mask&#39;: tensor([[1,  1]]),</span>
+<span class="sd">            &#39;tabular_inputs&#39;: {&#39;I1&#39;: tensor([0., 0.]), &#39;C1&#39;: tensor([ 888., 1313.])},</span>
+<span class="sd">            &#39;labels&#39;: tensor([0, 0])</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">token_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tabular_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">token_id</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span>
+            <span class="n">feature</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="n">feature</span>
+            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;token_id&quot;</span><span class="p">:</span>
+                <span class="n">token_id</span> <span class="o">+=</span> <span class="n">feature</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tabular_inputs</span><span class="p">:</span>
+                    <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">token_id</span><span class="p">:</span>
+            <span class="n">token_id</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+            <span class="n">token_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">tabular_inputs</span><span class="p">:</span>
+        <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">token_ids</span><span class="p">:</span>
+        <span class="n">input_ids</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">token_ids</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=</span><span class="n">pad_token_id</span><span class="p">)</span>
+        <span class="n">attention_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_ids</span> <span class="o">!=</span> <span class="n">pad_token_id</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_ids</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attention_mask</span>
+
+    <span class="n">output</span><span class="p">[</span><span class="s2">&quot;tabular_inputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tabular_inputs</span>
+    <span class="n">output</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">text_tabular_collate_fn</span><span class="p">)</span>
 <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">))</span>
 <span class="n">batch</span>
 </pre></div>
@@ -14405,60 +13986,24 @@ Name: count, dtype: int64</pre>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;tabular_inputs&#39;: {&#39;0&#39;: tensor([0.0075, 0.6037]),
-  &#39;1&#39;: tensor([0., 0.]),
-  &#39;2&#39;: tensor([1., 1.]),
-  &#39;3&#39;: tensor([0., 0.]),
-  &#39;4&#39;: tensor([0.0075, 0.6032]),
-  &#39;5&#39;: tensor([0., 0.]),
-  &#39;6&#39;: tensor([0., 0.]),
-  &#39;7&#39;: tensor([0., 0.]),
-  &#39;8&#39;: tensor([0., 0.]),
-  &#39;9&#39;: tensor([0., 0.]),
-  &#39;10&#39;: tensor([0.4711, 0.0000]),
-  &#39;11&#39;: tensor([0., 0.]),
-  &#39;12&#39;: tensor([1.0000, 0.1221]),
-  &#39;13&#39;: tensor([0., 0.]),
-  &#39;14&#39;: tensor([0.4775, 0.0000]),
-  &#39;15&#39;: tensor([0.0051, 0.9984]),
-  &#39;16&#39;: tensor([0.0000, 0.3750]),
-  &#39;17&#39;: tensor([0.5714, 1.0000]),
-  &#39;18&#39;: tensor([0., 0.]),
-  &#39;19&#39;: tensor([0.0048, 0.9981]),
-  &#39;20&#39;: tensor([0.7686, 0.0000]),
-  &#39;21&#39;: tensor([0.7277, 0.0000]),
-  &#39;22&#39;: tensor([0.7163, 0.1546]),
-  &#39;23&#39;: tensor([0.5821, 0.5557]),
-  &#39;24&#39;: tensor([0., 0.]),
-  &#39;25&#39;: tensor([0., 0.]),
-  &#39;26&#39;: tensor([0., 0.]),
-  &#39;27&#39;: tensor([0., 0.]),
-  &#39;28&#39;: tensor([0.7805, 0.0717]),
-  &#39;29&#39;: tensor([0.9624, 0.0000]),
-  &#39;30&#39;: tensor([0.9993, 0.0000]),
-  &#39;31&#39;: tensor([0.9615, 0.0000]),
-  &#39;32&#39;: tensor([0., 0.]),
-  &#39;33&#39;: tensor([0., 0.]),
-  &#39;34&#39;: tensor([0., 0.]),
-  &#39;35&#39;: tensor([0., 0.]),
-  &#39;36&#39;: tensor([0.7971, 0.0000]),
-  &#39;37&#39;: tensor([0.6973, 0.0000]),
-  &#39;38&#39;: tensor([0.7220, 0.1174]),
-  &#39;39&#39;: tensor([0.5826, 0.5606]),
-  &#39;40&#39;: tensor([0., 0.]),
-  &#39;41&#39;: tensor([0.0000, 0.2800]),
-  &#39;42&#39;: tensor([0., 0.]),
-  &#39;43&#39;: tensor([0.0000, 0.0037]),
-  &#39;44&#39;: tensor([0.0000, 0.3333]),
-  &#39;45&#39;: tensor([0.0070, 1.0000])},
- &#39;labels&#39;: tensor([0, 0]),
- &#39;contexts&#39;: tensor([0, 0])}</pre>
+<pre>{&#39;input_ids&#39;: tensor([[141907,  78371,      0,  64251,  69187,  23351, 110163,  74848,  60776,
+           78371,  45372],
+         [ 97424,      0,  74849, 127933,  62049, 142426, 121115,  74849, 148597,
+          148597, 148597]]),
+ &#39;attention_mask&#39;: tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]], dtype=torch.int32),
+ &#39;tabular_inputs&#39;: {&#39;depth&#39;: tensor([0., 0.]),
+  &#39;gender&#39;: tensor([2., 2.]),
+  &#39;age&#39;: tensor([6., 1.]),
+  &#39;advertiser_id&#39;: tensor([ 572., 1485.]),
+  &#39;user_id&#39;: tensor([3927., 3927.])},
+ &#39;labels&#39;: tensor([0, 0])}</pre>
 </div>
 
 </div>
@@ -14477,258 +14022,25 @@ Name: count, dtype: int64</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Learning to rank based approaches regardless of whether it's pairwise or listwise requires data from the same context/group to be in the same mini-batch. Given our input data is in a pointwise format where each row represents a query-document pair, some additional transformations are necessary. We'll use some toy examples to illustrate these points before showing the full blown implementation.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In pairwise loss, the trick is to expand the original 1d tensor for computing a pairwise difference.</p>
-<ul>
-<li>Context's pairwise difference signals which pairs belong to the same context. Pairs belonging to different context should be masked out during the loss calculation.</li>
-<li>Label's pairwise difference is symmetric, and we only need to consider pairs where the difference is positive and convert it to a binary label.</li>
-<li>Prediction score's pairwise difference will be input to our loss function.</li>
-</ul>
+<p>The model architecture we'll be implementing looks something along the lines of:</p>
+<img src="imgs/bert_ctr.png" width="75%" height="75%">
+<ol>
+<li>Feeding textual input through BERT style transformer block, converting categorical features into a low dimensonal embedding, packing all of our numerical features together.</li>
+<li>The output from 3 different field groups are concatenated together before feeding them into subsequent feed forward layers.</li>
+</ol>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pred_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="n">target_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">context_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-
-<span class="c1"># 6 total positive pairs</span>
-<span class="n">target_pairwise_diff</span> <span class="o">=</span> <span class="n">target_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">target_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;label:</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">target_pairwise_diff</span><span class="p">)</span>
-
-<span class="c1"># context pairs, shows pairs from the first 3 examples belonging to the same context 0,</span>
-<span class="c1"># and pairs from example 4, 5 belongs to the same context 1</span>
-<span class="n">context_pairwise_diff</span> <span class="o">=</span> <span class="n">context_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">context_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;context:</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">context_pairwise_diff</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>label:
-  tensor([[ 0.,  1.,  1.,  1.,  0.],
-        [-1.,  0.,  0.,  0., -1.],
-        [-1.,  0.,  0.,  0., -1.],
-        [-1.,  0.,  0.,  0., -1.],
-        [ 0.,  1.,  1.,  1.,  0.]])
-context:
-  tensor([[ True,  True,  True, False, False],
-        [ True,  True,  True, False, False],
-        [ True,  True,  True, False, False],
-        [False, False, False,  True,  True],
-        [False, False, False,  True,  True]])
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In listwise loss, loss are calculated once for all data within the same context/group. Hence apart from the predicted scores and target/labels, we also need to know which examples belong to the same context/group. One common way to do this is to assume the examples are already sorted by context, and have a group length variable which stores each group's instance count.</p>
-<p>In the example below, we have 5 observations belonging to 2 contexts/groups. <code>[3, 2]</code> means the fist 3 items belongs to the first group, whereas the next 2 items belongs to the second group. <code>torch.split</code> then splits the original single tensor into grouped chunks, in a vanilla implementation, we can loop through each group and compute the cross entropy loss.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pred_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="n">target_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">group_length_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-
-<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">pred</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">pred_tensor</span><span class="p">,</span> <span class="n">group_length_tensor</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">target_tensor</span><span class="p">,</span> <span class="n">group_length_tensor</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="p">):</span>
-    <span class="c1"># equivalent to cross entropy</span>
-    <span class="c1"># loss = -torch.dot(target, F.log_softmax(pred, dim=0))</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
-
-<span class="n">loop_listwise_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
-<span class="n">loop_listwise_loss</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[13]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>tensor([1.8152, 1.3133])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A cleaner solution would be to pad these grouped chunks and perform the calculation in a batched manner. The padding values do matter, where we'll use an extremely small prediction score with 0 as its corresponding label.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pred_group</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">pred_tensor</span><span class="p">,</span> <span class="n">group_length_tensor</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="n">target_group</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">target_tensor</span><span class="p">,</span> <span class="n">group_length_tensor</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="n">pred_pad</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">pred_group</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mf">1e4</span><span class="p">)</span>
-<span class="n">target_pad</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">target_group</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pred_pad</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">target_pad</span><span class="p">)</span>
-
-<span class="n">loss_fct</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
-<span class="n">batch_listwise_loss</span> <span class="o">=</span> <span class="n">loss_fct</span><span class="p">(</span><span class="n">pred_pad</span><span class="p">,</span> <span class="n">target_pad</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">batch_listwise_loss</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">loop_listwise_loss</span><span class="p">,</span> <span class="n">batch_listwise_loss</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>tensor([[ 1.0000e+00,  2.0000e+00,  3.0000e+00],
-        [ 1.0000e+00,  2.0000e+00, -1.0000e+04]])
-tensor([[0., 1., 1.],
-        [1., 0., 0.]])
-tensor([1.8152, 1.3133])
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_pairwise_loss</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">contexts</span><span class="p">):</span>    
-    <span class="n">logits_positive</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">logits_positive_diff</span> <span class="o">=</span> <span class="n">logits_positive</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">logits_positive</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="n">labels_pairwise_diff</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">labels_positive_mask</span> <span class="o">=</span> <span class="n">labels_pairwise_diff</span> <span class="o">&gt;</span> <span class="mi">0</span>
-    <span class="n">context_pairwise_diff</span> <span class="o">=</span> <span class="n">contexts</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">contexts</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="n">loss_fct</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LogSigmoid</span><span class="p">()</span>
-    <span class="n">logits_positive_masked</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">masked_select</span><span class="p">(</span><span class="n">logits_positive_diff</span><span class="p">,</span> <span class="n">labels_positive_mask</span> <span class="o">*</span> <span class="n">context_pairwise_diff</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logits_positive_masked</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">pairwise_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pairwise_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">loss_fct</span><span class="p">(</span><span class="n">logits_positive_masked</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">pairwise_loss</span>
-
-
-<span class="k">def</span> <span class="nf">compute_listwise_loss</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">contexts</span><span class="p">):</span>
-    <span class="n">sorted_contexts</span><span class="p">,</span> <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span>
-    <span class="n">sorted_labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span>
-    <span class="n">logits_positive</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">sorted_logits_positive</span> <span class="o">=</span> <span class="n">logits_positive</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span>
-
-    <span class="c1"># contexts should already be sorted, using unique_consecutive as opposed to</span>
-    <span class="c1"># unique for avoiding additional sorting</span>
-    <span class="n">unique_contexts</span><span class="p">,</span> <span class="n">group_length</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique_consecutive</span><span class="p">(</span><span class="n">contexts</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">logits_positive_group</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sorted_logits_positive</span><span class="p">,</span> <span class="n">group_length</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-    <span class="n">labels_group</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sorted_labels</span><span class="p">,</span> <span class="n">group_length</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-
-    <span class="c1"># for logits, pad with an extremely small prediction score, this default value works even</span>
-    <span class="c1"># when using float16 mixed precision training</span>
-    <span class="n">logits_pad</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">logits_positive_group</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=-</span><span class="mf">1e+4</span><span class="p">)</span>
-    <span class="n">labels_pad</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">labels_group</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-
-    <span class="c1"># we ensure there are more than 1 examples and at least 1 positive</span>
-    <span class="c1"># examples per group/context</span>
-    <span class="n">group_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">group_length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">labels_pad</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">logits_pad</span> <span class="o">=</span> <span class="n">logits_pad</span><span class="p">[</span><span class="n">group_mask</span><span class="p">]</span>
-    <span class="n">labels_pad</span> <span class="o">=</span> <span class="n">labels_pad</span><span class="p">[</span><span class="n">group_mask</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logits_pad</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">loss_fct</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">)</span>
-        <span class="n">listwise_loss</span> <span class="o">=</span> <span class="n">loss_fct</span><span class="p">(</span><span class="n">logits_pad</span><span class="p">,</span> <span class="n">labels_pad</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">listwise_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>            
-
-    <span class="k">return</span> <span class="n">listwise_loss</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_mlp_layers</span><span class="p">(</span><span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mlp_config</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Construct MLP, a.k.a. Feed forward layers based on input config.</span>
-
+<span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    input_dim : </span>
@@ -14782,8 +14094,10 @@ tensor([1.8152, 1.3133])
             <span class="n">activation</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">nn</span><span class="p">,</span> <span class="n">activation_function</span><span class="p">)(</span><span class="o">**</span><span class="n">activation_function_kwargs</span><span class="p">)</span>
             <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
 
-        <span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout_p</span><span class="p">)</span>
-        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dropout_p</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout_p</span><span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+
         <span class="n">current_dim</span> <span class="o">=</span> <span class="n">hidden_size</span>
 
     <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">),</span> <span class="n">current_dim</span>
@@ -14794,26 +14108,40 @@ tensor([1.8152, 1.3133])
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The next code block involves defining a config and model class following huggingface transformer's class structure <a href="https://huggingface.co/docs/transformers/custom_models">[3]</a>. This allows us to leverage its Trainer class for training and evaluating our models instead of writing custom training loops.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TabularModelConfig</span><span class="p">(</span><span class="n">PretrainedConfig</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TextTabularModelConfig</span><span class="p">(</span><span class="n">PretrainedConfig</span><span class="p">):</span>
+
+    <span class="n">model_type</span> <span class="o">=</span> <span class="s2">&quot;text_tabular&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">tabular_features_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">features_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">mlp_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">num_labels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">loss_name</span><span class="o">=</span><span class="s2">&quot;listwise&quot;</span><span class="p">,</span>
+        <span class="n">num_labels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;distilbert-base-uncased&quot;</span><span class="p">,</span>
+        <span class="n">pretrained_model_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tabular_features_config</span> <span class="o">=</span> <span class="n">tabular_features_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_config</span> <span class="o">=</span> <span class="n">features_config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mlp_config</span> <span class="o">=</span> <span class="n">mlp_config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_labels</span> <span class="o">=</span> <span class="n">num_labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_name</span> <span class="o">=</span> <span class="n">loss_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_pretrained</span> <span class="o">=</span> <span class="n">use_pretrained</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pretrained_model_config</span> <span class="o">=</span> <span class="n">pretrained_model_config</span>
 </pre></div>
 
     </div>
@@ -14823,88 +14151,145 @@ tensor([1.8152, 1.3133])
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TabularModel</span><span class="p">(</span><span class="n">PreTrainedModel</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mean_pool</span><span class="p">(</span><span class="n">last_hidden_state</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform mean pooling over sequence len dimension, exclude ones that are attention masked.</span>
 
-    <span class="n">config_class</span> <span class="o">=</span> <span class="n">TabularModelConfig</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    last_hidden_state : tensor</span>
+<span class="sd">        Size of [batch_size, sequence_len, hidden dimension]</span>
+
+<span class="sd">    attention_mask : tensor</span>
+<span class="sd">        Size of [batch size, sequence_len]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    embedding : tensor</span>
+<span class="sd">        Size of [batch size, hidden dimension]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># [..., None] is the same as unsqueeze last dimension</span>
+    <span class="n">last_hidden_masked</span> <span class="o">=</span> <span class="n">last_hidden_state</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="o">~</span><span class="n">attention_mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">(),</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">embedding</span> <span class="o">=</span> <span class="n">last_hidden_masked</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">attention_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">embedding</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TextTabularModel</span><span class="p">(</span><span class="n">PreTrainedModel</span><span class="p">):</span>
+
+    <span class="n">config_class</span> <span class="o">=</span> <span class="n">TextTabularModelConfig</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">output_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_tabular_parameters</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">tabular_features_config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">,</span> <span class="n">output_dim</span> <span class="o">=</span> <span class="n">get_mlp_layers</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">mlp_config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">use_pretrained</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bert</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bert_config</span> <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">pretrained_model_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bert</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">bert_config</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">categorical_embeddings</span><span class="p">,</span> <span class="n">categorical_dim</span><span class="p">,</span> <span class="n">numerical_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_tabular_parameters</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">features_config</span>
+        <span class="p">)</span>
+
+        <span class="c1"># note, different pre-trained models might have different attribute name for hidden dimension</span>
+        <span class="n">text_hidden_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bert</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dim</span>
+        <span class="n">mlp_hidden_dim</span> <span class="o">=</span> <span class="n">text_hidden_dim</span> <span class="o">+</span> <span class="n">categorical_dim</span> <span class="o">+</span> <span class="n">numerical_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">,</span> <span class="n">output_dim</span> <span class="o">=</span> <span class="n">get_mlp_layers</span><span class="p">(</span><span class="n">mlp_hidden_dim</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">mlp_config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_labels</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">loss_name</span> <span class="o">==</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">compute_pairwise_loss</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">compute_listwise_loss</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabular_inputs</span><span class="p">,</span> <span class="n">contexts</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">concatenated_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_tabular_inputs</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">tabular_inputs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">last_hidden_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bert</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">)</span><span class="o">.</span><span class="n">last_hidden_state</span>
+        <span class="n">text_embedding</span> <span class="o">=</span> <span class="n">mean_pool</span><span class="p">(</span><span class="n">last_hidden_state</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">)</span>
+        
+        <span class="n">categorical_inputs</span><span class="p">,</span> <span class="n">numerical_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_tabular_inputs</span><span class="p">(</span>
             <span class="n">tabular_inputs</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tabular_features_config</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">features_config</span>
         <span class="p">)</span>
-        <span class="n">mlp_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">concatenated_inputs</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_inputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">numerical_inputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text_tabular_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">text_embedding</span><span class="p">,</span> <span class="n">categorical_inputs</span><span class="p">,</span> <span class="n">numerical_inputs</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">categorical_inputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text_tabular_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">text_embedding</span><span class="p">,</span> <span class="n">categorical_inputs</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">numerical_inputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text_tabular_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">text_embedding</span><span class="p">,</span> <span class="n">numerical_inputs</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">mlp_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">text_tabular_inputs</span><span class="p">)</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">mlp_outputs</span><span class="p">)</span>
 
         <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">contexts</span><span class="p">)</span>
+            <span class="n">loss_fct</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fct</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">contexts</span>
+        <span class="c1"># at the bare minimum, we need to return loss as well as logits</span>
+        <span class="c1"># for both training and evaluation</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">concatenate_tabular_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">tabular_features_config</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_tabular_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabular_inputs</span><span class="p">,</span> <span class="n">features_config</span><span class="p">):</span>
         <span class="n">numerical_inputs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">categorical_inputs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">tabular_features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
                 <span class="n">feature_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_embedding&quot;</span>
                 <span class="n">share_embedding</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;share_embedding&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">share_embedding</span><span class="p">:</span>
                     <span class="n">feature_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">share_embedding</span><span class="si">}</span><span class="s2">_embedding&quot;</span>
 
-                <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embeddings</span><span class="p">[</span><span class="n">feature_name</span><span class="p">]</span>
-                <span class="n">features</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
-                <span class="n">embed</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+                <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_embeddings</span><span class="p">[</span><span class="n">feature_name</span><span class="p">]</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+                <span class="n">embed</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>                
                 <span class="n">categorical_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">embed</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;numerical&quot;</span><span class="p">:</span>
-                <span class="n">features</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="n">tabular_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
                 <span class="n">numerical_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">numerical_inputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">numerical_inputs</span><span class="p">:</span>
             <span class="n">numerical_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">numerical_inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">categorical_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numerical_inputs</span><span class="p">)</span>
-        <span class="n">concatenated_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">categorical_inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">concatenated_inputs</span>
+        <span class="k">if</span> <span class="n">categorical_inputs</span><span class="p">:</span>
+            <span class="n">categorical_inputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">categorical_inputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">init_tabular_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabular_features_config</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">categorical_inputs</span><span class="p">,</span> <span class="n">numerical_inputs</span>
+
+    <span class="k">def</span> <span class="nf">init_tabular_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features_config</span><span class="p">):</span>
         <span class="n">embeddings</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">tabular_features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">categorical_dim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">numerical_dim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
-                <span class="n">feature_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_embedding&quot;</span>
                 <span class="c1"># create new embedding layer for categorical features if share_embedding is None</span>
                 <span class="n">share_embedding</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;share_embedding&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">share_embedding</span><span class="p">:</span>
-                    <span class="n">share_embedding_config</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">pairwise_features_info</span><span class="p">[</span><span class="n">share_embedding</span><span class="p">]</span>
+                    <span class="n">share_embedding_config</span> <span class="o">=</span> <span class="n">tabular_features_config</span><span class="p">[</span><span class="n">share_embedding</span><span class="p">]</span>
                     <span class="n">embedding_size</span> <span class="o">=</span> <span class="n">share_embedding_config</span><span class="p">[</span><span class="s2">&quot;embedding_size&quot;</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">embedding_size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;embedding_size&quot;</span><span class="p">]</span>
                     <span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;vocab_size&quot;</span><span class="p">],</span> <span class="n">embedding_size</span><span class="p">)</span>
-                    <span class="n">embeddings</span><span class="p">[</span><span class="n">feature_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding</span>
+                    <span class="n">embedding_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_embedding&quot;</span>
+                    <span class="n">embeddings</span><span class="p">[</span><span class="n">embedding_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding</span>
 
-                <span class="n">output_dim</span> <span class="o">+=</span> <span class="n">embedding_size</span>
+                <span class="n">categorical_dim</span> <span class="o">+=</span> <span class="n">embedding_size</span>
             <span class="k">elif</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;numerical&quot;</span><span class="p">:</span>
-                <span class="n">output_dim</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">numerical_dim</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">embeddings</span><span class="p">),</span> <span class="n">output_dim</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">embeddings</span><span class="p">),</span> <span class="n">categorical_dim</span><span class="p">,</span> <span class="n">numerical_dim</span>
 </pre></div>
 
     </div>
@@ -14914,7 +14299,7 @@ tensor([1.8152, 1.3133])
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mlp_config</span> <span class="o">=</span> <span class="p">[</span>
@@ -14937,10 +14322,20 @@ tensor([1.8152, 1.3133])
         <span class="s2">&quot;normalization_function&quot;</span><span class="p">:</span> <span class="s2">&quot;LayerNorm&quot;</span>
     <span class="p">}</span>
 <span class="p">]</span>
-<span class="n">config</span> <span class="o">=</span> <span class="n">TabularModelConfig</span><span class="p">(</span><span class="n">tabular_features_config</span><span class="p">,</span> <span class="n">mlp_config</span><span class="p">,</span> <span class="n">loss_name</span><span class="o">=</span><span class="s2">&quot;listwise&quot;</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">TabularModel</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# of parameters: &quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">num_parameters</span><span class="p">())</span>
-<span class="n">model</span>
+<span class="n">pretrained_model_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;vocab_size&quot;</span><span class="p">:</span> <span class="n">vocab_size</span><span class="p">,</span>
+    <span class="s2">&quot;n_layers&quot;</span><span class="p">:</span> <span class="n">n_layers</span><span class="p">,</span>
+    <span class="s2">&quot;pad_token_id&quot;</span><span class="p">:</span> <span class="n">pad_token_id</span>
+<span class="p">}</span>
+<span class="n">text_tabular_config</span> <span class="o">=</span> <span class="n">TextTabularModelConfig</span><span class="p">(</span>
+    <span class="n">features_config</span><span class="o">=</span><span class="n">features_config</span><span class="p">,</span>
+    <span class="n">mlp_config</span><span class="o">=</span><span class="n">mlp_config</span><span class="p">,</span>
+    <span class="n">pretrained_model_config</span><span class="o">=</span><span class="n">pretrained_model_config</span><span class="p">,</span>
+    <span class="n">use_pretrained</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="n">text_tabular_model</span> <span class="o">=</span> <span class="n">TextTabularModel</span><span class="p">(</span><span class="n">text_tabular_config</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of parameters: &quot;</span><span class="p">,</span> <span class="n">text_tabular_model</span><span class="o">.</span><span class="n">num_parameters</span><span class="p">())</span>
+<span class="n">text_tabular_model</span>
 </pre></div>
 
     </div>
@@ -14957,23 +14352,57 @@ tensor([1.8152, 1.3133])
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre># of parameters:  708097
+<pre>number of parameters:  143602190
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[19]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>TabularModel(
-  (embeddings): ModuleDict()
+<pre>TextTabularModel(
+  (bert): DistilBertModel(
+    (embeddings): Embeddings(
+      (word_embeddings): Embedding(148598, 768, padding_idx=148597)
+      (position_embeddings): Embedding(512, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+      (dropout): Dropout(p=0.1, inplace=False)
+    )
+    (transformer): Transformer(
+      (layer): ModuleList(
+        (0-1): 2 x TransformerBlock(
+          (attention): MultiHeadSelfAttention(
+            (dropout): Dropout(p=0.1, inplace=False)
+            (q_lin): Linear(in_features=768, out_features=768, bias=True)
+            (k_lin): Linear(in_features=768, out_features=768, bias=True)
+            (v_lin): Linear(in_features=768, out_features=768, bias=True)
+            (out_lin): Linear(in_features=768, out_features=768, bias=True)
+          )
+          (sa_layer_norm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+          (ffn): FFN(
+            (dropout): Dropout(p=0.1, inplace=False)
+            (lin1): Linear(in_features=768, out_features=3072, bias=True)
+            (lin2): Linear(in_features=3072, out_features=768, bias=True)
+            (activation): GELUActivation()
+          )
+          (output_layer_norm): LayerNorm((768,), eps=1e-12, elementwise_affine=True)
+        )
+      )
+    )
+  )
+  (categorical_embeddings): ModuleDict(
+    (gender_embedding): Embedding(4, 4)
+    (age_embedding): Embedding(7, 4)
+    (advertiser_id_embedding): Embedding(12193, 32)
+    (user_id_embedding): Embedding(202547, 64)
+  )
   (mlp): Sequential(
-    (0): Linear(in_features=46, out_features=1024, bias=True)
+    (0): Linear(in_features=873, out_features=1024, bias=True)
     (1): LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
     (2): ReLU()
     (3): Dropout(p=0.1, inplace=False)
@@ -14986,7 +14415,7 @@ tensor([1.8152, 1.3133])
     (10): ReLU()
     (11): Dropout(p=0.1, inplace=False)
   )
-  (head): Linear(in_features=256, out_features=1, bias=True)
+  (head): Linear(in_features=256, out_features=2, bias=True)
 )</pre>
 </div>
 
@@ -14998,19 +14427,71 @@ tensor([1.8152, 1.3133])
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a quick test on a sample batch to ensure model forward pass runs</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">text_tabular_model</span><span class="p">(</span><span class="o">**</span><span class="n">batch</span><span class="p">)</span>
+<span class="n">output</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(tensor(0.6199, grad_fn=&lt;NllLossBackward0&gt;),
+ tensor([[0.5591, 0.4409],
+         [0.5177, 0.4823]], grad_fn=&lt;SoftmaxBackward0&gt;))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Rest of the code block defines boilerplate code for leveraging huggingface transformer's Trainer, as well as defining a <code>compute_metrics</code> function for calculating standard binary classification related metrics.</p>
+<p>We'll also train a <code>AutoModelForSequenceClassification</code> model as our baseline. This allows us to compare whether incorporating tabular features on top of text features will result in performance gains.</p>
+<p>There're many ways tips and tricks for training our model in a transfer learning setting <a href="https://arxiv.org/abs/1905.05583">[7]</a> <a href="https://www.masterfulai.com/blog/getting-the-most-out-of-transfer-learning">[8]</a> <a href="https://medium.com/mantisnlp/going-the-extra-mile-lessons-learnt-from-kaggle-on-how-to-train-better-nlp-models-part-ii-abf38153c0ed">[9]</a>. e.g.</p>
+<ul>
+<li>Two stage training. The model is first trained to convergence with a frozen encoder, then unfrozen and fine-tuned along with the entire model.</li>
+<li>Differential (a.k.a layer-wise) learning rate. The idea is to have different learning rates for different parts/layers of our model. Intuition behind this is initial layers in a pre-trained model likely have learned general features which we don't want to modify as much, hence we should be setting a smaller learning rate for those parts of the model.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="n">eval_preds</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reports NDCG metrics&quot;&quot;&quot;</span>
-    <span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span> <span class="n">y_true</span> <span class="o">=</span> <span class="n">eval_preds</span>
+    <span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span> <span class="o">=</span> <span class="n">eval_preds</span>
+    <span class="n">y_score</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">y_score</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">ndcg_metrics</span> <span class="o">=</span> <span class="n">torchmetrics</span><span class="o">.</span><span class="n">retrieval</span><span class="o">.</span><span class="n">RetrievalNormalizedDCG</span><span class="p">(</span><span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">ndcg</span> <span class="o">=</span> <span class="n">ndcg_metrics</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">y_score</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">y_true</span><span class="p">),</span> <span class="n">indexes</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">context</span><span class="p">))</span>
+    <span class="n">log_loss</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">log_loss</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">),</span> <span class="n">round_digits</span><span class="p">)</span>
+    <span class="n">roc_auc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">),</span> <span class="n">round_digits</span><span class="p">)</span>
+    <span class="n">pr_auc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">average_precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_score</span><span class="p">),</span> <span class="n">round_digits</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;ndcg&#39;</span><span class="p">:</span> <span class="n">ndcg</span>
+        <span class="s2">&quot;roc_auc&quot;</span><span class="p">:</span> <span class="n">roc_auc</span><span class="p">,</span>
+        <span class="s2">&quot;pr_auc&quot;</span><span class="p">:</span> <span class="n">pr_auc</span><span class="p">,</span>
+        <span class="s2">&quot;log_loss&quot;</span><span class="p">:</span> <span class="n">log_loss</span>
     <span class="p">}</span>
 </pre></div>
 
@@ -15019,34 +14500,26 @@ tensor([1.8152, 1.3133])
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>When training a learning to rank model, an important detail is to prevent data shuffling in our data loader so data from the same context can be grouped together in a mini-batch. At the time of writing this, huggingface transformer's Trainer will by default enable shuffling on our train dataset. We quickly override that behaviour by using <code>get_test_dataloader</code> even for our train dataloader. This addresses the issue with the least amount of code with the quirk being now <code>per_device_eval_batch_size</code> will also be used for <code>per_device_train_batch_size</code>, which can be a bit confusing.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">TabularRankingTrainer</span><span class="p">(</span><span class="n">Trainer</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># differential learning rate, lower learning rate for bert part</span>
+<span class="c1"># of the network, given our bert is not a pre-trained model, we</span>
+<span class="c1"># won&#39;t use layer-wise decreasing learning rate</span>
+<span class="n">bert_params</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">other_params</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">text_tabular_model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;bert.&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">bert_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">other_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        We should confirm context from this data loader isn&#39;t shuffled.</span>
-
-<span class="sd">        ```</span>
-<span class="sd">        dl = trainer.get_train_dataloader()</span>
-<span class="sd">        next(iter(dl))[&quot;contexts&quot;]</span>
-<span class="sd">        ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Trainer: training requires a train_dataset.&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_test_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dataset</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">bert_params</span><span class="p">,</span> <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">other_params</span><span class="p">,</span> <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">}</span>
+<span class="p">])</span>
 </pre></div>
 
     </div>
@@ -15056,44 +14529,43 @@ tensor([1.8152, 1.3133])
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DISABLE_MLFLOW_INTEGRATION&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
 <span class="n">training_args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;tabular&quot;</span><span class="p">,</span>
-    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
-    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;text_tabular&quot;</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
     <span class="n">gradient_accumulation_steps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">fp16</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">lr_scheduler_type</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span>
     <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span>
-    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span>
-    <span class="n">save_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">save_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">do_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="c1"># we are collecting all tabular features into a single entry</span>
     <span class="c1"># tabular_inputs during collate function, this is to prevent</span>
     <span class="c1"># huggingface trainer from removing these features while processing</span>
     <span class="c1"># our dataset</span>
-    <span class="n">remove_unused_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">remove_unused_columns</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
-<span class="n">trainer</span> <span class="o">=</span> <span class="n">TabularRankingTrainer</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">,</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">text_tabular_model</span><span class="p">,</span>
     <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
-    <span class="n">data_collator</span><span class="o">=</span><span class="n">tabular_collate_fn</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">text_tabular_collate_fn</span><span class="p">,</span>
     <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_train</span><span class="p">,</span>
-    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_validation</span><span class="p">,</span>
-    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_test</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span><span class="p">,</span>
+    <span class="n">optimizers</span><span class="o">=</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="c1"># on this multi-level graded validation dataset, pairwise/listwise</span>
-<span class="c1"># loss gives a 0.69 - 0.70 NDCG@5</span>
+<span class="c1"># 0.709</span>
 <span class="n">train_output</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 </pre></div>
 
@@ -15110,10 +14582,303 @@ tensor([1.8152, 1.3133])
     <div class="prompt"></div>
 
 
+
+<div class="output_html rendered_html output_subarea ">
+    <div>
+      
+      <progress value='14062' max='14062' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [14062/14062 37:18, Epoch 1/2]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+ <tr style="text-align: left;">
+      <th>Step</th>
+      <th>Training Loss</th>
+      <th>Validation Loss</th>
+      <th>Loss</th>
+      <th>Roc Auc</th>
+      <th>Pr Auc</th>
+      <th>Runtime</th>
+      <th>Samples Per Second</th>
+      <th>Steps Per Second</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1000</td>
+      <td>0.200200</td>
+      <td>0.199000</td>
+      <td>0.199228</td>
+      <td>0.645000</td>
+      <td>0.110000</td>
+      <td>91.491700</td>
+      <td>1092.995000</td>
+      <td>136.624000</td>
+    </tr>
+    <tr>
+      <td>2000</td>
+      <td>0.196000</td>
+      <td>0.202000</td>
+      <td>0.202408</td>
+      <td>0.657000</td>
+      <td>0.117000</td>
+      <td>91.507000</td>
+      <td>1092.812000</td>
+      <td>136.602000</td>
+    </tr>
+    <tr>
+      <td>3000</td>
+      <td>0.200000</td>
+      <td>0.200000</td>
+      <td>0.199665</td>
+      <td>0.661000</td>
+      <td>0.096000</td>
+      <td>92.473900</td>
+      <td>1081.386000</td>
+      <td>135.173000</td>
+    </tr>
+    <tr>
+      <td>4000</td>
+      <td>0.197900</td>
+      <td>0.196000</td>
+      <td>0.195827</td>
+      <td>0.677000</td>
+      <td>0.124000</td>
+      <td>90.559000</td>
+      <td>1104.253000</td>
+      <td>138.032000</td>
+    </tr>
+    <tr>
+      <td>5000</td>
+      <td>0.195000</td>
+      <td>0.194000</td>
+      <td>0.194292</td>
+      <td>0.683000</td>
+      <td>0.127000</td>
+      <td>92.309600</td>
+      <td>1083.311000</td>
+      <td>135.414000</td>
+    </tr>
+    <tr>
+      <td>6000</td>
+      <td>0.194500</td>
+      <td>0.193000</td>
+      <td>0.192818</td>
+      <td>0.692000</td>
+      <td>0.133000</td>
+      <td>89.654800</td>
+      <td>1115.389000</td>
+      <td>139.424000</td>
+    </tr>
+    <tr>
+      <td>7000</td>
+      <td>0.192800</td>
+      <td>0.192000</td>
+      <td>0.192244</td>
+      <td>0.698000</td>
+      <td>0.134000</td>
+      <td>91.605200</td>
+      <td>1091.641000</td>
+      <td>136.455000</td>
+    </tr>
+    <tr>
+      <td>8000</td>
+      <td>0.188300</td>
+      <td>0.193000</td>
+      <td>0.193351</td>
+      <td>0.696000</td>
+      <td>0.134000</td>
+      <td>90.521800</td>
+      <td>1104.706000</td>
+      <td>138.088000</td>
+    </tr>
+    <tr>
+      <td>9000</td>
+      <td>0.183800</td>
+      <td>0.194000</td>
+      <td>0.193508</td>
+      <td>0.701000</td>
+      <td>0.136000</td>
+      <td>90.866100</td>
+      <td>1100.520000</td>
+      <td>137.565000</td>
+    </tr>
+    <tr>
+      <td>10000</td>
+      <td>0.184800</td>
+      <td>0.192000</td>
+      <td>0.192026</td>
+      <td>0.702000</td>
+      <td>0.135000</td>
+      <td>90.745200</td>
+      <td>1101.987000</td>
+      <td>137.748000</td>
+    </tr>
+    <tr>
+      <td>11000</td>
+      <td>0.183800</td>
+      <td>0.192000</td>
+      <td>0.191573</td>
+      <td>0.705000</td>
+      <td>0.139000</td>
+      <td>90.199200</td>
+      <td>1108.657000</td>
+      <td>138.582000</td>
+    </tr>
+    <tr>
+      <td>12000</td>
+      <td>0.182600</td>
+      <td>0.195000</td>
+      <td>0.194737</td>
+      <td>0.699000</td>
+      <td>0.141000</td>
+      <td>90.359400</td>
+      <td>1106.692000</td>
+      <td>138.337000</td>
+    </tr>
+    <tr>
+      <td>13000</td>
+      <td>0.186800</td>
+      <td>0.191000</td>
+      <td>0.190699</td>
+      <td>0.709000</td>
+      <td>0.142000</td>
+      <td>90.229900</td>
+      <td>1108.280000</td>
+      <td>138.535000</td>
+    </tr>
+    <tr>
+      <td>14000</td>
+      <td>0.186700</td>
+      <td>0.192000</td>
+      <td>0.191811</td>
+      <td>0.708000</td>
+      <td>0.144000</td>
+      <td>87.963800</td>
+      <td>1136.832000</td>
+      <td>142.104000</td>
+    </tr>
+  </tbody>
+</table><p></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">text_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use in conjunction with Dataloader&#39;s collate_fn for text data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    batch : dict</span>
+<span class="sd">        Dictionary with 3 primary keys: input_ids, attention_mask, and labels. e.g.</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;input_ids&#39;: tensor([[116438,  65110]]),</span>
+<span class="sd">            &#39;attention_mask&#39;: tensor([[1,  1]]),</span>
+<span class="sd">            &#39;labels&#39;: tensor([0, 0])</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">texts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">token_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">token_id</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">features_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span>
+            <span class="n">feature</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="n">feature</span>
+            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;token_id&quot;</span><span class="p">:</span>
+                <span class="n">token_id</span> <span class="o">+=</span> <span class="n">feature</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="n">texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">token_id</span><span class="p">:</span>
+            <span class="n">token_id</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+            <span class="n">token_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">texts</span><span class="p">:</span>
+        <span class="n">tokenized</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokenized</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">token_ids</span><span class="p">:</span>
+        <span class="n">input_ids</span> <span class="o">=</span> <span class="n">pad_sequence</span><span class="p">(</span><span class="n">token_ids</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding_value</span><span class="o">=</span><span class="n">pad_token_id</span><span class="p">)</span>
+        <span class="n">attention_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_ids</span> <span class="o">!=</span> <span class="n">pad_token_id</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_ids</span>
+        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;attention_mask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attention_mask</span>
+
+    <span class="n">output</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bert_config</span> <span class="o">=</span> <span class="n">AutoConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">pretrained_model_config</span><span class="p">)</span>
+<span class="n">text_model</span> <span class="o">=</span> <span class="n">AutoModelForSequenceClassification</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">bert_config</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of parameters: &quot;</span><span class="p">,</span> <span class="n">text_model</span><span class="o">.</span><span class="n">num_parameters</span><span class="p">())</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">text_model</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">text_collate_fn</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_train</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_test</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics</span>
+<span class="p">)</span>
+<span class="n">train_output</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>number of parameters:  129285890
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>/usr/local/lib/python3.10/dist-packages/transformers/optimization.py:411: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
   warnings.warn(
-Could not estimate the number of tokens of the input, floating-point operations will not be computed
 </pre>
 </div>
 </div>
@@ -15127,8 +14892,8 @@ Could not estimate the number of tokens of the input, floating-point operations 
 <div class="output_html rendered_html output_subarea ">
     <div>
       
-      <progress value='8900' max='8900' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [8900/8900 08:24, Epoch 49/50]
+      <progress value='14062' max='14062' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [14062/14062 29:21, Epoch 1/2]
     </div>
     <table border="1" class="dataframe">
   <thead>
@@ -15136,111 +14901,168 @@ Could not estimate the number of tokens of the input, floating-point operations 
       <th>Step</th>
       <th>Training Loss</th>
       <th>Validation Loss</th>
-      <th>Ndcg</th>
+      <th>Loss</th>
+      <th>Roc Auc</th>
+      <th>Pr Auc</th>
+      <th>Runtime</th>
+      <th>Samples Per Second</th>
+      <th>Steps Per Second</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>500</td>
-      <td>21.815300</td>
-      <td>20.822407</td>
-      <td>0.489811</td>
-    </tr>
-    <tr>
       <td>1000</td>
-      <td>21.282800</td>
-      <td>20.460518</td>
-      <td>0.510252</td>
-    </tr>
-    <tr>
-      <td>1500</td>
-      <td>20.930400</td>
-      <td>20.099937</td>
-      <td>0.522047</td>
+      <td>0.198400</td>
+      <td>0.841000</td>
+      <td>0.199994</td>
+      <td>0.644000</td>
+      <td>0.113000</td>
+      <td>69.422000</td>
+      <td>1440.465000</td>
+      <td>180.058000</td>
     </tr>
     <tr>
       <td>2000</td>
-      <td>20.950900</td>
-      <td>19.581291</td>
-      <td>0.556249</td>
-    </tr>
-    <tr>
-      <td>2500</td>
-      <td>20.370300</td>
-      <td>19.352951</td>
-      <td>0.573809</td>
+      <td>0.194400</td>
+      <td>0.841000</td>
+      <td>0.199953</td>
+      <td>0.658000</td>
+      <td>0.122000</td>
+      <td>71.157800</td>
+      <td>1405.327000</td>
+      <td>175.666000</td>
     </tr>
     <tr>
       <td>3000</td>
-      <td>20.088400</td>
-      <td>18.906128</td>
-      <td>0.593706</td>
-    </tr>
-    <tr>
-      <td>3500</td>
-      <td>19.419700</td>
-      <td>18.469860</td>
-      <td>0.610612</td>
+      <td>0.200000</td>
+      <td>0.828000</td>
+      <td>0.197143</td>
+      <td>0.665000</td>
+      <td>0.128000</td>
+      <td>71.895300</td>
+      <td>1390.911000</td>
+      <td>173.864000</td>
     </tr>
     <tr>
       <td>4000</td>
-      <td>19.186300</td>
-      <td>18.217682</td>
-      <td>0.618409</td>
-    </tr>
-    <tr>
-      <td>4500</td>
-      <td>19.342700</td>
-      <td>17.893827</td>
-      <td>0.647029</td>
+      <td>0.197900</td>
+      <td>0.841000</td>
+      <td>0.198350</td>
+      <td>0.669000</td>
+      <td>0.128000</td>
+      <td>70.564600</td>
+      <td>1417.142000</td>
+      <td>177.143000</td>
     </tr>
     <tr>
       <td>5000</td>
-      <td>18.695400</td>
-      <td>17.563608</td>
-      <td>0.658074</td>
-    </tr>
-    <tr>
-      <td>5500</td>
-      <td>18.484600</td>
-      <td>17.467468</td>
-      <td>0.663601</td>
+      <td>0.195500</td>
+      <td>0.841000</td>
+      <td>0.195767</td>
+      <td>0.673000</td>
+      <td>0.131000</td>
+      <td>70.091500</td>
+      <td>1426.706000</td>
+      <td>178.338000</td>
     </tr>
     <tr>
       <td>6000</td>
-      <td>17.947200</td>
-      <td>17.103064</td>
-      <td>0.675647</td>
-    </tr>
-    <tr>
-      <td>6500</td>
-      <td>17.924100</td>
-      <td>16.729994</td>
-      <td>0.684831</td>
+      <td>0.196400</td>
+      <td>0.841000</td>
+      <td>0.195500</td>
+      <td>0.677000</td>
+      <td>0.131000</td>
+      <td>70.318200</td>
+      <td>1422.107000</td>
+      <td>177.763000</td>
     </tr>
     <tr>
       <td>7000</td>
-      <td>17.969500</td>
-      <td>16.560793</td>
-      <td>0.689212</td>
-    </tr>
-    <tr>
-      <td>7500</td>
-      <td>17.559800</td>
-      <td>16.929613</td>
-      <td>0.694637</td>
+      <td>0.195100</td>
+      <td>0.841000</td>
+      <td>0.194443</td>
+      <td>0.676000</td>
+      <td>0.133000</td>
+      <td>71.554400</td>
+      <td>1397.538000</td>
+      <td>174.692000</td>
     </tr>
     <tr>
       <td>8000</td>
-      <td>17.424100</td>
-      <td>16.342243</td>
-      <td>0.697590</td>
+      <td>0.189700</td>
+      <td>0.834000</td>
+      <td>0.198204</td>
+      <td>0.676000</td>
+      <td>0.130000</td>
+      <td>69.429100</td>
+      <td>1440.317000</td>
+      <td>180.040000</td>
     </tr>
     <tr>
-      <td>8500</td>
-      <td>17.035300</td>
-      <td>16.118475</td>
-      <td>0.698370</td>
+      <td>9000</td>
+      <td>0.186500</td>
+      <td>0.841000</td>
+      <td>0.200503</td>
+      <td>0.672000</td>
+      <td>0.132000</td>
+      <td>69.567300</td>
+      <td>1437.457000</td>
+      <td>179.682000</td>
+    </tr>
+    <tr>
+      <td>10000</td>
+      <td>0.188100</td>
+      <td>0.841000</td>
+      <td>0.196297</td>
+      <td>0.671000</td>
+      <td>0.129000</td>
+      <td>72.405600</td>
+      <td>1381.109000</td>
+      <td>172.639000</td>
+    </tr>
+    <tr>
+      <td>11000</td>
+      <td>0.187600</td>
+      <td>0.841000</td>
+      <td>0.199696</td>
+      <td>0.669000</td>
+      <td>0.131000</td>
+      <td>69.738600</td>
+      <td>1433.927000</td>
+      <td>179.241000</td>
+    </tr>
+    <tr>
+      <td>12000</td>
+      <td>0.185600</td>
+      <td>0.841000</td>
+      <td>0.196726</td>
+      <td>0.675000</td>
+      <td>0.132000</td>
+      <td>70.564800</td>
+      <td>1417.136000</td>
+      <td>177.142000</td>
+    </tr>
+    <tr>
+      <td>13000</td>
+      <td>0.189700</td>
+      <td>0.841000</td>
+      <td>0.195188</td>
+      <td>0.678000</td>
+      <td>0.135000</td>
+      <td>70.021300</td>
+      <td>1428.136000</td>
+      <td>178.517000</td>
+    </tr>
+    <tr>
+      <td>14000</td>
+      <td>0.190300</td>
+      <td>0.829000</td>
+      <td>0.196994</td>
+      <td>0.679000</td>
+      <td>0.136000</td>
+      <td>71.060200</td>
+      <td>1407.257000</td>
+      <td>175.907000</td>
     </tr>
   </tbody>
 </table><p></div>
@@ -15254,13 +15076,27 @@ Could not estimate the number of tokens of the input, floating-point operations 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In computational advertising, particularly its click through rate application, pointwise loss function still remains to be the dominating approach due to:</p>
+<p>From the experiment above, including some tabular/structure data into the model out-performs the text only variant by 300 basis point (1 absolute percent) 0.709 versus 0.679 on this particular preprocessed dataset. The gap will most likely widen even more if we devote more effort into feature engineering additional features out of the raw data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="End-Notes">End Notes<a class="anchor-link" href="#End-Notes">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Recent works such as DeText <a href="https://arxiv.org/abs/2008.02460">[4]</a>, CTR-BERT <a href="https://neurips2021-nlp.github.io/papers/20/CameraReady/camera_ready_final.pdf">[5]</a>, TwinBERT <a href="https://arxiv.org/abs/2002.06275">[6]</a> also explored leveraging BERT for click through rate (CTR) problems. Some common themes from these works includes:</p>
 <ul>
-<li>Calibrated Score. For ad auction to properly take place, a model's prediction score needs to be treated as a click probability instead of a score that only denotes ordering or perference.</li>
-<li>Data Sparsity. Pairwise/listwise approach relies on events that have positive outcomes. These approaches compare records with positive events to those without for building their loss functions. However, in practice, these positive events can be sparse, meaning there are far fewer instances of user engagement (clicks) than non-engagement. This sparsity implies that using pairwise or listwise methods would result in a significant loss of available data and might hinder downstream performance. Pointwise approach doesn't have this limitation and can make better use of available data.</li>
+<li>Cross architecture knowledge distillation process, where large cross attention teacher are distilled to smaller bi-encoder student. Both teacher and student incorporates tabular features via late fusion manner. One of the considerations in building industry scale CTR prediction model is achieving fast real time inference. Bi-encoder model address this by decoupling the encoding process for queries and documents. This enables one of the computationally expensive BERT-based document encoders to be pre-computed offline and cached (cache can be refreshed on a periodic basis, e.g. daily). During run time, the inference cost reduces to a query encoder, tabular features, as well as a late fusion cross layer such as MLP (multi-layer perceptron).</li>
+<li>N-pass ranker. To leverage cross encoder in production setting, we can have a N-pass ranker. i.e. A more lightweight ranker that can quickly weed out a large amounts of irrelevant document, while applying the more performant but computationally expensive ranker on a smaller subset of the documents.</li>
+<li>In domain pre-training. A common practice of using pre-trained BERT model is to directly leverage the public checkpoint that have been trained on general domain such as Wikipedia, and fine-tune it on our specific task. Continuing to pre-train on in-domain data using un/self-supervised learning loss like MLM (Masked Language Modeling) proves to be effective for vertical specific applications.</li>
 </ul>
-<p>To preserve the benefits from both pointwise and pairwise/listwise approaches, an intuitive way is to calculate weighted average of the two
-loss functions to take advantage from both sides <a href="https://dl.acm.org/doi/10.1145/2783258.2788582">[4]</a> <a href="https://arxiv.org/abs/2208.06164">[5]</a>. Given the sparsity of pairwise data, it can be beneficial to create pseudo pairs to prevent the model to be biased towards classification loss. e.g. we can form more pairs artificially by grouping impressions from different request but under the same session and user.</p>
 
 </div>
 </div>
@@ -15276,16 +15112,15 @@ loss functions to take advantage from both sides <a href="https://dl.acm.org/doi
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://icml.cc/2015/wp-content/uploads/2015/06/icml_ranking.pdf">[1]</a> Chris Burges, Tal Shaked, Erin Renshaw, Ari Lazier, Matt Deeds, Nicole Hamilton, Greg Hullender - Learning to Rank using Gradient Descent - 2005</li>
-<li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-2007-40.pdf">[2]</a> Zhe Cao, Tao Qin, Ming-Feng Tsai, et al. - Learning to Rank: From Pairwise Approach to Listwise Approach - 2007</li>
-<li><a href="https://dl.acm.org/doi/10.1145/3341981.3344221">[3]</a> Sebastian Bruch, Xuanhui Wang, Michael Bendersky, Marc Najork - An Analysis of the Softmax Cross Entropy Loss for Learning-to-Rank with Binary Relevance - 2019</li>
-<li><a href="https://dl.acm.org/doi/10.1145/2783258.2788582">[4]</a> Cheng Li, Yue Lu, Qiaozhu Mei, Dong Wang, Sandeep Pandey - Click-through Prediction for Advertising in Twitter Timeline - 2015</li>
-<li><a href="https://arxiv.org/abs/2208.06164">[5]</a> Shuguang Han et al. - Joint Optimization of Ranking and Calibration with Contextualized Hybrid Model - 2022</li>
-<li><a href="https://arxiv.org/abs/1306.2597">[6]</a> Tao Qin, Tie-Yan Liu - Introducing LETOR 4.0 Datasets - 2013</li>
-<li><a href="https://www.microsoft.com/en-us/research/project/letor-learning-rank-information-retrieval/letor-4-0/">[7]</a> LETOR: Learning to Rank for Information Retrieval - LETOR 4.0</li>
-<li><a href="https://www.microsoft.com/en-us/research/project/mslr/">[8]</a> Microsoft Learning to Rank Datasets</li>
-<li><a href="http://blog.istella.it/istella-learning-to-rank-dataset/">[9]</a> Blog: Istella Learning to Rank dataset</li>
-<li><a href="https://embracingtherandom.com/machine-learning/tensorflow/ranking/deep-learning/learning-to-rank-part-2/">[10]</a> Blog: Learning to rank is good for your ML career - Part 2: let’s implement ListNet!</li>
+<li><a href="https://www.kaggle.com/competitions/kddcup2012-track2/overview">[1]</a> KDD Cup 2012, Track 2 - Predict the click-through rate of ads given the query and user information.</li>
+<li><a href="https://arxiv.org/abs/2207.03051">[2]</a> Haitao Mao, Dawei Yin, Xiaokai Chu, et al. - A Large Scale Search Dataset for Unbiased Learning to Rank (2022)</li>
+<li><a href="https://medium.com/georgian-impact-blog/how-to-incorporate-tabular-data-with-huggingface-transformers-b70ac45fcfb4">[3]</a> How to Incorporate Tabular Data with HuggingFace Transformers</li>
+<li><a href="https://arxiv.org/abs/2008.02460">[4]</a> Weiwei Guo, Xiaowei Liu, Sida Wang, Huiji Gao, Ananth Sankar, Zimeng Yang, Qi Guo, Liang Zhang, Bo Long, Bee-Chung Chen, Deepak Agarwal - DeText: A Deep Text Ranking Framework with BERT (2020)</li>
+<li><a href="https://neurips2021-nlp.github.io/papers/20/CameraReady/camera_ready_final.pdf">[5]</a> Aashiq Muhamed, et al. - CTR-BERT: Cost-effective knowledge distillation for billion-parameter teacher models (2021)</li>
+<li><a href="https://arxiv.org/abs/2002.06275">[6]</a> Wenhao Lu, Jian Jiao, Ruofei Zhang - TwinBERT: Distilling Knowledge to Twin-Structured BERT Models for Efficient Retrieval (2022)</li>
+<li><a href="https://arxiv.org/abs/1905.05583">[7]</a> Chi Sun, Xipeng Qiu, Yige Xu, Xuanjing Huang - How to Fine-Tune BERT for Text Classification? (2019)</li>
+<li><a href="https://www.masterfulai.com/blog/getting-the-most-out-of-transfer-learning">[8]</a> Getting the most out of Transfer Learning</li>
+<li><a href="https://medium.com/mantisnlp/going-the-extra-mile-lessons-learnt-from-kaggle-on-how-to-train-better-nlp-models-part-ii-abf38153c0ed">[9]</a> Going the extra mile, lessons learnt from Kaggle on how to train better NLP models (Part II)</li>
 </ul>
 
 </div>

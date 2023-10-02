@@ -14329,7 +14329,7 @@ Name: count, dtype: int64</pre>
 
 <span class="c1"># for category in ordinal_encoder.categories_:</span>
 <span class="c1">#     print(len(category))</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_in</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;features_config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_in</span><span class="p">:</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f_in</span><span class="p">)</span>
 
 <span class="n">tabular_features_config</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;tabular_features_config&quot;</span><span class="p">]</span>
@@ -14432,7 +14432,7 @@ Name: count, dtype: int64</pre>
 <span class="sd">    input_dim : </span>
 <span class="sd">        Input dimension for the first layer.</span>
 
-<span class="sd">    mlp_spec : list of dictionary with mlp spec.</span>
+<span class="sd">    mlp_config : list of dictionary with mlp spec.</span>
 <span class="sd">        An example is shown below, the only mandatory parameter is hidden size.</span>
 <span class="sd">        ```</span>
 <span class="sd">        [</span>

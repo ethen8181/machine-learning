@@ -76,6 +76,7 @@ Curated notes on deep learning.
 - Tabular
   - Deep Learning for Tabular Data - PyTorch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_tabular.html)]
   - Deep Learning - Learning to Rank 101 (RankNet, ListNet). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_learning_to_rank.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_learning_to_rank.html)]
+  - BERT CTR. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/bert_ctr/bert_ctr.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/bert_ctr/bert_ctr.html)]
 
 ### model deployment
 
