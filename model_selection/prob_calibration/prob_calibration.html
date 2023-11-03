@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>prob_calibration</title>
+<title>prob_calibration</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Probability-Calibration" data-toc-modified-id="Probability-Calibration-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Probability Calibration</a></span><ul class="toc-item"><li><span><a href="#Data-Preprocessing" data-toc-modified-id="Data-Preprocessing-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Data Preprocessing</a></span></li><li><span><a href="#Model-Training" data-toc-modified-id="Model-Training-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model Training</a></span></li><li><span><a href="#Measuring-Calibration" data-toc-modified-id="Measuring-Calibration-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Measuring Calibration</a></span></li><li><span><a href="#Calibration-Model" data-toc-modified-id="Calibration-Model-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Calibration Model</a></span></li><li><span><a href="#Calibration-Model-Evaluation" data-toc-modified-id="Calibration-Model-Evaluation-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Calibration Model Evaluation</a></span></li><li><span><a href="#Final-Notes" data-toc-modified-id="Final-Notes-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>Final Notes</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13117,7 +13125,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13451,8 +13458,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13596,8 +13602,7 @@ xgboost 1.0.0
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -13762,8 +13767,7 @@ xgboost 1.0.0
   </tbody>
 </table>
 <p>5 rows × 25 columns</p>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -13889,8 +13893,7 @@ test shape:  (3000, 25)
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -14055,8 +14058,7 @@ test shape:  (3000, 25)
   </tbody>
 </table>
 <p>5 rows × 25 columns</p>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -14178,8 +14180,7 @@ test shape:  (3000, 25)
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -14229,8 +14230,7 @@ test shape:  (3000, 25)
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -14289,7 +14289,7 @@ ECE = \sqrt{ \sum_{m=1}^M \frac{|B_m|}{n} \big(prob(B_m) - pos(B_m)\big)^2 }
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We implement a <code>compute_calibration_summary</code> that builds on top of scikit-learn's <a href="https://scikit-learn.org/stable/modules/generated/sklearn.calibration.calibration_curve.html"><code>calibration_curve</code></a>. Instead of only plotting the calibration curve, we also return a table that contains summary statistics on the model performance, and calibration error.</p>
+<p>We implement a <code>compute_calibration_summary</code> that builds on top of scikit-learn's calibration module <a href="https://scikit-learn.org/stable/modules/calibration.html">[5]</a>. Instead of only plotting the calibration curve, we also return a table that contains summary statistics on the model performance, and calibration error.</p>
 
 </div>
 </div>
@@ -14359,8 +14359,7 @@ height=562
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -14413,8 +14412,7 @@ height=562
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -14447,8 +14445,10 @@ height=562
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The calibration technique that we'll be introducing here are all rescaling operation that is applied after the predictions have been made by a predictive mode, i.e. this assumes we already have a model, and we would only like to perform some post-processing steps to calibration our original model's prediction. As mentioned in the data preprocessing step, When training/learning the calibration function, we should ensure the data that is used to fit the original model and the one that is used for calibration does not overlap. e.g.</p>
 <ul>
-<li>We can split the data into training / validation set, After our base model is trained on the training
-set, the predictions on the validation set are used to fit the calibration model.</li>
+<li>We can split the data into training / validation set, After our base model is trained on the training</li>
+</ul>
+<p>set, the predictions on the validation set are used to fit the calibration model.</p>
+<ul>
 <li>Or do it in a cross validation way, where the data is split into $C$ folds. For each fold, one part is held aside for use as an validation set while the training is performed using the other $C-1$ fold. After repeating the process for all $C$ folds, we can compute final probability by doing an arithmetic mean of the calibrated classifier's predictions.</li>
 <li>Whether we're using train/validation split, or cross validation. It boils down to using the predicted probability as the single input feature, and the hold set's label as the target.</li>
 <li>To evaluate whether we successfully calibrated our model, we can/should check various evaluation metrics. e.g. Our ranking metrics such as AUC should remain somewhat the same, whereas our probability-related metrics such as calibration error should improve.</li>
@@ -14461,7 +14461,7 @@ set, the predictions on the validation set are used to fit the calibration model
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We'll introduce some notations for discussing the calibration models itself. Assuming a binary classification setting, where given a sample $x_i$ and its corresponding label $y_i$, our original model will produce a predicted probability of the positive class $\hat{p_i}$. Given that most models are not calibrated out of the box, the calibration model's goal is to post processed $\hat{p_i}$ and produce a well calibrated probability $\hat{q_i}$.</p>
-<p>Two popular choices are <strong>Platt Scaling</strong> and <strong>Isotonic Regression</strong>.</p>
+<p>Two popular choices are <strong>Platt Scaling</strong> and <strong>Isotonic Regression</strong> <a href="https://arxiv.org/abs/1207.1403">[6]</a>.</p>
 <p><strong>Platt Scaling:</strong> Is a parametric approach. At a high level, Platt Scaling amounts to training a logistic regression on of the original classifier's output with respect to the true class labels.</p>
 <p><strong>Isotonic Regression:</strong> A non-parametric approach. With this approach, the idea is to fit a piecewise constant non-decreasing function, where we would merge similar scores into bins such that each bin becomes monotonically increasing. e.g. The first bin may have the range [0, 0.2] and probability 0.15, meaning that any instance with a score between 0 and 0.2 should be assigned a probability estimate of 0.15. More formally,</p>
 \begin{align}
@@ -14480,7 +14480,7 @@ set, the predictions on the validation set are used to fit the calibration model
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Apart from Platt Scaling and Isotonic Regression that we'll often come across in online materials, here we'll also introduce two additional methods. Namely, <strong>Histogram Binning</strong> and <strong>Platt Scaling Binning</strong></p>
 <p><strong>Histogram Binning</strong> is a stricter version of Isotonic Regression, where we would directly define the bin boundaries either by choosing it to be of equal length interval or equal sample size interval. As for the prediction values for each bin, we would set it equal to the $pos(B_m)$, the average number of positive samples in that bin.</p>
-<p><strong>Platt Scaling Binning</strong> is a blend of Platt Scaling and Histogram Binning. We first fit a Platt Scaling function, $f$, then just like Histogram Binning, we would bin the input samples. The main difference here is that we would bin the samples with the output from Platt Scaling instead of the original predicted probability. And for each bin, the calibrated prediction is the average of the scaling function, $f$, instead of the average number of positive samples. The motivation behind this method is the output from our scaling function lies within a narrower range than the original label values, hence it should introduce a lower calibration error.</p>
+<p><strong>Platt Scaling Binning</strong> is a blend of Platt Scaling and Histogram Binning <a href="https://arxiv.org/abs/1909.10155">[9]</a>. We first fit a Platt Scaling function, $f$, then just like Histogram Binning, we would bin the input samples. The main difference here is that we would bin the samples with the output from Platt Scaling instead of the original predicted probability. And for each bin, the calibrated prediction is the average of the scaling function, $f$, instead of the average number of positive samples. The motivation behind this method is the output from our scaling function lies within a narrower range than the original label values, hence it should introduce a lower calibration error.</p>
 
 </div>
 </div>
@@ -14488,7 +14488,7 @@ set, the predictions on the validation set are used to fit the calibration model
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>One important thing to note is (not commonly mentioned) while applying Platt Scaling related calibration method is that logistic regression assumes a linear relationship between the input and log odds class probability output. Hence in theory, it should be beneficial to first transform the class probability $p$ into a log odds scale, $z$ before passing it to Platt Scaling.</p>
+<p>One important thing to note is (not commonly mentioned) while applying Platt Scaling related calibration method is that logistic regression assumes a linear relationship between the input and log odds class probability output. Hence in theory, it should be beneficial to first transform the class probability $p$ into a log odds scale, $z$ before passing it to Platt Scaling <a href="https://arxiv.org/abs/1808.00111">[7]</a>.</p>
 \begin{align}
 z = \log \left({p\over 1-p}\right)
 \end{align}
@@ -14749,8 +14749,7 @@ height=562
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -14836,8 +14835,7 @@ height=562
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -14982,8 +14980,7 @@ height=562
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -15047,8 +15044,7 @@ height=562
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -15075,7 +15071,7 @@ height=562
 t_c \cdot \big( 1 + log( \frac{\hat{p_i}}{t_c} ) \big) &amp; \hat{p_i} \geq t_c
 \end{cases}
 \end{align}<p>In this case, the calibration function is saying for any predicted probability higher than a user-defined calibration threshold $t_c$, we will scale the prediction using the function specified above. The piecewise linear function can be of any arbitrary function, and unlike the other estimators that we can directly plug and play, this requires us to have a much better understanding of our data's distribution.</p>
-<p>Given all the rage with deep learning models lately, there are even ones that are tailored for them. Calibration also becomes an important topic there, as modern neural networks often times optimizes for negative log likelihood. Upon being able to correctly classify the majority of the training samples, that measure can be further minimized by increasing the probability of its prediction, which will ultimately result in over/under confident predicted score.</p>
+<p>Given all the rage with deep learning models lately, there are even ones that are tailored for them <a href="https://arxiv.org/abs/1706.04599">[8]</a>. Calibration also becomes an important topic there, as modern neural networks often times optimizes for negative log likelihood. Upon being able to correctly classify the majority of the training samples, that measure can be further minimized by increasing the probability of its prediction, which will ultimately result in over/under confident predicted score.</p>
 <p>One caveat to note about measuring calibration error is that the number of bins do matter, play with the parameter and we might find surprising results. As we are measuring the calibration error of a continuous output (probability output from the model) by grouping samples into finite set of bins, the measure that we've obtained will only be an approximation of the true calibration error. The intuition behind this is that averaging a continuous number within a bin allows errors at different regions of a bin to cancel out with each other.</p>
 
 </div>
@@ -15092,16 +15088,15 @@ t_c \cdot \big( 1 + log( \frac{\hat{p_i}}{t_c} ) \big) &amp; \hat{p_i} \geq t_c
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://jmetzen.github.io/2015-04-14/calibration.html">Blog: Probability calibration</a></li>
-<li><a href="https://changhsinlee.com/python-calibration-plot/">Blog: A Guide to Calibration Plots in Python</a></li>
-<li><a href="https://machinelearningmastery.com/calibrated-classification-model-in-scikit-learn/">Blog: How and When to Use a Calibrated Classification Model with scikit-learn</a></li>
-<li><a href="https://www.youtube.com/watch?v=FkfDlOnQVvQ">Youtube - Model Calibration - is your model ready for the real world?</a></li>
-<li><a href="https://scikit-learn.org/stable/modules/calibration.html">Sklearn Documentation: Probability calibration</a></li>
-<li><a href="https://scikit-learn.org/stable/auto_examples/calibration/compute_calibration_summary.html">Sklearn Documentation: Probability calibration curves</a></li>
-<li><a href="https://arxiv.org/abs/1207.1403">Paper: A. Niculescu-Mizil, R. Caruana (2012) - Obtaining Calibrated Probabilities from Boosting</a></li>
-<li><a href="https://arxiv.org/abs/1808.00111">Paper: T. Leathart, E. Frank, G. Holmes, B. Pfahringer (2017) - Probability Calibration Trees</a></li>
-<li><a href="https://arxiv.org/abs/1706.04599">Paper: C. Guo, G.Pleiss, Y. Sun, K. Weinberger (2017) - On Calibration of Modern Neural Networks</a></li>
-<li><a href="https://arxiv.org/abs/1909.10155">Paper: A. Kumar, P. Liang, T. Ma (2020) - Verified Uncertainty Calibration</a></li>
+<li><a href="https://gdmarmerola.github.io/probability-calibration/">[1]</a> Blog: Calibration of probabilities for tree-based models</li>
+<li><a href="https://changhsinlee.com/python-calibration-plot/">[2]</a> Blog: A Guide to Calibration Plots in Python</li>
+<li><a href="https://machinelearningmastery.com/calibrated-classification-model-in-scikit-learn/">[3]</a> Blog: How and When to Use a Calibrated Classification Model with scikit-learn</li>
+<li><a href="https://www.youtube.com/watch?v=FkfDlOnQVvQ">[4]</a> Youtube: Model Calibration - is your model ready for the real world?</li>
+<li><a href="https://scikit-learn.org/stable/modules/calibration.html">[5]</a> Sklearn Documentation: Probability calibration</li>
+<li><a href="https://arxiv.org/abs/1207.1403">[6]</a> Alexandru Niculescu-Mizil, Richard A. Caruana - Obtaining Calibrated Probabilities from Boosting (2012)</li>
+<li><a href="https://arxiv.org/abs/1808.00111">[7]</a> Tim Leathart, Eibe Frank, Geoffrey Holmes, Bernhard Pfahringer - Probability Calibration Trees (2017)</li>
+<li><a href="https://arxiv.org/abs/1706.04599">[8]</a> Chuan Guo, Geoff Pleiss, Yu Sun, et al. - On Calibration of Modern Neural Networks (2017)</li>
+<li><a href="https://arxiv.org/abs/1909.10155">[9]</a> Ananya Kumar, Percy Liang, Tengyu Ma - Verified Uncertainty Calibration (2020)</li>
 </ul>
 
 </div>
@@ -15111,7 +15106,10 @@ t_c \cdot \big( 1 + log( \frac{\hat{p_i}}{t_c} ) \big) &amp; \hat{p_i} \geq t_c
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>

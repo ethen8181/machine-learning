@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>deeplearning_prob_calibration</title>
+<title>deeplearning_prob_calibration</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Deep-Learning-Model-Calibration-with-Temperature-Scaling" data-toc-modified-id="Deep-Learning-Model-Calibration-with-Temperature-Scaling-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Deep Learning Model Calibration with Temperature Scaling</a></span><ul class="toc-item"><li><span><a href="#Tokenizer" data-toc-modified-id="Tokenizer-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Tokenizer</a></span></li><li><span><a href="#Model-FineTuning" data-toc-modified-id="Model-FineTuning-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Model FineTuning</a></span></li><li><span><a href="#Model-Calibration" data-toc-modified-id="Model-Calibration-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Model Calibration</a></span><ul class="toc-item"><li><span><a href="#Temperature-Scaling" data-toc-modified-id="Temperature-Scaling-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>Temperature Scaling</a></span></li></ul></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13117,7 +13125,6 @@ div#notebook {
 
 
 <div class="output_html rendered_html output_subarea output_execute_result">
-
 <style>
     html {
         font-size: 18px !important;
@@ -13451,8 +13458,7 @@ div#notebook {
                     styles: {'.MathJax_Display': {"margin": 4}}
                 }
         });
-</script>
-</div>
+</script></div>
 
 </div>
 
@@ -13546,9 +13552,9 @@ matplotlib  : 3.4.3
 <p>In this article, we'll be going over two main things:</p>
 <ul>
 <li>Process of finetuning a pre-trained BERT model towards a text classification task, more specificially, the <a href="https://www.kaggle.com/c/quora-question-pairs/data">Quora Question Pairs</a> challenge.</li>
-<li>Process of evaluating model calibration and improving upong calibration error using temperature scaling.</li>
+<li>Process of evaluating model calibration and improving upong calibration error using temperature scaling <a href="https://arxiv.org/abs/1706.04599">[2]</a>.</li>
 </ul>
-<p>Finetuning pre-trained models on downstream tasks has been increasingly popular these days, this notebook documents the findings on these model's calibration. Calibration in this context means does the model's predicted score reflects true probability. If the reader is not familiar with model calibration 101, there is a separate <a href="http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html">notebook</a> that covers this topic. Reading up till the "Measuring Calibration" section should suffice.</p>
+<p>Finetuning pre-trained models on downstream tasks has been increasingly popular these days, this notebook documents the findings on these model's calibration. Calibration in this context means does the model's predicted score reflects true probability. If the reader is not familiar with model calibration 101, there is a separate notebook [<a href="http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_selection/prob_calibration/prob_calibration.ipynb">nbviewer</a>][<a href="http://ethen8181.github.io/machine-learning/model_selection/prob_calibration/prob_calibration.html">html</a>] that covers this topic. Reading up till the &quot;Measuring Calibration&quot; section should suffice.</p>
 
 </div>
 </div>
@@ -13589,17 +13595,8 @@ Reusing dataset quora (/home/mingyuliu/.cache/huggingface/datasets/quora/default
 
 
 
-
- 
- 
-<div id="737556a9-2781-4cb6-90a3-413ae1dbd66c"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#737556a9-2781-4cb6-90a3-413ae1dbd66c');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3dfdd5fa8565473ea04d96ab72284f5c", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>  0%|          | 0/1 [00:00&lt;?, ?it/s]</pre>
 </div>
 
 </div>
@@ -13922,17 +13919,8 @@ var element = $('#737556a9-2781-4cb6-90a3-413ae1dbd66c');
 
 
 
-
- 
- 
-<div id="647ebb90-7a9c-4450-ac8c-3eaee5b1b73e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#647ebb90-7a9c-4450-ac8c-3eaee5b1b73e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "b124f30d73224cb58d53f6dd50100a6d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#0:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -13944,17 +13932,8 @@ var element = $('#647ebb90-7a9c-4450-ac8c-3eaee5b1b73e');
 
 
 
-
- 
- 
-<div id="9006880d-5bb7-45a4-a166-f7fca5863669"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#9006880d-5bb7-45a4-a166-f7fca5863669');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "e00eb40f7ce44dc9bba3cda42c4492a0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#1:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -13966,17 +13945,8 @@ var element = $('#9006880d-5bb7-45a4-a166-f7fca5863669');
 
 
 
-
- 
- 
-<div id="981c4b42-7b08-4b67-b96e-f2c6758e14bd"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#981c4b42-7b08-4b67-b96e-f2c6758e14bd');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "0adccd225e8b4cf89bbdda6a0ca5f99f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#2:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -13988,17 +13958,8 @@ var element = $('#981c4b42-7b08-4b67-b96e-f2c6758e14bd');
 
 
 
-
- 
- 
-<div id="081ff6b1-e7d6-4f60-a91a-20f4e195a9c4"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#081ff6b1-e7d6-4f60-a91a-20f4e195a9c4');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3e84033c40714193b5da0498d2c5f242", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#3:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14010,17 +13971,8 @@ var element = $('#081ff6b1-e7d6-4f60-a91a-20f4e195a9c4');
 
 
 
-
- 
- 
-<div id="78148efc-af82-4ed4-85a5-7b4d3cd85f75"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#78148efc-af82-4ed4-85a5-7b4d3cd85f75');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "41ea313e8ba04a42a633eaa0054c47ed", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#4:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14032,17 +13984,8 @@ var element = $('#78148efc-af82-4ed4-85a5-7b4d3cd85f75');
 
 
 
-
- 
- 
-<div id="0762e4bd-ea64-487d-8e46-1e12892f187e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#0762e4bd-ea64-487d-8e46-1e12892f187e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "41a9e837c4bd4ca38d6b9bedc2108e87", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#6:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14054,17 +13997,8 @@ var element = $('#0762e4bd-ea64-487d-8e46-1e12892f187e');
 
 
 
-
- 
- 
-<div id="2f5d9be6-c6d1-4382-8ee9-91dce147ba58"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#2f5d9be6-c6d1-4382-8ee9-91dce147ba58');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "30244ef12f174d3ca86ef42ebc965c1b", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#5:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14076,17 +14010,8 @@ var element = $('#2f5d9be6-c6d1-4382-8ee9-91dce147ba58');
 
 
 
-
- 
- 
-<div id="5d3bcf6f-a4ca-41dd-b8de-eccc6e282906"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5d3bcf6f-a4ca-41dd-b8de-eccc6e282906');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "38a74034f870422d91ffc5783e8d3ce0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#7:   0%|          | 0/41 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14108,17 +14033,8 @@ var element = $('#5d3bcf6f-a4ca-41dd-b8de-eccc6e282906');
 
 
 
-
- 
- 
-<div id="715bc005-9357-4560-b146-3adcbeab3148"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#715bc005-9357-4560-b146-3adcbeab3148');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "9c3d64f47bf34dc0b7c2609c57163911", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#0:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14130,17 +14046,8 @@ var element = $('#715bc005-9357-4560-b146-3adcbeab3148');
 
 
 
-
- 
- 
-<div id="a0746678-39ab-45df-95c2-22497a891b8a"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#a0746678-39ab-45df-95c2-22497a891b8a');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "3f7e931ce49540bfb16aaf3b14ca0156", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#1:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14152,17 +14059,8 @@ var element = $('#a0746678-39ab-45df-95c2-22497a891b8a');
 
 
 
-
- 
- 
-<div id="27e1f325-9395-4b0a-8973-06f5ea29accf"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#27e1f325-9395-4b0a-8973-06f5ea29accf');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "257bbdda14154edd80c04d21869376b5", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#2:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14174,17 +14072,8 @@ var element = $('#27e1f325-9395-4b0a-8973-06f5ea29accf');
 
 
 
-
- 
- 
-<div id="5d15c989-8577-4ad1-8c01-e5efb4af6ece"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5d15c989-8577-4ad1-8c01-e5efb4af6ece');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "d9b3d01496dd41f89346c0fc8129562d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#3:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14196,17 +14085,8 @@ var element = $('#5d15c989-8577-4ad1-8c01-e5efb4af6ece');
 
 
 
-
- 
- 
-<div id="5752d4c6-9221-4f59-8d8a-2c05c0389fca"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5752d4c6-9221-4f59-8d8a-2c05c0389fca');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "720a63e4a3d74c55a3d9680e5d7771c2", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#4:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14218,17 +14098,8 @@ var element = $('#5752d4c6-9221-4f59-8d8a-2c05c0389fca');
 
 
 
-
- 
- 
-<div id="2ef85f42-c179-4be9-86cf-93aed34e4be9"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#2ef85f42-c179-4be9-86cf-93aed34e4be9');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "67a913dfa6f946d7b65b7db999bfa86f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#5:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14240,17 +14111,8 @@ var element = $('#2ef85f42-c179-4be9-86cf-93aed34e4be9');
 
 
 
-
- 
- 
-<div id="8c5f32ee-50ad-4fde-828a-e3d25bad29a8"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#8c5f32ee-50ad-4fde-828a-e3d25bad29a8');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "e1bf772877d6408485fdfa5224bb74a0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#6:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14262,17 +14124,8 @@ var element = $('#8c5f32ee-50ad-4fde-828a-e3d25bad29a8');
 
 
 
-
- 
- 
-<div id="a4dd9b64-7137-416b-8d3d-4a94502b613e"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#a4dd9b64-7137-416b-8d3d-4a94502b613e');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "e16b6cbd27284bf9b46533617de7df53", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#7:   0%|          | 0/5 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14294,17 +14147,8 @@ var element = $('#a4dd9b64-7137-416b-8d3d-4a94502b613e');
 
 
 
-
- 
- 
-<div id="8d2f79af-3710-4598-87ff-96d461cd2bbb"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#8d2f79af-3710-4598-87ff-96d461cd2bbb');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "f0824d60fddd41baaf35758679a1495f", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#7:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14316,17 +14160,8 @@ var element = $('#8d2f79af-3710-4598-87ff-96d461cd2bbb');
 
 
 
-
- 
- 
-<div id="663b0974-21a9-45bd-b4e3-8b8abb9e1cd0"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#663b0974-21a9-45bd-b4e3-8b8abb9e1cd0');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "57959cf7d3b64ed5a66275132277d368", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#4:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14338,17 +14173,8 @@ var element = $('#663b0974-21a9-45bd-b4e3-8b8abb9e1cd0');
 
 
 
-
- 
- 
-<div id="08f45153-5319-42c1-b892-e73f41fe94f3"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#08f45153-5319-42c1-b892-e73f41fe94f3');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "1aafd12200bc4edaa535332a83411af7", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#6:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14360,17 +14186,8 @@ var element = $('#08f45153-5319-42c1-b892-e73f41fe94f3');
 
 
 
-
- 
- 
-<div id="dacfd0c9-e107-432d-86bb-3514cf352c66"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#dacfd0c9-e107-432d-86bb-3514cf352c66');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "71375a0d33374de4a23ce437bf796ad0", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#2:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14382,17 +14199,8 @@ var element = $('#dacfd0c9-e107-432d-86bb-3514cf352c66');
 
 
 
-
- 
- 
-<div id="49bcb4fd-c52d-4353-8df9-1352cdaa7a7a"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#49bcb4fd-c52d-4353-8df9-1352cdaa7a7a');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "8569013dca0e4bb3a8165229c668827d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#1:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14404,17 +14212,8 @@ var element = $('#49bcb4fd-c52d-4353-8df9-1352cdaa7a7a');
 
 
 
-
- 
- 
-<div id="5f44a369-d287-40ae-995a-2f806707ded0"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#5f44a369-d287-40ae-995a-2f806707ded0');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "51d3b43a16094d92855fd476dd19a94d", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#5:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14426,17 +14225,8 @@ var element = $('#5f44a369-d287-40ae-995a-2f806707ded0');
 
 
 
-
- 
- 
-<div id="114d028b-7f4f-4387-82aa-319bc974c93b"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#114d028b-7f4f-4387-82aa-319bc974c93b');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "c13d8a1716a249ada05c673c162d5dcc", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#3:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14448,17 +14238,8 @@ var element = $('#114d028b-7f4f-4387-82aa-319bc974c93b');
 
 
 
-
- 
- 
-<div id="4f61aa61-a58c-4c76-a672-3002e91f45c5"></div>
-<div class="output_subarea output_widget_view ">
-<script type="text/javascript">
-var element = $('#4f61aa61-a58c-4c76-a672-3002e91f45c5');
-</script>
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id": "17b732f75d814bf3bcb06cbb2117f3bb", "version_major": 2, "version_minor": 0}
-</script>
+<div class="output_text output_subarea ">
+<pre>#0:   0%|          | 0/6 [00:00&lt;?, ?ba/s]</pre>
 </div>
 
 </div>
@@ -14834,7 +14615,6 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 
 
 <div class="output_html rendered_html output_subarea ">
-
     <div>
       
       <progress value='10234' max='10234' style='width:300px; height:20px; vertical-align: middle;'></progress>
@@ -14860,8 +14640,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
       <td>0.237408</td>
     </tr>
   </tbody>
-</table><p>
-</div>
+</table><p></div>
 
 </div>
 
@@ -14905,7 +14684,7 @@ Model weights saved in text_classification/pytorch_model.bin
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SoftmaxModule</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a softmax layer on top the base model. Note this does not necessarily</span>
 <span class="sd">    mean the output score is a well-calibrated probability.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -15109,8 +14888,7 @@ If your task is similar to the task the model of the checkpoint was trained on, 
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -15160,8 +14938,7 @@ If your task is similar to the task the model of the checkpoint was trained on, 
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -15216,13 +14993,13 @@ If your task is similar to the task the model of the checkpoint was trained on, 
         <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;forward method that returns softmax-ed confidence scores.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;forward method that returns softmax-ed confidence scores.&quot;&quot;&quot;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_logit</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">)</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">scores</span>
 
     <span class="k">def</span> <span class="nf">forward_logit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">token_type_ids</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;forward method that returns logits, to be used with cross entropy loss.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;forward method that returns logits, to be used with cross entropy loss.&quot;&quot;&quot;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
             <span class="n">input_ids</span><span class="o">=</span><span class="n">input_ids</span><span class="p">,</span>
             <span class="n">attention_mask</span><span class="o">=</span><span class="n">attention_mask</span><span class="p">,</span>
@@ -15231,7 +15008,7 @@ If your task is similar to the task the model of the checkpoint was trained on, 
         <span class="k">return</span> <span class="n">outputs</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span>
 
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_tokenized</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;fits the temperature scaling parameter.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;fits the temperature scaling parameter.&quot;&quot;&quot;</span>
         <span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorWithPadding</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset_tokenized</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 
@@ -15256,7 +15033,7 @@ If your task is similar to the task the model of the checkpoint was trained on, 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">freeze_base_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;remember to freeze base model&#39;s parameters when training temperature scaler&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;remember to freeze base model&#39;s parameters when training temperature scaler&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
             <span class="n">parameter</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
@@ -15440,8 +15217,7 @@ tensor([1.1972], device=&#39;cuda:0&#39;, requires_grad=True)</pre>
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -15491,8 +15267,7 @@ tensor([1.1972], device=&#39;cuda:0&#39;, requires_grad=True)</pre>
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -15565,8 +15340,7 @@ height=850
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -15619,8 +15393,7 @@ height=850
     </tr>
   </tbody>
 </table>
-</div>
-</div>
+</div></div>
 
 </div>
 
@@ -15631,7 +15404,7 @@ height=850
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>There're other <a href="https://arxiv.org/pdf/2106.07998.pdf">papers</a> that studies calibration effect for state of the art models. Although it's mainly for image based models, their claim is that model size and pretraining amount don't fully account for the differences in calibration across different models, but primary factor seems to be on model architecture, or more explicitly models that rely on attention based mechanism are found to be better calibrated compared to convolution based mechanism.</p>
+<p>There're other works <a href="https://arxiv.org/abs/2106.07998">[3]</a> that studies calibration effect for state of the art models. Although it's mainly for image based models, their claim is that model size and pretraining amount don't fully account for the differences in calibration across different models, but primary factor seems to be on model architecture, or more explicitly models that rely on attention based mechanism are found to be better calibrated compared to convolution based mechanism.</p>
 
 </div>
 </div>
@@ -15647,10 +15420,9 @@ height=850
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://nbviewer.jupyter.org/github/huggingface/notebooks/blob/master/examples/text_classification.ipynb">Jupyter Notebook: Fine-tuning a model on a text classification task</a></li>
-<li><a href="https://jamesmccaffrey.wordpress.com/2021/01/28/temperature-scaling-for-neural-network-calibration/">Blog: Temperature Scaling for Neural Network Calibration</a></li>
-<li><a href="https://arxiv.org/pdf/1706.04599.pdf">Paper: On Calibration of Modern Neural Networks - Guo, Chuan and Pleiss, Geoff and Sun, Yu and Weinberger, Kilian Q. (2017)</a></li>
-<li><a href="https://arxiv.org/pdf/2106.07998.pdf">Paper: Revisiting the Calibration of Modern Neural Networks - Matthias Minderer, Josip Djolonga, Rob Romijnders, Frances Hubis, Xiaohua Zhai, Neil Houlsby, Dustin Tran ,Mario Lucic (2021)</a></li>
+<li><a href="https://jamesmccaffrey.wordpress.com/2021/01/28/temperature-scaling-for-neural-network-calibration/">[1]</a> Blog: Temperature Scaling for Neural Network Calibration</li>
+<li><a href="https://arxiv.org/abs/1706.04599">[2]</a> Chuan Guo, Geoff Pleiss, Yu Sun, et al. - On Calibration of Modern Neural Networks (2017)</li>
+<li><a href="https://arxiv.org/abs/2106.07998">[3]</a> Matthias Minderer, Josip Djolonga, Rob Romijnders, Frances Hubis, Xiaohua Zhai, Neil Houlsby, Dustin Tran, Mario Lucic - Revisiting the Calibration of Modern Neural Networks (2021)</li>
 </ul>
 
 </div>
@@ -15660,7 +15432,10 @@ height=850
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>
