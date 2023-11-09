@@ -2,6 +2,16 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2023-11]
+
+### Changed
+
+- Introduction to CLIP (Contrastive Language-Image Pre-training), LiT, ViT [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
+  - Massive overhaul to the content using latest version of PyTorch 2.
+  - Switched to using huggingface transformer ViT image encoder, instead of timm's ResNet.
+  - Added quantitative evaluation with retrieval recall@k.
+  - Added additional introduction to LiT, ViT.
+
 
 ## [2023-10]
 

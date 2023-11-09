@@ -30,8 +30,9 @@
 # machine-learning
 
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ethen8181/machine-learning/blob/master/LICENSE)
+![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)
+![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)
 ![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)
-![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)
 
 
 This is a continuously updated repository that documents personal journey on learning data science, machine learning related topics.
@@ -71,7 +72,7 @@ Curated notes on deep learning.
     - Fine Tuning Pre-trained Encoder on Question Answer Task. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/question_answer/question_answer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/question_answer/question_answer.html)]
     - Training Bi-Encoder Models with Contrastive Learning Notes. [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/contrastive_learning_notes.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/contrastive_learning_notes.html)]
     - Sentence Transformer: Training Bi-Encoder via Contrastive Loss. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/sentence_transformer.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/sentence_transformer.html)]
-    - Introduction to CLIP (Contrastive Language-Image Pre-training) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
+    - Introduction to CLIP (Contrastive Language-Image Pre-training), LiT, ViT [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/clip/clip.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/clip/clip.html)]
     - Self Supervised (SIMCLR) versus Supervised Contrastive Learning. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/self_supervised_vs_supervised_contrastive/self_supervised_vs_supervised_contrastive.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/self_supervised_vs_supervised_contrastive/self_supervised_vs_supervised_contrastive.html)]
 - Tabular
   - Deep Learning for Tabular Data - PyTorch. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/deep_learning/tabular/deep_learning_tabular.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/tabular/deep_learning_tabular.html)]
