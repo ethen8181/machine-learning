@@ -13615,7 +13615,7 @@ IPython version      : 8.2.0
 <ul>
 <li>When we invoke <code>iter</code> function on our object, it effectively translates to calling <code>.__iter__()</code> dunder method which returns the iterator object.</li>
 <li>Subsequent loop will iteratively call the iterator object's <code>__next__</code> method to fetch values from it.</li>
-<li>For practical reasons, iterable class can implment both <code>__iter__()</code> and <code>__next__()</code> in the same class, and have <code>__iter__()</code> return self. This makes the class both an iterable and its own iterator. However, it is perfectly valid to return a different object as the iterator.</li>
+<li>For practical reasons, iterable class can implement both <code>__iter__()</code> and <code>__next__()</code> in the same class, and have <code>__iter__()</code> return self. This makes the class both an iterable and its own iterator. However, it is perfectly valid to return a different object as the iterator.</li>
 </ul>
 
 </div>
