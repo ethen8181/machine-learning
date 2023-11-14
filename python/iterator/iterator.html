@@ -1,16 +1,91 @@
-<!DOCTYPE html>
+None<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>iterator</title>
+<title>iterator</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+  pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
 
 
 
 <style type="text/css">
-    /*!
+/*!
 *
 * Twitter Bootstrap
 *
@@ -12944,86 +13019,7 @@ ul.typeahead-list  > li > a.pull-right {
 .terminal-app #terminado-container {
   margin-top: 20px;
 }
-/*# sourceMappingURL=style.min.css.map */
-    </style>
-<style type="text/css">
-    pre { line-height: 125%; }
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #408080; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
-.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #FF0000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #00A000 } /* Generic.Inserted */
-.highlight .go { color: #888888 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #7D9029 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #A0A000 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
-    </style>
-
-
+/*# sourceMappingURL=style.min.css.map */</style>
 <style type="text/css">
 /* Overrides of notebook CSS for static HTML export */
 body {
@@ -13035,44 +13031,55 @@ div#notebook {
   overflow: visible;
   border-top: none;
 }@media print {
+  body {
+    margin: 0;
+  }
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
-
-<!-- Custom stylesheet, it must be in the same directory as the html file -->
-<link rel="stylesheet" href="custom.css">
-
-<!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"> </script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            processEscapes: true,
-            processEnvironments: true
-        },
-        // Center justify equations in code and markdown cells. Elsewhere
-        // we use CSS to left justify single line equations in code cells.
-        displayAlign: 'center',
-        "HTML-CSS": {
-            styles: {'.MathJax_Display': {"margin": 0}},
-            linebreaks: { automatic: true }
+    init_mathjax = function() {
+        if (window.MathJax) {
+        // MathJax loaded
+            MathJax.Hub.Config({
+                TeX: {
+                    equationNumbers: {
+                    autoNumber: "AMS",
+                    useLabelIds: true
+                    }
+                },
+                tex2jax: {
+                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true,
+                    processEnvironments: true
+                },
+                displayAlign: 'center',
+                CommonHTML: {
+                    linebreaks: {
+                    automatic: true
+                    }
+                }
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    });
+    }
+    init_mathjax();
     </script>
     <!-- End of mathjax configuration --></head>
 <body>
@@ -13082,8 +13089,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><h1>Table of Contents<span class="tocSkip"></span></h1></p>
+<h1>Table of Contents<span class="tocSkip"></span></h1>
 <div class="toc"><ul class="toc-item"><li><span><a href="#Understanding-Iterables,-Iterators-and-Generators" data-toc-modified-id="Understanding-Iterables,-Iterators-and-Generators-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Understanding Iterables, Iterators and Generators</a></span><ul class="toc-item"><li><span><a href="#Iterables,-Iterators" data-toc-modified-id="Iterables,-Iterators-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Iterables, Iterators</a></span></li><li><span><a href="#Generators" data-toc-modified-id="Generators-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Generators</a></span></li></ul></li><li><span><a href="#Reference" data-toc-modified-id="Reference-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Reference</a></span></li></ul></div>
+
 </div>
 </div>
 </div>
@@ -13117,8 +13125,7 @@ div#notebook {
 
 
 
-<div class="output_html rendered_html output_subarea output_execute_result">
-<style>
+<div class="output_html rendered_html output_subarea output_execute_result"><style>
 @import url('http://fonts.googleapis.com/css?family=Source+Code+Pro');
 @import url('http://fonts.googleapis.com/css?family=Vollkorn');
 @import url('http://fonts.googleapis.com/css?family=Arimo');
@@ -13334,7 +13341,6 @@ div#notebook {
                 }
         });
 </script>
-
 </div>
 
 </div>
@@ -13352,7 +13358,7 @@ div#notebook {
 
 <span class="c1"># magic to print version</span>
 <span class="o">%</span><span class="k">load_ext</span> watermark
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -t -v
+<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -v
 </pre></div>
 
     </div>
@@ -13369,10 +13375,14 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Ethen 2017-08-23 15:19:09 
+<pre>Author: Ethen
 
-CPython 3.5.2
-IPython 5.4.1
+Last updated: 2023-11-14
+
+Python implementation: CPython
+Python version       : 3.9.12
+IPython version      : 8.2.0
+
 </pre>
 </div>
 </div>
@@ -13441,14 +13451,15 @@ IPython 5.4.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It works as expected. The code prints the number 1, 2, 3 and then stops. The question now is, how does the loop constructs the work behind the scenes. i.e. How does the loop fetch individual elements from the object it is looping over and know when to stop?</p>
-<p>The answer to the question is Python's iterator protocol:</p>
-<blockquote><p>Objects that support the <strong>iter</strong> and <strong>next</strong> dunder methods automatically work with for-in loops.</p>
+<p>It functions as expected. Our code prints the number 1, 2, 3 and then terminates. In this document, we'll dive deeper into what's happening behind the scenes. i.e. How does the loop construct fetch individual elements from object it's looping over and determine when to stop?</p>
+<p>The short answer to this question is Python's iterator protocol:</p>
+<blockquote>
+<p>Objects that support <strong>iter</strong> and <strong>next</strong> dunder methods automatically work with for-in loops.</p>
 </blockquote>
-<p>Before we answer the question, let's first introduce some terminologies.</p>
+<p>Let's first introduce some terminologies.</p>
 <ul>
 <li>An <strong>iterator</strong> is:<ul>
-<li>Object which defines a <code>__next__</code> method and will produce the next value when we call <code>next()</code> on it. If there are no further items, it raises the <code>StopIteration</code> exception.</li>
+<li>Object which defines a <code>__next__</code> method and will produce the next value when we call <code>next()</code> on it. If there are no more items, it raises <code>StopIteration</code> exception.</li>
 <li>Object that is self-iterable (meaning that it has an <strong>iter</strong> method that returns self).</li>
 </ul>
 </li>
@@ -13504,7 +13515,7 @@ IPython 5.4.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Then we can now loop through all available elements using the <code>next</code> built-in function.</p>
+<p>Then we can loop through all available elements using <code>next</code> built-in function.</p>
 
 </div>
 </div>
@@ -13593,15 +13604,19 @@ IPython 5.4.1
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can see it raises a StopIteration exception to signal we've exhausted all of the available values in the iterator. Based on this experiment, we now know that iterators use exceptions to structure control flow. To signal the end of iteration, a Python iterator simply raises the built-in StopIteration exception. To sum it up, we we write:</p>
+<p>It raises a StopIteration exception to signal we've exhausted all available values in the iterator. Based on this experiment, we now know iterators use exceptions to structure control flow. To signal the end of iteration, a Python iterator raises the built-in StopIteration exception. To sum it up, when we write:</p>
 <div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
     <span class="o">...</span>
 </pre></div>
 <p>This is what's actually happening under the hood:</p>
-<p><img src="img/iterable_vs_iterator.png" width="60%" height="60%"></p>
-<p>We will now dive deeper and implement a class that allows us the use it in a <code>for obj in object</code> loop. To be more explicit, when we call the <code>iter</code> function on the object, it actually translates to calling the <code>.__iter__()</code> dunder method, this method must return the the iterator object. After that the loop will repeatedly call the iterator object's <code>__next__</code> method to retrieve values from it. Often, for pragmatic reasons, iterable classes will implement both <code>__iter__()</code> and <code>__next__()</code> in the same class, and have <code>__iter__()</code> return self, which makes the class both an iterable and its own iterator. It is perfectly fine to return a different object as the iterator, though.</p>
-<p>Let's apply the notion above in action, we will write a class that prints a value for a maximum number of times.</p>
+<img src="img/iterable_vs_iterator.png" width="60%" height="60%">
+<p>Now, let's dive deeper. We'll implement a class that enables us to prints a value for some maximum number of times and use it in a <code>for obj in object</code> loop.</p>
+<ul>
+<li>When we invoke <code>iter</code> function on our object, it effectively translates to calling <code>.__iter__()</code> dunder method which returns the iterator object.</li>
+<li>Subsequent loop will iteratively call the iterator object's <code>__next__</code> method to fetch values from it.</li>
+<li>For practical reasons, iterable class can implment both <code>__iter__()</code> and <code>__next__()</code> in the same class, and have <code>__iter__()</code> return self. This makes the class both an iterable and its own iterator. However, it is perfectly valid to return a different object as the iterator.</li>
+</ul>
 
 </div>
 </div>
@@ -13620,7 +13635,7 @@ IPython 5.4.1
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># simply return the iterator object, since</span>
         <span class="c1"># all that matters is that __iter__ returns a</span>
-        <span class="c1"># object with a __next__ method on it, which we</span>
+        <span class="c1"># object with a __next__ method, which we</span>
         <span class="c1"># will implement below</span>
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -13645,7 +13660,7 @@ IPython 5.4.1
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">repeater</span> <span class="o">=</span> <span class="n">Repeat</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">max_repeats</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">repeater</span> <span class="o">=</span> <span class="n">Repeat</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">max_repeats</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">repeater</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </pre></div>
@@ -13678,7 +13693,7 @@ Hello
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This implementation gives us the desired result. Iteration stops after the number of repetitions defined in the max_repeats parameter. If you've ever worked with database cursors, this mental model will seem familiar: We first initialize the cursor and prepare it for reading, and then we can fetch data into local variables as needed from it, one element at a time. Because there will never be more than one element in memory, this approach is highly memory-efficient.</p>
+<p>This implementation gives us the desired result. Iteration stops after max_repeats is met. This mental model will seem familiar to readers that have worked with database cursors: We first initialize the cursor and prepare it for reading, then we can fetch our data into local variables as needed from it, one element at a time. Because there will never be more than one element in memory, this approach is highly memory-efficient.</p>
 <p>Note that we can also take this class and implement it using the <code>iter</code> and <code>next</code> function way.</p>
 
 </div>
@@ -13689,7 +13704,7 @@ Hello
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">repeater</span> <span class="o">=</span> <span class="n">Repeat</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">max_repeats</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">repeater</span> <span class="o">=</span> <span class="n">Repeat</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">max_repeats</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">repeater</span><span class="p">)</span>
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
@@ -13743,16 +13758,16 @@ Hello
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A generator is an object that lazily produces values (i.e. generates values on demand). A generator is either:</p>
-<ul>
-<li>A function that contains the <code>yield</code> keyword (yield expression).<ul>
-<li>When this function is called, it does not execute, but returns a generator object.</li>
-<li>When the end-user invokes the <code>next()</code> method on the function: It will execute the function, and when the function encounters the <code>yield</code> keyword, it suspends execution at that point, saves its context and returns the value to the caller</li>
-<li>When the caller invokes <code>next()</code> again, execution of the function continues till another yield is encountered or end of function is reached.</li>
+<p>A generator is an object that lazily produces values, i.e. generates values on demand. It can be either:</p>
+<ol>
+<li>A function that incorporates the <code>yield</code> keyword (yield expression).<ul>
+<li>When called, it does not execute immediately, but returns a generator object.</li>
+<li>Upon involing <code>next()</code> method on the function, it starts the actual execution. Once this function encounters the <code>yield</code> keyword, it pauses execution at that point, saves its context and returns its value to the caller</li>
+<li>Subsequent calls to <code>next()</code> resume execution until another yield is encountered or end of function is reached.</li>
 </ul>
 </li>
-<li>A generator expression, i.e. a syntactic construct for creating an anonymous generator object. These are like list comprehensions but enclosed in <code>()</code> instead of <code>[]</code>.</li>
-</ul>
+<li>A generator expression, which is syntactic construct for creating an anonymous generator object. These are like list comprehensions but enclosed in <code>()</code> instead of <code>[]</code>.</li>
+</ol>
 
 </div>
 </div>
@@ -13820,7 +13835,7 @@ Hello
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>One important thing to note about generator is that it only produces the result a single time. In other words, once we're done iterating through the generator for the first time, we won't get any results the second time around.</p>
+<p>One important thing to note about generator is that it only produces the result a single time. In other words, once we're done iterating through our generator for the first time, we won't get any results the second time around when we iterate over an already-exhausted generator.</p>
 
 </div>
 </div>
@@ -13843,7 +13858,7 @@ Hello
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the result, we can see that when we iterate over an already-exhausted generator, it won't produce any results and we also won't get any errors that tells us it is now exhausted. This is something that's extremely important to keep in mind when working with generators. If we wish to iterate over the content for more than once, we can always make a copy by converting it to a list.</p>
+<p>This is something that's extremely important to keep in mind when working with generators. If we wish to iterate over its content for more than once, we can always make a copy by converting it to a list.</p>
 
 </div>
 </div>
@@ -13969,7 +13984,7 @@ Hello
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This type of streaming approach is used a lot in the <code>Gensim</code> library. e.g. with helper class such as <a href="https://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.LineSentence">LineSetence</a> we can feed chunks/batches of documents into the memory to train the model instead of having to load the entire corpus into memory.</p>
 <p>To wrap up, the following diagram summarizes the relationship between iterable, iterator and generator.</p>
-<p><img src="img/iterator_relationships.png" width="70%" height="70%"></p>
+<img src="img/iterator_relationships.png" width="70%" height="70%">
 
 </div>
 </div>
@@ -13977,11 +13992,18 @@ Hello
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1><ul>
-<li><a href="http://www.effectivepython.com/2015/01/03/be-defensive-when-iterating-over-arguments/">Blog: Be Defensive When Iterating Over Arguments</a></li>
-<li><a href="https://dbader.org/blog/python-iterators">Blog: Python Iterators: A Step-By-Step Introduction</a></li>
-<li><a href="https://rare-technologies.com/data-streaming-in-python-generators-iterators-iterables/">Blog: Data streaming in Python: generators, iterators, iterables</a></li>
-<li><a href="http://nbviewer.jupyter.org/github/akittas/presentations/blob/master/pythess/func_py/func_py.ipynb">Notebook: Using functional programming in Python like a boss: Generators, Iterators and Decorators</a></li>
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li><a href="http://www.effectivepython.com/2015/01/03/be-defensive-when-iterating-over-arguments/">[1]</a> Blog: Be Defensive When Iterating Over Arguments</li>
+<li><a href="https://dbader.org/blog/python-iterators">[2]</a> Blog: Python Iterators: A Step-By-Step Introduction</li>
+<li><a href="https://rare-technologies.com/data-streaming-in-python-generators-iterators-iterables/">[3]</a> Blog: Data streaming in Python: generators, iterators, iterables</li>
+<li><a href="http://nbviewer.jupyter.org/github/akittas/presentations/blob/master/pythess/func_py/func_py.ipynb">[4]</a> Notebook: Using functional programming in Python like a boss: Generators, Iterators and Decorators</li>
 </ul>
 
 </div>
@@ -13991,7 +14013,10 @@ Hello
   </div>
 </body>
 
- 
+
+
+
+
 
 
 </html>
