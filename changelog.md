@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2024-03]
+
+### Added
+
+- Multilingual Sentence Embedding with LLM and PEFT LoRA (PyTorch Lightning) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/contrastive/sentence_embedding_peft/sentence_embedding_peft.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/contrastive/sentence_embedding_peft/sentence_embedding_peft.html)]
+
 ## [2023-11]
 
 ### Changed
