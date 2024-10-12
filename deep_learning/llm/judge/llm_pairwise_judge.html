@@ -13502,18 +13502,6 @@ div#notebook {
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/home/ethenliu/.conda/envs/mfivelib/lib/python3.10/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
-  from .autonotebook import tqdm as notebook_tqdm
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
@@ -13639,7 +13627,7 @@ torch            : 2.1.2+cu121
 
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">"Qwen/Qwen2.5-1.5B-Instruct"</span><span class="p">)</span>
 <span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorForGeneration</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
 <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">))</span>
 <span class="n">batch</span>
 </pre></div>
@@ -13828,7 +13816,6 @@ TPU available: False, using: 0 TPU cores
 IPU available: False, using: 0 IPUs
 HPU available: False, using: 0 HPUs
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-/home/ethenliu/.conda/envs/mfivelib/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:441: The &#39;predict_dataloader&#39; does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=7` in the `DataLoader` to improve performance.
 </pre>
 </div>
 </div>
@@ -13839,7 +13826,7 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Predicting DataLoader 0: 100%|██████████| 1/1 [00:10&lt;00:00,  0.10it/s]
+<pre>Predicting DataLoader 0: 100%|██████████| 1/1 [00:10&lt;00:00,  0.09it/s]
 </pre>
 </div>
 </div>
@@ -14052,7 +14039,7 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
     <span class="p">{</span><span class="s2">"prompts"</span><span class="p">:</span> <span class="s2">"What is the biggest planet in the solar system?"</span><span class="p">,</span> <span class="s2">"responses1"</span><span class="p">:</span> <span class="s2">"Saturn"</span><span class="p">,</span> <span class="s2">"responses2"</span><span class="p">:</span> <span class="s2">"Jupiter"</span><span class="p">}</span>
 <span class="p">]</span>
 <span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorForPairwiseJudge</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
-<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">data_collator</span><span class="p">)</span>
 <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">data_loader</span><span class="p">))</span>
 <span class="n">batch</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 </pre></div>
@@ -14219,14 +14206,13 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading checkpoint shards: 100%|██████████| 2/2 [00:42&lt;00:00, 21.05s/it]
+<pre>Loading checkpoint shards: 100%|██████████| 2/2 [00:02&lt;00:00,  1.31s/it]
 Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
 GPU available: True (cuda), used: True
 TPU available: False, using: 0 TPU cores
 IPU available: False, using: 0 IPUs
 HPU available: False, using: 0 HPUs
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-/home/ethenliu/.conda/envs/mfivelib/lib/python3.10/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:441: The &#39;predict_dataloader&#39; does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=7` in the `DataLoader` to improve performance.
 </pre>
 </div>
 </div>
@@ -14237,7 +14223,7 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Predicting DataLoader 0: 100%|██████████| 1/1 [00:00&lt;00:00,  1.63it/s]
+<pre>Predicting DataLoader 0: 100%|██████████| 1/1 [00:00&lt;00:00,  1.83it/s]
 </pre>
 </div>
 </div>
