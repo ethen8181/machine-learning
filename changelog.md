@@ -6,6 +6,7 @@ The changelog will record what content was **changed** (e.g. changed an existing
 
 ### Added
 
+- Direct Preference Optimization (DPO) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/llm/rlhf/dpo.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/llm/rlhf/dpo.html)]
 - LLM Pairwise Judge (PyTorch Lightning) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/llm/judge/llm_pairwise_judge.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/llm/judge/llm_pairwise_judge.html)]
 
 ## [2024-03]
