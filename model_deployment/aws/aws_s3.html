@@ -13098,7 +13098,7 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>One of the most common operations when working with <a href="https://aws.amazon.com/s3/">Amazon S3 (Amazon Simple Storage Service)</a> is to pull data from s3 to local as well as push data from local to s3. We can use aws command line tool to achieve this:</p>
 <div class="highlight"><pre><span></span><span class="c1"># e.g. from s3 to local, add --recursive if it&#39;s a directory</span>
-aws s3 cp &lt;s3 path&gt; &lt;<span class="nb">local</span> path&gt; --recursive
+aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>&lt;s3<span class="w"> </span>path&gt;<span class="w"> </span>&lt;<span class="nb">local</span><span class="w"> </span>path&gt;<span class="w"> </span>--recursive
 </pre></div>
 <p>We'll also demonstrate how to use <code>boto3</code> to perform these kind of operations in Python.</p>
 
@@ -13117,14 +13117,18 @@ aws s3 cp &lt;s3 path&gt; &lt;<span class="nb">local</span> path&gt; --recursive
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">boto3</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pyarrow</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span> <span class="nn">awswrangler</span> <span class="k">as</span> <span class="nn">wr</span>
 <span class="kn">import</span> <span class="nn">pyarrow.parquet</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">perf_counter</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a &#39;Ethen&#39; -d -u -v -iv
+<span class="o">%</span><span class="k">watermark</span> -a 'Ethen' -d -u -v -iv
 </pre></div>
 
     </div>
@@ -13143,17 +13147,18 @@ aws s3 cp &lt;s3 path&gt; &lt;<span class="nb">local</span> path&gt; --recursive
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2023-05-19
+Last updated: 2024-10-24
 
 Python implementation: CPython
-Python version       : 3.8.10
-IPython version      : 8.8.0
+Python version       : 3.10.14
+IPython version      : 8.26.0
 
-pandas : 1.5.2
-pyarrow: 10.0.1
-boto3  : 1.26.49
-numpy  : 1.23.2
-json   : 2.0.9
+pandas     : 2.2.2
+boto3      : 1.34.152
+numpy      : 1.26.4
+pyarrow    : 17.0.0
+json       : 2.0.9
+awswrangler: 3.9.1
 
 </pre>
 </div>
@@ -13169,14 +13174,9 @@ json   : 2.0.9
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># replace these top level configuration, especially s3 region and bucket</span>
-<span class="n">region_name</span> <span class="o">=</span> <span class="s2">&quot;us-east-1&quot;</span>
-<span class="n">s3_bucket</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">s3_json_path</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/test.json&quot;</span>
-<span class="n">s3_dir</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/data&quot;</span>
-<span class="n">local_dir</span> <span class="o">=</span> <span class="s2">&quot;ethenliu/data&quot;</span>
-<span class="n">s3_parquet_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s3_dir</span><span class="p">,</span> <span class="s2">&quot;test.parquet&quot;</span><span class="p">)</span>
-
-<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">)</span>
+<span class="n">region_name</span> <span class="o">=</span> <span class="s2">"us-east-1"</span>
+<span class="n">s3_bucket</span> <span class="o">=</span>
+<span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"s3"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13197,10 +13197,10 @@ json   : 2.0.9
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># json dumps doesn&#39;t allow saving numpy array directly, we need to convert it to a list</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># json dumps doesn't allow saving numpy array directly, we need to convert it to a list</span>
 <span class="n">prediction</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-    <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="s2">"ids"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="s2">"embeddings"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="p">}</span>
 <span class="n">prediction</span>
 </pre></div>
@@ -13235,7 +13235,8 @@ json   : 2.0.9
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_json_path</span> <span class="o">=</span> <span class="s2">"ethenliu/data/test.json"</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span>
     <span class="n">Body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">prediction</span><span class="p">),</span>
     <span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span>
     <span class="n">Key</span><span class="o">=</span><span class="n">s3_json_path</span>
@@ -13257,10 +13258,9 @@ json   : 2.0.9
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>All of this is well and good until we work with some large python objects, which we'll encounter <a href="https://stackoverflow.com/questions/26319815/entitytoolarge-error-when-uploading-a-5g-file-to-amazon-s3">errors</a> such as entity too large error.</p>
+<p>All of this is well and good until we work with some large python objects, which we'll encounter <a href="https://stackoverflow.com/questions/26319815/entitytoolarge-error-when-uploading-a-5g-file-to-amazon-s3">errors</a> such as entity being too large.</p>
 <p>Directly copied from S3's <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/upload-objects.html">documentation</a></p>
-<blockquote>
-<ul>
+<blockquote><ul>
 <li>Upload an object in a single operation by using the AWS SDKs, REST API, or AWS CLI – With a single PUT operation, you can upload a single object up to 5 GB in size.</li>
 <li>Upload an object in parts by using the AWS SDKs, REST API, or AWS CLI – Using the multipart upload API operation, you can upload a single large object, up to 5 TB in size.</li>
 </ul>
@@ -13276,8 +13276,8 @@ json   : 2.0.9
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Saves the dictionary as a parquet file and push it to s3.    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Saves the dictionary as a parquet file and push it to s3.    </span>
+<span class="sd">    """</span>
     <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">s3_path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">pa_table</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">pq</span><span class="o">.</span><span class="n">write_table</span><span class="p">(</span><span class="n">pa_table</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
@@ -13286,7 +13286,7 @@ json   : 2.0.9
     <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">pa_table</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finish writing </span><span class="si">{}</span><span class="s2"> to s3://</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Finish writing </span><span class="si">{}</span><span class="s2"> to s3://</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">))</span>
 
     <span class="k">return</span>
 </pre></div>
@@ -13304,9 +13304,11 @@ json   : 2.0.9
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># convert 2d numpy array to list of 1d numpy array as pyarrow supports saving 1d numpy array</span>
 <span class="n">embeddings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]])</span>
 <span class="n">prediction</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;ids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
-    <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">embedding</span> <span class="k">for</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
+    <span class="s2">"ids"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="s2">"embeddings"</span><span class="p">:</span> <span class="p">[</span><span class="n">embedding</span> <span class="k">for</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
 <span class="p">}</span>
+
+<span class="n">s3_parquet_path</span> <span class="o">=</span> <span class="s2">"ethenliu/data/test.parquet"</span>
 <span class="n">save_as_parquet_to_s3</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_parquet_path</span><span class="p">)</span>
 </pre></div>
 
@@ -13324,9 +13326,10 @@ json   : 2.0.9
     <span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">local_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*.parquet"</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Download files under a s3 bucket &amp; path to a specified local path.</span>
 <span class="sd">    n_jobs configures the number of threads used for downloading files in parallel.</span>
 
@@ -13334,7 +13337,7 @@ json   : 2.0.9
 <span class="sd">    -------</span>
 <span class="sd">    download_paths : </span>
 <span class="sd">        list of files that were downloaded their corresponding local path.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">s3_client</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">):</span>
@@ -13344,17 +13347,17 @@ json   : 2.0.9
 
     <span class="c1"># use clients instead of resource, as they are thread safe</span>
     <span class="c1"># https://boto3.amazonaws.com/v1/documentation/api/latest/guide/clients.html#multithreading-or-multiprocessing-with-clients</span>
-    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
+    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"s3"</span><span class="p">)</span>
 
-    <span class="c1"># leverage paginator to avoid list object&#39;s limitation of returning 1000 objects at a time</span>
+    <span class="c1"># leverage paginator to avoid list object's limitation of returning 1000 objects at a time</span>
     <span class="c1"># https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html</span>
-    <span class="n">paginator</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s2">&quot;list_objects_v2&quot;</span><span class="p">)</span>
+    <span class="n">paginator</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s2">"list_objects_v2"</span><span class="p">)</span>
     <span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Prefix</span><span class="o">=</span><span class="n">s3_path</span><span class="p">)</span>
 
-    <span class="n">parallel</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;threading&quot;</span><span class="p">)</span>
+    <span class="n">parallel</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">"threading"</span><span class="p">)</span>
     <span class="n">page_download_paths</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">page_iterator</span><span class="p">:</span>
-        <span class="n">object_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;Key&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">page</span><span class="p">[</span><span class="s2">&quot;Contents&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;_SUCCESS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;Key&quot;</span><span class="p">]]</span>
+        <span class="n">object_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">content</span><span class="p">[</span><span class="s2">"Key"</span><span class="p">]</span> <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">page</span><span class="p">[</span><span class="s2">"Contents"</span><span class="p">]</span> <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s2">"Key"</span><span class="p">],</span> <span class="n">pattern</span><span class="p">)]</span>
         <span class="n">download_paths</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span>
             <span class="n">delayed</span><span class="p">(</span><span class="n">download_file</span><span class="p">)(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">s3_client</span><span class="p">,</span> <span class="n">s3_bucket</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">object_key</span> <span class="ow">in</span> <span class="n">object_keys</span>
@@ -13374,12 +13377,14 @@ json   : 2.0.9
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;download files from s3&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_dir</span> <span class="o">=</span> <span class="s2">"ethenliu/data"</span>
+<span class="n">local_dir</span> <span class="o">=</span> <span class="s2">"ethenliu/data"</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_dir</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"download files from s3"</span><span class="p">)</span>
     <span class="n">start</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">download_files_from_s3</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">,</span> <span class="n">local_dir</span><span class="p">)</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;download files from s3 elapsed: &quot;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"download files from s3 elapsed: "</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">local_dir</span><span class="p">)</span>
 <span class="n">df</span>
@@ -13392,6 +13397,18 @@ json   : 2.0.9
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>download files from s3
+download files from s3 elapsed:  0.47062552347779274
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -13445,7 +13462,7 @@ json   : 2.0.9
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Instead of downloading our parquet files to disk first, we can also read it directly into memory by wrapping the bytes object in a pyarrow <code>BufferReader</code> followed with <code>read_table</code>.</p>
+<p>We can also upload an entire local directory to s3, and remove the local copy once complete.</p>
 
 </div>
 </div>
@@ -13455,13 +13472,19 @@ json   : 2.0.9
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">list_s3_object</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">)</span>
-    <span class="n">bucket</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">upload_s3</span><span class="p">(</span><span class="n">local_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">'s3'</span><span class="p">)</span>
 
-    <span class="n">objects</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Prefix</span><span class="o">=</span><span class="n">s3_dir</span><span class="p">)</span>
-    <span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">obj</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span> <span class="k">if</span> <span class="s2">&quot;_SUCCESS&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">objects</span>
+    <span class="n">bucket</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">s3_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"s3://"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">local_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+            <span class="n">relative_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">local_file_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span>
+            <span class="n">s3_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">)</span>
+            <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">local_file_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">s3_file_path</span><span class="p">)</span>
+
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13474,11 +13497,61 @@ json   : 2.0.9
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"s3://</span><span class="si">{</span><span class="n">s3_bucket</span><span class="si">}</span><span class="s2">/ethenliu/data_upload"</span>
+<span class="n">upload_s3</span><span class="p">(</span><span class="n">local_dir</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instead of downloading our parquet files to disk first, we can also read it directly into memory by wrapping the bytes object in a pyarrow <code>BufferReader</code> followed with <code>read_table</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">list_s3_objects</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s3_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*.parquet"</span><span class="p">):</span>
+    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">"s3"</span><span class="p">)</span>
+
+    <span class="c1"># leverage paginator to avoid list object's limitation of returning 1000 objects at a time</span>
+    <span class="c1"># https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html</span>
+    <span class="n">paginator</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">get_paginator</span><span class="p">(</span><span class="s2">"list_objects_v2"</span><span class="p">)</span>
+    <span class="n">page_iterator</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">paginate</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Prefix</span><span class="o">=</span><span class="n">s3_path</span><span class="p">)</span>
+
+    <span class="n">page_download_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">page_iterator</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">page</span><span class="p">[</span><span class="s2">"Contents"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s2">"Key"</span><span class="p">],</span> <span class="n">pattern</span><span class="p">):</span>
+                <span class="n">obj</span> <span class="o">=</span> <span class="n">s3_client</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">content</span><span class="p">[</span><span class="s2">"Key"</span><span class="p">])</span>
+                <span class="n">page_download_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">page_download_paths</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    https://stackoverflow.com/questions/58061225/read-a-parquet-bytes-object-in-python</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">body</span> <span class="o">=</span> <span class="n">s3_object</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="s2">&quot;Body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">s3_object</span><span class="p">[</span><span class="s2">"Body"</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">BufferReader</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
@@ -13492,10 +13565,11 @@ json   : 2.0.9
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_objects</span> <span class="o">=</span> <span class="n">list_s3_object</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">s3_dir</span> <span class="o">=</span> <span class="s2">"ethenliu/data/"</span>
+<span class="n">s3_objects</span> <span class="o">=</span> <span class="n">list_s3_objects</span><span class="p">(</span><span class="n">s3_bucket</span><span class="p">,</span> <span class="n">s3_dir</span><span class="p">)</span>
 <span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">read_s3_parquet_object</span><span class="p">(</span><span class="n">s3_object</span><span class="p">)</span> <span class="k">for</span> <span class="n">s3_object</span> <span class="ow">in</span> <span class="n">s3_objects</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">df</span>
@@ -13511,7 +13585,107 @@ json   : 2.0.9
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ids</th>
+      <th>embeddings</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>[1.0, 2.0, 3.0]</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>[4.0, 5.0, 6.0]</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="AWSWrangler">AWSWrangler<a class="anchor-link" href="#AWSWrangler">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The upload and download functionality is technically quite generic and allows for us to use it as part of any object. If uploading/reading parquet file is all we need, then we could instead leverage awswrangler.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"s3://</span><span class="si">{</span><span class="n">s3_bucket</span><span class="si">}</span><span class="s2">/ethenliu/data_awswrangler/test.parquet"</span>
+<span class="n">wr</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">wr</span><span class="o">.</span><span class="n">s3</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(2, 2)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 

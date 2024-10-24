@@ -87,7 +87,8 @@ Curated notes on deep learning.
 - FastAPI & Azure Kubernetes Cluster. End to end example of training a model and hosting it as a service. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/fastapi_kubernetes)]
 - Quick Intro to Gradient Boosted Tree Inferencing. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/gbt_inference/gbt_inference.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/gbt_inference/gbt_inference.html)]
 - Speeding Up Transformers Inferencing. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/transformers)]
-- Working with AWS (Amazon Web Services). [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/aws/)]
+- Working with AWS (Amazon Web Services).
+    - Uploading and downloading files from s3. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/aws/aws_s3.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/aws/aws_s3.html)]
 
 ### operation research
 
