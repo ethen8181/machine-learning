@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2025-06]
+
+### Added
+
+- LLM Batch Inference with Ray and VLLM (2D parallelism, data + tensor). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/llm_batch_inference/llm_batch_inference_ray_vllm.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/llm_batch_inference/llm_batch_inference_ray_vllm.html)]
+
 ## [2024-10]
 
 ### Added

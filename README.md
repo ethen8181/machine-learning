@@ -89,6 +89,7 @@ Curated notes on deep learning.
 - Speeding Up Transformers Inferencing. [[folder](https://github.com/ethen8181/machine-learning/blob/master/model_deployment/transformers)]
 - Working with AWS (Amazon Web Services).
     - Uploading and downloading files from s3. [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/aws/aws_s3.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/aws/aws_s3.html)]
+- LLM Batch Inference with Ray and VLLM (2D parallelism, data + tensor). [[nbviewer](http://nbviewer.jupyter.org/github/ethen8181/machine-learning/blob/master/model_deployment/llm_batch_inference/llm_batch_inference_ray_vllm.ipynb)][[html](http://ethen8181.github.io/machine-learning/model_deployment/llm_batch_inference/llm_batch_inference_ray_vllm.html)]
 
 ### operation research
 
