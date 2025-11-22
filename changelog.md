@@ -2,6 +2,12 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+## [2025-11]
+
+### Added
+
+- LLM Reranker with Single Token Decoding [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/llm/reranker/llm_reranker.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/llm/reranker/llm_reranker.html)]
+
 ## [2025-06]
 
 ### Added

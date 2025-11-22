@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dpo</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>llm_reranker</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13088,402 +13088,29 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># code for loading notebook's format</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="c1"># path : store the current path to convert back to it later</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">'..'</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">,</span> <span class="s1">'notebook_format'</span><span class="p">))</span>
-
-<span class="kn">from</span> <span class="nn">formats</span> <span class="kn">import</span> <span class="n">load_style</span>
-<span class="n">load_style</span><span class="p">(</span><span class="n">css_style</span><span class="o">=</span><span class="s1">'custom2.css'</span><span class="p">,</span> <span class="n">plot_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[1]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<style>
-    html {
-        font-size: 18px !important;
-    }
-
-    body {
-        background-color: #FFF !important;
-        font-weight: 1rem;
-        font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    body .notebook-app {
-        background-color: #FFF !important;
-    }
-
-    #header {
-        box-shadow: none !important;
-    }
-
-    #notebook {
-        padding-top: 0px;
-    }
-
-    #notebook-container {
-        box-shadow: none;
-        -webkit-box-shadow: none;
-        padding: 10px;
-    }
-
-    div.cell {
-        width: 1000px;
-        margin-left: 0% !important;
-        margin-right: auto;
-    }
-
-    div.cell.selected {
-        border: 1px dashed #CCCCCC;
-    }
-
-    .edit_mode div.cell.selected {
-        border: 1px dashed #828282;
-    }
-
-    div.output_wrapper {
-        margin-top: 8px;
-    }
-
-    a {
-        color: #383838;
-    }
-
-    code,
-    kbd,
-    pre,
-    samp {
-        font-family: 'Menlo', monospace !important;
-        font-size: 0.75rem !important;
-    }
-
-    h1 {
-        font-size: 2rem !important;
-        font-weight: 500 !important;
-        letter-spacing: 3px !important;
-        text-transform: uppercase !important;
-    }
-
-    h2 {
-        font-size: 1.8rem !important;
-        font-weight: 400 !important;
-        letter-spacing: 3px !important;
-        text-transform: none !important;
-    }
-
-    h3 {
-        font-size: 1.5rem !important;
-        font-weight: 400 !important;
-        font-style: italic !important;
-        display: block !important;
-    }
-
-    h4,
-    h5,
-    h6 {
-        font-size: 1rem !important;
-        font-weight: 400 !important;
-        display: block !important;
-    }
-
-    .prompt {
-        font-family: 'Menlo', monospace !important;
-        font-size: 0.75rem;
-        text-align: right;
-        line-height: 1.21429rem;
-    }
-
-    /* INTRO PAGE */
-
-    .toolbar_info,
-    .list-container {
-        ;
-    }
-    /* NOTEBOOK */
-
-    div#header-container {
-        display: none !important;
-    }
-
-    div#notebook {
-        border-top: none;
-        font-size: 1rem;
-    }
-
-    div.input_prompt {
-        color: #C74483;
-    }
-
-    .code_cell div.input_prompt:after,
-    div.output_prompt:after {
-        content: '\25b6';
-    }
-
-    div.output_prompt {
-        color: #2B88D9;
-    }
-
-    div.input_area {
-        border-radius: 0px;
-        border: 1px solid #d8d8d8;
-    }
-
-    div.output_area pre {
-        font-weight: normal;
-    }
-
-    div.output_subarea {
-        font-weight: normal;
-    }
-
-    .rendered_html pre,
-    .rendered_html table,
-    .rendered_html th,
-    .rendered_html tr,
-    .rendered_html td {
-        border: 1px #828282 solid;
-        font-size: 0.75rem;
-        font-family: 'Menlo', monospace;
-    }
-
-    .rendered_html th,
-    .rendered_html tr,
-    .rendered_html td {
-        padding: 5px 10px;
-    }
-
-    .rendered_html th {
-        font-weight: normal;
-        background: #f8f8f8;
-    }
-
-    a:link{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:visited{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:hover{
-       font-weight: bold;
-       color: #1d3b84;
-    }
-    a:focus{
-       font-weight: bold;
-       color:#447adb;
-    }
-    a:active{
-       font-weight: bold;
-       color:#447adb;
-    }
-    .rendered_html :link {
-       text-decoration: underline; 
-    }
-
-    div.output_html {
-        font-weight: 1rem;
-        font-family: 'Source Sans Pro', "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-
-    table.dataframe tr {
-        border: 1px #CCCCCC;
-    }
-
-    div.cell.selected {
-        border-radius: 0px;
-    }
-
-    div.cell.edit_mode {
-        border-radius: 0px;
-        border: thin solid #CF5804;
-    }
-
-    span.ansiblue {
-        color: #00A397;
-    }
-
-    span.ansigray {
-        color: #d8d8d8;
-    }
-
-    span.ansigreen {
-        color: #688A0A;
-    }
-
-    span.ansipurple {
-        color: #975DDE;
-    }
-
-    span.ansired {
-        color: #D43132;
-    }
-
-    span.ansiyellow {
-        color: #D9AA00;
-    }
-
-    div.output_stderr {
-        background-color: #D43132;
-    }
-
-    div.output_stderr pre {
-        color: #e8e8e8;
-    }
-
-    .cm-s-ipython.CodeMirror {
-        background: #F8F8F8;
-    }
-
-    .cm-s-ipython div.CodeMirror-selected {
-        background: #e8e8e8 !important;
-    }
-
-    .cm-s-ipython .CodeMirror-gutters {
-        background: #F8F8F8;
-        border-right: 0px;
-    }
-
-    .cm-s-ipython .CodeMirror-linenumber {
-        color: #b8b8b8;
-    }
-
-    .cm-s-ipython .CodeMirror-cursor {
-        border-left: 1px solid #585858 !important;
-    }
-
-    .cm-s-ipython span.cm-atom {
-        color: #C74483;
-    }
-
-    .cm-s-ipython span.cm-number {
-        color: #C74483;
-    }
-
-    .cm-s-ipython span.cm-property,
-    .cm-s-ipython span.cm-attribute {
-        color: #688A0A;
-    }
-
-    .cm-s-ipython span.cm-keyword {
-        font-weight: normal;
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-string {
-        color: #D9AA00;
-    }
-
-    .cm-s-ipython span.cm-operator {
-        font-weight: normal;
-    }
-
-    .cm-s-ipython span.cm-builtin {
-        color: #2B88D9;
-    }
-
-    .cm-s-ipython span.cm-variable {
-        color: #00A397;
-    }
-
-    .cm-s-ipython span.cm-variable-2 {
-        color: #2B88D9;
-    }
-
-    .cm-s-ipython span.cm-def {
-        color: #00A397;
-    }
-
-    .cm-s-ipython span.cm-error {
-        background: #FFBDBD;
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-tag {
-        color: #D43132;
-    }
-
-    .cm-s-ipython span.cm-link {
-        color: #975DDE;
-    }
-
-    .cm-s-ipython .CodeMirror-matchingbracket {
-        text-decoration: underline;
-         !important;
-    }
-</style>
-
-<script>
-    MathJax.Hub.Config({
-                        TeX: {
-                           extensions: ["AMSmath.js"]
-                           },
-                tex2jax: {
-                    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-                },
-                displayAlign: 'center', // Change this to 'center' to center equations.
-                "HTML-CSS": {
-                    scale:100,
-                        availableFonts: [],
-                        preferredFont:null,
-                        webFont: "TeX",
-                    styles: {'.MathJax_Display': {"margin": 4}}
-                }
-        });
-</script></div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-
-<span class="o">%</span><span class="k">load_ext</span> watermark
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 
+<span class="kn">import</span> <span class="nn">ray</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">transformers</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AutoTokenizer</span><span class="p">,</span>
-    <span class="n">AutoModelForCausalLM</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">peft</span> <span class="kn">import</span> <span class="n">LoraConfig</span>
-<span class="kn">from</span> <span class="nn">trl</span> <span class="kn">import</span> <span class="n">DPOTrainer</span><span class="p">,</span> <span class="n">DPOConfig</span>
+<span class="kn">from</span> <span class="nn">vllm</span> <span class="kn">import</span> <span class="n">LLM</span><span class="p">,</span> <span class="n">SamplingParams</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">ndcg_score</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">kendalltau</span><span class="p">,</span> <span class="n">rankdata</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForCausalLM</span>
 
-<span class="o">%</span><span class="k">watermark</span> -a 'Ethen' -d -v -u -p transformers,datasets,torch,trl,peft
+<span class="o">%</span><span class="k">watermark</span> -a 'Ethen' -d -v -u -p transformers,datasets,torch,numpy,pandas,vllm
 </pre></div>
 
     </div>
@@ -13502,17 +13129,18 @@ div#notebook {
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2024-10-23
+Last updated: 2025-11-22
 
 Python implementation: CPython
 Python version       : 3.10.14
-IPython version      : 8.26.0
+IPython version      : 8.37.0
 
-transformers: 4.42.0
-datasets    : 3.0.0
-torch       : 2.1.2+cu121
-trl         : 0.11.3
-peft        : 0.10.0
+transformers: 4.51.3
+datasets    : 4.0.0
+torch       : 2.6.0
+numpy       : 1.26.4
+pandas      : 2.3.3
+vllm        : 0.8.6.dev0+gba41cc90e.d20251108.cu121
 
 </pre>
 </div>
@@ -13525,21 +13153,25 @@ peft        : 0.10.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Direct-Preference-Optimization-(DPO)">Direct Preference Optimization (DPO)<a class="anchor-link" href="#Direct-Preference-Optimization-(DPO)">&#182;</a></h1>
+<h1 id="LLM-Listwise-Reranker">LLM Listwise Reranker<a class="anchor-link" href="#LLM-Listwise-Reranker">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>A typical process of training modern LLM involves an un/self-supervised training stage, followed by an instruction tuning stage. The instruction tuning phase trains LLM on higher quality of instructions to completion datasets. This helps conform the model's outputs with desired behaviors or tasks, making it more reliable and effective for various applications. Despite the success of instruction tuning, relative judgements of response quality are often times easier to collect, thus subsequent LLM works have a so called alignment stage, which tunes LLMs with preference dataset and reinforcement learning based algorithms, a.k.a. RLHF (Reinforcement Learning with Human Feedback).</p>
-<p>In Reinforcement Learning from Human Feedback (RLHF), our objective can be written as:</p>
-$$
-\max_{\pi_{\theta}} \mathbb{E}{x \sim D, y \sim \pi_{\theta}(y|x)}[r(x, y)] - \beta \cdot \mathrm{KL}(\pi_{\theta}(y|x)||\pi_{\mathrm{ref}}(y|x))
-$$<ul>
-<li>This objective function optimizes our LLM policy $\pi_{\theta}$ to maximize the expected reward $[r(x, y)]$ for the questions/prompts $x$ sampled from our dataset $D$ and the answers $y$ generated by LLM policy $\pi_{\theta}(y|x)$. The reason we can't just run gradient descent on this objective function and resort to RL algorithms is because the output $y$ are sampled from LLM using various decoding strategies (greedy, beam search, etc.). All of which are not differentiable.</li>
-<li>At the same time, it seeks to minimize Kullback-Leibler (KL) divergence between the LLM policy $\pi_{\theta}(y|x)$ and the original reference policy $\pi_{\mathrm{ref}}(y|x)$, weighted by a factor $\beta$. Higher $\beta$ means less deviation from the reference model. This second term is added to prevent "reward hacking," a situation where the LLM generates sequences of tokens that achieve high reward scores but may be nonsensical.</li>
-</ul>
+<p>Early implementation of LLM for listwise reranking employs the following prompt template <a href="https://arxiv.org/abs/2304.09542">[1]</a> <a href="https://arxiv.org/abs/2309.15088">[4]</a></p>
+
+<pre><code>Input:
+Rank these passages based on their relevance to the {query} in descending order
+
+1. {passage 1}
+2. {passage 2}
+...
+
+Output:
+[2, 1, ...]</code></pre>
+<p>Where given an input query and multiple candidate messages, LLM is prompted or instruction fine tuned to generate a ranked ordering based on some relevance criteria. The expected output is a sequence of indices representing descending order of relevance. While this approach offers intuitive simplicity, it  leaves a lot to be desired both from a training as well as inference perspective.</p>
 
 </div>
 </div>
@@ -13547,36 +13179,72 @@ $$<ul>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Given this objective function, RLHF methods usually involves fitting a reward model to dataset of human preferences and then use RL to optimize a language model policy to produce responses assigned high reward without drifting excessively far from the original model.</p>
-<p>Suppose we have a preference dataset at hand, we can convert these preferences into a score by modeling it via the Bradley-Terry model.</p>
-$$\Pr(y_1 \succ y_2) = \frac{\exp(r(x, y_1))}{\exp(r(x, y_1)) + \exp(r(x, y_2))}$$<p>where:</p>
+<h3 id="Training">Training<a class="anchor-link" href="#Training">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From training perspective, supervised/instruction fine-tuning's next token prediction loss applies uniform penalties across all ranking errors. This fails to differentiate between critical errors, such as misranking highly relevant passages, versus minor inconsistencies, like reordering non-relevant items.</p>
+<p>To address this limitation, we propose adopting established learning-to-rank methodologies by implementing NDCG/MRR-based reward functions during RL phase <a href="https://arxiv.org/abs/2503.24289">[6]</a>. This enhancement serves dual purposes: it better aligns the objective function with task requirements while enabling more dense reward signals.</p>
+<p>Dense reward in this context refers to moving beyond optimizing for a sparse binary feedback such as single relevance definition or behavioral signals including purchase or click for our ground truth array <code>[1 (purchase/click/relevance), 0 (other), 0 (other)]</code>. Instead, we categorize ground truth into distinct hierarchical interaction levels, e.g. <code>[4 (purchase), 2 (click), 1 (relevance), 0 (others)]</code> <a href="https://www.arxiv.org/abs/2506.06913">[7]</a>. This refined approach addresses critical challenges in standard RL with binary reward: model collapse due to sparse positive signals or skews optimization towards simpler cases. Exemplars of applying dense reward includes defining a curriculum learning regime where we warm up with fine-grained reward signals before transitioning to strict pass/fail <a href="https://www.arxiv.org/abs/2509.21016">[8]</a> or a hybrid reward system that combine both model and rule-base reward which captures more grandular signals to better differentiate diverse rollouts <a href="https://arxiv.org/abs/2510.07242">[9]</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inference">Inference<a class="anchor-link" href="#Inference">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>On inference side, ranked list output lacks efficiency due its sequential nature. On the other hand, single token decoding utilizes the first generated identifier from LLM head's output logits to directly determine ranking order <a href="https://arxiv.org/abs/2311.02089">[2]</a> <a href="https://arxiv.org/abs/2406.15657">[3]</a>. This method significantly accelerate inference speed for <strong>closed vocab</strong> style list-wise re-ranking applications.</p>
+<p><img src="imgs/single_token_decoding.png"></p>
+<p>Two important clarifications. This fundamentally differs from standard multiple-choice evaluation methods, specifically the generation and cloze-style formulations <a href="https://arxiv.org/abs/2406.08446">[10]</a>, and this is not suitable for open vocab style generation.</p>
+<p><strong>Distinction from standard multi choice formulation:</strong> In a generation formulation, the model is presented with a prompt, answer choices. Evaluation uses exact match between the answer label and generated choice.</p>
+
+<pre><code>Question: {question}
+A. [Option A]
+B. [Option B]
+
+Answer:</code></pre>
+<p>While this matches how multiple choice questions are typically presented to humans, weaker base LLM models can struggle with this formulation. The alternative cloze formulation, i.e. the multi_choice setup in eval framework such as lm eval harness:</p>
+
+<pre><code>Question: {question}
+
+Answer: {Insert individual options}</code></pre>
+<p>evaluates each option's logit score independently by substituting individual answer choices after Answer: and picking the most probable choice.</p>
+<p>In single token decoding, we still maintain a generation based formulation, while directly extracting additional each answer option's score/logits from LLM head's vocab. Contrasting with cloze formulation's separate substitution approach which scales poorly for re-ranking task given inference complexity scales linearly with number of input candidates.</p>
+<p><strong>Open-vocab vs closed-vocab:</strong> For open-vocab use cases such as query or semantic id generation <a href="https://www.arxiv.org/abs/2506.06913">[7]</a>, LLM's role extends beyond pure re-ranking. Input candidates only serves as contextual signals or anchors rather than strict constraints, allowing generation result to fall outside initial candidate set. Rendering this single token decoding using candidate identifier less suitable for open-vocabulary tasks.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Additional-Considerations">Additional Considerations<a class="anchor-link" href="#Additional-Considerations">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>$P(i \succ j)$ represents probability that the first answer ($y_1$) is better than the second answer ($y_2$) in a paired comparison.</li>
-<li>The numerator $\exp(r(x, y_1))$ is the (hidden) reward function that evaluates the first answer's quaility $y_1$ for an input prompt $x$. Similarly, for the second answer, we have $\exp(r(x, y_2))$.</li>
-<li>The probability is computed by taking the ratio of first answer's reward over the sum of rewards for both answers. This normalization ensures we result in a valid probability distribution.</li>
+<li>Following IFT stage's common best practice of including diverse mix of data/format, sequence generation training objective can also improve the quality of LLM's logit-induced ranking. Whereas during RL stage, reward should handle various edge cases including wrong format, repetition, missing ordering.</li>
+<li>Candidate set: For closed-vocab re-ranking, input candidates typically relies on first stage retrieval or early stage ranking system. This initial stage output not only determines the ceiling/room-for-improvement of a re-ranker, but also determine the optimal candidate pool size we should consider for subsequent re-ranking phase.</li>
+<li>Shuffle candidate ordering:<ul>
+<li>Implementing this data augmentation exposes the model to more challenging reordering scenarios, achieving a balance between effectiveness and robustness. This approach reduces re-ranker's sensitivity to first stage system's candidate ordering, and mitigates position bias from behavioral logs. During RL stage, shuffling helps prevent reward collapse by discouraging default ordering output, measurable through rank ordering metrics such as Kendall-tau.</li>
+<li>Permutation self consistency <a href="https://arxiv.org/abs/2310.07712">[5]</a> is comprised of two main stages, analogous to self-consistency. Multiple responses are generated from shuffled input orderings, with the expectation that output errors will vary across permutations. These diverse ordering biases are then consolidated using established rank aggregation techniques such as Kemeny-Young or Borda count.</li>
 </ul>
-<p>We can parameterize the reward function and estimate its parameter via maximum likelihood, which boils down to framing it as a binary classfication problem:</p>
-$$
-L = -\mathbb{E}_{(x,y_1,y_2)\sim D}\left[\log \sigma\left(r(x,y_1) - r(x,y_2)\right)\right]
-$$<p>Where $\sigma$ is the logistic function $\frac{1}{1 + e^{-x}}$.</p>
-<p>Note, we can show the two are connected. Assuming $r(x,y_1) = A$ and $r(x,y_2) = B$</p>
-$$ \frac{e^A}{e^A + e^B} = \frac{\frac{e^A}{e^A}}{\frac{e^A + e^B}{e^A}} = \frac{1}{1 + \left(\frac{e^A + e^B}{e^A} - 1\right)} = \frac{1}{1 + \left(\frac{e^A + e^B - e^A}{e^A}\right)} = \frac{1}{1 + \left(\frac{e^B}{e^A}\right)} = \frac{1}{1 + e^{B-A}} = \sigma(A - B) $$
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>While RLHF is capable of producing models with impressive capabilities (supposedly one of the secret sauces behind ChatGPT), its pipeline can be consideraby more complex than supervised learning. Involving training multiple LMs and sampling from a LLM policy as part of the training loop. One of the key insights in Direct Preference Optimization (DPO) <a href="https://arxiv.org/abs/2305.18290">[9]</a> is replacing this complex process in RLHF with a supervised learning algorithm that implicitly optimizes the same objective as RLHF.</p>
-<p><img src="imgs/dpo.png" width="60%" height="60%"></p>
-<p>The DPO paper shows an optimal solution to this optimization problem is:</p>
-$$\pi_{\theta}(y|x) = \frac{1}{Z(x)} \pi_{\mathrm{ref}}(y|x) \exp\left(\frac{1}{\beta}r(x, y)\right)$$<p>where:</p>
-$$Z(x) = \sum_{y'} \pi_{\mathrm{ref}}(y'|x) \exp\left(\frac{1}{\beta}r(x, y')\right)$$<p>While an exact solution exists, it is hard to utilize in practice. $Z(x)$ entails we would have to compute all possible answers that can be generated by our LLM, making it computationally intractable.</p>
-<p>The trick is to re-arrange the above term to be based on the reward function:</p>
-$$\log \pi_{\theta}(y|x) = \log \left[\frac{1}{Z(x)}\pi_\text{ref}(y|x) \exp \left(\frac{1}{\beta} r(x,y)\right)\right] = \log \pi_\text{ref}(y|x) - \log Z(x) + \log \exp \left(\frac{1}{\beta} r(x,y)\right) = \log \pi_\text{ref}(y|x) - \log Z(x) + \frac{1}{\beta} r(x,y)$$$$r(x, y) = \beta \log \frac{\pi_{\theta}(y|x)}{\pi_{ref}(y|x)} + \beta \log Z(x)$$<p>Given this reward function expression, we can now plug it back into Bradley-Terry model expression:</p>
-$$P(y_1 &gt; y_2) = \sigma(r(x, y_1) - r(x, y_2)) = \sigma \left( \beta \log \frac{\pi_{\theta}(y_1|x)}{\pi_{ref}(y_1|x)} + \beta \log Z(x) - \beta \log \frac{\pi_{\theta}(y_2|x)}{\pi_{ref}(y_2|x)} - \beta \log Z(x) \right)$$<p>With the Bradley-Terry model depending only on reward differences beteen the two completions, the computationally expensive $Z(x)$ term canels out. With the final DPO loss being:</p>
-$$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log \sigma \left( \beta \log \frac{\pi_{\theta}(y_1|x)}{\pi_{ref}(y_1|x)} - \beta \log \frac{\pi_{\theta}(y_2|x)}{\pi_{ref}(y_2|x)} \right) \right]$$<p>And with all that, we now have the probability of human preference data in terms of our optimal policy rather than a reward model.</p>
-<p>Similar to existing algorithms, Direct Preference Optimization (DPO) uses a preference model, such as the Bradley-Terry model, to evaluate how well a reward function aligns with empirical preference data. However, while RLHF methods trains a reward model based on the preference model and then optimize a policy to maximize that learned reward, DPO takes a different approach. It uses a change of variables to directly define a preference loss as a function of the policy itself. This is DPO's main contribution - an algorithm that can train language models from human preferences through binary cross-entropy objective, discarding the need for reinforcement learning methods.</p>
+</li>
+<li>With single token decoding approach, we need to ensure candidate identifier can be represented by one single token. Adopting alphabetic identifiers A-Z imposes a 26 candidate limitation. Larger candidate pools require extended identifier sets such as greek letters or special tokens, etc.</li>
+</ul>
 
 </div>
 </div>
@@ -13584,15 +13252,27 @@ $$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+<h2 id="VLLM-Evaluation">VLLM Evaluation<a class="anchor-link" href="#VLLM-Evaluation">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This implementation section is comprised of two parts. We'll roll out the DPO loss calculations ourselves, as well as showcase how to leverage <code>trl</code> library's DPOTrainer <a href="https://huggingface.co/blog/dpo-trl">[3]</a> <a href="https://www.philschmid.de/dpo-align-llms-in-2024-with-trl">[5]</a>. We'll be leveraging Ultrafeedback <a href="https://arxiv.org/abs/2310.01377">[10]</a> as our dataset. Ultrafeedback is a synthetic preference dataset collected via LLMs. At a high level, the authors compiled 60K diverse instructions, prompted a pool of distinct models at different capability levels for generating completions, and finally leveraged GPT-4 for annotating completion pairs.</p>
+<p>The following implementation section is organized as follows:</p>
+<ul>
+<li>We will re-use first stage retrieval results data from the community.</li>
+<li>Implement single token decoding inference as well as metric calculation using vllm with ray data.</li>
+<li>Use Qwen2.5 7B in a zero shot manner to demonstrate the improvements of performing a stage 2 re-ranking.</li>
+</ul>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Data-Preprocessing">Data Preprocessing<a class="anchor-link" href="#Data-Preprocessing">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13601,14 +13281,12 @@ $$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log 
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
-    <span class="s2">"argilla/ultrafeedback-binarized-preferences-cleaned"</span><span class="p">,</span>
-    <span class="n">split</span><span class="o">=</span><span class="s2">"train"</span><span class="p">,</span>
-    <span class="n">verification_mode</span><span class="o">=</span><span class="s2">"no_checks"</span><span class="p">,</span>
-    <span class="n">cache_dir</span><span class="o">=</span><span class="s2">"/data"</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-<span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># https://huggingface.co/datasets/abdoelsayed/reranking-datasets</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">"abdoelsayed/reranking-datasets"</span><span class="p">,</span> <span class="n">data_files</span><span class="o">=</span><span class="p">{</span><span class="s2">"test"</span><span class="p">:</span> <span class="s2">"bm25/nq-test.json"</span><span class="p">},</span> <span class="n">cache_dir</span><span class="o">=</span><span class="s2">"/data"</span><span class="p">,</span> <span class="n">streaming</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">"test"</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"question"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"answers"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"ctxs"</span><span class="p">][:</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -13625,38 +13303,11 @@ $$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log 
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Dataset({
-    features: [&#39;source&#39;, &#39;prompt&#39;, &#39;chosen&#39;, &#39;chosen-rating&#39;, &#39;chosen-model&#39;, &#39;rejected&#39;, &#39;rejected-rating&#39;, &#39;rejected-model&#39;],
-    num_rows: 60917
-})
+<pre>who got the first nobel prize in physics
+[&#39;Wilhelm Conrad Röntgen&#39;]
+[{&#39;has_answer&#39;: False, &#39;id&#39;: 628725, &#39;score&#39;: &#39;16.331100&#39;, &#39;text&#39;: &#39;receive a diploma, a medal and a document confirming the prize amount. Nobel Prize in Physics The Nobel Prize in Physics () is a yearly award given by the Royal Swedish Academy of Sciences for those who have made the most outstanding contributions for mankind in the field of physics. It is one of the five Nobel Prizes established by the will of Alfred Nobel in 1895 and awarded since 1901; the others being the Nobel Prize in Chemistry, Nobel Prize in Literature, Nobel Peace Prize, and Nobel Prize in Physiology or Medicine. The first Nobel Prize in Physics was&#39;, &#39;title&#39;: &#39;Nobel Prize in Physics&#39;}]
 </pre>
 </div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;source&#39;: &#39;evol_instruct&#39;,
- &#39;prompt&#39;: &#39;Can you write a C++ program that prompts the user to enter the name of a country and checks if it borders the Mediterranean Sea? Here\&#39;s some starter code to help you out:\n#include &lt;iostream&gt;\n#include &lt;string&gt;\nusing namespace std;\nint main() {\n    string country;\n    // prompt user for input\n    cout &lt;&lt; &#34;Enter the name of a country: &#34;;\n    cin &gt;&gt; country;\n    // check if country borders the Mediterranean Sea\n    // [C++ code]\n    return 0;\n}&#39;,
- &#39;chosen&#39;: [{&#39;content&#39;: &#39;Can you write a C++ program that prompts the user to enter the name of a country and checks if it borders the Mediterranean Sea? Here\&#39;s some starter code to help you out:\n#include &lt;iostream&gt;\n#include &lt;string&gt;\nusing namespace std;\nint main() {\n    string country;\n    // prompt user for input\n    cout &lt;&lt; &#34;Enter the name of a country: &#34;;\n    cin &gt;&gt; country;\n    // check if country borders the Mediterranean Sea\n    // [C++ code]\n    return 0;\n}&#39;,
-   &#39;role&#39;: &#39;user&#39;},
-  {&#39;content&#39;: &#39;Here\&#39;s a C++ program that prompts the user to enter the name of a country and checks if it borders the Mediterranean Sea:\n\n#include &lt;iostream&gt;\n#include &lt;string&gt;\n#include &lt;set&gt;\n#include &lt;map&gt;\n#include &lt;algorithm&gt;\n\nusing namespace std;\n\nint main() {\n    // store countries and their bordering seas in a map\n    map&lt;string, set&lt;string&gt;&gt; countries;\n    countries[&#34;Algeria&#34;] = {&#34;Mediterranean Sea&#34;, &#34;North African Coast&#34;};\n    countries[&#34;France&#34;] = {&#34;Mediterranean Sea&#34;, &#34;English Channel&#34;};\n    countries[&#34;Italy&#34;] = {&#34;Mediterranean Sea&#34;, &#34;Adriatic Sea&#34;};\n    countries[&#34;Malta&#34;] = {&#34;Mediterranean Sea&#34;, &#34;North African Coast&#34;};\n    countries[&#34;Spain&#34;] = {&#34;Mediterranean Sea&#34;, &#34;Atlantic Ocean&#34;};\n    countries[&#34;Tunisia&#34;] = {&#34;Mediterranean Sea&#34;, &#34;North African Coast&#34;};\n\n    string country;\n    cout &lt;&lt; &#34;Enter the name of a country: &#34;;\n    cin &gt;&gt; country;\n\n    // check if country is in the map\n    if (countries.find(country)!= countries.end()) {\n        // check if country borders the Mediterranean Sea\n        set&lt;string&gt; borders = countries.at(country);\n        if (borders.find(&#34;Mediterranean Sea&#34;)!= borders.end()) {\n            cout &lt;&lt; country &lt;&lt; &#34; borders the Mediterranean Sea.&#34; &lt;&lt; endl;\n        } else {\n            cout &lt;&lt; country &lt;&lt; &#34; does not border the Mediterranean Sea.&#34; &lt;&lt; endl;\n        }\n    } else {\n        cout &lt;&lt; country &lt;&lt; &#34; is not a recognized country.&#34; &lt;&lt; endl;\n    }\n\n    return 0;\n}\n\nIn this program, we first define a map called countries that stores each country\&#39;s name as a key and a set of its surrounding seas as the value. We use a set to store each sea name so that we can easily check if a country borders a certain sea.\n\nWe then present the user with a prompt to enter the name of a country. We use a while loop to ensure that the user enters a valid country name. We check if the country is in the map, and if so, we retrieve its bordering seas from the map.\n\nFinally, we check if the Mediterranean Sea is among the set of borders. If it is, we inform the user that the country borders the Mediterranean Sea. If not, we inform the user that the country does not border the Mediterranean Sea.&#39;,
-   &#39;role&#39;: &#39;assistant&#39;}],
- &#39;chosen-rating&#39;: 5.0,
- &#39;chosen-model&#39;: &#39;starchat&#39;,
- &#39;rejected&#39;: [{&#39;content&#39;: &#39;Can you write a C++ program that prompts the user to enter the name of a country and checks if it borders the Mediterranean Sea? Here\&#39;s some starter code to help you out:\n#include &lt;iostream&gt;\n#include &lt;string&gt;\nusing namespace std;\nint main() {\n    string country;\n    // prompt user for input\n    cout &lt;&lt; &#34;Enter the name of a country: &#34;;\n    cin &gt;&gt; country;\n    // check if country borders the Mediterranean Sea\n    // [C++ code]\n    return 0;\n}&#39;,
-   &#39;role&#39;: &#39;user&#39;},
-  {&#39;content&#39;: &#39;Sure, here is the program using the C++11 algorithm &#34;cds::algorithm::GreaterEqual&#34;:\n#include &lt;iostream&gt;\n#include &lt;string&gt;\n#include &lt;algorithm&gt;\n#include &lt;vector&gt;\n#include &lt;cctype&gt;\n\nusing namespace std;\n\nint main() {\n    string country;\n    cout &lt;&lt; &#34;Enter the name of a country: &#34;;\n    cin &gt;&gt; country;\n    std::vector&lt;string&gt; vec;\n    vec.push_back(country);\n    size_t index = std::find_if(vec.begin(), vec.end(), [](const string&amp; s) {\n        return std::any_of(s.begin(), s.end(), [](const char&amp; c) {\n            return c == \&#39;}}\&#39;;\n    });\n    if (index != vec.end()) {\n        if ((*index)[0] == \&#39;M\&#39;) {\n            cout &lt;&lt; &#34;Country is bordered by the Mediterranean Sea.&#34; &lt;&lt; endl;\n        } else {\n            cout &lt;&lt; &#34;Country does not border the Mediterranean Sea.&#34; &lt;&lt; endl;\n        }\n    } else {\n        cout &lt;&lt; &#34;Country is not found.&#34; &lt;&lt; endl;\n    }\n    return 0;\n}&#39;,
-   &#39;role&#39;: &#39;assistant&#39;}],
- &#39;rejected-rating&#39;: 1.25,
- &#39;rejected-model&#39;: &#39;pythia-12b&#39;}</pre>
-</div>
-
 </div>
 
 </div>
@@ -13668,30 +13319,66 @@ $$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log 
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">create_preference_triplets</span><span class="p">(</span><span class="n">example</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Create preference triplets:</span>
-<span class="sd">    </span>
-<span class="sd">    - `prompt`: prompt that is given to a model for text generation.</span>
-<span class="sd">    - `chosen`: preferred generated response for the corresponding prompt.</span>
-<span class="sd">    - `rejected`: response that is not preferred.</span>
-<span class="sd">    """</span>
-    <span class="n">chosen</span> <span class="o">=</span> <span class="n">extract_assistant_messages</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">"chosen"</span><span class="p">],</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">rejected</span> <span class="o">=</span> <span class="n">extract_assistant_messages</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">"rejected"</span><span class="p">],</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
- 
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">"prompt"</span><span class="p">:</span> <span class="n">example</span><span class="p">[</span><span class="s2">"prompt"</span><span class="p">],</span>
-        <span class="s2">"chosen"</span><span class="p">:</span> <span class="n">chosen</span><span class="p">,</span>
-        <span class="s2">"rejected"</span><span class="p">:</span> <span class="n">rejected</span>
-    <span class="p">}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">format_reranker_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+    <span class="n">processed_samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s2">"question"</span><span class="p">]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s2">"answers"</span><span class="p">]</span>
 
+        <span class="n">target_labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">contexts</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s2">"ctxs"</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">choices</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">context</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">contexts</span><span class="p">):</span>
+            <span class="n">has_answer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s2">"has_answer"</span><span class="p">])</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"text"</span><span class="p">]</span>
+            <span class="n">target_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">has_answer</span><span class="p">)</span>
+    
+            <span class="n">candidate</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">choices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">'</span>
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+    
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">target_labels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2"> "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+            <span class="n">prompt_template</span> <span class="o">=</span> <span class="n">dedent</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">                Pick the most relevant candidate to the query: **</span><span class="si">{query}</span><span class="s2">**</span>
+<span class="s2">        </span>
+<span class="s2">                **candidates:**</span>
+<span class="s2">                </span><span class="si">{candidates}</span>
+<span class="s2">        </span>
+<span class="s2">                **Output Requirement**</span>
+<span class="s2">                Return **only** the corresponding letter index</span>
+<span class="s2">        </span>
+<span class="s2">                Your answer:"""</span>
+            <span class="p">)</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">,</span>
+            <span class="p">)</span>
+    
+            <span class="n">max_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target_labels</span><span class="p">)</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">choices</span><span class="p">[</span><span class="n">max_index</span><span class="p">]</span>
+        
+            <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+                    <span class="s2">"content"</span><span class="p">:</span> <span class="n">prompt</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span>
+                    <span class="s2">"content"</span><span class="p">:</span> <span class="n">answer</span>
+                <span class="p">},</span>            
+            <span class="p">]</span>
+    
+            <span class="n">target_labels_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">"target_labels"</span><span class="p">:</span> <span class="n">target_labels</span><span class="p">})</span>
+            <span class="n">processed_sample</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"question"</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+                <span class="s2">"answers"</span><span class="p">:</span> <span class="n">answers</span><span class="p">,</span>
+                <span class="s2">"messages"</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+                <span class="s2">"target_labels_str"</span><span class="p">:</span> <span class="n">target_labels_str</span>
+            <span class="p">}</span>
+            <span class="n">processed_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_sample</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">extract_assistant_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Recursively extract the last assistant messages from the end of the conversation."""</span>
-    <span class="k">if</span> <span class="n">messages</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">"role"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"assistant"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">messages</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">"content"</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">extract_assistant_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_processed_samples</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">processed_samples</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_processed_samples</span>
 </pre></div>
 
     </div>
@@ -13704,523 +13391,10 @@ $$L_{DPO}(\pi_{\theta}; \pi_{ref}) = -\mathbb{E}{(x,y_1,y_2)\sim D} \left[ \log 
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset_dict</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">54321</span><span class="p">)</span>
-<span class="n">dataset_dict_preprocessed</span> <span class="o">=</span> <span class="n">dataset_dict</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-    <span class="n">create_preference_triplets</span><span class="p">,</span>
-    <span class="n">num_proc</span><span class="o">=</span><span class="mi">8</span>
-<span class="p">)</span>
-<span class="n">dataset_dict_preprocessed</span><span class="p">[</span><span class="s2">"train"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[5]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;source&#39;: &#39;flan_v2_niv2&#39;,
- &#39;prompt&#39;: &#34;In this task, you are given two sentences in the English language (Sentence 1 and Sentence 2). Your task is to identify the connecting word between the two sentences.\n\nExample input: Sentence 1:A suicide car bomber detonated his bomb as he attempted to drive an SUV into a Somali military camp . Sentence 2:However the vehicle exploded at the entrance when police guards opened fire on the insurgent driving the vehicle .\nExample output: however\nExample explanation: The above sentence is connected by the word &#39;however&#39;.\nQ: Sentence 1:She went on to earn 39 caps in the Silver Ferns by the end of 2006 . Sentence 2:but was not selected for the 2007 World Netball Championships squad , subsequently retiring from netball to focus on beach volleyball , partnering with Susan Blundell .\nA:&#34;,
- &#39;chosen&#39;: &#39;but\nConfidence: 90%&#39;,
- &#39;chosen-rating&#39;: 4.5,
- &#39;chosen-model&#39;: &#39;vicuna-33b&#39;,
- &#39;rejected&#39;: &#39;The connecting word is &#34;by&#34;&#39;,
- &#39;rejected-rating&#39;: 1.75,
- &#39;rejected-model&#39;: &#39;starchat&#39;}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For DPO, we need two copies of the model, one serving as the model/policy we wish to optimize, and another for reference model, hence memory requirement will be higher than supervised fine-tuning.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_name_or_path</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen2.5-0.5B-Instruct"</span>
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name_or_path</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="s2">"/data"</span><span class="p">)</span>
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">padding_side</span> <span class="o">=</span> <span class="s2">"left"</span>
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token</span>
-
-<span class="n">reference_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-    <span class="n">model_name_or_path</span><span class="p">,</span>
-    <span class="n">cache_dir</span><span class="o">=</span><span class="s2">"/data"</span>
-<span class="p">)</span>
-<span class="n">reference_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-    <span class="n">model_name_or_path</span><span class="p">,</span>
-    <span class="n">cache_dir</span><span class="o">=</span><span class="s2">"/data"</span>
-<span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Qwen2ForCausalLM(
-  (model): Qwen2Model(
-    (embed_tokens): Embedding(151936, 896)
-    (layers): ModuleList(
-      (0-23): 24 x Qwen2DecoderLayer(
-        (self_attn): Qwen2SdpaAttention(
-          (q_proj): Linear(in_features=896, out_features=896, bias=True)
-          (k_proj): Linear(in_features=896, out_features=128, bias=True)
-          (v_proj): Linear(in_features=896, out_features=128, bias=True)
-          (o_proj): Linear(in_features=896, out_features=896, bias=False)
-          (rotary_emb): Qwen2RotaryEmbedding()
-        )
-        (mlp): Qwen2MLP(
-          (gate_proj): Linear(in_features=896, out_features=4864, bias=False)
-          (up_proj): Linear(in_features=896, out_features=4864, bias=False)
-          (down_proj): Linear(in_features=4864, out_features=896, bias=False)
-          (act_fn): SiLU()
-        )
-        (input_layernorm): Qwen2RMSNorm()
-        (post_attention_layernorm): Qwen2RMSNorm()
-      )
-    )
-    (norm): Qwen2RMSNorm()
-  )
-  (lm_head): Linear(in_features=896, out_features=151936, bias=False)
-)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_batch_logps</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">label_pad_token_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Get log probabilities summed over all tokens for a given batch.</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    logits: [batch size, seq length, vocab size]</span>
-<span class="sd">    labels: [batch size, seq length]</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    logps: [batch size]</span>
-<span class="sd">    """</span>
-
-    <span class="c1"># next token prediction: labels are inputs shifted by one</span>
-    <span class="n">targets</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="c1"># truncate logits to match labels' number of tokens</span>
-    <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-
-    <span class="n">loss_mask</span> <span class="o">=</span> <span class="n">targets</span> <span class="o">!=</span> <span class="n">label_pad_token_id</span>
-    
-    <span class="c1"># dummy token; we'll ignore loss on these tokens later</span>
-    <span class="n">targets</span><span class="p">[</span><span class="n">targets</span> <span class="o">==</span> <span class="n">label_pad_token_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    
-    <span class="n">log_probs</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="c1"># [batch size, seq length]</span>
-    <span class="n">per_token_logps</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">log_probs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">targets</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">per_token_logps</span> <span class="o">*</span> <span class="n">loss_mask</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">dataset_dict_preprocessed</span><span class="p">[</span><span class="s2">"train"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"prompt"</span><span class="p">]</span>
-<span class="n">chosen</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"chosen"</span><span class="p">]</span>
-<span class="n">rejected</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"rejected"</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">chosen_tokenized_outputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">([</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">chosen</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span>
-<span class="n">policy_chosen_model_outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
-    <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">],</span>
-    <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">policy_chosen_logps</span> <span class="o">=</span> <span class="n">get_batch_logps</span><span class="p">(</span>
-    <span class="n">policy_chosen_model_outputs</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span>
-    <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">rejected_tokenized_outputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">([</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">rejected</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">)</span>
-<span class="n">policy_rejected_model_outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
-    <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">],</span>
-    <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">policy_rejected_logps</span> <span class="o">=</span> <span class="n">get_batch_logps</span><span class="p">(</span>
-    <span class="n">policy_rejected_model_outputs</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span>
-    <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>We detected that you are passing `past_key_values` as a tuple and this is deprecated and will be removed in v4.43. Please use an appropriate `Cache` class (https://huggingface.co/docs/transformers/v4.41.3/en/internal/generation_utils#transformers.Cache)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">reference_chosen_model_outputs</span> <span class="o">=</span> <span class="n">reference_model</span><span class="p">(</span>
-        <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">],</span>
-        <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">reference_chosen_logps</span> <span class="o">=</span> <span class="n">get_batch_logps</span><span class="p">(</span>
-        <span class="n">reference_chosen_model_outputs</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span>
-        <span class="n">chosen_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span>
-    <span class="p">)</span>
-    
-    <span class="n">reference_rejected_model_outputs</span> <span class="o">=</span> <span class="n">reference_model</span><span class="p">(</span>
-        <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">],</span>
-        <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">reference_rejected_logps</span> <span class="o">=</span> <span class="n">get_batch_logps</span><span class="p">(</span>
-        <span class="n">reference_rejected_model_outputs</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span>
-        <span class="n">rejected_tokenized_outputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span>
-    <span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">dpo_loss</span><span class="p">(</span>
-    <span class="n">policy_chosen_logps</span><span class="p">,</span>
-    <span class="n">policy_rejected_logps</span><span class="p">,</span>
-    <span class="n">reference_chosen_logps</span><span class="p">,</span>
-    <span class="n">reference_rejected_logps</span><span class="p">,</span>
-    <span class="n">beta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">"""logps shape [batch size,]"""</span>
-    <span class="n">chosen_logratios</span> <span class="o">=</span> <span class="n">policy_chosen_logps</span> <span class="o">-</span> <span class="n">reference_chosen_logps</span>
-    <span class="n">rejected_logratios</span> <span class="o">=</span> <span class="n">policy_rejected_logps</span> <span class="o">-</span> <span class="n">reference_rejected_logps</span>
-    <span class="n">logits</span> <span class="o">=</span> <span class="n">chosen_logratios</span> <span class="o">-</span> <span class="n">rejected_logratios</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">logsigmoid</span><span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="n">logits</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">loss</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dpo_loss</span><span class="p">(</span>
-    <span class="n">policy_chosen_logps</span><span class="p">,</span>
-    <span class="n">policy_rejected_logps</span><span class="p">,</span>
-    <span class="n">reference_chosen_logps</span><span class="p">,</span>
-    <span class="n">reference_rejected_logps</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>tensor(0.6931, grad_fn=&lt;NegBackward0&gt;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="DPOTrainer">DPOTrainer<a class="anchor-link" href="#DPOTrainer">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">training_args</span> <span class="o">=</span> <span class="n">DPOConfig</span><span class="p">(</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">"./dpo_sample_model"</span><span class="p">,</span>
-    <span class="n">fp16</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">gradient_accumulation_steps</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">gradient_checkpointing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">gradient_checkpointing_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"use_reentrant"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
-    <span class="n">max_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">logging_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span>
-    <span class="n">beta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-    <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
-    <span class="n">max_prompt_length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-    <span class="n">remove_unused_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">eval_strategy</span><span class="o">=</span><span class="s2">"steps"</span><span class="p">,</span>
-    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-    <span class="n">save_strategy</span><span class="o">=</span><span class="s2">"steps"</span><span class="p">,</span>
-    <span class="n">save_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">peft_config</span> <span class="o">=</span> <span class="n">LoraConfig</span><span class="p">(</span>
-    <span class="n">r</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
-    <span class="n">target_modules</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">"q_proj"</span><span class="p">,</span>
-        <span class="s2">"k_proj"</span><span class="p">,</span>
-        <span class="s2">"v_proj"</span><span class="p">,</span>
-        <span class="s2">"o_proj"</span><span class="p">,</span>
-        <span class="s2">"down_proj"</span><span class="p">,</span>
-        <span class="s2">"up_proj"</span><span class="p">,</span>
-        <span class="s2">"gate_proj"</span>
-    <span class="p">],</span>
-    <span class="n">modules_to_save</span><span class="o">=</span><span class="p">[</span>
-        <span class="s2">"embed_tokens"</span><span class="p">,</span>
-        <span class="s2">"lm_head"</span>
-    <span class="p">]</span>
-<span class="p">)</span>
-<span class="n">dpo_trainer</span> <span class="o">=</span> <span class="n">DPOTrainer</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">,</span>
-    <span class="n">train_dataset</span><span class="o">=</span><span class="n">dataset_dict_preprocessed</span><span class="p">[</span><span class="s2">"train"</span><span class="p">],</span>
-    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">dataset_dict_preprocessed</span><span class="p">[</span><span class="s2">"test"</span><span class="p">],</span>
-    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
-    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
-    <span class="n">peft_config</span><span class="o">=</span><span class="n">peft_config</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">dpo_trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>Tokenizing train dataset: 100%|██████████| 60307/60307 [05:22&lt;00:00, 187.11 examples/s]
-Tokenizing eval dataset: 100%|██████████| 610/610 [00:03&lt;00:00, 185.96 examples/s]
-max_steps is given, it will override any value given in num_train_epochs
-Could not estimate the number of tokens of the input, floating-point operations will not be computed
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-    <div>
-      
-      <progress value='100' max='100' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [100/100 06:22, Epoch 0/1]
-    </div>
-    <table border="1" class="dataframe">
-  <thead>
- <tr style="text-align: left;">
-      <th>Step</th>
-      <th>Training Loss</th>
-      <th>Validation Loss</th>
-      <th>Rewards/chosen</th>
-      <th>Rewards/rejected</th>
-      <th>Rewards/accuracies</th>
-      <th>Rewards/margins</th>
-      <th>Logps/rejected</th>
-      <th>Logps/chosen</th>
-      <th>Logits/rejected</th>
-      <th>Logits/chosen</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>50</td>
-      <td>0.884900</td>
-      <td>0.917661</td>
-      <td>-1.439814</td>
-      <td>-1.465053</td>
-      <td>0.511475</td>
-      <td>0.025239</td>
-      <td>-272.778931</td>
-      <td>-303.907043</td>
-      <td>-1.459422</td>
-      <td>-1.637277</td>
-    </tr>
-    <tr>
-      <td>100</td>
-      <td>0.854500</td>
-      <td>0.940485</td>
-      <td>-1.702263</td>
-      <td>-1.789815</td>
-      <td>0.522951</td>
-      <td>0.087551</td>
-      <td>-276.026550</td>
-      <td>-306.531555</td>
-      <td>-1.460726</td>
-      <td>-1.642910</td>
-    </tr>
-  </tbody>
-</table><p></div>
-
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[13]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>TrainOutput(global_step=100, training_loss=0.8696735000610352, metrics={&#39;train_runtime&#39;: 384.2274, &#39;train_samples_per_second&#39;: 1.041, &#39;train_steps_per_second&#39;: 0.26, &#39;total_flos&#39;: 0.0, &#39;train_loss&#39;: 0.8696735000610352, &#39;epoch&#39;: 0.006632729202248495})</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>DPO trainer offers several metrics related to rewards for us to monitor as part of its training process:</p>
-<ul>
-<li>rewards/chosen: for the chosen responses, it measures the mean difference between policy model and reference model's log probabilities, scaled by beta</li>
-<li>rewards/rejected: Same as above but for rejected responses.</li>
-<li>rewards/accuracies: how often rewards/chosen is greater than its corresponding rewards/rejected.</li>
-<li>rewards/margins: the mean difference between the chosen and corresponding rejected rewards.</li>
-</ul>
-<p>We can also compare final result using LLM as a parwise judge. In our case, this boils down to comparing the answer generated by the original base/instruct model with the model that was aligned using DPO.</p>
-<p><code>llm_judge_responses.parquet</code> shows pairwise comparison of a Qwen 2.5 3B instruct reference model versus the reference model being aligned with DPO on ultra feedback dataset.</p>
-<ol>
-<li>3B model was trained via <code>dpo_train.py</code> (took approx. 1 hour on 16 A100)</li>
-<li>response generated via <code>generate.py</code></li>
-<li>LLM based judgements curated via <code>claude_judge.py</code>. LLM as a judge script is largely following the concept introduced as part of a separate <a href="https://ethen8181.github.io/machine-learning/deep_learning/llm/judge/llm_pairwise_judge.html">notebook</a>, except we call claude through AWS bedrock's API for obtaining judge response.</li>
-</ol>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_llm_judge_responses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"llm_judge_responses_v7.parquet"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_llm_judge_responses</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">df_llm_judge_responses</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">choices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)</span>
+<span class="n">df_processed_samples</span> <span class="o">=</span> <span class="n">format_reranker_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">"test"</span><span class="p">],</span> <span class="n">choices</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_processed_samples</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">df_processed_samples</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -14237,14 +13411,14 @@ Could not estimate the number of tokens of the input, floating-point operations 
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(61, 6)
+<pre>(642, 4)
 </pre>
 </div>
 </div>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[16]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -14266,59 +13440,52 @@ Could not estimate the number of tokens of the input, floating-point operations 
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>prompts</th>
-      <th>responses1</th>
-      <th>responses2</th>
-      <th>judge_responses</th>
-      <th>judge_responses_swapped_position</th>
-      <th>result</th>
+      <th>question</th>
+      <th>answers</th>
+      <th>messages</th>
+      <th>target_labels_str</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Is a raspberry pi powerful enough to run real ...</td>
-      <td>I have a raspberry pi 3 and I want to run a c...</td>
-      <td>For running real-time chess software on a Ras...</td>
-      <td>2</td>
-      <td>1</td>
-      <td>win</td>
+      <td>who wrote the first declaration of human rights</td>
+      <td>[Cyrus]</td>
+      <td>[{'role': 'user', 'content': '
+Pick the most r...</td>
+      <td>{"target_labels": [0, 0, 0, 0, 0, 1, 0, 0, 0, ...</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>In this task, you will be presented with a que...</td>
-      <td>B\nThe answer to this example can be: B\nHere...</td>
-      <td>B\nThe answer to this example can be: B\nHere...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>tie</td>
+      <td>when is the last time the philadelphia won the...</td>
+      <td>[Super Bowl LII ,, 2017]</td>
+      <td>[{'role': 'user', 'content': '
+Pick the most r...</td>
+      <td>{"target_labels": [0, 0, 0, 0, 0, 0, 0, 0, 0, ...</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Name one kind of technologie that stones use m...</td>
-      <td>Stones are typically not used in daily life b...</td>
-      <td>It's important to note that stones themselves...</td>
-      <td>2</td>
-      <td>1</td>
-      <td>win</td>
+      <td>swan lake the sleeping beauty and the nutcrack...</td>
+      <td>[Pyotr Ilyich Tchaikovsky]</td>
+      <td>[{'role': 'user', 'content': '
+Pick the most r...</td>
+      <td>{"target_labels": [0, 0, 0, 0, 0, 0, 0, 0, 0, ...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Which clown is more famous in Thunderstorm?</td>
-      <td>A. Red Aiken B. White Aiken C. Both Aiken clo...</td>
-      <td>In the context of the play "Thunderstorm" by ...</td>
-      <td>1</td>
-      <td>1</td>
-      <td>tie</td>
+      <td>in which sea pearl is found in india</td>
+      <td>[the Indian Ocean]</td>
+      <td>[{'role': 'user', 'content': '
+Pick the most r...</td>
+      <td>{"target_labels": [0, 0, 0, 0, 0, 0, 0, 0, 0, ...</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Did your mouth hear the music?</td>
-      <td>Did your mouth taste the food? Did your mouth...</td>
-      <td>Or did your ears hear the music?\n\nWhen we t...</td>
-      <td>2</td>
-      <td>1</td>
-      <td>win</td>
+      <td>who played the mother in the black stallion</td>
+      <td>[Teri Garr]</td>
+      <td>[{'role': 'user', 'content': '
+Pick the most r...</td>
+      <td>{"target_labels": [0, 1, 0, 0, 0, 0, 0, 0, 0, ...</td>
     </tr>
   </tbody>
 </table>
@@ -14332,17 +13499,36 @@ Could not estimate the number of tokens of the input, floating-point operations 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># dpo model preferred 42%</span>
-<span class="c1"># instruct model preferred 23%</span>
-<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_llm_judge_responses</span><span class="p">[</span><span class="s2">"prompts"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> instruct model response: </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_llm_judge_responses</span><span class="p">[</span><span class="s2">"responses1"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> dpo model response: </span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_llm_judge_responses</span><span class="p">[</span><span class="s2">"responses2"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">processed_path</span> <span class="o">=</span> <span class="s2">"/data/processed_nq.json"</span>
+<span class="n">df_processed_samples</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">processed_path</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">"records"</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ray</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">num_cpus</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">num_gpus</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="c1"># avoid polluting notebook with log info</span>
+    <span class="n">log_to_driver</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14358,30 +13544,79 @@ Could not estimate the number of tokens of the input, floating-point operations 
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Is a raspberry pi powerful enough to run real time chess software?
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>2025-11-22 20:46:17,767	INFO worker.py:1888 -- Started a local Ray instance.
+</pre>
+</div>
+</div>
 
- instruct model response: 
+<div class="output_area">
 
- I have a raspberry pi 3 and I want to run a chess engine on it. I have a 16GB microSD card and 1GB RAM. I have a 1080p monitor and a keyboard and mouse. I have a 1.4GHz processor. I have a 100Mbps internet connection. I have a 100W power supply. I have a 100% clean environment. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I have a 100% stable internet connection. I have a 100% stable power supply. I
+    <div class="prompt output_prompt">Out[7]:</div>
 
- dpo model response: 
 
- For running real-time chess software on a Raspberry Pi, it&#39;s important to consider both the hardware capabilities and the specific requirements of the chess software you plan to use.
 
-Typically, chess software requires a significant amount of processing power, especially for high-level games and complex algorithms. The Raspberry Pi, while quite capable for many tasks, has some limitations that might affect its performance for chess software.
+<div class="output_html rendered_html output_subarea output_execute_result"><div class="lm-Widget p-Widget lm-Panel p-Panel jp-Cell-outputWrapper">
+    <div style="margin-left: 50px;display: flex;flex-direction: row;align-items: center">
+        <div class="jp-RenderedHTMLCommon" style="display: flex; flex-direction: row;">
+  <svg viewBox="0 0 567 224" fill="none" xmlns="http://www.w3.org/2000/svg" style="height: 3em;">
+    <g clip-path="url(#clip0_4338_178347)">
+        <path d="M341.29 165.561H355.29L330.13 129.051C345.63 123.991 354.21 112.051 354.21 94.2307C354.21 71.3707 338.72 58.1807 311.88 58.1807H271V165.561H283.27V131.661H311.8C314.25 131.661 316.71 131.501 319.01 131.351L341.25 165.561H341.29ZM283.29 119.851V70.0007H311.82C331.3 70.0007 342.34 78.2907 342.34 94.5507C342.34 111.271 331.34 119.861 311.82 119.861L283.29 119.851ZM451.4 138.411L463.4 165.561H476.74L428.74 58.1807H416L367.83 165.561H380.83L392.83 138.411H451.4ZM446.19 126.601H398L422 72.1407L446.24 126.601H446.19ZM526.11 128.741L566.91 58.1807H554.35L519.99 114.181L485.17 58.1807H472.44L514.01 129.181V165.541H526.13V128.741H526.11Z" fill="var(--jp-ui-font-color0)"/>
+        <path d="M82.35 104.44C84.0187 97.8827 87.8248 92.0678 93.1671 87.9146C98.5094 83.7614 105.083 81.5067 111.85 81.5067C118.617 81.5067 125.191 83.7614 130.533 87.9146C135.875 92.0678 139.681 97.8827 141.35 104.44H163.75C164.476 101.562 165.622 98.8057 167.15 96.2605L127.45 56.5605C121.071 60.3522 113.526 61.6823 106.235 60.3005C98.9443 58.9187 92.4094 54.9203 87.8602 49.0574C83.3109 43.1946 81.0609 35.8714 81.5332 28.4656C82.0056 21.0599 85.1679 14.0819 90.4252 8.8446C95.6824 3.60726 102.672 0.471508 110.08 0.0272655C117.487 -0.416977 124.802 1.86091 130.647 6.4324C136.493 11.0039 140.467 17.5539 141.821 24.8501C143.175 32.1463 141.816 39.6859 138 46.0505L177.69 85.7505C182.31 82.9877 187.58 81.4995 192.962 81.4375C198.345 81.3755 203.648 82.742 208.33 85.3976C213.012 88.0532 216.907 91.9029 219.616 96.5544C222.326 101.206 223.753 106.492 223.753 111.875C223.753 117.258 222.326 122.545 219.616 127.197C216.907 131.848 213.012 135.698 208.33 138.353C203.648 141.009 198.345 142.375 192.962 142.313C187.58 142.251 182.31 140.763 177.69 138L138 177.7C141.808 184.071 143.155 191.614 141.79 198.91C140.424 206.205 136.44 212.75 130.585 217.313C124.731 221.875 117.412 224.141 110.004 223.683C102.596 223.226 95.6103 220.077 90.3621 214.828C85.1139 209.58 81.9647 202.595 81.5072 195.187C81.0497 187.779 83.3154 180.459 87.878 174.605C92.4405 168.751 98.9853 164.766 106.281 163.401C113.576 162.035 121.119 163.383 127.49 167.19L167.19 127.49C165.664 124.941 164.518 122.182 163.79 119.3H141.39C139.721 125.858 135.915 131.673 130.573 135.826C125.231 139.98 118.657 142.234 111.89 142.234C105.123 142.234 98.5494 139.98 93.2071 135.826C87.8648 131.673 84.0587 125.858 82.39 119.3H60C58.1878 126.495 53.8086 132.78 47.6863 136.971C41.5641 141.163 34.1211 142.972 26.7579 142.059C19.3947 141.146 12.6191 137.574 7.70605 132.014C2.79302 126.454 0.0813599 119.29 0.0813599 111.87C0.0813599 104.451 2.79302 97.2871 7.70605 91.7272C12.6191 86.1673 19.3947 82.5947 26.7579 81.6817C34.1211 80.7686 41.5641 82.5781 47.6863 86.7696C53.8086 90.9611 58.1878 97.2456 60 104.44H82.35ZM100.86 204.32C103.407 206.868 106.759 208.453 110.345 208.806C113.93 209.159 117.527 208.258 120.522 206.256C123.517 204.254 125.725 201.276 126.771 197.828C127.816 194.38 127.633 190.677 126.253 187.349C124.874 184.021 122.383 181.274 119.205 179.577C116.027 177.88 112.359 177.337 108.826 178.042C105.293 178.746 102.113 180.654 99.8291 183.44C97.5451 186.226 96.2979 189.718 96.3 193.32C96.2985 195.364 96.7006 197.388 97.4831 199.275C98.2656 201.163 99.4132 202.877 100.86 204.32ZM204.32 122.88C206.868 120.333 208.453 116.981 208.806 113.396C209.159 109.811 208.258 106.214 206.256 103.219C204.254 100.223 201.275 98.0151 197.827 96.97C194.38 95.9249 190.676 96.1077 187.348 97.4873C184.02 98.8669 181.274 101.358 179.577 104.536C177.879 107.714 177.337 111.382 178.041 114.915C178.746 118.448 180.653 121.627 183.439 123.911C186.226 126.195 189.717 127.443 193.32 127.44C195.364 127.443 197.388 127.042 199.275 126.259C201.163 125.476 202.878 124.328 204.32 122.88ZM122.88 19.4205C120.333 16.8729 116.981 15.2876 113.395 14.9347C109.81 14.5817 106.213 15.483 103.218 17.4849C100.223 19.4868 98.0146 22.4654 96.9696 25.9131C95.9245 29.3608 96.1073 33.0642 97.4869 36.3922C98.8665 39.7202 101.358 42.4668 104.535 44.1639C107.713 45.861 111.381 46.4036 114.914 45.6992C118.447 44.9949 121.627 43.0871 123.911 40.301C126.195 37.515 127.442 34.0231 127.44 30.4205C127.44 28.3772 127.038 26.3539 126.255 24.4664C125.473 22.5788 124.326 20.8642 122.88 19.4205ZM19.42 100.86C16.8725 103.408 15.2872 106.76 14.9342 110.345C14.5813 113.93 15.4826 117.527 17.4844 120.522C19.4863 123.518 22.4649 125.726 25.9127 126.771C29.3604 127.816 33.0638 127.633 36.3918 126.254C39.7198 124.874 42.4664 122.383 44.1635 119.205C45.8606 116.027 46.4032 112.359 45.6988 108.826C44.9944 105.293 43.0866 102.114 40.3006 99.8296C37.5145 97.5455 34.0227 96.2983 30.42 96.3005C26.2938 96.3018 22.337 97.9421 19.42 100.86ZM100.86 100.86C98.3125 103.408 96.7272 106.76 96.3742 110.345C96.0213 113.93 96.9226 117.527 98.9244 120.522C100.926 123.518 103.905 125.726 107.353 126.771C110.8 127.816 114.504 127.633 117.832 126.254C121.16 124.874 123.906 122.383 125.604 119.205C127.301 116.027 127.843 112.359 127.139 108.826C126.434 105.293 124.527 102.114 121.741 99.8296C118.955 97.5455 115.463 96.2983 111.86 96.3005C109.817 96.299 107.793 96.701 105.905 97.4835C104.018 98.2661 102.303 99.4136 100.86 100.86Z" fill="#00AEEF"/>
+    </g>
+    <defs>
+        <clipPath id="clip0_4338_178347">
+            <rect width="566.93" height="223.75" fill="white"/>
+        </clipPath>
+    </defs>
+  </svg>
+</div>
 
-Here are some key factors to consider:
+        <table class="jp-RenderedHTMLCommon" style="border-collapse: collapse;color: var(--jp-ui-font-color1);font-size: var(--jp-ui-font-size1);">
+    <tr>
+        <td style="text-align: left"><b>Python version:</b></td>
+        <td style="text-align: left"><b>3.10.14</b></td>
+    </tr>
+    <tr>
+        <td style="text-align: left"><b>Ray version:</b></td>
+        <td style="text-align: left"><b>2.46.0</b></td>
+    </tr>
+    
+</table>
 
-1. CPU: The Raspberry Pi 4 has a 1.5 GHz quad-core ARM Cortex-A72 CPU, which is quite powerful. However, chess software can still be quite demanding on CPU resources, especially for high-level games and complex algorithms.
+    </div>
+</div>
+</div>
 
-2. Memory: The Raspberry Pi 4 has 4GB of RAM, which is sufficient for most tasks, but chess software might still require more memory for optimal performance.
+</div>
 
-3. Storage: The Raspberry Pi 4 has 64GB of eMMC storage, which is more than enough for chess software.
+</div>
+</div>
 
-4. GPU: The Raspberry Pi 4 has a Broadcom VideoCore IV GPU, which is not as powerful as dedicated GPUs found in more powerful computers. This might affect chess software performance, especially for games with complex graphics or animations.
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ds</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">processed_path</span><span class="p">)</span>
+</pre></div>
 
-5.
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>2025-11-22 20:46:19,395	INFO util.py:154 -- Missing packages: [&#39;ipywidgets&#39;]. Run `pip install -U ipywidgets`, then restart the notebook server for rich notebook output.
 </pre>
 </div>
 </div>
@@ -14390,18 +13625,466 @@ Here are some key factors to consider:
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Since DPO was introduced, subsequent works such as IPO, KPO have attempted to further improve upon it. Though, thorough comparisons on these approaches thus far seems to indicate that they all offer similar performance when hyperparameters scans are properly conducted <a href="https://huggingface.co/blog/pref-tuning">[4]</a>.</p>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
+<span class="k">class</span> <span class="nc">MetricsAggregator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Accumulates and computes NDCG scores, position baseline scores, and Kendall Tau </span>
+<span class="sd">    correlations between predicted rank vs position baseline across multiple samples.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_baseline_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_kendall_tau_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scores</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Update metrics counter with new scores and labels."""</span>
+        <span class="n">metric_score</span> <span class="o">=</span> <span class="n">ndcg_score</span><span class="p">([</span><span class="n">labels</span><span class="p">],</span> <span class="p">[</span><span class="n">scores</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="n">baseline_scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))]</span>
+        <span class="n">baseline_score</span> <span class="o">=</span> <span class="n">ndcg_score</span><span class="p">([</span><span class="n">labels</span><span class="p">],</span> <span class="p">[</span><span class="n">baseline_scores</span><span class="p">],</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="n">kendall_tau_score</span> <span class="o">=</span> <span class="n">compute_kendall_tau</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_kendall_tau_score</span> <span class="o">+=</span> <span class="n">kendall_tau_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_baseline_score</span> <span class="o">+=</span> <span class="n">baseline_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_score</span> <span class="o">+=</span> <span class="n">metric_score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">"ndcg_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">metric_score</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"baseline_ndcg_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">baseline_score</span><span class="p">,</span>
+            <span class="s2">"kendall_tau"</span><span class="p">:</span> <span class="n">kendall_tau_score</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Compute final averaged metrics across all samples."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">metric_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">baseline_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">kendall_tau_score</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>      
+            <span class="n">metric_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_score</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
+            <span class="n">baseline_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_baseline_score</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
+            <span class="n">kendall_tau_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_kendall_tau_score</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">"ndcg_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">metric_score</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"baseline_ndcg_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">baseline_score</span><span class="p">,</span>
+            <span class="s2">"kendall_tau"</span><span class="p">:</span> <span class="n">kendall_tau_score</span><span class="p">,</span>
+            <span class="s2">"n_samples"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">compute_kendall_tau</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""kendall tau used as a guard rail measurement to ensure we don't output</span>
+<span class="sd">    consecutive rank. i.e. just blindly following the order of the original input candidate set"""</span>
+    <span class="c1"># higher score = better rank, rankdata's rank starts at 1</span>
+    <span class="n">pred_ranks</span> <span class="o">=</span> <span class="n">rankdata</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+    <span class="n">consecutive_ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tau</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">kendalltau</span><span class="p">(</span><span class="n">pred_ranks</span><span class="p">,</span> <span class="n">consecutive_ranks</span><span class="p">)</span>
+    <span class="c1"># kendall tau value can be nan if input is constant</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tau</span><span class="p">))</span> <span class="k">else</span> <span class="n">tau</span>
+    <span class="k">return</span> <span class="n">tau</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">LLMRerankerSingleTokenEvaluator</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pretrained_model_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">sampling_params</span><span class="p">:</span> <span class="n">SamplingParams</span><span class="p">,</span>
+        <span class="n">vllm_engine_kwargs</span><span class="p">,</span>
+        <span class="n">choices</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">,</span>
+        <span class="n">apply_chat_template_kwargs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">id_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"id"</span><span class="p">,</span>
+        <span class="n">tensor_parallel_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">LLM</span><span class="p">(</span>
+            <span class="n">pretrained_model_name_or_path</span><span class="p">,</span>
+            <span class="n">tensor_parallel_size</span><span class="o">=</span><span class="n">tensor_parallel_size</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">vllm_engine_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_params</span> <span class="o">=</span> <span class="n">sampling_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">choices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_field</span> <span class="o">=</span> <span class="n">id_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span> <span class="o">=</span> <span class="n">apply_chat_template_kwargs</span> <span class="k">if</span> <span class="n">apply_chat_template_kwargs</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="n">tokenizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">get_tokenizer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choice_token_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">choice</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">think_end_token_id</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"&lt;/think&gt;"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># for white space, qwen3 series treats \n\n as a single token</span>
+        <span class="n">whitespace_tokens</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">whitespace</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">whitespace_token_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">whitespace_token</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">whitespace_token</span> <span class="ow">in</span> <span class="n">whitespace_tokens</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Logic for inference on 1 batch of data. Example:</span>
+
+<span class="sd">        messages: array([array([{"role": "user", "content": "prompt"}, {"role": "assistant", "content": "response"}])])</span>
+<span class="sd">        target_labels_str: array(['{"target_labels": [1, 0, 0]}', '{"target_labels": [0, 1, 0]}']</span>
+<span class="sd">        id (optional identifier for each sample): </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dictionary containing:</span>
+<span class="sd">            - generated_texts: Model generation output</span>
+<span class="sd">            - finished_reasons: Generation completion states. Useful for debugging whether generation successfully completed</span>
+<span class="sd">            - answers: Single token decoding answer. Useful for debugging whether it's outputing/parsing intended candidate choices</span>
+<span class="sd">            - prediction_scores: scores for each candidate choices</span>
+<span class="sd">            - metric_scores: Sample level evaluation metrics in dictionary format</span>
+<span class="sd">            - id: Optional sample identifiers</span>
+<span class="sd">        """</span>
+        <span class="n">batch_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">target_labels_str</span><span class="p">)[</span><span class="s2">"target_labels"</span><span class="p">]</span> <span class="k">for</span> <span class="n">target_labels_str</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"target_labels_str"</span><span class="p">]]</span>
+        <span class="n">request_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">])</span>
+
+        <span class="n">finished_reasons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">generated_texts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">prediction_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">metric_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">request_output</span><span class="p">,</span> <span class="n">batch_label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">request_outputs</span><span class="p">,</span> <span class="n">batch_labels</span><span class="p">):</span>
+            <span class="c1"># we assume only sampling 1 output</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">request_output</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># extract answer position's corresponding top log-prob,</span>
+            <span class="c1"># logprob is a dictionary of token id -&gt; Logprob object</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_reasoning</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">token_id</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">token_ids</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">get_tokenizer</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token_id</span><span class="p">)</span>
+
+            <span class="n">logprobs</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">logprobs</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+            <span class="n">choice_logprobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">choice_token_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice_token_ids</span><span class="p">:</span>
+                <span class="n">logprob</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">choice_token_id</span> <span class="ow">in</span> <span class="n">logprobs</span><span class="p">:</span>
+                    <span class="n">logprob</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logprobs</span><span class="p">[</span><span class="n">choice_token_id</span><span class="p">]</span><span class="o">.</span><span class="n">logprob</span><span class="p">)</span>
+                <span class="n">choice_logprobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logprob</span><span class="p">)</span>
+
+            <span class="c1"># ensure scores and labels' length lines up, cover edge cases where</span>
+            <span class="c1"># records might not have all the intended candidates</span>
+            <span class="n">choice_logprobs</span> <span class="o">=</span> <span class="n">choice_logprobs</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_label</span><span class="p">)]</span>
+            <span class="n">metric_score</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">choice_logprobs</span><span class="p">,</span> <span class="n">batch_label</span><span class="p">))</span>
+
+            <span class="n">generated_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">finished_reasons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">finish_reason</span><span class="p">)</span>
+            <span class="n">answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+            <span class="n">prediction_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">choice_logprobs</span><span class="p">)</span>
+            <span class="n">metric_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_score</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"generated_texts"</span><span class="p">:</span> <span class="n">generated_texts</span><span class="p">,</span>
+            <span class="s2">"finished_reasons"</span><span class="p">:</span> <span class="n">finished_reasons</span><span class="p">,</span>
+            <span class="s2">"answers"</span><span class="p">:</span> <span class="n">answers</span><span class="p">,</span>
+            <span class="s2">"prediction_scores"</span><span class="p">:</span> <span class="n">prediction_scores</span><span class="p">,</span>
+            <span class="s2">"metric_scores"</span><span class="p">:</span> <span class="n">metric_scores</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># If the input has an id field, add it to the result</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_field</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+            <span class="n">id_fields</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_field</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_field</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_field</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_fields</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">messages</span><span class="p">):</span>
+        <span class="n">formatted_texts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expect message length to be at least 2 where last message content is from assistant"</span><span class="p">)</span>
+            <span class="c1"># this assumes the last message content is from assistant, hence we remove it from the input prompt</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">formatted_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">get_tokenizer</span><span class="p">()</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
+                <span class="n">message</span><span class="p">,</span>
+                <span class="n">tokenize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span>
+            <span class="p">)</span>
+            <span class="n">formatted_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">formatted_text</span><span class="p">)</span>
+
+        <span class="n">request_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">formatted_texts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">request_outputs</span>
+
+    <span class="k">def</span> <span class="nf">cleanup_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return position id of the first none-reasoning token"""</span>
+        <span class="n">token_ids</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">token_ids</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">think_end_index</span> <span class="o">=</span> <span class="n">token_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">think_end_token_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">think_end_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        
+        <span class="c1"># loop through each white space token and find the one with the max index position</span>
+        <span class="n">token_ids</span> <span class="o">=</span> <span class="n">token_ids</span><span class="p">[</span><span class="n">think_end_index</span><span class="p">:]</span>
+        <span class="n">last_whitespace_index</span> <span class="o">=</span> <span class="n">think_end_index</span>
+        <span class="k">for</span> <span class="n">whitespace_token_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">whitespace_token_ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">token_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">whitespace_token_id</span><span class="p">)</span>
+                <span class="n">last_whitespace_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">last_whitespace_index</span><span class="p">,</span> <span class="n">think_end_index</span> <span class="o">+</span> <span class="n">pos</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="n">position</span> <span class="o">=</span> <span class="n">last_whitespace_index</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">position</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pretrained_model_name_or_path</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen2.5-7B-Instruct"</span>
+<span class="n">tensor_parallel_size</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">concurrency</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">sampling_params</span> <span class="o">=</span> <span class="n">SamplingParams</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">logprobs</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">vllm_engine_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"max_model_len"</span><span class="p">:</span> <span class="mi">32768</span><span class="p">,</span>
+    <span class="s2">"max_logprobs"</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s2">"enable_chunked_prefill"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"gpu_memory_utilization"</span><span class="p">:</span> <span class="mf">0.85</span>
+<span class="p">}</span>
+<span class="n">resources_kwarg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"num_gpus"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="n">apply_chat_template_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"enable_thinking"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+
+<span class="n">k</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">id_field</span> <span class="o">=</span> <span class="s2">"id"</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">MetricsAggregator</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+<span class="n">ds_prediction</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+    <span class="n">LLMRerankerSingleTokenEvaluator</span><span class="p">,</span>
+    <span class="n">concurrency</span><span class="o">=</span><span class="n">concurrency</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">fn_constructor_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"pretrained_model_name_or_path"</span><span class="p">:</span> <span class="n">pretrained_model_name_or_path</span><span class="p">,</span>
+        <span class="s2">"tensor_parallel_size"</span><span class="p">:</span> <span class="n">tensor_parallel_size</span><span class="p">,</span>
+        <span class="s2">"sampling_params"</span><span class="p">:</span> <span class="n">sampling_params</span><span class="p">,</span>
+        <span class="s2">"vllm_engine_kwargs"</span><span class="p">:</span> <span class="n">vllm_engine_kwargs</span><span class="p">,</span>
+        <span class="s2">"choices"</span><span class="p">:</span> <span class="n">choices</span><span class="p">,</span>
+        <span class="s2">"metric"</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
+        <span class="s2">"id_field"</span><span class="p">:</span> <span class="n">id_field</span><span class="p">,</span>
+        <span class="s2">"apply_chat_template_kwargs"</span><span class="p">:</span> <span class="n">apply_chat_template_kwargs</span>
+    <span class="p">},</span>
+    <span class="o">**</span><span class="n">resources_kwarg</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">prediction_path</span> <span class="o">=</span> <span class="s2">"/data/vllm_evaluate.parquet"</span>
+<span class="n">ds_prediction</span><span class="o">.</span><span class="n">write_parquet</span><span class="p">(</span><span class="n">prediction_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">prediction_path</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>generated_texts</th>
+      <th>finished_reasons</th>
+      <th>answers</th>
+      <th>prediction_scores</th>
+      <th>metric_scores</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>B</td>
+      <td>stop</td>
+      <td>B</td>
+      <td>[0.010986941583869245, 0.9890128259039056, 2.4...</td>
+      <td>{'baseline_ndcg_10': 0.35620718710802235, 'ken...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>I.</td>
+      <td>stop</td>
+      <td>I</td>
+      <td>[6.604850797098207e-05, 8.314280132392579e-07,...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.632...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>A</td>
+      <td>stop</td>
+      <td>A</td>
+      <td>[0.9880039478005868, 0.000546449452111729, 9.8...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.614...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>A</td>
+      <td>stop</td>
+      <td>A</td>
+      <td>[0.8175690948201907, 1.0425564486761268e-07, 6...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.445...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>B</td>
+      <td>stop</td>
+      <td>B</td>
+      <td>[9.736200313009565e-10, 0.9999998807907247, 1....</td>
+      <td>{'baseline_ndcg_10': 0.6309297535714573, 'kend...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>637</th>
+      <td>L</td>
+      <td>stop</td>
+      <td>L</td>
+      <td>[0.016295285221976725, 2.401794551566288e-07, ...</td>
+      <td>{'baseline_ndcg_10': 0.5, 'kendall_tau': 0.540...</td>
+    </tr>
+    <tr>
+      <th>638</th>
+      <td>W</td>
+      <td>stop</td>
+      <td>W</td>
+      <td>[0.00013982015873990243, 1.2499621227508566e-0...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.195...</td>
+    </tr>
+    <tr>
+      <th>639</th>
+      <td>C</td>
+      <td>stop</td>
+      <td>C</td>
+      <td>[4.944450501938644e-09, 4.139937718785167e-08,...</td>
+      <td>{'baseline_ndcg_10': 0.5, 'kendall_tau': 0.600...</td>
+    </tr>
+    <tr>
+      <th>640</th>
+      <td>F</td>
+      <td>stop</td>
+      <td>F</td>
+      <td>[1.046161355021561e-08, 5.489750958988169e-11,...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.421...</td>
+    </tr>
+    <tr>
+      <th>641</th>
+      <td>P</td>
+      <td>stop</td>
+      <td>P</td>
+      <td>[0.02891047059926518, 6.534724918514375e-08, 1...</td>
+      <td>{'baseline_ndcg_10': 0.0, 'kendall_tau': 0.429...</td>
+    </tr>
+  </tbody>
+</table>
+<p>642 rows × 5 columns</p>
+</div></div>
+
+</div>
 
 </div>
 </div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">final_metrics</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="o">.</span><span class="n">remote</span><span class="p">())</span>
+<span class="n">final_metrics</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[13]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;ndcg_10&#39;: 0.5384098638953938,
+ &#39;baseline_ndcg_10&#39;: 0.3238045689793697,
+ &#39;kendall_tau&#39;: 0.36265297260183416,
+ &#39;n_samples&#39;: 642}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
+<h1 id="References">References<a class="anchor-link" href="#References">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -14409,16 +14092,18 @@ Here are some key factors to consider:
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://www.youtube.com/watch?v=hvGa5Mba4c8">[1]</a> Youtube: Direct Preference Optimization (DPO) explained</li>
-<li><a href="https://www.youtube.com/watch?v=BqZC7mDSbIg">[2]</a> Youtube: CS 285: Eric Mitchell: Reinforcement Learning from Human Feedback: Algorithms &amp; Applications</li>
-<li><a href="https://huggingface.co/blog/dpo-trl">[3]</a> Huggingface Blog: Fine-tune Llama 2 with DPO</li>
-<li><a href="https://huggingface.co/blog/pref-tuning">[4]</a> Huggingface Blog: Preference Tuning LLMs with Direct Preference Optimization Methods</li>
-<li><a href="https://www.philschmid.de/dpo-align-llms-in-2024-with-trl">[5]</a> RLHF in 2024 with DPO &amp; Hugging Face</li>
-<li><a href="https://allam.vercel.app/post/dpo/">[6]</a> Unveiling the Hidden Reward System in Language Models: A Dive into DPO</li>
-<li><a href="https://github.com/eric-mitchell/direct-preference-optimization">[7]</a> Github: DPO - Direct Preference Optimization</li>
-<li><a href="https://medium.com/@haitham.bouammar71/deriving-dpos-loss-f332776d6c04">[8]</a> Deriving DPO’s Loss</li>
-<li><a href="https://arxiv.org/abs/2305.18290">[9]</a> Rafael Rafailov, Archit Sharma, Eric Mitchell et al. - Direct Preference Optimization: Your Language Model is Secretly a Reward Model (2023)</li>
-<li><a href="https://arxiv.org/abs/2310.01377">[10]</a> Ganqu Cui, Lifan Yuan, et al. - UltraFeedback: Boosting Language Models with Scaled AI Feedback (2023)</li>
+<li><a href="https://arxiv.org/abs/2304.09542">[1]</a> Weiwei Sun - Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents (2023)</li>
+<li><a href="https://arxiv.org/abs/2311.02089">[2]</a> Zhenrui Yue, Sara Rabhi, Gabriel de Souza Pereira Moreira, Dong Wang, Even Oldridge - LlamaRec: Two-Stage Recommendation using Large Language Models for Ranking (2023)</li>
+<li><a href="https://arxiv.org/abs/2406.15657">[3]</a> Revanth Gangi Reddy, JaeHyeok Doo, Yifei Xu, et al. - FIRST: Faster Improved Listwise Reranking with Single Token Decoding (2024)</li>
+<li><a href="https://arxiv.org/abs/2309.15088">[4]</a> Ronak Pradeep, Sahel Sharifymoghaddam et al. - RankVicuna: Zero-Shot Listwise Document Reranking with Open-Source Large Language Models (2023)</li>
+<li><a href="https://arxiv.org/abs/2310.07712">[5]</a> Raphael Tang, Xinyu Zhang et al. - Found in the Middle: Permutation Self-Consistency Improves Listwise Ranking in Large Language Models (2023)</li>
+<li><a href="https://arxiv.org/abs/2503.24289">[6]</a> Jiacheng Lin, Tian Wang, Kun Qian - Rec-R1: Bridging Generative Large Language Models and User-Centric Recommendation Systems via Reinforcement Learning (2025)</li>
+<li><a href="https://www.arxiv.org/abs/2506.06913">[7]</a> Xian Guo, Ben Chen et al. - OneSug: The Unified End-to-End Generative Framework for E-commerce Query Suggestion</li>
+<li><a href="https://www.arxiv.org/abs/2509.21016">[8]</a> Yiyou Sun, Yuhan Cao et al. - RL Grokking Recipe: How Does RL Unlock and Transfer New Algorithms in LLMs? (2025)</li>
+<li><a href="https://arxiv.org/abs/2510.07242">[9]</a> Leitian Tao, Ping Yu et al. - Hybrid Reinforcement: When Reward Is Sparse, It's Better to Be Dense (2025)</li>
+<li><a href="https://arxiv.org/abs/2406.08446">[10]</a> Yuling Gu, Oyvind Tafjord, Bailey Kuehl, Dany Haddad, Jesse Dodge, Hannaneh Hajishirzi - OLMES: A Standard for Language Model Evaluations (2024)</li>
+<li><a href="https://huggingface.co/blog/open-llm-leaderboard-mmlu">[11]</a> What's going on with the Open LLM Leaderboard?</li>
+<li><a href="https://arxiv.org/abs/2506.05176">[12]</a> Yanzhao Zhang, Mingxin Li, et al. - Qwen3 Embedding: Advancing Text Embedding and Reranking Through Foundation Models (2025)</li>
 </ul>
 
 </div>
