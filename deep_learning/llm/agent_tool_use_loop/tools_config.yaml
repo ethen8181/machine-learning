@@ -1,0 +1,4 @@
+tools:
+  - class_name: "tools.tools.WeatherTool"
+    config: 
+      type: native

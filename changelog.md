@@ -2,6 +2,13 @@
 
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
+
+## [2026-03]
+
+### Added
+
+- Introduction to Agent Tool Use Loop (simplified verl tool agent loop walk through) [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/llm/agent_tool_use_loop/agent_tool_use_loop.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/llm/agent_tool_use_loop/agent_tool_use_loop.html)]
+
 ## [2026-01]
 
 ### Added
