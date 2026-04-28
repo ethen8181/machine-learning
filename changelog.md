@@ -3,6 +3,12 @@
 The changelog will record what content was **changed** (e.g. changed an existing paragraph to a better-worded version, re-ran the notebook using an updated version of the package, introduced new content to existing notebook), **added** (e.g. a completely new jupyter notebook).
 
 
+## [2026-04]
+
+### Added
+
+- Improving LLM on Open Ended Tasks via Rubrics Literature Review [[nbviewer](https://nbviewer.org/github/ethen8181/machine-learning/blob/master/deep_learning/llm/rubrics/rubrics_literature_review.ipynb)][[html](http://ethen8181.github.io/machine-learning/deep_learning/llm/rubrics/rubrics_literature_review.html)]
+
 ## [2026-03]
 
 ### Added
