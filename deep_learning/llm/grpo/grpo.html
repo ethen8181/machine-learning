@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>agent_tool_use_loop</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>grpo</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13088,6 +13088,19 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
@@ -13096,19 +13109,13 @@ div#notebook {
 <span class="o">%</span><span class="k">autoreload</span> 2
 
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">vllm</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">vllm.inputs</span> <span class="kn">import</span> <span class="n">TokensPrompt</span>
-<span class="kn">from</span> <span class="nn">vllm</span> <span class="kn">import</span> <span class="n">AsyncLLMEngine</span><span class="p">,</span> <span class="n">SamplingParams</span>
-<span class="kn">from</span> <span class="nn">vllm.engine.arg_utils</span> <span class="kn">import</span> <span class="n">AsyncEngineArgs</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
-<span class="kn">from</span> <span class="nn">transformers.utils</span> <span class="kn">import</span> <span class="n">get_json_schema</span>
-<span class="kn">from</span> <span class="nn">verl.tools.utils.tool_registry</span> <span class="kn">import</span> <span class="n">get_tool_class</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="kn">from</span> <span class="nn">math_verify</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">verify</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForCausalLM</span>
 
 <span class="o">%</span><span class="k">watermark</span> -a 'Ethen' -d -u -v -iv
 </pre></div>
@@ -13126,21 +13133,33 @@ div#notebook {
     <div class="prompt"></div>
 
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/usr/local/lib/python3.12/dist-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2026-03-09
+Last updated: 2026-06-05
 
 Python implementation: CPython
-Python version       : 3.11.10
-IPython version      : 9.4.0
+Python version       : 3.12.13
+IPython version      : 9.14.0
 
-json        : 2.0.9
-omegaconf   : 2.3.0
+datasets    : 4.8.5
+math_verify : 0.9.0
 re          : 2.2.1
-transformers: 4.56.2
-verl        : 0.7.0.dev0
-vllm        : 0.10.2
+torch       : 2.10.0+cu129
+transformers: 4.57.6
+vllm        : 0.18.0
 
 </pre>
 </div>
@@ -13153,28 +13172,28 @@ vllm        : 0.10.2
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Introduction-to-Agent-Tool-Use-Loop">Introduction to Agent Tool Use Loop<a class="anchor-link" href="#Introduction-to-Agent-Tool-Use-Loop">&#182;</a></h1>
+<h1 id="Introduction-to-GRPO-(Group-Relative-Policy-Optimization)">Introduction to GRPO (Group Relative Policy Optimization)<a class="anchor-link" href="#Introduction-to-GRPO-(Group-Relative-Policy-Optimization)">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Agent is a system that leverages LLM model to reason, plan, and execute actions through external tools, enabling it to interact with its environment and accomplish specific goals.</p>
-<ul>
-<li>LLM serves as the agent's reasoning engine, processing inputs to interpret instructions, maintain contextual understanding and formulate action plans.</li>
-<li>Reasoning/planning capabilities enable the agent to determine appropriate course of actions and select suitable tools when necessary to fullfill user requests.</li>
-<li>Tools extends the model's capabilities by supplying auxiliary information or perform action the model can't handle reliably on its own. e.g. when precise arithmetic are required, delegating the task to a calculator tool will yield more accurate results than relying soley on its text generation capability. Similarly, querying a search tool for real-time information, such as current weather condition, prevents the model from producing hallucinated results. Crucially, by integrating tools, we are enhancing our system/model's capability without re-training the underlying LLM. </li>
-</ul>
-<p>The ReAct (Reasoning + Acting) pattern, demonstrates this overalll process:</p>
+<p>The standard recipe for building capable language models (LLM) involves: pre-training on massive corpora, followed by supervised/instruction fine-tuning stage (SFT) on curated instruction response pairs. While SFT is a potent method it's fundamental limitation is it trains the model to imitate demonstrations. On the other hand, in reinforcement learning (RL), the model learns to independently generate its own answers, explore new paths to optimize for a specific goal. Being "on-policy" allows the model to explore new pathways and solutions that might not be present in the demonstration training data. This is similar in real life, where we first bootstrap ourselves via imitation, either from school, studying how other people found success. But once we can acquire that foundation, it's always best to play to our strength, take our own actions and we learn through environment's feedback <a href="https://www.jasonwei.net/blog/life-lessons-from-reinforcement-learning">[7]</a>.</p>
+<p>Using RL to improve LLM started with learning to summarize from human feedback <a href="https://arxiv.org/abs/2009.01325">[2]</a>, where they demonstrated training a reward model from human preferences, and using it as a reward signal to fine-tune a summarization policy with RL produce better summary than optimizing ROUGE as well as much larger models trained with supervised learning alone. InstructGPT <a href="https://arxiv.org/abs/2203.02155">[3]</a> scaled this approach to general instruction following across arbitrary tasks not just summarization, establishing the reinforcement learning from human feedback (RLHF) recipe behind ChatGPT.</p>
+<p>The standard RLHF pipeline, however, comes with significant complexity. The algorithm adopted, PPO, requires 4 models simultaneously (we'll dive into this a bit more in later sections).</p>
 
-<pre><code>Thought: I need to find the latest weather in Paris.
-Action: Search["weather in Paris"]
-Observation: 22C.
-Thought: Now that I know the weather ...
-Action: Respond["The current temperature is 22C in Paris."]</code></pre>
-<p>In this pattern, LLM alternates between thinking - articulating its reasoning and intent, and acting - invoking tools and incorporating their output, until the goal is achieved.</p>
-<p>We will implement this so call "agent loop" in the upcoming sections.</p>
+<pre><code>┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────────┐
+│  SFT Model  │ ──► │ Reward Model │ ──► │ PPO Training │ ──► │ Final Model │
+│  (policy    │     │ (trained on  │     │ (policy +    │     │             │
+│   init)     │     │  preferences)│     │  critic +    │     │             │
+│             │     │              │     │  reward +    │     │             │
+│             │     │              │     │  reference)  │     │             │
+└─────────────┘     └──────────────┘     └──────────────┘     └─────────────┘
+                                               │
+                                    4 models in memory</code></pre>
+<p>Two subsequent work from Deepseek introducted simplifcations that make modern RL practical for folks that are just getting started.</p>
+<p>DeepseekMath <a href="https://arxiv.org/abs/2402.03300">[4]</a> introduced Group Relative Policy Optimization (GRPO), which eliminates the critic model entirely. Subsequent work Deepseek R1 <a href="https://arxiv.org/abs/2501.12948">[5]</a> demonstrates for tasks with verifiable answers like math, we can also eliminate the learned reward model and replace it with a deterministic verifier. This motivates the concept of verification asymmetry <a href="https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law">[6]</a>, where some tasks should be easier to verify than to solve. Together these simplificactions reduced the RL pipeline from 4 models to 2.</p>
 
 </div>
 </div>
@@ -13182,14 +13201,77 @@ Action: Respond["The current temperature is 22C in Paris."]</code></pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Tools">Tools<a class="anchor-link" href="#Tools">&#182;</a></h2>
+<h2 id="Intuition:-The-Exam-Analogy">Intuition: The Exam Analogy<a class="anchor-link" href="#Intuition:-The-Exam-Analogy">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For huggingface transformer, end users pass in tool's json schema as part of apply chat template. If we pass in Python function, they will automatically be converted to json schema for us.</p>
+<p>Instead of diving directly into the math, let us build an intuition for why each component of GRPO exists. In reinforcement learning, simply optimizing for a high reward alone can lead to instability or shortcutting behaviors. To address these challenges, we often incorporate several mechanisms - critic, clip operation, reference.</p>
+<p>Following the work understanding GRPO without any prior RL knowledge <a href="https://huggingface.co/blog/NormalUhr/grpo">[1]</a>, We will frame RL training process as a school exam scenario. We (the model being trained) are like students trying to get higher grades, the teacher we grades our exam is like the reward model, and our father handing out pocket money based on our grades plays the rolw of the training algorithm.</p>
+<p>Suppose my younger brother and I are in the same class, where I typically score above 80, while my brother often gets around 30. We take our test scores directly to our father for pocket money - whoever scores higher gets more. This however, becomes unfair, as if my brother improves from 30 to 60 through tremendous effort, his absolute reward still pales in comparison to my ususal 80+.</p>
+<p><strong>Critic</strong>: Recognizing this problem, our father sets a predicted score line for each of us, e.g. 80 for me and 40 for my brother. If we exceed each of our baseline, we get extra pocket money proportional to the surplus. Each person is now incentized to improve from their own baseline. And of course, our father must keep adjusting this baseline as we progress. This predicted baseline is so called the value function, and our training objective now becomes maximizing the <strong>advantage</strong> (reward - baseline), instead of raw reward.</p>
+<p><strong>Clip</strong>: Purely chasing for larger amount of pocket money might push us to adopt some extreme study patterns. Causing our grades to swing s between extremes, 95 one week, 60 the next. These outliers shouldn't dictate our overall study strategy. So our father caps how much extra pocket money any single exam can earn. This is called the clip mechanism, limiting how much the policy can shift in one update.</p>
+<p><strong>Reference Model</strong>: If I am solely fixated on high scores, I might resort to questionable tactics - cheating, or memorizing patterns without actually understanding. In LLM terms, this corresponds to reward hacking: producing degenerate outputs that score highly without being genuinely useful. Our father adds a rule: "You can't deviate too much from your original studying approach, else even with high scores, I will penalize you". In practice, this is calculated using the KL divergence against a reference model, it keeps the policy that we are training during RL stage from drifting too far from the initial model.</p>
+<p><strong>GRPO</strong>: One day, our father feels he is spending enormous amount of time maintaining our predicted score baseline, instead says "take a few practice tests yourself before the real exam, and use those average as your expected score". In LLM scenarios, this critic is often times a model that also needs to be trained, typically the same size as the policy model, effectively doubling the system's memory and compute requirements. GRPO's core insight is to replace the learned value function with the empirical mean of multiple samples from our model. This mechanism is self-calibrating, as we improve, our average rises automatically, fair given we are comparing only against ourselves, as well as offers computational advantage, as generating multiple samples is far cheaper than training a seprate value model.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Putting-it-Together">Putting it Together<a class="anchor-link" href="#Putting-it-Together">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The complete GRPO training objective is to <strong>maximize</strong>:</p>
+$$
+J_{\text{GRPO}}(\theta) = \mathbb{E}_{q, \{o_i\}_{i=1}^G} \left[\frac{1}{G}\sum_{i=1}^{G} \frac{1}{|o_i|}\sum_{t=1}^{|o_i|} \left(\min\left(\rho_{i,t} \hat{A}_i, \; \text{clip}(\rho_{i,t}, 1\!-\!\epsilon, 1\!+\!\epsilon) \hat{A}_i\right) - \beta \cdot D_{\text{KL}}^{(i,t)}\right)\right]
+$$<p>GRPO's key insight is replacing the learned value function with a statistical baseline computed from a group of sampled completions. For each prompt $q$, GRPO:</p>
+<ol>
+<li>Samples a group of $G$ completions $\{o_1, o_2, \ldots, o_G\}$ from the current policy $\pi_\theta$.</li>
+<li>Evaluates each completion with a reward function to obtain rewards $\{r_1, r_2, \ldots, r_G\}$.</li>
+<li>Computes the <strong>group relative advantage</strong> for each completion using z-score normalization.</li>
+</ol>
+$$\hat{A}_i = \frac{r_i - \mu_G}{\sigma_G}$$<p>Completions with above average rewards gets positive advantges, and will get reinforced. Whereas completion with below average rewards gets negative advantage and suppressed.</p>
+<p>One of the most critical failure modes in GRPO occurs when all completions within a group receives identical rewards. Since GRPO computes advantages via group level normalization, uniform rewards collapse the advantage to 0, which leads to zero gradients, and completely wasting that batch of compute.</p>
+<p>When all rewards are identical ($r_1 = r_2 = \cdots = r_G$):</p>
+$$
+\text{mean} = r_i \quad \Rightarrow \quad r_i - \text{mean} = 0 \quad \Rightarrow \quad \hat{A}_i = 0 \quad \forall i
+$$<p>This condition happens in two symmetric scenarios when the problem is too easy or too hard for the currency policy. If every sampled completion solves it correctly or no sampled completion succeeds, the reward lacks the variance/diversity needed to differentiate between completions and provide meaningful learning signals.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Importance sampling ratio: One fundamental challenge in RL is sample efficiency, every time we update our current policy's parameter $\pi_\theta$ by a single step, all previously collected samples become "stale". This can be wasteful in LLM setting, where generating completions requires expensive full autoregressive decoding. Importance sampling allows us to reuse samples from an old policy $\pi_{\theta_{\text{old}}}$ while still computing a valid gradient estimate for the current policy $\pi_\theta$.</p>
+<p>In practice, GRPO computes the importance ratio at token level:</p>
+$$
+\rho_{i,t} = \frac{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,&lt;t})} = \exp\left(\log \pi_\theta(o_{i,t} \mid q, o_{i,&lt;t}) - \log \pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,&lt;t})\right)
+$$<p>The ratio $\rho = \pi_\theta(o) / \pi_{\theta_{\text{old}}}(o)$ is called the <strong>importance sampling ratio</strong>, where it reweights each sample to account for the mismatch between the distribution it was drawn from (old policy) and the distribution we want to estimate expectations under (current policy). Intuition: If the current policy assigns a higher probability to a particular completion than the old policy did, then that completion is under-represented in our old samples. Given it should have appeared more often, the ratio $\rho &gt; 1$ upweights it to compensate.</p>
+<p>As for carrying out the computation, what we want (in probability space):</p>
+<p>$\text{ratio} = \text{new prob} / \text{old prob}$</p>
+<p>but in practice, we typically have model's log probabilities, so in log space:</p>
+<p>$\text{log(ratio)} = \text{log(new prob / old prob)} = \text{log(new prob) - log(old prob)} = \text{log prob - old log prob}$</p>
+<p>To obtain actual ratio:</p>
+<p>$\text{ratio} = \text{exp(log(new prob / old prob))} = \text{exp(log prob - old log prob)}$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Clipping is necessary as importance sampling can have a very high variance when the two distributions diverge significantly.</p>
+$$\text{clip}(\rho_{i,t}, \; 1-\epsilon, \; 1+\epsilon)$$<p>By bounding the ratio via a clipping parameter $\epsilon$, we limit how much any single token's reweighting can influence the model update. This creates a <strong>trusted region</strong>, where the optimization proceeds as if the current policy can't deviate too far from the old policy in a single step.</p>
+<p>It's important to note that when the ratio gets clamped, this style of clipping mechanism introduces a flat region in the loss landscape where the gradient becomes 0 to those elements that are clipped, effectively stopping learning for them. Because any value exceeding the thresholds is capped to a constant value, mathematically, the derivative of a constant is zero.</p>
 
 </div>
 </div>
@@ -13199,11 +13281,160 @@ Action: Respond["The current temperature is 22C in Paris."]</code></pre>
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># "Qwen/Qwen3-4B-Instruct-2507" # "Qwen/Qwen3-1.7B"</span>
-<span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen3-4B-Instruct-2507"</span>
-<span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">"/data"</span>
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create an input tensor with values below, within, and above the clamp limits</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># apply torch.clamp between -1.0 and 1.0</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1"># compute a dummy loss (sum of elements) so we can backpropagate</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+<span class="c1"># inspect the gradients</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Original Input: "</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Clamped Output: "</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Gradients:      "</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Original Input:  [-2.0, 0.5, 3.0]
+Clamped Output:  [-1.0, 0.5, 1.0]
+Gradients:       [0.0, 1.0, 0.0]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When <code>num_grpo/ppo_epochs &gt; 1</code> we perform multiple gradient steps on the same batch of rollouts. The importance sampling ratio drifts further from 1 with each step, and clipping prevents the later steps from making overly aggressive updates.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>KL divergence regularization: In GRPO, KL divergence is added directly to the loss function (not to reward as in some other variants). The per-token KL divergence is computed against a reference policy $\pi_{\text{ref}}$ (typically the initial SFT model):</p>
+$$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})} - \log \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})} - 1$$<p>There're many different forms of KL divergence, this particular form is sometimes referred to as $k_3$ estimator. The coefficient $\beta$ controls the strength of regularization — larger $\beta$ keeps the policy closer to the reference model.</p>
+<p>Note that advantage $\hat{A}_i$ is at <strong>sequence level</strong> (same value for all tokens in a completion), while importance ratio $\rho_{i,t}$ and KL divergence $D_{\text{KL}}^{(i,t)}$ are computed at the <strong>token level</strong>. Because of this, while KL divergence's primary role is to prevent the policy from diverging too far from the reference model, it effectively also serves as a per <strong>token process reward signal</strong>. Providing dense, token-level feedback regardless of whether the final sparse outcome reward.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To summarize:</p>
+<table>
+<thead><tr>
+<th>Step</th>
+<th>Exam Analogy</th>
+<th>RL Component</th>
+<th>Problem Solved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Raw scores</td>
+<td>Pays based on absolute grade</td>
+<td>Reward $r(o)$</td>
+<td>— (starting point)</td>
+</tr>
+<tr>
+<td>2. Score line</td>
+<td>Sets a predicted baseline per child</td>
+<td>Value function $V_\psi(s)$ (Critic)</td>
+<td>High variance, unfair comparisons</td>
+</tr>
+<tr>
+<td>3. Capped bonus</td>
+<td>Limits max bonus from any single exam</td>
+<td>Clip $[1-\epsilon, 1+\epsilon]$</td>
+<td>Unstable over-updates</td>
+</tr>
+<tr>
+<td>4. "Stay honest" rule</td>
+<td>Penalizes deviation from original habits</td>
+<td>KL penalty against $\pi_{\text{ref}}$</td>
+<td>Reward hacking, policy collapse</td>
+</tr>
+<tr>
+<td>5. Practice tests</td>
+<td>Use your own average from n tests as baseline</td>
+<td>Group mean $\mu_G$ replaces Critic</td>
+<td>Expensive Critic network eliminated</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This section provides an implementation of GRPO training loop consisting of 3 main phases per iteration:</p>
+<ul>
+<li>Rollout generation</li>
+<li>Reward/Advantage computation</li>
+<li>Policy update.</li>
+</ul>
+<p>We'll be using <a href="https://huggingface.co/datasets/openai/gsm8k">gsm8k</a> grade school math dataset, and <a href="https://huggingface.co/Qwen/Qwen3-0.6B">Qwen/Qwen3-0.6B</a> model to illustrate the end to end flow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">"cuda"</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cpu"</span><span class="p">)</span>
+
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen3-0.6B"</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+
+<span class="c1"># Load policy model (trainable)</span>
+<span class="n">policy_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">,</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
+    <span class="n">attn_implementation</span><span class="o">=</span><span class="s2">"flash_attention_2"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="c1"># Load reference model, frozen copy of the initial policy</span>
+<span class="n">ref_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">,</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">ref_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ref_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 
     </div>
@@ -13220,7 +13451,7 @@ Action: Respond["The current temperature is 22C in Paris."]</code></pre>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:01&lt;00:00,  2.40it/s]
+<pre>`torch_dtype` is deprecated! Use `dtype` instead!
 </pre>
 </div>
 </div>
@@ -13228,59 +13459,15 @@ Action: Respond["The current temperature is 22C in Paris."]</code></pre>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_current_temperature</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Get the current temperature at a location.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        location: The location to get the temperature for, in the format "City, Country"</span>
-<span class="sd">        unit: The unit to return the temperature in. (choices: ["celsius", "fahrenheit"])</span>
-<span class="sd">    """</span>
-    <span class="c1"># dummy code, in actual implementation, call some weather API</span>
-    <span class="k">return</span> <span class="mf">22.</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>While not necessary, we typically rely on system message to shape the overall behavior and role following pattern: <code>You are a [role] who [behavior]</code>. e.g. You are a senior software engineer who explains concepts with code examples.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"You are a bot that responds to weather queries. You should reply with the unit used in the queried location."</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Hey, what's the temperature in Paris right now?"</span><span class="p">}</span>
-<span class="p">]</span>
-
-<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_current_temperature</span><span class="p">]</span>
-
-<span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
-    <span class="n">messages</span><span class="p">,</span>
-    <span class="c1"># pass additional tools</span>
-    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
-    <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">return_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">,</span>
-    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">"openai/gsm8k"</span><span class="p">,</span> <span class="s2">"main"</span><span class="p">)[</span><span class="s2">"train"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
+<span class="n">train_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
     </div>
@@ -13297,103 +13484,78 @@ Action: Respond["The current temperature is 22C in Paris."]</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;|im_start|&gt;system
-You are a bot that responds to weather queries. You should reply with the unit used in the queried location.
-
-# Tools
-
-You may call one or more functions to assist with the user query.
-
-You are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:
-&lt;tools&gt;
-{&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;description&#34;: &#34;Get the current temperature at a location.&#34;, &#34;parameters&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;location&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;description&#34;: &#34;The location to get the temperature for, in the format \&#34;City, Country\&#34;&#34;}, &#34;unit&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;celsius&#34;, &#34;fahrenheit&#34;], &#34;description&#34;: &#34;The unit to return the temperature in.&#34;}}, &#34;required&#34;: [&#34;location&#34;, &#34;unit&#34;]}}}
-&lt;/tools&gt;
-
-For each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:
-&lt;tool_call&gt;
-{&#34;name&#34;: &lt;function-name&gt;, &#34;arguments&#34;: &lt;args-json-object&gt;}
-&lt;/tool_call&gt;&lt;|im_end|&gt;
-&lt;|im_start|&gt;user
-Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant
-
+<pre>Dataset({
+    features: [&#39;question&#39;, &#39;answer&#39;],
+    num_rows: 7473
+})
 </pre>
 </div>
 </div>
 
-</div>
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;question&#39;: &#39;Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&#39;,
+ &#39;answer&#39;: &#39;Natalia sold 48/2 = &lt;&lt;48/2=24&gt;&gt;24 clips in May.\nNatalia sold 48+24 = &lt;&lt;48+24=72&gt;&gt;72 clips altogether in April and May.\n#### 72&#39;}</pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Underneath the hood, it parses our tool function's docstring to create a json schema. These tool info are typically specified within some special <code>&lt;tool&gt;&lt;/tool&gt;</code> tag. Note: LLM doesn't have visibility into tool function's actual implementation code, therefore, the clarity and comprehensiveness of its docstring directly impact our model's ability to effectively utilize these tools.</p>
 
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># example json schema parsing</span>
-<span class="n">get_json_schema</span><span class="p">(</span><span class="n">get_current_temperature</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">extract_hash_answer</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"####"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="n">prompts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">answers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"question"</span><span class="p">]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"answer"</span><span class="p">]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">extract_hash_answer</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">question</span><span class="p">}</span>
+        <span class="p">]</span>
+        <span class="n">prompts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="n">answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+
+    <span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"prompts"</span><span class="p">:</span> <span class="n">prompts</span><span class="p">,</span>
+        <span class="s2">"answers"</span><span class="p">:</span> <span class="n">answers</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">batch</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;type&#39;: &#39;function&#39;,
- &#39;function&#39;: {&#39;name&#39;: &#39;get_current_temperature&#39;,
-  &#39;description&#39;: &#39;Get the current temperature at a location.&#39;,
-  &#39;parameters&#39;: {&#39;type&#39;: &#39;object&#39;,
-   &#39;properties&#39;: {&#39;location&#39;: {&#39;type&#39;: &#39;string&#39;,
-     &#39;description&#39;: &#39;The location to get the temperature for, in the format &#34;City, Country&#34;&#39;},
-    &#39;unit&#39;: {&#39;type&#39;: &#39;string&#39;,
-     &#39;enum&#39;: [&#39;celsius&#39;, &#39;fahrenheit&#39;],
-     &#39;description&#39;: &#39;The unit to return the temperature in.&#39;}},
-   &#39;required&#39;: [&#39;location&#39;, &#39;unit&#39;]}}}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Given our input message and tool definition, the model should call our tool for responding to this input query.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tool_outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-<span class="c1"># generate includes the original input, slice to only retain response</span>
-<span class="n">tool_response_ids</span> <span class="o">=</span> <span class="n">tool_outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">]):]</span>
-<span class="n">tool_response</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">tool_response_ids</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tool_response</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>    
+<span class="p">)</span>
+<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">train_loader</span><span class="p">))</span>
+<span class="n">batch</span>
 </pre></div>
 
     </div>
@@ -13406,15 +13568,19 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;tool_call&gt;
-{&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;arguments&#34;: {&#34;location&#34;: &#34;Paris, France&#34;, &#34;unit&#34;: &#34;celsius&#34;}}
-&lt;/tool_call&gt;&lt;|im_end|&gt;
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;prompts&#39;: [[{&#39;role&#39;: &#39;user&#39;,
+    &#39;content&#39;: &#39;Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&#39;}],
+  [{&#39;role&#39;: &#39;user&#39;,
+    &#39;content&#39;: &#39;Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?&#39;}]],
+ &#39;answers&#39;: [&#39;72&#39;, &#39;10&#39;]}</pre>
 </div>
+
 </div>
 
 </div>
@@ -13424,8 +13590,7 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It is important to note that a model cannot directly execute tool calls by itself. Instead, the model decides it should generate a tool call request through a structured interface, typically encapsulated within special tokens such as <code>&lt;tool_call&gt;&lt;/tool_call&gt;</code>. It's end user's responsibility to handle this request, execute that tool, and append that result to the main conversation history. Consequently, when a tool call is triggered, two messages must be appended: the assistant's tool call request and its corresponding tool response.</p>
-
+<h3 id="Rollout-Generation">Rollout Generation<a class="anchor-link" href="#Rollout-Generation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -13434,16 +13599,47 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># adding tool call to our chat message, typically requires a bit of parsing</span>
-<span class="n">tool_call</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"get_current_temperature"</span><span class="p">,</span> <span class="s2">"arguments"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"location"</span><span class="p">:</span> <span class="s2">"Paris, France"</span><span class="p">,</span> <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"celsius"</span><span class="p">}}</span>
-<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span> <span class="s2">"tool_calls"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span> <span class="s2">"function"</span><span class="p">:</span> <span class="n">tool_call</span><span class="p">}]})</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prompts</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
+    <span class="n">batch</span><span class="p">[</span><span class="s2">"prompts"</span><span class="p">],</span>
+    <span class="n">tokenize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">prompt_encoded</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
+    <span class="n">prompts</span><span class="p">,</span>
+    <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">,</span>
+    <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">padding_side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 
-<span class="c1"># tool role for indicating it's a response from tool, which will</span>
-<span class="c1"># get wrapped in some special token &lt;tool_response&gt;</span>
-<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"22"</span><span class="p">})</span>
+<span class="c1"># [batch size, sequence length]</span>
+<span class="n">input_ids</span> <span class="o">=</span> <span class="n">prompt_encoded</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">attention_mask</span> <span class="o">=</span> <span class="n">prompt_encoded</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">input_ids</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>torch.Size([2, 51])</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -13453,15 +13649,27 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">inputs</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
-    <span class="n">messages</span><span class="p">,</span>
-    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
-    <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">return_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">,</span>
-    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_rollouts</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># roll out stage</span>
+<span class="n">policy_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># [batch size * number of rollouts, sequence length (prompt length + max new tokens)]</span>
+    <span class="c1"># num_return_sequences internally repeats each prompt</span>
+    <span class="n">generated_ids</span> <span class="o">=</span> <span class="n">policy_model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>    
+        <span class="n">input_ids</span><span class="o">=</span><span class="n">input_ids</span><span class="p">,</span>
+        <span class="n">attention_mask</span><span class="o">=</span><span class="n">attention_mask</span><span class="p">,</span>
+        <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+        <span class="n">do_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_return_sequences</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
+        <span class="n">top_p</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">top_k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">eos_token_id</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token_id</span>
+    <span class="p">)</span>
+<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">generated_ids</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">batch_decode</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -13478,34 +13686,29 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>&lt;|im_start|&gt;system
-You are a bot that responds to weather queries. You should reply with the unit used in the queried location.
-
-# Tools
-
-You may call one or more functions to assist with the user query.
-
-You are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:
-&lt;tools&gt;
-{&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;description&#34;: &#34;Get the current temperature at a location.&#34;, &#34;parameters&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;location&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;description&#34;: &#34;The location to get the temperature for, in the format \&#34;City, Country\&#34;&#34;}, &#34;unit&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;enum&#34;: [&#34;celsius&#34;, &#34;fahrenheit&#34;], &#34;description&#34;: &#34;The unit to return the temperature in.&#34;}}, &#34;required&#34;: [&#34;location&#34;, &#34;unit&#34;]}}}
-&lt;/tools&gt;
-
-For each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:
-&lt;tool_call&gt;
-{&#34;name&#34;: &lt;function-name&gt;, &#34;arguments&#34;: &lt;args-json-object&gt;}
-&lt;/tool_call&gt;&lt;|im_end|&gt;
+<pre>torch.Size([8, 165])
 &lt;|im_start|&gt;user
-Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
+Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&lt;|im_end|&gt;
 &lt;|im_start|&gt;assistant
-&lt;tool_call&gt;
-{&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;arguments&#34;: {&#34;location&#34;: &#34;Paris, France&#34;, &#34;unit&#34;: &#34;celsius&#34;}}
-&lt;/tool_call&gt;&lt;|im_end|&gt;
-&lt;|im_start|&gt;user
-&lt;tool_response&gt;
-22
-&lt;/tool_response&gt;&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant
+&lt;think&gt;
 
+&lt;/think&gt;
+
+Natalia sold 48 clips in April.
+
+In May, she sold **half as many clips** as she did in April. That means she sold:
+
+$$
+\frac{1}{2} \times 48 = 24 \text{ clips in May}
+$$
+
+Now, to find the total number of clips she sold in April and May:
+
+$$
+48 + 24 = 72
+$$
+
+So, Natalia sold **72 clips** in total in April and May.&lt;|im_end|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;
 </pre>
 </div>
 </div>
@@ -13513,23 +13716,105 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Our model now tailors the response using all 3 information: our original input prompt, tool use, tool response.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">]):])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># decode completions for reward computation, since left padding</span>
+<span class="c1"># ensures all prompts end at column prompt length, we simply slice</span>
+<span class="c1"># from that position onwards, and batch decode handles variable length</span>
+<span class="c1"># responses via skip special tokens</span>
+<span class="c1"># [batch size * number of rollouts, response length]</span>
+<span class="n">prompt_len</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">response_ids</span> <span class="o">=</span> <span class="n">generated_ids</span><span class="p">[:,</span> <span class="n">prompt_len</span><span class="p">:]</span>
+<span class="n">completion_texts</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">batch_decode</span><span class="p">(</span><span class="n">response_ids</span><span class="p">,</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Reward-Advantage-Computation">Reward Advantage Computation<a class="anchor-link" href="#Reward-Advantage-Computation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">cleanup_reasoning</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Remove the &lt;think&gt; process."""</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">think_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(&lt;think&gt;)?(.+)(&lt;/think&gt;)'</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">matched</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">think_pattern</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
+        <span class="c1"># remove think tags</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="n">matched</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span>
+
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">answer</span>
+
+
+<span class="k">def</span> <span class="nf">compute_score</span><span class="p">(</span><span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Binary reward: 1 if the parsed answer matches ground truth, 0 otherwise.</span>
+
+<span class="sd">    We rely on math-verify, which offers more flexibility in terms</span>
+<span class="sd">    of mathematical equivalence answers instead of strict answer match</span>
+<span class="sd">    https://github.com/huggingface/Math-Verify</span>
+<span class="sd">    """</span>
+    <span class="n">solution_str_cleaned</span> <span class="o">=</span> <span class="n">cleanup_reasoning</span><span class="p">(</span><span class="n">solution_str</span><span class="p">)</span>
+    <span class="n">gold</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">solution_str_cleaned</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">verify</span><span class="p">(</span><span class="n">gold</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">score</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_group_advantages</span><span class="p">(</span>
+    <span class="n">rewards</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Compute group-relative advantages rewards [batch_size, num_rollouts]</span>
+<span class="sd">    """</span>
+    <span class="n">mean_rewards</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">std_rewards</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">advantages</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards</span> <span class="o">-</span> <span class="n">mean_rewards</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_rewards</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">advantages</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">answers</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"answers"</span><span class="p">]</span>
+<span class="n">answers_repeated</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">answer</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">answers</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">answers_repeated</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13542,120 +13827,17 @@ Hey, what&#39;s the temperature in Paris right now?&lt;|im_end|&gt;
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>The current temperature in Paris is 22°C.&lt;|im_end|&gt;
-</pre>
-</div>
-</div>
 
-</div>
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;72&#39;, &#39;72&#39;, &#39;72&#39;, &#39;72&#39;, &#39;10&#39;, &#39;10&#39;, &#39;10&#39;, &#39;10&#39;]</pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># del model</span>
-</pre></div>
 
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Verl-Implementation">Verl Implementation<a class="anchor-link" href="#Verl-Implementation">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Having established a high level understanding of agentic tool use, we now turn to a concrete implementation. Specifically, let's look at how <a href="https://github.com/verl-project/verl/blob/018f8dc5c6c2ab710d1ae697ccc3a699bf768943/verl/experimental/agent_loop/tool_agent_loop.py">verl</a> implements this.</p>
-<p>Verl's <code>ToolAgentLoop</code> implements a state machine that orchestrates multi-turn conversations between a language model and a set of external tools. The flow cycles through a sequence of pre-defined states until one or more termination conditions are met, e.g.</p>
-
-<pre><code>User: "What's the weather in Seattle?"
-
-PENDING → Tokenize prompt with tool schemas
-GENERATING → Model outputs: &lt;tool_call&gt;get_weather(city="Seattle")&lt;/tool_call&gt;
-             response_mask = [1,1,1,1,1,1,1,1]
-PROCESSING_TOOLS → Execute get_weather tool
-                   Tool returns: "72°F, Sunny"
-                   response_mask = [1,1,1,1,1,1,1,1,0,0,0,0]
-GENERATING → Model outputs: "The weather in Seattle is 72°F and sunny."
-             response_mask = [1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1]
-TERMINATED → No more tool calls, return output</code></pre>
-<p>Compared to the simplified example in the previous section, the main enhancements includes:</p>
-<ul>
-<li>Using async implementation. Enable concurrent processing without blocking.</li>
-<li>Leverage vllm's <code>AsyncLLMEngine</code> for generation. </li>
-<li>Implement proper tool parsing. Tool call emitted are parsed using a dedicated ToolParser.</li>
-<li>Continuous multi-turn loop. Iterates across arbitrary number of turns, allowing the model to invoke tools repeatedly until the task is completed or termination condition is reached.</li>
-<li>Accumulate response mask. <code>response_mask</code> is maintained throughout the conversation to distinguish model generated tokens (marked as 1) from injected context tokens (marked as 0, which includes the original prompt, tool response, and user messages). This distinction is critical for training, since external information should be excluded from the training signal to avoid corrupting the model's learning objective.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Utils">Utils<a class="anchor-link" href="#Utils">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">AsyncLLMServerManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""leverage AsyncLLMEngine for async request processing</span>
-<span class="sd">    LLM class is more tailored towards offline batch inference"""</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">engine_kwargs</span><span class="p">):</span>
-        <span class="n">engine_args</span> <span class="o">=</span> <span class="n">AsyncEngineArgs</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">engine_kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">AsyncLLMEngine</span><span class="o">.</span><span class="n">from_engine_args</span><span class="p">(</span><span class="n">engine_args</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_ids</span><span class="p">,</span> <span class="n">sampling_params</span><span class="p">):</span>
-        <span class="c1"># vllm also accepts tokenized id as input instead of raw text</span>
-        <span class="c1"># request_id required for vllm's async llm engine</span>
-        <span class="n">request_id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
-        <span class="n">generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
-            <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span><span class="p">,</span>
-            <span class="n">prompt</span><span class="o">=</span><span class="n">TokensPrompt</span><span class="p">(</span><span class="n">prompt_token_ids</span><span class="o">=</span><span class="n">prompt_ids</span><span class="p">),</span>
-            <span class="n">sampling_params</span><span class="o">=</span><span class="n">SamplingParams</span><span class="p">(</span><span class="o">**</span><span class="n">sampling_params</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="k">async</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">generator</span><span class="p">:</span>
-            <span class="n">final_res</span> <span class="o">=</span> <span class="n">output</span>
-
-        <span class="n">token_ids</span> <span class="o">=</span> <span class="n">final_res</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">token_ids</span>
-        <span class="k">return</span> <span class="n">token_ids</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">engine_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"tensor_parallel_size"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">"gpu_memory_utilization"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">"max_model_len"</span><span class="p">:</span> <span class="mi">8192</span><span class="p">}</span>
-<span class="n">server_manager</span> <span class="o">=</span> <span class="n">AsyncLLMServerManager</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">engine_kwargs</span><span class="o">=</span><span class="n">engine_kwargs</span><span class="p">)</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 
@@ -13665,13 +13847,23 @@ TERMINATED → No more tool calls, return output</code></pre>
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sampling_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-    <span class="s2">"top_p"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-    <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">512</span>
-<span class="p">}</span>
-<span class="n">token_ids</span> <span class="o">=</span> <span class="k">await</span> <span class="n">server_manager</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">sampling_params</span><span class="p">)</span>
-<span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token_ids</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rewards</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">compute_score</span><span class="p">(</span><span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">completion_texts</span><span class="p">,</span> <span class="n">answers_repeated</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># [batch_size * num_rollouts,]</span>
+
+<span class="c1"># temporarily reshape to [batch_size, num_rollouts] for</span>
+<span class="c1"># computing batch group-relative advantages</span>
+<span class="c1"># the last batch in an epoch might be smaller than config's batch size</span>
+<span class="n">rewards_grouped</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">answers</span><span class="p">),</span> <span class="n">num_rollouts</span><span class="p">)</span>
+<span class="n">advantages_grouped</span> <span class="o">=</span> <span class="n">compute_group_advantages</span><span class="p">(</span><span class="n">rewards_grouped</span><span class="p">)</span>
+<span class="c1"># [batch_size * num_rollouts,]</span>
+<span class="n">advantages</span> <span class="o">=</span> <span class="n">advantages_grouped</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">advantages</span>
 </pre></div>
 
     </div>
@@ -13690,7 +13882,7 @@ TERMINATED → No more tool calls, return output</code></pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;The current temperature in Paris is 22°C.&lt;|im_end|&gt;&#39;</pre>
+<pre>tensor([0., 0., 0., 0., 0., 0., 0., 0.], device=&#39;cuda:0&#39;)</pre>
 </div>
 
 </div>
@@ -13698,58 +13890,37 @@ TERMINATED → No more tool calls, return output</code></pre>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Policy-Update">Policy Update<a class="anchor-link" href="#Policy-Update">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">FunctionCall</span><span class="p">:</span>
-    <span class="n">arguments</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    The arguments to call the function with, as generated by the model in JSON</span>
-<span class="sd">    format (dump into str). Note that the model does not always generate valid JSON,</span>
-<span class="sd">    and may hallucinate parameters not defined by your function schema. Validate the</span>
-<span class="sd">    arguments in your code before calling your function.</span>
-<span class="sd">    """</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_logprobs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute per-token log probabilities from model logits."""</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">logits</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-<span class="w">    </span><span class="sd">"""The name of the function to call."""</span>
-
-
-<span class="k">class</span> <span class="nc">ToolParser</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Parses tool call's name and argument, tool call token/regex should match the ones</span>
-<span class="sd">    used by our model/prompt"""</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_start_token</span> <span class="o">=</span> <span class="s2">"&lt;tool_call&gt;"</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_end_token</span> <span class="o">=</span> <span class="s2">"&lt;/tool_call&gt;"</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"&lt;tool_call&gt;(.*?)&lt;/tool_call&gt;"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">extract_tool_calls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_ids</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">,</span> <span class="n">response_ids</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_start_token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_end_token</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="p">[]</span>
-
-        <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">function_calls</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">function_call</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="n">function_call</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">function_call</span><span class="p">[</span><span class="s2">"arguments"</span><span class="p">]</span>
-                <span class="n">function_call</span> <span class="o">=</span> <span class="n">FunctionCall</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">arguments</span><span class="p">))</span>
-                <span class="n">function_calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function_call</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to decode tool call: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-        <span class="c1"># remaining text excluding tool call tokens</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_call_regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">content</span><span class="p">,</span> <span class="n">function_calls</span>
+    <span class="c1"># shift logits and labels</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">labels</span><span class="p">[</span><span class="n">attention_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+    <span class="n">logits_shifted</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="n">labels_shifted</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="c1"># (batch_size, seq_len - 1)</span>
+    <span class="n">log_probs</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+        <span class="n">logits_shifted</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">logits_shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+        <span class="n">labels_shifted</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">reduction</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+        <span class="n">ignore_index</span><span class="o">=-</span><span class="mi">100</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">labels_shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_probs</span>
 </pre></div>
 
     </div>
@@ -13762,124 +13933,24 @@ TERMINATED → No more tool calls, return output</code></pre>
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tool_parser</span> <span class="o">=</span> <span class="n">ToolParser</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
-<span class="n">parsed_output</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tool_parser</span><span class="o">.</span><span class="n">extract_tool_calls</span><span class="p">(</span><span class="n">tool_response_ids</span><span class="p">)</span>
-<span class="n">parsed_output</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gen_attention_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated_ids</span> <span class="o">!=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token_id</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+<span class="n">gen_attention_mask</span><span class="p">[:,</span> <span class="p">:</span><span class="n">prompt_len</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-    </div>
-</div>
-</div>
+<span class="c1"># compute old policy's log prob, frozen used for importance sampling ratios</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">log_probs_old</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">policy_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
 
-<div class="output_wrapper">
-<div class="output">
+<span class="c1"># compute reference model's log prob, frozen used for KL divergence</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">log_probs_ref</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">ref_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
 
+<span class="c1"># current policy log prob</span>
+<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+<span class="n">log_probs_current</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">policy_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
 
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(&#39;&lt;|im_end|&gt;&#39;,
- [FunctionCall(arguments=&#39;{&#34;location&#34;: &#34;Paris, France&#34;, &#34;unit&#34;: &#34;celsius&#34;}&#39;, name=&#39;get_current_temperature&#39;)])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To use tool in verl, we need to define a tool class that inherits from <code>BaseTool</code>, and implement the following methods:</p>
-<ul>
-<li>get_openai_tool_schema: return tool's schema in OpenAIFunctionToolSchema format.</li>
-<li>execute: execute the tool with input parameters, and return relevant info such as response, reward and metrics.</li>
-</ul>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">transformers.utils</span> <span class="kn">import</span> <span class="n">get_json_schema</span>
-<span class="kn">from</span> <span class="nn">verl.tools.schemas</span> <span class="kn">import</span> <span class="n">ToolResponse</span>
-<span class="kn">from</span> <span class="nn">verl.tools.base_tool</span> <span class="kn">import</span> <span class="n">BaseTool</span><span class="p">,</span> <span class="n">OpenAIFunctionToolSchema</span>
-
-
-<span class="k">class</span> <span class="nc">WeatherTool</span><span class="p">(</span><span class="n">BaseTool</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">get_current_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get current temperature at a location.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            city: The location to get the temperature for, in the format &quot;City, State, Country&quot;.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            the temperature, the location, and the unit in a dict</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">72</span><span class="p">,</span>
-            <span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="n">city</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">get_openai_tool_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenAIFunctionToolSchema</span><span class="p">:</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="n">get_json_schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_current_temperature</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">OpenAIFunctionToolSchema</span><span class="p">(</span><span class="o">**</span><span class="n">schema</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ToolResponse</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;trigger the tool call and return response, reward, metrics&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_temperature</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ToolResponse</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{}</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ToolResponse</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">{}</span>
-</pre></div>
-<p>One defined, these tools modules can be configured via yaml and lazy load only when needed.</p>
-<div class="highlight"><pre><span></span><span class="nt">tools</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tools.tools.WeatherTool&quot;</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">initialize_tools_from_config</span><span class="p">(</span><span class="n">tools_config_file</span><span class="p">):</span>
-    <span class="n">tools_config</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tools_config_file</span><span class="p">)</span>
-    
-    <span class="n">tool_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">tool_config</span> <span class="ow">in</span> <span class="n">tools_config</span><span class="o">.</span><span class="n">tools</span><span class="p">:</span>
-        <span class="n">cls_name</span> <span class="o">=</span> <span class="n">tool_config</span><span class="o">.</span><span class="n">class_name</span>
-        <span class="c1"># verl's lazy loading util, where we can specify tool class in our yaml config</span>
-        <span class="c1"># file, and dynamically load them at runtime</span>
-        <span class="n">tool_cls</span> <span class="o">=</span> <span class="n">get_tool_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">)</span>
-        <span class="n">tool</span> <span class="o">=</span> <span class="n">tool_cls</span><span class="p">(</span>
-            <span class="n">config</span><span class="o">=</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">tool_config</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="c1"># our tool class already implemented tool's schema, no need to re-define it in tool config file</span>
-            <span class="n">tool_schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">tool_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tool</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">tool_list</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tools_config_file</span> <span class="o">=</span> <span class="s2">"tools_config.yaml"</span>
-<span class="n">tool_list</span> <span class="o">=</span> <span class="n">initialize_tools_from_config</span><span class="p">(</span><span class="n">tools_config_file</span><span class="p">)</span>
-<span class="n">tool_list</span>
+<span class="c1"># [batch_size * num_rollouts, seq length - 1]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">log_probs_old</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">log_probs_current</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13896,106 +13967,12 @@ TERMINATED → No more tool calls, return output</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{
-  &#34;type&#34;: &#34;function&#34;,
-  &#34;function&#34;: {
-    &#34;name&#34;: &#34;get_current_temperature&#34;,
-    &#34;description&#34;: &#34;Get current temperature at a location.&#34;,
-    &#34;parameters&#34;: {
-      &#34;type&#34;: &#34;object&#34;,
-      &#34;properties&#34;: {
-        &#34;city&#34;: {
-          &#34;type&#34;: &#34;string&#34;,
-          &#34;description&#34;: &#34;The location to get the temperature for, in the format \&#34;City, State, Country\&#34;.&#34;
-        }
-      },
-      &#34;required&#34;: [
-        &#34;city&#34;
-      ]
-    }
-  }
-}
+<pre>torch.Size([8, 164])
+torch.Size([8, 164])
 </pre>
 </div>
 </div>
 
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&lt;tools.tools.WeatherTool at 0x7fd9fa9b9010&gt;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="ToolAgentLoop">ToolAgentLoop<a class="anchor-link" href="#ToolAgentLoop">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">AgentState</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">"pending"</span>
-    <span class="n">GENERATING</span> <span class="o">=</span> <span class="s2">"generating"</span>
-    <span class="n">PROCESSING_TOOLS</span> <span class="o">=</span> <span class="s2">"processing_tools"</span>
-    <span class="n">TERMINATED</span> <span class="o">=</span> <span class="s2">"terminated"</span>
-
-
-<span class="k">class</span> <span class="nc">AgentData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Encapsulates all state variables for the agent loop."""</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">messages</span>
-
-        <span class="c1"># State variables</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_mask</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_rewards</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">user_turns</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assistant_turns</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c1"># Temporary state for tool calls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="c1"># Extra fields for dynamic addition</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extra_fields</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
-
-
-<span class="k">class</span> <span class="nc">AgentLoopOutput</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Agent loop output."""</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">prompt_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-        <span class="n">response_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-        <span class="n">response_mask</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-        <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">=</span> <span class="n">prompt_ids</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_ids</span> <span class="o">=</span> <span class="n">response_ids</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_mask</span> <span class="o">=</span> <span class="n">response_mask</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extra_fields</span> <span class="o">=</span> <span class="n">extra_fields</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 
@@ -14005,222 +13982,62 @@ TERMINATED → No more tool calls, return output</code></pre>
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">ToolAgentLoop</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""simplified version of verl's tool agent loop"""</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_kl_divergence</span><span class="p">(</span>
+    <span class="n">log_probs_current</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">log_probs_ref</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="n">log_ratio</span> <span class="o">=</span> <span class="n">log_probs_ref</span> <span class="o">-</span> <span class="n">log_probs_current</span>
+    <span class="n">kl_per_token</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_ratio</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_ratio</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">kl_per_token</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">server_manager</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">server_manager</span> <span class="o">=</span> <span class="n">server_manager</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">response_length</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">response_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_user_turns</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">max_user_turns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_assistant_turns</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">max_assistant_turns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_parallel_calls</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">max_parallel_calls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_tool_response_length</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">max_tool_response_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_response_truncate_side</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">tool_response_truncate_side</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_config_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">tool_response_truncate_side</span>
-
-        <span class="c1"># Initialize tools and parser</span>
-        <span class="n">tool_config_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">tool_config_path</span>
-        <span class="n">tool_list</span> <span class="o">=</span> <span class="n">initialize_tools_from_config</span><span class="p">(</span><span class="n">tool_config_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">tool_config_path</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">{</span><span class="n">tool</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">tool</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">tool_list</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_schemas</span> <span class="o">=</span> <span class="p">[</span><span class="n">tool</span><span class="o">.</span><span class="n">tool_schema</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">tool</span> <span class="ow">in</span> <span class="n">tool_list</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tool_parser</span> <span class="o">=</span> <span class="n">ToolParser</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampling_params</span><span class="p">,</span> <span class="n">messages</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""run agent loop terminates when there are:</span>
-<span class="sd">        - no tool calls</span>
-<span class="sd">        - reaches configurable max turns</span>
-<span class="sd">        - reaches configurable max response length</span>
-<span class="sd">        """</span>
-        <span class="n">agent_data</span> <span class="o">=</span> <span class="n">AgentData</span><span class="p">(</span>
-            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># state machine loop</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">PENDING</span>
-        <span class="k">while</span> <span class="n">state</span> <span class="o">!=</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">PENDING</span><span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_pending_state</span><span class="p">(</span><span class="n">agent_data</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">GENERATING</span><span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_generating_state</span><span class="p">(</span><span class="n">agent_data</span><span class="p">,</span> <span class="n">sampling_params</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">PROCESSING_TOOLS</span><span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_processing_tools_state</span><span class="p">(</span><span class="n">agent_data</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-
-        <span class="c1"># finalize output</span>
-        <span class="n">response_ids</span> <span class="o">=</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span><span class="p">):]</span>
-        <span class="n">prompt_ids</span> <span class="o">=</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span><span class="p">)]</span>
-                
-        <span class="n">output</span> <span class="o">=</span> <span class="n">AgentLoopOutput</span><span class="p">(</span>
-            <span class="n">prompt_ids</span><span class="o">=</span><span class="n">prompt_ids</span><span class="p">,</span>
-            <span class="n">response_ids</span><span class="o">=</span><span class="n">response_ids</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">response_length</span><span class="p">],</span>
-            <span class="n">response_mask</span><span class="o">=</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">response_length</span><span class="p">],</span>
-            <span class="n">extra_fields</span><span class="o">=</span><span class="p">{</span><span class="s2">"tool_rewards"</span><span class="p">:</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">tool_rewards</span><span class="p">}</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">output</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_pending_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Prepare tokenized prompt id including tool schema and transition to generating state"""</span>
-
-        <span class="c1"># tokenization related blocking/synchronous/CPU-bound function are submitted via run_in_executor</span>
-        <span class="c1"># to be executed in separate thread</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
-            <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
-                <span class="n">agent_data</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span>
-                <span class="n">tools</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tool_schemas</span><span class="p">,</span>
-                <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">tokenize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">GENERATING</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_generating_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_data</span><span class="p">,</span> <span class="n">sampling_params</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""generate model response, append assistant response, parse tool calls (name/argument) if present"""</span>
-        <span class="c1"># generate response output (token id)</span>
-        <span class="n">token_ids</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">server_manager</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">sampling_params</span><span class="p">)</span>
-
-        <span class="c1"># update agent state with generation results</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">assistant_turns</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">response_ids</span> <span class="o">=</span> <span class="n">token_ids</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">+=</span> <span class="n">token_ids</span>
-        <span class="c1"># mark as model generated</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_length</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_assistant_turns</span> <span class="ow">and</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">assistant_turns</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_assistant_turns</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_user_turns</span> <span class="ow">and</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">user_turns</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_user_turns</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-
-        <span class="c1"># extract tool calls from generated response</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">tool_calls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tool_parser</span><span class="o">.</span><span class="n">extract_tool_calls</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_ids</span><span class="p">)</span>
-
-        <span class="c1"># add assistant message to conversation history</span>
-        <span class="n">assistant_message</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
-            <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_ids</span><span class="p">,</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">assistant_message</span><span class="p">})</span>
-
-        <span class="k">if</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">PROCESSING_TOOLS</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_processing_tools_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""execute all tool calls, and append tool result"""</span>
-        <span class="c1"># execute tools in parallel</span>
-
-        <span class="n">add_messages</span> <span class="o">=</span> <span class="p">[]</span>
-        
-        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">tool_call</span> <span class="ow">in</span> <span class="n">agent_data</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_parallel_calls</span><span class="p">]:</span>
-            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_call_tool</span><span class="p">(</span><span class="n">tool_call</span><span class="p">,</span> <span class="n">agent_data</span><span class="p">))</span>
-
-        <span class="n">responses</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">tool_response</span><span class="p">,</span> <span class="n">tool_reward</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">tool_response</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">}</span>
-            <span class="n">add_messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">tool_reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">agent_data</span><span class="o">.</span><span class="n">tool_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tool_reward</span><span class="p">)</span>
-
-        <span class="c1"># encode tool response into tokens</span>
-        <span class="n">response_ids</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
-            <span class="kc">None</span><span class="p">,</span>
-            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
-                <span class="n">add_messages</span><span class="p">,</span>
-                <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">tokenize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_chat_template_kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span>        
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">response_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_length</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">TERMINATED</span>
-        
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">add_messages</span><span class="p">)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">prompt_ids</span> <span class="o">+=</span> <span class="n">response_ids</span>
-        <span class="c1"># mark as context (not model generated)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">response_mask</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">response_ids</span><span class="p">)</span>
-        <span class="n">agent_data</span><span class="o">.</span><span class="n">user_turns</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">GENERATING</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_call_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_call</span><span class="p">:</span> <span class="n">FunctionCall</span><span class="p">,</span> <span class="n">agent_data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""execute a single tool call, return tool response, reward and metric"""</span>
-        <span class="n">tool</span><span class="p">,</span> <span class="n">instance_id</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">tool_name</span> <span class="o">=</span> <span class="n">tool_call</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">tool_args</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tool_call</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
-            <span class="n">tool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">[</span><span class="n">tool_name</span><span class="p">]</span>
-
-            <span class="n">instance_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tool</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-            <span class="n">tool_execution_response</span><span class="p">,</span> <span class="n">tool_reward</span><span class="p">,</span> <span class="n">tool_metrics</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tool</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="n">instance_id</span><span class="p">,</span> <span class="n">tool_args</span><span class="p">,</span> <span class="n">agent_data</span><span class="o">=</span><span class="n">agent_data</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error when executing tool: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Error when executing tool: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                <span class="mf">0.0</span><span class="p">,</span>
-                <span class="p">{},</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Truncate tool response if needed</span>
-        <span class="n">tool_response_text</span> <span class="o">=</span> <span class="n">tool_execution_response</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">if</span> <span class="n">tool_response_text</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">tool_response_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_tool_response_length</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_response_truncate_side</span> <span class="o">==</span> <span class="s2">"left"</span><span class="p">:</span>
-                <span class="n">tool_response_text</span> <span class="o">=</span> <span class="n">tool_response_text</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_tool_response_length</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"...(truncated)"</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_response_truncate_side</span> <span class="o">==</span> <span class="s2">"right"</span><span class="p">:</span>
-                <span class="n">tool_response_text</span> <span class="o">=</span> <span class="s2">"(truncated)..."</span> <span class="o">+</span> <span class="n">tool_response_text</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_tool_response_length</span><span class="p">:]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_tool_response_length</span> <span class="o">//</span> <span class="mi">2</span>
-                <span class="n">tool_response_text</span> <span class="o">=</span> <span class="n">tool_response_text</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"...(truncated)..."</span> <span class="o">+</span> <span class="n">tool_response_text</span><span class="p">[</span><span class="o">-</span><span class="n">length</span><span class="p">:]</span>
-
-        <span class="k">return</span> <span class="n">tool_response_text</span><span class="p">,</span> <span class="n">tool_reward</span><span class="p">,</span> <span class="n">tool_metrics</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="n">apply_chat_template_kwargs</span><span class="p">:</span> <span class="nb">dict</span>
-    <span class="n">response_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="k">def</span> <span class="nf">compute_grpo_loss</span><span class="p">(</span>
+    <span class="n">log_probs_current</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">log_probs_old</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">log_probs_ref</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">advantages</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">response_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">clip_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">kl_coeff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="p">):</span>
+    <span class="c1"># per token importance sampling ratio</span>
+    <span class="n">log_ratio</span> <span class="o">=</span> <span class="n">log_probs_current</span> <span class="o">-</span> <span class="n">log_probs_old</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_ratio</span><span class="p">)</span>
     
-    <span class="c1"># multi turn config</span>
-    <span class="n">max_user_turns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">max_assistant_turns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
-    <span class="n">max_parallel_calls</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">max_tool_response_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
-    <span class="n">tool_response_truncate_side</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"middle"</span>
-    <span class="n">tool_config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"tools_config.yaml"</span>
+    <span class="c1"># broadcast sequence level advantages to all token positions</span>
+    <span class="n">advantages_expanded</span> <span class="o">=</span> <span class="n">advantages</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># clipped objective</span>
+    <span class="n">surrogate_unclipped</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantages_expanded</span>
+    <span class="n">surrogate_clipped</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">clip_epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">clip_epsilon</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">advantages_expanded</span>
+    <span class="p">)</span>
+    <span class="n">surrogate_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surrogate_unclipped</span><span class="p">,</span> <span class="n">surrogate_clipped</span><span class="p">)</span>
+    
+    <span class="c1"># loss - beta * KL, ensure it is masked to calculate for response token only</span>
+    <span class="n">kl_penalty</span> <span class="o">=</span> <span class="n">compute_kl_divergence</span><span class="p">(</span><span class="n">log_probs_current</span><span class="p">,</span> <span class="n">log_probs_ref</span><span class="p">)</span>
+    <span class="n">per_token_objective</span> <span class="o">=</span> <span class="p">(</span><span class="n">surrogate_loss</span> <span class="o">-</span> <span class="n">kl_coeff</span> <span class="o">*</span> <span class="n">kl_penalty</span><span class="p">)</span> <span class="o">*</span> <span class="n">response_mask</span>
+    
+    <span class="c1"># average over valid response per completion, then over batch size</span>
+    <span class="n">response_lengths</span> <span class="o">=</span> <span class="n">response_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">per_completion_objective</span> <span class="o">=</span> <span class="n">per_token_objective</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">response_lengths</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">per_completion_objective</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">surrogate_loss</span><span class="p">,</span> <span class="n">per_token_objective</span><span class="p">,</span> <span class="n">kl_penalty</span>
 
 
-<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
-    <span class="n">apply_chat_template_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"enable_thinking"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="c1"># slice to match shifted tensor</span>
+<span class="n">response_mask</span> <span class="o">=</span> <span class="n">gen_attention_mask</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+<span class="n">loss</span><span class="p">,</span> <span class="n">surrogate_loss</span><span class="p">,</span> <span class="n">per_token_objective</span><span class="p">,</span> <span class="n">kl_penalty</span> <span class="o">=</span> <span class="n">compute_grpo_loss</span><span class="p">(</span>
+    <span class="n">log_probs_current</span><span class="o">=</span><span class="n">log_probs_current</span><span class="p">,</span>
+    <span class="n">log_probs_old</span><span class="o">=</span><span class="n">log_probs_old</span><span class="p">,</span>
+    <span class="n">log_probs_ref</span><span class="o">=</span><span class="n">log_probs_ref</span><span class="p">,</span>
+    <span class="n">advantages</span><span class="o">=</span><span class="n">advantages</span><span class="p">,</span>
+    <span class="n">response_mask</span><span class="o">=</span><span class="n">response_mask</span><span class="p">,</span>
+    <span class="n">clip_epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">kl_coeff</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">agent_loop</span> <span class="o">=</span> <span class="n">ToolAgentLoop</span><span class="p">(</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
-    <span class="n">server_manager</span><span class="o">=</span><span class="n">server_manager</span><span class="p">,</span>
-    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14237,104 +14054,7 @@ TERMINATED → No more tool calls, return output</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{
-  &#34;type&#34;: &#34;function&#34;,
-  &#34;function&#34;: {
-    &#34;name&#34;: &#34;get_current_temperature&#34;,
-    &#34;description&#34;: &#34;Get current temperature at a location.&#34;,
-    &#34;parameters&#34;: {
-      &#34;type&#34;: &#34;object&#34;,
-      &#34;properties&#34;: {
-        &#34;city&#34;: {
-          &#34;type&#34;: &#34;string&#34;,
-          &#34;description&#34;: &#34;The location to get the temperature for, in the format \&#34;City, State, Country\&#34;.&#34;
-        }
-      },
-      &#34;required&#34;: [
-        &#34;city&#34;
-      ]
-    }
-  }
-}
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"What's the weather in Seattle?"</span><span class="p">}</span>
-<span class="p">]</span>
-
-<span class="n">sampling_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"temperature"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-    <span class="s2">"top_p"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-    <span class="s2">"max_tokens"</span><span class="p">:</span> <span class="mi">512</span>
-<span class="p">}</span>
-<span class="n">tools_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="c1"># Run the agent loop</span>
-<span class="n">output</span> <span class="o">=</span> <span class="k">await</span> <span class="n">agent_loop</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-    <span class="n">sampling_params</span><span class="o">=</span><span class="n">sampling_params</span><span class="p">,</span>
-    <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"prompt ids: </span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">prompt_ids</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"response ids: </span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">response_ids</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">response mask: </span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">response_mask</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>prompt ids: 
- &lt;|im_start|&gt;system
-# Tools
-
-You may call one or more functions to assist with the user query.
-
-You are provided with function signatures within &lt;tools&gt;&lt;/tools&gt; XML tags:
-&lt;tools&gt;
-{&#34;type&#34;: &#34;function&#34;, &#34;function&#34;: {&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;description&#34;: &#34;Get current temperature at a location.&#34;, &#34;parameters&#34;: {&#34;type&#34;: &#34;object&#34;, &#34;properties&#34;: {&#34;city&#34;: {&#34;type&#34;: &#34;string&#34;, &#34;description&#34;: &#34;The location to get the temperature for, in the format \&#34;City, State, Country\&#34;.&#34;}}, &#34;required&#34;: [&#34;city&#34;]}}}
-&lt;/tools&gt;
-
-For each function call, return a json object with function name and arguments within &lt;tool_call&gt;&lt;/tool_call&gt; XML tags:
-&lt;tool_call&gt;
-{&#34;name&#34;: &lt;function-name&gt;, &#34;arguments&#34;: &lt;args-json-object&gt;}
-&lt;/tool_call&gt;&lt;|im_end|&gt;
-&lt;|im_start|&gt;user
-What&#39;s the weather in Seattle?&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant
-
-response ids: 
- &lt;tool_call&gt;
-{&#34;name&#34;: &#34;get_current_temperature&#34;, &#34;arguments&#34;: {&#34;city&#34;: &#34;Seattle, WA, USA&#34;}}
-&lt;/tool_call&gt;&lt;|im_end|&gt;&lt;|im_start|&gt;user
-&lt;tool_response&gt;
-{&#34;temperature&#34;: 72, &#34;city&#34;: &#34;Seattle, WA, USA&#34;}
-&lt;/tool_response&gt;&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant
-The current temperature in Seattle, WA, USA is 72°F.&lt;|im_end|&gt;
-
-response mask: 
- [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+<pre>tensor(4.8195e-06, device=&#39;cuda:0&#39;, grad_fn=&lt;NegBackward0&gt;)
 </pre>
 </div>
 </div>
@@ -14346,7 +14066,35 @@ response mask:
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="References">References<a class="anchor-link" href="#References">&#182;</a></h1>
+<h2 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We run the full training and evaluation separately outside of notebook via grpo.py and evaluate.py <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/llm/grpo">script folder link</a>.</p>
+<p>Model: Qwen/Qwen3-0.6B
+Accuracy: 58.98% (778/1319)</p>
+<p>Model: Qwen/Qwen3-0.6B, 8 A100 for 200 steps
+Accuracy: 66.87% (882/1319)</p>
+<p>Anecdotal example:</p>
+
+<pre><code>{'idx': 2, 'prompt': '&lt;|im_start|&gt;user\nJosh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n', 'ground_truth': '70000', 'generated_text': 'Josh buys a house for **$80,000** and puts in **$50,000** in repairs. The value of the house **increased by 150%**.\n\n---\n\n### Step 1: Find the new value of the house\n\nThe value increased by 150%, so the new value is:\n\n$$\n\\text{New Value} = \\text{Original Value} + 150\\% \\times \\text{Original Value}\n$$\n\n$$\n\\text{New Value} = 80,000 + 0.15 \\times 80,000 = 80,000 + 12,000 = 92,000\n$$\n\n---\n\n### Step 2: Calculate the profit\n\nProfit = New Value - Cost\n\n$$\n\\text{Profit} = 92,000 - 50,000 = 42,000\n$$\n\n---\n\n### ✅ Final Answer:\n\nJosh made a **profit of $42,000**.', 'correct': 0}</code></pre>
+<p>Qwen3-0.6B made two errors:</p>
+<p>Computed 150% as 0.15 × 80,000 = 12,000 (confused 150% with 15%). Only subtracted repair cost, not total investment: 92,000 - 50,000</p>
+<p>Qwen3-0.6B-GRPO, on the other hand, got it right:</p>
+
+<pre><code>{'idx': 2, 'prompt': '&lt;|im_start|&gt;user\nJosh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n', 'ground_truth': '70000', 'generated_text': 'We are given the following information:\n\n- The original price of the house is **$80,000**.\n- Josh puts in **$50,000** in repairs.\n- The value of the house **increased by 150%** due to the repairs.\n\n---\n\n### Step 1: Calculate the new value of the house after the increase\n\nThe increase in value is **150%** of the original price:\n\n$$\n\\text{Increase} = 150\\% \\times 80,000 = 1.5 \\times 80,000 = 120,000\n$$\n\n$$\n\\text{New value} = \\text{Original value} + \\text{Increase} = 80,000 + 120,000 = 200,000\n$$\n\n---\n\n### Step 2: Calculate the profit\n\nProfit is the difference between the **new value** and the **cost** (original price of the house and repairs):\n\n$$\n\\text{Profit} = \\text{New value} - (\\text{Original price} + \\text{Cost in repairs})\n$$\n\n$$\n\\text{Profit} = 200,000 - (80,000 + 50,000) = 200,000 - 130,000 = 70,000\n$$\n\n---\n\n### ✅ Final Answer: $ \\boxed{70,000} $ profit.', 'correct': 1}</code></pre>
+<p>Correctly computed 1.5 × 80,000 = 120,000 increase. Subtracted total cost (purchase + repairs): 200,000 - 130,000 = 70,000</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Reference">Reference<a class="anchor-link" href="#Reference">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -14354,10 +14102,13 @@ response mask:
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://huggingface.co/blog/unified-tool-use">[1]</a> Hugginface Blog - Tool Use, Unified</li>
-<li><a href="https://huggingface.co/docs/transformers/chat_extras">[2]</a> Huggingface Doc - Tool use</li>
-<li><a href="https://huggingface.co/learn/agents-course/unit1/what-are-agents">[3]</a> Hugginface Agent Course - What are agents</li>
-<li><a href="https://github.com/verl-project/verl/blob/main/examples/tutorial/agent_loop_get_started/agent_loop_tutorial.ipynb">[4]</a> Verl agent loop tutorial</li>
+<li><a href="https://huggingface.co/blog/NormalUhr/grpo">[1]</a> Yihua Zhang - Blog: DeepSeek-R1 Dissection: Understanding PPO &amp; GRPO Without Any Prior Reinforcement Learning Knowledge (2025)</li>
+<li><a href="https://arxiv.org/abs/2009.01325">[2]</a> Nisan Stiennon, Long Ouyang, Jeff Wu, Daniel M. Ziegler, Ryan Lowe, Chelsea Voss, Paul Christiano, et al. - Learning to summarize from human feedback (2020)</li>
+<li><a href="https://arxiv.org/abs/2203.02155">[3]</a> Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Amanda Askell, Paul Christiano, Jan Leike, Ryan Lowe, et al. - Training language models to follow instructions with human feedback (2022)</li>
+<li><a href="https://arxiv.org/abs/2402.03300">[4]</a> Zhihong Shao, Peiyi Wang, Qihao Zhu, Daya Guo, et al. - DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models (2024)</li>
+<li><a href="https://arxiv.org/abs/2501.12948">[5]</a> DeepSeek-AI - DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning (2025)</li>
+<li><a href="https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law">[6]</a> Jason Wei - Blog: Asymmetry of verification and verifier’s rule</li>
+<li><a href="https://www.jasonwei.net/blog/life-lessons-from-reinforcement-learning">[7]</a> Jason Wei - Blog: Life lessons from reinforcement learning (2025)</li>
 </ul>
 
 </div>
