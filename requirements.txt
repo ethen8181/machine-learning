@@ -24,7 +24,7 @@ joblib==1.2.0
 logzero==1.7.0
 lightgbm==3.3.2
 matplotlib==3.4.3
-scipy==1.7.1
+scipy==1.10.0
 fasttext==0.9.2
 torch==1.13.1
 numpy==1.23.2
