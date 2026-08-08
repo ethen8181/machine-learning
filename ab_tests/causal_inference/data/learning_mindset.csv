@@ -1,4 +1,4 @@
-schoolid,intervention,achievement_score,success_expect,ethnicity,gender,frst_in_family,school_urbanicity,school_mindset,school_achievement,school_ethnic_minority,school_poverty,school_size
+schoolid,intervention,achievement_score,success_expect,ethnicity,gender,frst_in_family,school_urbanicity,school_mindset,school_achievement,school_ethnic_minority,school_poverty,schoolsize
 76,1,0.2773586221959551,6,4,2,1,4,0.3345435220473089,0.6485855743026551,-1.31092696938127,0.22407651434157,-0.42675665264691903
 76,1,-0.4496463935390407,4,12,2,1,4,0.3345435220473089,0.6485855743026551,-1.31092696938127,0.22407651434157,-0.42675665264691903
 76,1,0.769703440352199,6,4,2,0,4,0.3345435220473089,0.6485855743026551,-1.31092696938127,0.22407651434157,-0.42675665264691903
