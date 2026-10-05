@@ -3,7 +3,7 @@ None<!DOCTYPE html>
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>grpo</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>fp8_quantization</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 <style type="text/css">
   pre { line-height: 125%; }
@@ -13088,34 +13088,18 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
 <span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">vllm</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
-<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
-<span class="kn">from</span> <span class="nn">math_verify</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">verify</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span><span class="p">,</span> <span class="n">AutoModelForCausalLM</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="kn">from</span> <span class="nn">llmcompressor</span> <span class="kn">import</span> <span class="n">oneshot</span>
+<span class="kn">from</span> <span class="nn">llmcompressor.modifiers.quantization</span> <span class="kn">import</span> <span class="n">QuantizationModifier</span>
 
 <span class="o">%</span><span class="k">watermark</span> -a 'Ethen' -d -u -v -iv
 </pre></div>
@@ -13133,33 +13117,18 @@ div#notebook {
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/usr/local/lib/python3.12/dist-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
-  from .autonotebook import tqdm as notebook_tqdm
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Author: Ethen
 
-Last updated: 2026-06-05
+Last updated: 2026-10-05
 
 Python implementation: CPython
-Python version       : 3.12.13
-IPython version      : 9.14.0
+Python version       : 3.12.15
+IPython version      : 9.17.1
 
-datasets    : 4.8.5
-math_verify : 0.9.0
-re          : 2.2.1
-torch       : 2.10.0+cu129
-transformers: 4.57.6
-vllm        : 0.18.0
+llmcompressor: 0.13.0
+torch        : 2.11.0+cu130
+transformers : 5.10.2
 
 </pre>
 </div>
@@ -13172,78 +13141,56 @@ vllm        : 0.18.0
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Introduction-to-GRPO-(Group-Relative-Policy-Optimization)">Introduction to GRPO (Group Relative Policy Optimization)<a class="anchor-link" href="#Introduction-to-GRPO-(Group-Relative-Policy-Optimization)">&#182;</a></h1>
+<h1 id="FP8-Quantization">FP8 Quantization<a class="anchor-link" href="#FP8-Quantization">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The standard recipe for building capable language models (LLM) involves: pre-training on massive corpora, followed by supervised/instruction fine-tuning stage (SFT) on curated instruction response pairs. While SFT is a potent method, its fundamental limitation is it trains the model to imitate demonstrations. On the other hand, in reinforcement learning (RL), the model learns to independently generate its own answers, explore new paths to optimize for a specific goal. Being "on-policy" allows the model to explore new pathways and solutions that might not be present in the demonstration training data. This is similar in real life, where we first bootstrap ourselves via imitation, either from school, studying how other people found success. But once we can acquire that foundation, it's always best to play to our strength, take our own actions and we learn through environment's feedback <a href="https://www.jasonwei.net/blog/life-lessons-from-reinforcement-learning">[7]</a>.</p>
-<p>Using RL to improve LLM started with learning to summarize from human feedback <a href="https://arxiv.org/abs/2009.01325">[2]</a>, where they demonstrated training a reward model from human preferences, and using it as a reward signal to fine-tune a summarization policy with RL produce better summary than optimizing ROUGE as well as much larger models trained with supervised learning alone. InstructGPT <a href="https://arxiv.org/abs/2203.02155">[3]</a> scaled this approach to general instruction following across arbitrary tasks not just summarization, establishing the reinforcement learning from human feedback (RLHF) recipe behind ChatGPT.</p>
-<p>The standard RLHF pipeline, however, comes with significant complexity. The algorithm adopted, PPO, requires 4 models simultaneously (we'll dive into this a bit more in later sections).</p>
+<p><strong>Why Quantization</strong></p>
+<p>The diagram below shows the GPU memory hierarchy, simplified/adapted from <a href="https://handbook.modular.com/kernel-optimization/gpu-architecture-fundamentals/gpu-memory/">[4]</a>. Quantization helps at each level:</p>
 
-<pre><code>┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌─────────────┐
-│  SFT Model  │ ──► │ Reward Model │ ──► │ PPO Training │ ──► │ Final Model │
-│  (policy    │     │ (trained on  │     │ (policy +    │     │             │
-│   init)     │     │  preferences)│     │  critic +    │     │             │
-│             │     │              │     │  reward +    │     │             │
-│             │     │              │     │  reference)  │     │             │
-└─────────────┘     └──────────────┘     └──────────────┘     └─────────────┘
-                                               │
-                                    4 models in memory</code></pre>
-<p>Two subsequent work from Deepseek introducted simplifcations that make modern RL practical for folks that are just getting started.</p>
-<p>DeepseekMath <a href="https://arxiv.org/abs/2402.03300">[4]</a> introduced Group Relative Policy Optimization (GRPO), which eliminates the critic model entirely. Subsequent work Deepseek R1 <a href="https://arxiv.org/abs/2501.12948">[5]</a> demonstrates for tasks with verifiable answers like math, we can also eliminate the learned reward model and replace it with a deterministic verifier. This motivates the concept of verification asymmetry <a href="https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law">[6]</a>, where some tasks should be easier to verify than to solve. Together these simplificactions reduced the RL pipeline from 4 models to 2.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Intuition:-The-Exam-Analogy">Intuition: The Exam Analogy<a class="anchor-link" href="#Intuition:-The-Exam-Analogy">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Instead of diving directly into the math, let us build an intuition for why each component of GRPO exists. In reinforcement learning, simply optimizing for a high reward alone can lead to instability or shortcutting behaviors. To address these challenges, we often incorporate several mechanisms - critic, clip operation, reference.</p>
-<p>Following the work understanding GRPO without any prior RL knowledge <a href="https://huggingface.co/blog/NormalUhr/grpo">[1]</a>, We will frame RL training process as a school exam scenario. We (the model being trained) are like students trying to get higher grades, the teacher we grades our exam is like the reward model, and our father handing out pocket money based on our grades plays the rolw of the training algorithm.</p>
-<p>Suppose my younger brother and I are in the same class, where I typically score above 80, while my brother often gets around 30. We take our test scores directly to our father for pocket money - whoever scores higher gets more. This however, becomes unfair, as if my brother improves from 30 to 60 through tremendous effort, his absolute reward still pales in comparison to my ususal 80+.</p>
-<p><strong>Critic</strong>: Recognizing this problem, our father sets a predicted score line for each of us, e.g. 80 for me and 40 for my brother. If we exceed each of our baseline, we get extra pocket money proportional to the surplus. Each person is now incentized to improve from their own baseline. And of course, our father must keep adjusting this baseline as we progress. This predicted baseline is so called the value function, and our training objective now becomes maximizing the <strong>advantage</strong> (reward - baseline), instead of raw reward.</p>
-<p><strong>Clip</strong>: Purely chasing for larger amount of pocket money might push us to adopt some extreme study patterns. Causing our grades to swing s between extremes, 95 one week, 60 the next. These outliers shouldn't dictate our overall study strategy. So our father caps how much extra pocket money any single exam can earn. This is called the clip mechanism, limiting how much the policy can shift in one update.</p>
-<p><strong>Reference Model</strong>: If I am solely fixated on high scores, I might resort to questionable tactics - cheating, or memorizing patterns without actually understanding. In LLM terms, this corresponds to reward hacking: producing degenerate outputs that score highly without being genuinely useful. Our father adds a rule: "You can't deviate too much from your original studying approach, else even with high scores, I will penalize you". In practice, this is calculated using the KL divergence against a reference model, it keeps the policy that we are training during RL stage from drifting too far from the initial model.</p>
-<p><strong>GRPO</strong>: One day, our father feels he is spending enormous amount of time maintaining our predicted score baseline, instead says "take a few practice tests yourself before the real exam, and use those average as your expected score". In LLM scenarios, this critic is often times a model that also needs to be trained, typically the same size as the policy model, effectively doubling the system's memory and compute requirements. GRPO's core insight is to replace the learned value function with the empirical mean of multiple samples from our model. This mechanism is self-calibrating, as we improve, our average rises automatically, fair given we are comparing only against ourselves, as well as offers computational advantage, as generating multiple samples is far cheaper than training a seprate value model.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Putting-it-Together">Putting it Together<a class="anchor-link" href="#Putting-it-Together">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The complete GRPO training objective is to <strong>maximize</strong>:</p>
-$$
-J_{\text{GRPO}}(\theta) = \mathbb{E}_{q, \{o_i\}_{i=1}^G} \left[\frac{1}{G}\sum_{i=1}^{G} \frac{1}{|o_i|}\sum_{t=1}^{|o_i|} \left(\min\left(\rho_{i,t} \hat{A}_i, \; \text{clip}(\rho_{i,t}, 1\!-\!\epsilon, 1\!+\!\epsilon) \hat{A}_i\right) - \beta \cdot D_{\text{KL}}^{(i,t)}\right)\right]
-$$<p>GRPO's key insight is replacing the learned value function with a statistical baseline computed from a group of sampled completions. For each prompt $q$, GRPO:</p>
-<ol>
-<li>Samples a group of $G$ completions $\{o_1, o_2, \ldots, o_G\}$ from the current policy $\pi_\theta$.</li>
-<li>Evaluates each completion with a reward function to obtain rewards $\{r_1, r_2, \ldots, r_G\}$.</li>
-<li>Computes the <strong>group relative advantage</strong> for each completion using z-score normalization.</li>
-</ol>
-$$\hat{A}_i = \frac{r_i - \mu_G}{\sigma_G}$$<p>Completions with above average rewards gets positive advantages, and will get reinforced. Whereas completion with below average rewards gets negative advantage and suppressed.</p>
-<p>One of the most critical failure modes in GRPO occurs when all completions within a group receives identical rewards. Since GRPO computes advantages via group level normalization, uniform rewards collapse the advantage to 0, which leads to zero gradients, and completely wasting that batch of compute.</p>
-<p>When all rewards are identical ($r_1 = r_2 = \cdots = r_G$):</p>
-$$
-\text{mean} = r_i \quad \Rightarrow \quad r_i - \text{mean} = 0 \quad \Rightarrow \quad \hat{A}_i = 0 \quad \forall i
-$$<p>This condition happens in two symmetric scenarios when the problem is too easy or too hard for the currency policy. If every sampled completion solves it correctly or no sampled completion succeeds, the reward lacks the variance/diversity needed to differentiate between completions and provide meaningful learning signals.</p>
+<pre><code>                    ┌──────────────────────────────────────┐
+                    │           TENSOR CORES               │  ← compute AX+b
+                    │  (compute units inside each SM;      │    ×N per forward pass
+                    │   read operands from SRAM)           │
+                    └───────────────────▲──────────────────┘
+                                        │  operands
+                    ┌───────────────────┴──────────────────┐
+                    │           SM SRAM (on-chip)          │  ← registers, L1, shared mem
+                    │  smallest, fastest                   │    one pool per SM
+                    └───────────────────▲──────────────────┘
+                                        │
+    ════════════════════════════════════╪════════════════════════════════════
+       HBM → SM bandwidth               │   ▶ every forward pass streams the
+                                        │     layer weights across this link
+                                        │   ▶ quantization shrinks the bytes
+                                        │     that cross it
+    ════════════════════════════════════╪════════════════════════════════════
+                                        │
+                    ┌───────────────────┴──────────────────┐
+                    │           GPU HBM (off-chip DRAM)    │  ← what nvidia-smi reports
+                    │  smaller than CPU RAM, but faster    │
+                    │  ▶ model weights                     │
+                    │  ▶ KV cache                          │
+                    │  ▶ activations                       │
+                    └───────────────────▲──────────────────┘
+                                        │
+                          PCIe / NVLink │   ×1 at model load
+                                        │   (one-time cost)
+                    ┌───────────────────┴──────────────────┐
+                    │           CPU MAIN MEMORY (DRAM)     │
+                    │  largest, slowest                    │
+                    │  ▶ checkpoint loaded from disk       │
+                    └──────────────────────────────────────┘</code></pre>
+<ul>
+<li><strong>CPU to GPU load (one time)</strong>: A smaller checkpoint loads faster. Since this happens once at startup and isn't on the hot path, it's a secondary benefit.</li>
+<li><strong>HBM (High Bandwidth Memory) Capacity</strong>: BF16 uses 2 bytes per parameter, FP8 cuts that to 1 byte. Halving the weight footprint lets us serve a model using fewer GPUs, fit a larger model on the same hardware, or free up additional memory for a larger KV cache and batch size.</li>
+<li><strong>HBM -&gt; SM (Streaming Multiprocessor) bandwidth</strong>: Every forward pass streams layer weights from HBM onto the chip, so fewer bytes per weight means less data to move. This matters most at small batch sizes, where GPU spends most of its time waiting for weights rather than computing.</li>
+<li><strong>Tensor cores compute</strong>: GPUs with dedicated FP8 tensor cores, such as Hopper (H100/H200/GH200) or Ada Lovelace (L40), etc. offer higher matmul throughput in FP8 than in BF16.</li>
+</ul>
+<p>As the empirical results later in this notebook show, FP8 quantization delivers these gains with minimal quality loss.</p>
 
 </div>
 </div>
@@ -13251,27 +13198,38 @@ $$<p>This condition happens in two symmetric scenarios when the problem is too e
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Importance sampling ratio: One fundamental challenge in RL is sample efficiency, every time we update our current policy's parameter $\pi_\theta$ by a single step, all previously collected samples become "stale". This can be wasteful in LLM setting, where generating completions requires expensive full autoregressive decoding. Importance sampling allows us to reuse samples from an old policy $\pi_{\theta_{\text{old}}}$ while still computing a valid gradient estimate for the current policy $\pi_\theta$.</p>
-<p>In practice, GRPO computes the importance ratio at token level:</p>
-$$
-\rho_{i,t} = \frac{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,&lt;t})} = \exp\left(\log \pi_\theta(o_{i,t} \mid q, o_{i,&lt;t}) - \log \pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,&lt;t})\right)
-$$<p>The ratio $\rho = \pi_\theta(o) / \pi_{\theta_{\text{old}}}(o)$ is called the <strong>importance sampling ratio</strong>, where it reweights each sample to account for the mismatch between the distribution it was drawn from (old policy) and the distribution we want to estimate expectations under (current policy). Intuition: If the current policy assigns a higher probability to a particular completion than the old policy did, then that completion is under-represented in our old samples. Given it should have appeared more often, the ratio $\rho &gt; 1$ upweights it to compensate.</p>
-<p>As for carrying out the computation, what we want (in probability space):</p>
-<p>$\text{ratio} = \text{new prob} / \text{old prob}$</p>
-<p>but in practice, we typically have model's log probabilities, so in log space:</p>
-<p>$\text{log(ratio)} = \text{log(new prob / old prob)} = \text{log(new prob) - log(old prob)} = \text{log prob - old log prob}$</p>
-<p>To obtain actual ratio:</p>
-<p>$\text{ratio} = \text{exp(log(new prob / old prob))} = \text{exp(log prob - old log prob)}$</p>
+<p><strong>FP8 Representation</strong></p>
+<p>Just as 96.0 = 1.5 × 64 = 1.5 × $2^6$ in scientific notation, to represent a decimal number like 96.0 using only 8 bits (eight 0s or 1s) in binary notation is comprised of three parts:</p>
+<ul>
+<li>Sign: is it positive or negative? positive</li>
+<li>Exponent ("how big"): which power of 2? $2^6$ = 64</li>
+<li>Mantissa ("where between"): where between 64 and the next power of 2 (128)? halfway (1.5×)</li>
+</ul>
+<p>FP8 e4m3 format encodes exactly these three parts in 8 bits:</p>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Clipping is necessary as importance sampling can have a very high variance when the two distributions diverge significantly.</p>
-$$\text{clip}(\rho_{i,t}, \; 1-\epsilon, \; 1+\epsilon)$$<p>By bounding the ratio via a clipping parameter $\epsilon$, we limit how much any single token's reweighting can influence the model update. This creates a <strong>trusted region</strong>, where the optimization proceeds as if the current policy can't deviate too far from the old policy in a single step.</p>
-<p>It's important to note that when the ratio gets clamped, this style of clipping mechanism introduces a flat region in the loss landscape where the gradient becomes 0 to those elements that are clipped, effectively stopping learning for them. Because any value exceeding the thresholds is capped to a constant value, mathematically, the derivative of a constant is zero.</p>
+<pre><code>[S][E E E E][M M M]
+ 1    4        3     = 8 bits total</code></pre>
+<ul>
+<li><strong>Sign (1 bit)</strong>: 0 = positive, 1 = negative</li>
+<li><strong>Exponent (4 bits)</strong>: Determines the magnitude/scale — which power of 2 the number lives near. 4 bits can store values 0-15, we subtract a bias of 7 to recover the actual power. For representing 96, the exponent bits are 1101 ($2^3 + 2^2 + 2^0 = 13$), producing an actual power is 13-7 = 6. This tells us our number lies in the range of $2^6$ to $2^7$</li>
+<li><strong>Mantissa (3 bits)</strong>: Determines precision within that range, i.e. how we can pinpoint a value between consecutive powers of 2. With 3 bits, we get $2^3 = 8$ evenly spaced positions. For 96, we need to locate where it falls between 64 and 128. Using the formula $\text{value} = 2^{\text{exponent}} \times (1 + \text{mantissa}/8)$, a mantissa of $100 = 4$ places us 4/8 of the way from 64 to 128: $64 \times (1 + 4/8) = 64 \times 1.5 = 96$.</li>
+</ul>
+<p>Putting it together, 96.0 in FP8 e4m3 = <code>0 1101 100</code>. If our real number is 95.0, it would get "rounded" to the closest FP8 value of 96, that's the quantization error.</p>
+<p><strong>E4M3 vs E5M2</strong></p>
+<p>Two FP8 formats exist, optimized for different roles:</p>
+
+<pre><code>┌────────┬───────┬────────┬───────┬─────────────────────────┐
+│ Format │ S/E/M │ Range  │ Steps │ Typical use             │
+├────────┼───────┼────────┼───────┼─────────────────────────┤
+│ E4M3   │ 1/4/3 │ ±448   │ 8     │ Weights &amp; activations   │
+├────────┼───────┼────────┼───────┼─────────────────────────┤
+│ E5M2   │ 1/5/2 │ ±57344 │ 4     │ Gradients               │
+└────────┴───────┴────────┴───────┴─────────────────────────┘</code></pre>
+<ul>
+<li>S/E/M = sign / exponent / mantissa bits.</li>
+<li>Steps = number of representable values between consecutive powers of 2 (2^mantissa bits).</li>
+<li>E4M3 trades range for precision — better for forward pass weights/activations where values cluster in a narrower band. E5M2 trades precision for range — typically used for backward pass gradients which can spike during training.</li>
+</ul>
 
 </div>
 </div>
@@ -13281,20 +13239,8 @@ $$\text{clip}(\rho_{i,t}, \; 1-\epsilon, \; 1+\epsilon)$$<p>By bounding the rati
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create an input tensor with values below, within, and above the clamp limits</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># apply torch.clamp between -1.0 and 1.0</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">min</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="c1"># compute a dummy loss (sum of elements) so we can backpropagate</span>
-<span class="n">loss</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-
-<span class="c1"># inspect the gradients</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Original Input: "</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Clamped Output: "</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Gradients:      "</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e5m2</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13311,9 +13257,8 @@ $$\text{clip}(\rho_{i,t}, \; 1-\epsilon, \; 1+\epsilon)$$<p>By bounding the rati
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Original Input:  [-2.0, 0.5, 3.0]
-Clamped Output:  [-1.0, 0.5, 1.0]
-Gradients:       [0.0, 1.0, 0.0]
+<pre>finfo(resolution=1, min=-448, max=448, eps=0.125, smallest_normal=0.015625, tiny=0.015625, dtype=float8_e4m3fn)
+finfo(resolution=1, min=-57344, max=57344, eps=0.25, smallest_normal=6.10352e-05, tiny=6.10352e-05, dtype=float8_e5m2)
 </pre>
 </div>
 </div>
@@ -13325,87 +13270,55 @@ Gradients:       [0.0, 1.0, 0.0]
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When <code>num_grpo/ppo_epochs &gt; 1</code> we perform multiple gradient steps on the same batch of rollouts. The importance sampling ratio drifts further from 1 with each step, and clipping prevents the later steps from making overly aggressive updates.</p>
-
+<h2 id="Quantization-Equation">Quantization Equation<a class="anchor-link" href="#Quantization-Equation">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>KL divergence regularization: In GRPO, KL divergence is added directly to the loss function (not to reward as in some other variants). The per-token KL divergence is computed against a reference policy $\pi_{\text{ref}}$ (typically the initial SFT model):</p>
-$$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})} - \log \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\pi_\theta(o_{i,t} \mid q, o_{i,&lt;t})} - 1$$<p>There're many different forms of KL divergence, this particular form is sometimes referred to as $k_3$ estimator. The coefficient $\beta$ controls the strength of regularization — larger $\beta$ keeps the policy closer to the reference model.</p>
-<p>Note that advantage $\hat{A}_i$ is at <strong>sequence level</strong> (same value for all tokens in a completion), while importance ratio $\rho_{i,t}$ and KL divergence $D_{\text{KL}}^{(i,t)}$ are computed at the <strong>token level</strong>. Because of this, while KL divergence's primary role is to prevent the policy from diverging too far from the reference model, it effectively also serves as a per <strong>token process reward signal</strong>. Providing dense, token-level feedback regardless of whether the final sparse outcome reward.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To summarize:</p>
-<table>
-<thead><tr>
-<th>Step</th>
-<th>Exam Analogy</th>
-<th>RL Component</th>
-<th>Problem Solved</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1. Raw scores</td>
-<td>Pays based on absolute grade</td>
-<td>Reward $r(o)$</td>
-<td>— (starting point)</td>
-</tr>
-<tr>
-<td>2. Score line</td>
-<td>Sets a predicted baseline per child</td>
-<td>Value function $V_\psi(s)$ (Critic)</td>
-<td>High variance, unfair comparisons</td>
-</tr>
-<tr>
-<td>3. Capped bonus</td>
-<td>Limits max bonus from any single exam</td>
-<td>Clip $[1-\epsilon, 1+\epsilon]$</td>
-<td>Unstable over-updates</td>
-</tr>
-<tr>
-<td>4. "Stay honest" rule</td>
-<td>Penalizes deviation from original habits</td>
-<td>KL penalty against $\pi_{\text{ref}}$</td>
-<td>Reward hacking, policy collapse</td>
-</tr>
-<tr>
-<td>5. Practice tests</td>
-<td>Use your own average from n tests as baseline</td>
-<td>Group mean $\mu_G$ replaces Critic</td>
-<td>Expensive Critic network eliminated</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This section provides an implementation of GRPO training loop consisting of 3 main phases per iteration:</p>
+<p>To convert high precision tensor into lower precision ones like FP8, we apply a scaling factor to map values into representable range:</p>
+$$
+X_{FP8}=\text{clip}\left(\text{round}\left(X\times S\right),-V_{max},V_{max}\right)
+$$<p>Where:</p>
 <ul>
-<li>Rollout generation</li>
-<li>Reward/Advantage computation</li>
-<li>Policy update.</li>
+<li>$S$ is the scaling factor.</li>
+<li>$V_{max}$ is the maximum representable value of lower precision FP8 format (e.g. 448 for E4M3).</li>
+<li>round means round to nearest representable value in the target format, not round to integer.</li>
+<li>clip forces any value overflowing the range back into the legal boundaries.</li>
 </ul>
-<p>We'll be using <a href="https://huggingface.co/datasets/openai/gsm8k">gsm8k</a> grade school math dataset, and <a href="https://huggingface.co/Qwen/Qwen3-0.6B">Qwen/Qwen3-0.6B</a> model to illustrate the end to end flow.</p>
+<p>To dequantize back to high precision during computation, we multiply by the inverse:</p>
+$$
+X_{high\_res}=X_{FP8}\times \frac{1}{S}
+$$
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Choose-Scaling-Strategy">Choose Scaling Strategy<a class="anchor-link" href="#Choose-Scaling-Strategy">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Because FP8 has a narrower dynamic range, picking the right scaling factor $S$ is critical to avoid severe accuracy loss. Two primary strategies are used:</p>
+<p><strong>Static Scaling</strong></p>
+<ul>
+<li>How: Pre-calculate a fixed scale factor using calibration dataset before deployment.</li>
+<li>Pros: Zero runtime overhead.</li>
+<li>Cons: Accuracy degrades if real-world data drifts from calibration data.</li>
+<li>Typically used for weights as they don't change after loading.</li>
+</ul>
+<p><strong>Dynamic Scaling</strong></p>
+<ul>
+<li>How: Calculate tensor's maximum absolute value, $max(|X|)$ on the fly during runtime, and compute scaling value via $S = \frac{V_{max}}{\text{max}(\vert{}X\vert{})}$</li>
+<li>Pros: Maximizes accuracy regardless of input distribution.</li>
+<li>Cons: Introduces a minor hardware overhead to find the maximum value.</li>
+<li>Typically used for activations where distribution changes every forward pass based on input.</li>
+</ul>
 
 </div>
 </div>
@@ -13415,59 +13328,32 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">"cuda"</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cpu"</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Example tensor in bf16</span>
+<span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">)</span>
 
-<span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Qwen/Qwen3-0.6B"</span>
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+<span class="c1"># Quantize: X_FP8 = clip(round(X × S), -V_max, V_max)</span>
+<span class="n">V_max</span> <span class="o">=</span> <span class="mf">448.0</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">V_max</span> <span class="o">/</span> <span class="n">tensor</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-<span class="c1"># Load policy model (trainable)</span>
-<span class="n">policy_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-    <span class="n">model_name</span><span class="p">,</span>
-    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
-    <span class="n">attn_implementation</span><span class="o">=</span><span class="s2">"flash_attention_2"</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-<span class="c1"># Load reference model, frozen copy of the initial policy</span>
-<span class="n">ref_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
-    <span class="n">model_name</span><span class="p">,</span>
-    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">ref_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ref_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
-</pre></div>
+<span class="c1"># .to(float8) handles rounding to nearest representable FP8 value</span>
+<span class="c1"># No explicit torch.round() needed — that's carryover notation for integer type quantization</span>
+<span class="n">tensor_fp8</span> <span class="o">=</span> <span class="p">(</span><span class="n">tensor</span> <span class="o">*</span> <span class="n">S</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="n">V_max</span><span class="p">,</span> <span class="n">V_max</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
 
-    </div>
-</div>
-</div>
+<span class="c1"># Dequantize</span>
+<span class="n">tensor_restored</span> <span class="o">=</span> <span class="n">tensor_fp8</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">)</span> <span class="o">/</span> <span class="n">S</span>
 
-<div class="output_wrapper">
-<div class="output">
+<span class="c1"># Check error</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Original:</span><span class="se">\n</span><span class="si">{</span><span class="n">tensor</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fp8:</span><span class="se">\n</span><span class="si">{</span><span class="n">tensor_fp8</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Restored:</span><span class="se">\n</span><span class="si">{</span><span class="n">tensor_restored</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
+<span class="k">def</span> <span class="nf">relative_error</span><span class="p">(</span><span class="n">approx</span><span class="p">,</span> <span class="n">ref</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A relative Frobenius-norm error measures the difference between a true tensor and its approximation,</span>
+<span class="sd">    scaled by the magnitude of the true tensor.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">approx</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span> <span class="o">/</span> <span class="n">ref</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span>
 
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>`torch_dtype` is deprecated! Use `dtype` instead!
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">"openai/gsm8k"</span><span class="p">,</span> <span class="s2">"main"</span><span class="p">)[</span><span class="s2">"train"</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">train_data</span><span class="p">)</span>
-<span class="n">train_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"original vs restored error:  </span><span class="si">{</span><span class="n">relative_error</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span><span class="w"> </span><span class="n">tensor_restored</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13484,13 +13370,67 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Dataset({
-    features: [&#39;question&#39;, &#39;answer&#39;],
-    num_rows: 7473
-})
+<pre>Original:
+tensor([[-0.1494,  1.3594, -0.0684,  0.1030],
+        [-0.6094, -0.2393,  0.5977,  0.7852],
+        [-0.3008,  0.4141,  1.4766, -2.7344],
+        [ 1.4844, -0.2148, -0.2148, -0.8281]], dtype=torch.bfloat16)
+fp8:
+tensor([[ -24.,  224.,  -11.,   16.],
+        [ -96.,  -40.,   96.,  128.],
+        [ -48.,   64.,  240., -448.],
+        [ 240.,  -36.,  -36., -128.]], dtype=torch.float8_e4m3fn)
+Restored:
+tensor([[-0.1465,  1.3672, -0.0669,  0.0977],
+        [-0.5859, -0.2441,  0.5859,  0.7812],
+        [-0.2930,  0.3906,  1.4609, -2.7344],
+        [ 1.4609, -0.2197, -0.2197, -0.7812]], dtype=torch.bfloat16)
+original vs restored error:  0.016749
 </pre>
 </div>
 </div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="How-FP8-Matmul-Works-at-the-Hardware-Level">How FP8 Matmul Works at the Hardware Level<a class="anchor-link" href="#How-FP8-Matmul-Works-at-the-Hardware-Level">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The speedup comes from H100/H200 tensor cores that natively multiply FP8 operands:</p>
+<p>Input A (FP8) × Input B (FP8) → Accumulate in FP32 → Output (BF16 or FP8)</p>
+<p>Both inputs are stored and loaded in FP8 (half the memory bandwidth), the multiply-accumulate runs in FP32 to prevent rounding errors from compounding across dot products, finally the output is cast back to a desired output type.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">A_bf16</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
+<span class="n">B_bf16</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">"cuda"</span><span class="p">)</span>
+
+<span class="c1"># ── Ground truth: full bf16 matmul ──</span>
+<span class="n">C_bf16</span> <span class="o">=</span> <span class="n">A_bf16</span> <span class="o">@</span> <span class="n">B_bf16</span><span class="o">.</span><span class="n">T</span>
+<span class="n">C_bf16</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
 
 <div class="output_area">
 
@@ -13500,8 +13440,19 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;question&#39;: &#39;Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&#39;,
- &#39;answer&#39;: &#39;Natalia sold 48/2 = &lt;&lt;48/2=24&gt;&gt;24 clips in May.\nNatalia sold 48+24 = &lt;&lt;48+24=72&gt;&gt;72 clips altogether in April and May.\n#### 72&#39;}</pre>
+<pre>tensor([[-107.0000,  -56.5000,   24.2500,  ...,   26.6250,   97.0000,
+           36.5000],
+        [ -56.7500,  -23.7500,  -23.6250,  ...,    4.7188,   43.2500,
+          -17.5000],
+        [ -13.2500,   33.2500,  -59.7500,  ...,  -22.0000,  -16.7500,
+          -14.0625],
+        ...,
+        [ -38.7500,   58.2500,  -42.7500,  ...,    5.6250,  112.0000,
+          125.0000],
+        [  13.0625,   38.5000,    6.1562,  ...,    0.8008,  160.0000,
+          -29.8750],
+        [  52.0000,  -54.7500,   35.5000,  ...,  -57.0000,  -94.0000,
+          117.5000]], device=&#39;cuda:0&#39;, dtype=torch.bfloat16)</pre>
 </div>
 
 </div>
@@ -13515,47 +13466,84 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">extract_hash_answer</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"####"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ── FP8 matmul with FP32 accumulation (what H100 tensor cores do) ──</span>
+<span class="c1"># Step 1: Quantize both operands to FP8</span>
+<span class="n">V_max</span> <span class="o">=</span> <span class="mf">448.0</span>
 
+<span class="n">scale_A</span> <span class="o">=</span> <span class="n">V_max</span> <span class="o">/</span> <span class="n">A_bf16</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">scale_B</span> <span class="o">=</span> <span class="n">V_max</span> <span class="o">/</span> <span class="n">B_bf16</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-    <span class="n">prompts</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">answers</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
-        <span class="n">question</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"question"</span><span class="p">]</span>
-        <span class="n">answer</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"answer"</span><span class="p">]</span>
-        <span class="n">answer</span> <span class="o">=</span> <span class="n">extract_hash_answer</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+<span class="n">A_fp8</span> <span class="o">=</span> <span class="p">(</span><span class="n">A_bf16</span> <span class="o">*</span> <span class="n">scale_A</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="n">V_max</span><span class="p">,</span> <span class="n">V_max</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
+<span class="n">B_fp8</span> <span class="o">=</span> <span class="p">(</span><span class="n">B_bf16</span> <span class="o">*</span> <span class="n">scale_B</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="n">V_max</span><span class="p">,</span> <span class="n">V_max</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float8_e4m3fn</span><span class="p">)</span>
 
-        <span class="n">prompt</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">question</span><span class="p">}</span>
-        <span class="p">]</span>
-        <span class="n">prompts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-        <span class="n">answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+<span class="c1"># Step 2: Matmul — upcast to FP32 for the multiply-accumulate</span>
+<span class="c1"># (On real H100 hardware, this happens inside the tensor core automatically.</span>
+<span class="c1">#  Here we simulate it explicitly since torch.matmul doesn't support FP8 directly.)</span>
+<span class="n">C_fp8_accum32</span> <span class="o">=</span> <span class="p">(</span><span class="n">A_fp8</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">@</span> <span class="n">B_fp8</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 
-    <span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">"prompts"</span><span class="p">:</span> <span class="n">prompts</span><span class="p">,</span>
-        <span class="s2">"answers"</span><span class="p">:</span> <span class="n">answers</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">batch</span>
+<span class="c1"># Step 3: Undo the scaling and cast output to bf16</span>
+<span class="n">C_fp8_accum32</span> <span class="o">=</span> <span class="p">(</span><span class="n">C_fp8_accum32</span> <span class="o">/</span> <span class="p">(</span><span class="n">scale_A</span> <span class="o">*</span> <span class="n">scale_B</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">C_fp8_accum32</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>tensor([[-1.0350e+02, -6.0500e+01,  2.3500e+01,  ...,  2.9375e+01,
+          9.6000e+01,  3.8250e+01],
+        [-5.6750e+01, -2.5875e+01, -2.5750e+01,  ...,  8.3750e+00,
+          4.2000e+01, -1.5000e+01],
+        [-1.3062e+01,  3.2250e+01, -6.1500e+01,  ..., -1.7125e+01,
+         -1.6875e+01, -1.4625e+01],
+        ...,
+        [-3.9750e+01,  5.8000e+01, -4.5000e+01,  ...,  9.6250e+00,
+          1.1500e+02,  1.3100e+02],
+        [ 7.0625e+00,  4.1000e+01,  8.0625e+00,  ..., -3.6133e-02,
+          1.6000e+02, -3.5500e+01],
+        [ 5.0250e+01, -5.3250e+01,  3.6250e+01,  ..., -5.8000e+01,
+         -9.1000e+01,  1.1600e+02]], device=&#39;cuda:0&#39;, dtype=torch.bfloat16)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can also perform a parity check with pytorch native _scaled_mm method, which is one of the method <a href="https://github.com/vllm-project/vllm/blob/8c1557a79c539ffe82d004d2a0c8d7b5e71159ce/vllm/model_executor/kernels/linear/scaled_mm/pytorch.py#L116">vllm</a> uses if other hardware specialized kernels aren't available.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>    
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">C_hardware</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_scaled_mm</span><span class="p">(</span>
+    <span class="n">A_fp8</span><span class="p">,</span> <span class="c1"># [M, K] row major</span>
+    <span class="n">B_fp8</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="c1"># [K, N] column major</span>
+    <span class="c1"># scale should be float32</span>
+    <span class="n">scale_a</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">scale_A</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="n">scale_b</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">scale_B</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="c1"># accumulates in FP32 internally, outputs bf16</span>
+    <span class="n">out_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">train_loader</span><span class="p">))</span>
-<span class="n">batch</span>
+<span class="n">C_hardware</span>
 </pre></div>
 
     </div>
@@ -13574,11 +13562,19 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{&#39;prompts&#39;: [[{&#39;role&#39;: &#39;user&#39;,
-    &#39;content&#39;: &#39;Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&#39;}],
-  [{&#39;role&#39;: &#39;user&#39;,
-    &#39;content&#39;: &#39;Weng earns $12 an hour for babysitting. Yesterday, she just did 50 minutes of babysitting. How much did she earn?&#39;}]],
- &#39;answers&#39;: [&#39;72&#39;, &#39;10&#39;]}</pre>
+<pre>tensor([[-1.0350e+02, -6.0500e+01,  2.3625e+01,  ...,  2.9375e+01,
+          9.6000e+01,  3.8250e+01],
+        [-5.6750e+01, -2.5875e+01, -2.5750e+01,  ...,  8.3750e+00,
+          4.2000e+01, -1.5000e+01],
+        [-1.3062e+01,  3.2250e+01, -6.1500e+01,  ..., -1.7125e+01,
+         -1.6875e+01, -1.4625e+01],
+        ...,
+        [-3.9750e+01,  5.8250e+01, -4.5000e+01,  ...,  9.6250e+00,
+          1.1500e+02,  1.3100e+02],
+        [ 7.0938e+00,  4.1000e+01,  8.1250e+00,  ..., -3.2227e-02,
+          1.6000e+02, -3.5500e+01],
+        [ 5.0500e+01, -5.3250e+01,  3.6250e+01,  ..., -5.8250e+01,
+         -9.1000e+01,  1.1600e+02]], device=&#39;cuda:0&#39;, dtype=torch.bfloat16)</pre>
 </div>
 
 </div>
@@ -13586,37 +13582,14 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Rollout-Generation">Rollout Generation<a class="anchor-link" href="#Rollout-Generation">&#182;</a></h3>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prompts</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
-    <span class="n">batch</span><span class="p">[</span><span class="s2">"prompts"</span><span class="p">],</span>
-    <span class="n">tokenize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">enable_thinking</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="n">prompt_encoded</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="p">(</span>
-    <span class="n">prompts</span><span class="p">,</span>
-    <span class="n">return_tensors</span><span class="o">=</span><span class="s2">"pt"</span><span class="p">,</span>
-    <span class="n">padding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">padding_side</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span>
-    <span class="n">truncation</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-
-<span class="c1"># [batch size, sequence length]</span>
-<span class="n">input_ids</span> <span class="o">=</span> <span class="n">prompt_encoded</span><span class="p">[</span><span class="s2">"input_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">attention_mask</span> <span class="o">=</span> <span class="n">prompt_encoded</span><span class="p">[</span><span class="s2">"attention_mask"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="n">input_ids</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"FP8 + FP32 accumulate vs BF16:  </span><span class="si">{</span><span class="n">relative_error</span><span class="p">(</span><span class="n">C_fp8_accum32</span><span class="p">,</span><span class="w"> </span><span class="n">C_bf16</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"FP8 + FP32 accumulate vs scale mm:  </span><span class="si">{</span><span class="n">relative_error</span><span class="p">(</span><span class="n">C_fp8_accum32</span><span class="p">,</span><span class="w"> </span><span class="n">C_hardware</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13629,17 +13602,85 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>torch.Size([2, 51])</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>FP8 + FP32 accumulate vs BF16:  0.037785
+FP8 + FP32 accumulate vs scale mm:  0.002769
+</pre>
+</div>
 </div>
 
 </div>
+</div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Granularity">Granularity<a class="anchor-link" href="#Granularity">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Apart from scaling strategy, we can also determine scaling granularity. i.e. how many elements share a single scale factor e.g.</p>
+<p><strong>Per-tensor</strong> -- one scale for the entire matrix:</p>
+
+<pre><code>Weight W [4096 x 4096]:
+  scale = 448 / max(|W|)     # 1 scalar</code></pre>
+<p><strong>Per-channel</strong> -- one scale per output row:</p>
+
+<pre><code>Weight W [4096 x 4096]:
+  scale[i] = 448 / max(|W[i, :]|)</code></pre>
+<p><strong>Per-block, e.g. [128x128]</strong> -- one scale per 128x128 tile:</p>
+
+<pre><code>Weight W [4096 x 4096]:
+  For each 128x128 block:
+    scale[i,j] = 448 / max(|block_ij|)</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We use <code>llmcompressor</code> to implement a <code>FP8_DYNAMIC</code> quantization <a href="https://github.com/vllm-project/llm-compressor/tree/f0f20063db4e24e1c796e8e315de68cef1c42508/examples/quantization_w8a8_fp8">[1]</a>. This is a W8A8 method where:</p>
+<ul>
+<li>Weights are quantized statically per channel offline to FP8.</li>
+<li>Activations are scaled dynamically per token at inference time to FP8. No calibration data is used.</li>
+</ul>
+<p><strong>Layers:</strong></p>
+<p>As a rule of thumb for quantization, we target only Linear layers, since FP8 tensor cores main purpose is to accelerate matrix multiplications. Normalization layers and embeddings are division sensitive or comprised of elementwise/lookup operations with comparatively fewer parameters, so quantizing them offers very negligible speedup or memory savings.
+Among the Linear layers, we further exclude those where small numerical errors can flip discrete decisions, such as lm_head, mtp speculative head (token selection), MOE router gates (expert assignment). We also exclude linear attention layers, where errors accumulate through recurrent state.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model_name</span> <span class="o">=</span> <span class="s2">"Qwen3-Next-80B-A3B-Instruct"</span>
+<span class="n">cache_dir</span> <span class="o">=</span> <span class="s2">"/shared/data"</span>
+<span class="n">model_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cache_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="c1"># Save to disk in compressed-tensors format (vLLM compatible)</span>
+<span class="n">quantized_model_name</span> <span class="o">=</span> <span class="n">model_name</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"-FP8-Dynamic"</span>
+<span class="n">quantized_model_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cache_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quantized_model_name</span><span class="si">}</span><span class="s2">"</span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 
@@ -13649,27 +13690,8 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">num_rollouts</span> <span class="o">=</span> <span class="mi">4</span>
-
-<span class="c1"># roll out stage</span>
-<span class="n">policy_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="c1"># [batch size * number of rollouts, sequence length (prompt length + max new tokens)]</span>
-    <span class="c1"># num_return_sequences internally repeats each prompt</span>
-    <span class="n">generated_ids</span> <span class="o">=</span> <span class="n">policy_model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>    
-        <span class="n">input_ids</span><span class="o">=</span><span class="n">input_ids</span><span class="p">,</span>
-        <span class="n">attention_mask</span><span class="o">=</span><span class="n">attention_mask</span><span class="p">,</span>
-        <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
-        <span class="n">do_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">num_return_sequences</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
-        <span class="n">top_p</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
-        <span class="n">top_k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-        <span class="n">temperature</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
-        <span class="n">eos_token_id</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token_id</span>
-    <span class="p">)</span>
-<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">generated_ids</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">batch_decode</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="n">cache_dir</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13685,30 +13707,9 @@ $$D_{\text{KL}}^{(i,t)} = \frac{\pi_{\text{ref}}(o_{i,t} \mid q, o_{i,&lt;t})}{\
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>torch.Size([8, 165])
-&lt;|im_start|&gt;user
-Natalia sold clips to 48 of her friends in April, and then she sold half as many clips in May. How many clips did Natalia sell altogether in April and May?&lt;|im_end|&gt;
-&lt;|im_start|&gt;assistant
-&lt;think&gt;
-
-&lt;/think&gt;
-
-Natalia sold 48 clips in April.
-
-In May, she sold **half as many clips** as she did in April. That means she sold:
-
-$$
-\frac{1}{2} \times 48 = 24 \text{ clips in May}
-$$
-
-Now, to find the total number of clips she sold in April and May:
-
-$$
-48 + 24 = 72
-$$
-
-So, Natalia sold **72 clips** in total in April and May.&lt;|im_end|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;&lt;|endoftext|&gt;
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights: 100%|██████████| 759/759 [04:52&lt;00:00,  2.60it/s]
 </pre>
 </div>
 </div>
@@ -13719,374 +13720,62 @@ So, Natalia sold **72 clips** in total in April and May.&lt;|im_end|&gt;&lt;|end
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># decode completions for reward computation, since left padding</span>
-<span class="c1"># ensures all prompts end at column prompt length, we simply slice</span>
-<span class="c1"># from that position onwards, and batch decode handles variable length</span>
-<span class="c1"># responses via skip special tokens</span>
-<span class="c1"># [batch size * number of rollouts, response length]</span>
-<span class="n">prompt_len</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">response_ids</span> <span class="o">=</span> <span class="n">generated_ids</span><span class="p">[:,</span> <span class="n">prompt_len</span><span class="p">:]</span>
-<span class="n">completion_texts</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">batch_decode</span><span class="p">(</span><span class="n">response_ids</span><span class="p">,</span> <span class="n">skip_special_tokens</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Reward-Advantage-Computation">Reward Advantage Computation<a class="anchor-link" href="#Reward-Advantage-Computation">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">cleanup_reasoning</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Remove the &lt;think&gt; process."""</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">think_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(&lt;think&gt;)?(.+)(&lt;/think&gt;)'</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
-    <span class="n">matched</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">think_pattern</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
-        <span class="c1"># remove think tags</span>
-        <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="n">matched</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span>
-
-    <span class="n">answer</span> <span class="o">=</span> <span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">answer</span>
-
-
-<span class="k">def</span> <span class="nf">compute_score</span><span class="p">(</span><span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Binary reward: 1 if the parsed answer matches ground truth, 0 otherwise.</span>
-
-<span class="sd">    We rely on math-verify, which offers more flexibility in terms</span>
-<span class="sd">    of mathematical equivalence answers instead of strict answer match</span>
-<span class="sd">    https://github.com/huggingface/Math-Verify</span>
-<span class="sd">    """</span>
-    <span class="n">solution_str_cleaned</span> <span class="o">=</span> <span class="n">cleanup_reasoning</span><span class="p">(</span><span class="n">solution_str</span><span class="p">)</span>
-    <span class="n">gold</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
-    <span class="n">answer</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">solution_str_cleaned</span><span class="p">)</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">verify</span><span class="p">(</span><span class="n">gold</span><span class="p">,</span> <span class="n">answer</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">score</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_group_advantages</span><span class="p">(</span>
-    <span class="n">rewards</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Compute group-relative advantages rewards [batch_size, num_rollouts]</span>
-<span class="sd">    """</span>
-    <span class="n">mean_rewards</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">std_rewards</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">advantages</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards</span> <span class="o">-</span> <span class="n">mean_rewards</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">std_rewards</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">advantages</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">answers</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"answers"</span><span class="p">]</span>
-<span class="n">answers_repeated</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">answer</span> <span class="k">for</span> <span class="n">answer</span> <span class="ow">in</span> <span class="n">answers</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">)</span>
-<span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">answers_repeated</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[13]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&#39;72&#39;, &#39;72&#39;, &#39;72&#39;, &#39;72&#39;, &#39;10&#39;, &#39;10&#39;, &#39;10&#39;, &#39;10&#39;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rewards</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="n">compute_score</span><span class="p">(</span><span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">solution_str</span><span class="p">,</span> <span class="n">ground_truth</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">completion_texts</span><span class="p">,</span> <span class="n">answers_repeated</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">recipe</span> <span class="o">=</span> <span class="n">QuantizationModifier</span><span class="p">(</span>
+    <span class="n">targets</span><span class="o">=</span><span class="p">[</span><span class="s2">"Linear"</span><span class="p">],</span>
+    <span class="n">scheme</span><span class="o">=</span><span class="s2">"FP8_DYNAMIC"</span><span class="p">,</span>
+    <span class="n">ignore</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">"lm_head"</span><span class="p">,</span>
+        <span class="c1"># moe router and shared expert gate</span>
+        <span class="s2">"re:.*mlp.gate$"</span><span class="p">,</span>
+        <span class="s2">"re:.*mlp.shared_expert_gate$"</span><span class="p">,</span>
+        <span class="c1"># linear attention layers (GatedDeltaNet)</span>
+        <span class="s2">"re:.*linear_attn.*"</span><span class="p">,</span>
+        <span class="c1"># mtp speculative head</span>
+        <span class="c1"># "re:^mtp.*",</span>
     <span class="p">],</span>
-    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-<span class="p">)</span>  <span class="c1"># [batch_size * num_rollouts,]</span>
-
-<span class="c1"># temporarily reshape to [batch_size, num_rollouts] for</span>
-<span class="c1"># computing batch group-relative advantages</span>
-<span class="c1"># the last batch in an epoch might be smaller than config's batch size</span>
-<span class="n">rewards_grouped</span> <span class="o">=</span> <span class="n">rewards</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">answers</span><span class="p">),</span> <span class="n">num_rollouts</span><span class="p">)</span>
-<span class="n">advantages_grouped</span> <span class="o">=</span> <span class="n">compute_group_advantages</span><span class="p">(</span><span class="n">rewards_grouped</span><span class="p">)</span>
-<span class="c1"># [batch_size * num_rollouts,]</span>
-<span class="n">advantages</span> <span class="o">=</span> <span class="n">advantages_grouped</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">advantages</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[14]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>tensor([0., 0., 0., 0., 0., 0., 0., 0.], device=&#39;cuda:0&#39;)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Policy-Update">Policy Update<a class="anchor-link" href="#Policy-Update">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_logprobs</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Compute per-token log probabilities from model logits."""</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">logits</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">logits</span>
-
-    <span class="c1"># shift logits and labels</span>
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-    <span class="n">labels</span><span class="p">[</span><span class="n">attention_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
-    <span class="n">logits_shifted</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
-    <span class="n">labels_shifted</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
-    <span class="c1"># (batch_size, seq_len - 1)</span>
-    <span class="n">log_probs</span> <span class="o">=</span> <span class="o">-</span><span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
-        <span class="n">logits_shifted</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">logits_shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
-        <span class="n">labels_shifted</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="n">reduction</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
-        <span class="n">ignore_index</span><span class="o">=-</span><span class="mi">100</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">labels_shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">log_probs</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gen_attention_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated_ids</span> <span class="o">!=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token_id</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
-<span class="n">gen_attention_mask</span><span class="p">[:,</span> <span class="p">:</span><span class="n">prompt_len</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="c1"># compute old policy's log prob, frozen used for importance sampling ratios</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">log_probs_old</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">policy_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
-
-<span class="c1"># compute reference model's log prob, frozen used for KL divergence</span>
-<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-    <span class="n">log_probs_ref</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">ref_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
-
-<span class="c1"># current policy log prob</span>
-<span class="n">policy_model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-<span class="n">log_probs_current</span> <span class="o">=</span> <span class="n">compute_logprobs</span><span class="p">(</span><span class="n">policy_model</span><span class="p">,</span> <span class="n">generated_ids</span><span class="p">,</span> <span class="n">gen_attention_mask</span><span class="p">)</span>
-
-<span class="c1"># [batch_size * num_rollouts, seq length - 1]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">log_probs_old</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">log_probs_current</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>torch.Size([8, 164])
-torch.Size([8, 164])
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_kl_divergence</span><span class="p">(</span>
-    <span class="n">log_probs_current</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">log_probs_ref</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="n">log_ratio</span> <span class="o">=</span> <span class="n">log_probs_ref</span> <span class="o">-</span> <span class="n">log_probs_current</span>
-    <span class="n">kl_per_token</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_ratio</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_ratio</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">kl_per_token</span>
-
-
-<span class="k">def</span> <span class="nf">compute_grpo_loss</span><span class="p">(</span>
-    <span class="n">log_probs_current</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">log_probs_old</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">log_probs_ref</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">advantages</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">response_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">clip_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
-    <span class="n">kl_coeff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="p">):</span>
-    <span class="c1"># per token importance sampling ratio</span>
-    <span class="n">log_ratio</span> <span class="o">=</span> <span class="n">log_probs_current</span> <span class="o">-</span> <span class="n">log_probs_old</span>
-    <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_ratio</span><span class="p">)</span>
-    
-    <span class="c1"># broadcast sequence level advantages to all token positions</span>
-    <span class="n">advantages_expanded</span> <span class="o">=</span> <span class="n">advantages</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="c1"># clipped objective</span>
-    <span class="n">surrogate_unclipped</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantages_expanded</span>
-    <span class="n">surrogate_clipped</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">clip_epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">clip_epsilon</span><span class="p">)</span>
-        <span class="o">*</span> <span class="n">advantages_expanded</span>
-    <span class="p">)</span>
-    <span class="n">surrogate_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surrogate_unclipped</span><span class="p">,</span> <span class="n">surrogate_clipped</span><span class="p">)</span>
-    
-    <span class="c1"># loss - beta * KL, ensure it is masked to calculate for response token only</span>
-    <span class="n">kl_penalty</span> <span class="o">=</span> <span class="n">compute_kl_divergence</span><span class="p">(</span><span class="n">log_probs_current</span><span class="p">,</span> <span class="n">log_probs_ref</span><span class="p">)</span>
-    <span class="n">per_token_objective</span> <span class="o">=</span> <span class="p">(</span><span class="n">surrogate_loss</span> <span class="o">-</span> <span class="n">kl_coeff</span> <span class="o">*</span> <span class="n">kl_penalty</span><span class="p">)</span> <span class="o">*</span> <span class="n">response_mask</span>
-    
-    <span class="c1"># average over valid response per completion, then over batch size</span>
-    <span class="n">response_lengths</span> <span class="o">=</span> <span class="n">response_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">per_completion_objective</span> <span class="o">=</span> <span class="n">per_token_objective</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">response_lengths</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">per_completion_objective</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">surrogate_loss</span><span class="p">,</span> <span class="n">per_token_objective</span><span class="p">,</span> <span class="n">kl_penalty</span>
-
-
-<span class="c1"># slice to match shifted tensor</span>
-<span class="n">response_mask</span> <span class="o">=</span> <span class="n">gen_attention_mask</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
-<span class="n">loss</span><span class="p">,</span> <span class="n">surrogate_loss</span><span class="p">,</span> <span class="n">per_token_objective</span><span class="p">,</span> <span class="n">kl_penalty</span> <span class="o">=</span> <span class="n">compute_grpo_loss</span><span class="p">(</span>
-    <span class="n">log_probs_current</span><span class="o">=</span><span class="n">log_probs_current</span><span class="p">,</span>
-    <span class="n">log_probs_old</span><span class="o">=</span><span class="n">log_probs_old</span><span class="p">,</span>
-    <span class="n">log_probs_ref</span><span class="o">=</span><span class="n">log_probs_ref</span><span class="p">,</span>
-    <span class="n">advantages</span><span class="o">=</span><span class="n">advantages</span><span class="p">,</span>
-    <span class="n">response_mask</span><span class="o">=</span><span class="n">response_mask</span><span class="p">,</span>
-    <span class="n">clip_epsilon</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-    <span class="n">kl_coeff</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+
+<span class="c1"># Apply quantization (no calibration data needed for FP8_DYNAMIC)</span>
+<span class="n">oneshot</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">recipe</span><span class="o">=</span><span class="n">recipe</span><span class="p">)</span>
+
+<span class="c1">#!du -h -d 1 $model_path</span>
+<span class="c1">#!du -h -d 1 $quantized_model_path</span>
+<span class="n">model</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">quantized_model_path</span><span class="p">,</span> <span class="n">save_compressed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="n">quantized_model_path</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>tensor(4.8195e-06, device=&#39;cuda:0&#39;, grad_fn=&lt;NegBackward0&gt;)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h2>
+<p>We can check disk usage of the quantized checkpoint to confirm its lower size, and <code>vllm serve</code> this quantized checkpoint to check for performance parity as subsequent step.</p>
+
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We run the full training and evaluation separately outside of notebook via grpo.py and evaluate.py <a href="https://github.com/ethen8181/machine-learning/blob/master/deep_learning/llm/grpo">script folder link</a>.</p>
-<p>Model: Qwen/Qwen3-0.6B
-Accuracy: 58.98% (778/1319)</p>
-<p>Model: Qwen/Qwen3-0.6B, 8 A100 for 200 steps
-Accuracy: 66.87% (882/1319)</p>
-<p>Anecdotal example:</p>
-
-<pre><code>{'idx': 2, 'prompt': '&lt;|im_start|&gt;user\nJosh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n', 'ground_truth': '70000', 'generated_text': 'Josh buys a house for **$80,000** and puts in **$50,000** in repairs. The value of the house **increased by 150%**.\n\n---\n\n### Step 1: Find the new value of the house\n\nThe value increased by 150%, so the new value is:\n\n$$\n\\text{New Value} = \\text{Original Value} + 150\\% \\times \\text{Original Value}\n$$\n\n$$\n\\text{New Value} = 80,000 + 0.15 \\times 80,000 = 80,000 + 12,000 = 92,000\n$$\n\n---\n\n### Step 2: Calculate the profit\n\nProfit = New Value - Cost\n\n$$\n\\text{Profit} = 92,000 - 50,000 = 42,000\n$$\n\n---\n\n### ✅ Final Answer:\n\nJosh made a **profit of $42,000**.', 'correct': 0}</code></pre>
-<p>Qwen3-0.6B made two errors:</p>
-<p>Computed 150% as 0.15 × 80,000 = 12,000 (confused 150% with 15%). Only subtracted repair cost, not total investment: 92,000 - 50,000</p>
-<p>Qwen3-0.6B-GRPO, on the other hand, got it right:</p>
-
-<pre><code>{'idx': 2, 'prompt': '&lt;|im_start|&gt;user\nJosh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n', 'ground_truth': '70000', 'generated_text': 'We are given the following information:\n\n- The original price of the house is **$80,000**.\n- Josh puts in **$50,000** in repairs.\n- The value of the house **increased by 150%** due to the repairs.\n\n---\n\n### Step 1: Calculate the new value of the house after the increase\n\nThe increase in value is **150%** of the original price:\n\n$$\n\\text{Increase} = 150\\% \\times 80,000 = 1.5 \\times 80,000 = 120,000\n$$\n\n$$\n\\text{New value} = \\text{Original value} + \\text{Increase} = 80,000 + 120,000 = 200,000\n$$\n\n---\n\n### Step 2: Calculate the profit\n\nProfit is the difference between the **new value** and the **cost** (original price of the house and repairs):\n\n$$\n\\text{Profit} = \\text{New value} - (\\text{Original price} + \\text{Cost in repairs})\n$$\n\n$$\n\\text{Profit} = 200,000 - (80,000 + 50,000) = 200,000 - 130,000 = 70,000\n$$\n\n---\n\n### ✅ Final Answer: $ \\boxed{70,000} $ profit.', 'correct': 1}</code></pre>
-<p>Correctly computed 1.5 × 80,000 = 120,000 increase. Subtracted total cost (purchase + repairs): 200,000 - 130,000 = 70,000</p>
+<p>To close out this document, we will take a closer look at some empirical numbers from a quantization study on Deepseek-R1 distilled models <a href="https://developers.redhat.com/articles/2025/03/03/deployment-ready-reasoning-quantized-deepseek-r1-models">[3]</a></p>
+<p><img src="imgs/quantization_reasoning_performance.png" width="70%" height="70%"></p>
+<ul>
+<li><strong>Performance recovery:</strong> FP W8A8 is nearly lossless, matching BF16 across reasoning benchmarks. INT W8A8 closely tracks FP W8A8, making them a practical alternative for Ampere and older devices that lack dedicated FP8 tensor cores. INT W4A16 can exhibit more noticeable performance degradation, particularly on smaller models. The more aggressive 4 bit weight compression has less room for error when the model itself has fewer parameters to absorb quantization noise.</li>
+<li><strong>Larger quantized model can beat a smaller unquantized one:</strong> Most quantization discussion frame the question as "how well does the quantized model recover the unquantized baseline?" But the more practical deployment decision is: should we run a smaller model at full precision or a quantized larger model. Suppose we have a setup where we can only afford a 7B full precision model, quantizing larger model opens a second pathway where we can take a 14B or 32B model quantize it down to W8 or W4 so it fits the same budget, and inherit larger model variant's stronger base capability. From the table above, we can see the quantized larger model typically wins on quality despite performance loss during compression, because model scale offers more performance gain than the last few percent of numerical precision.</li>
+</ul>
+<p><img src="imgs/quantization_reasoning_inference.png" width="70%" height="70%"></p>
+<p><strong>Inference speedups:</strong> The same study profiled throughput across chat, instruction following, summarization, RAG, and coding workloads on A6000, A100, and H100 GPUs:</p>
+<ul>
+<li><strong>W8A8 wins on throughput</strong>, particularly for larger models, averaging 1.3 - 1.7x improvements across workloads. By compressing both weights and activations, memory bandwidth savings compound with faster matmuls.</li>
+<li>W4A16 delivers the highest speedup for single stream low latency deployments. With only 1 input in flight, the workload is memory bandwidth bound and 4 bit weights cuts the bytes moved from HBM to SM to a quarter compared to BF16.</li>
+<li>Smaller model like 1.5B see minimal speedup on tested GPUs. Their BF16 variant is already lightweight enough that GPU compute isn't the bottleneck, so quantization has little headroom.</li>
+</ul>
 
 </div>
 </div>
@@ -14102,13 +13791,10 @@ Accuracy: 66.87% (882/1319)</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li><a href="https://huggingface.co/blog/NormalUhr/grpo">[1]</a> Yihua Zhang - Blog: DeepSeek-R1 Dissection: Understanding PPO &amp; GRPO Without Any Prior Reinforcement Learning Knowledge (2025)</li>
-<li><a href="https://arxiv.org/abs/2009.01325">[2]</a> Nisan Stiennon, Long Ouyang, Jeff Wu, Daniel M. Ziegler, Ryan Lowe, Chelsea Voss, Paul Christiano, et al. - Learning to summarize from human feedback (2020)</li>
-<li><a href="https://arxiv.org/abs/2203.02155">[3]</a> Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Amanda Askell, Paul Christiano, Jan Leike, Ryan Lowe, et al. - Training language models to follow instructions with human feedback (2022)</li>
-<li><a href="https://arxiv.org/abs/2402.03300">[4]</a> Zhihong Shao, Peiyi Wang, Qihao Zhu, Daya Guo, et al. - DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models (2024)</li>
-<li><a href="https://arxiv.org/abs/2501.12948">[5]</a> DeepSeek-AI - DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning (2025)</li>
-<li><a href="https://www.jasonwei.net/blog/asymmetry-of-verification-and-verifiers-law">[6]</a> Jason Wei - Blog: Asymmetry of verification and verifier’s rule</li>
-<li><a href="https://www.jasonwei.net/blog/life-lessons-from-reinforcement-learning">[7]</a> Jason Wei - Blog: Life lessons from reinforcement learning (2025)</li>
+<li><a href="https://github.com/vllm-project/llm-compressor/tree/f0f20063db4e24e1c796e8e315de68cef1c42508/examples/quantization_w8a8_fp8">[1]</a> llmcompressor quantization w8a8 fp8</li>
+<li><a href="https://www.youtube.com/watch?v=LK2-lrLvhTA">[2]</a> Youtube: Eldar Kurtić - Beginner Friendly Introduction to LLM Quantization: From Zero to Hero</li>
+<li><a href="https://developers.redhat.com/articles/2025/03/03/deployment-ready-reasoning-quantized-deepseek-r1-models">[3]</a> Deployment-ready reasoning with quantized DeepSeek-R1 models</li>
+<li><a href="https://handbook.modular.com/kernel-optimization/gpu-architecture-fundamentals/gpu-memory/">[4]</a> Modular LLM Inference Handbook - GPU Memory Hierarchy</li>
 </ul>
 
 </div>
